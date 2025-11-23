@@ -21,7 +21,8 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
     targetX: 0,
     currentX: 0,
     lastIndex: 0,
-    isAnimating: false
+    isAnimating: false,
+    winner: null as LootItem | null
   });
 
   const animationFrameId = useRef<number>(0);
@@ -61,16 +62,16 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
   }, [generateStrip]);
 
   // REFINED Ease Out Back
-  // Significantly reduced tension from 0.8 to 0.25.
-  // This creates a very subtle "locking" effect rather than a large bounce.
+  // Update: drastically reduced 'c1' to 0.12 (was 0.25). 
+  // This fixes the "returns too much" issue by making the overshoot very subtle.
   const easeOutBackCustom = (x: number): number => {
-    const c1 = 0.25; // Much lower overshoot (was 0.8)
+    const c1 = 0.12; 
     const c3 = c1 + 1;
     
     return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
   };
 
-  const animate = (timestamp: number) => {
+  const animate = useCallback((timestamp: number) => {
     const state = stateRef.current;
     if (!state.isAnimating) return;
 
@@ -87,7 +88,10 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
     
     // Calculate Velocity based on Delta X (Real visual speed)
     const dx = Math.abs(newX - state.currentX);
-    const velocityNormalized = Math.min(1, dx / 12); // Normalized against max speed
+    
+    // Increased sensitivity divisor (was 12, now 8).
+    // This ensures ticks continue to fire even when moving very slowly at the end.
+    const velocityNormalized = Math.min(1, dx / 8); 
 
     state.currentX = newX;
 
@@ -119,82 +123,85 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
       animationFrameId.current = requestAnimationFrame(animate);
     } else {
       state.isAnimating = false;
-      const winner = strip[WINNING_INDEX];
-      
-      // Snap to final exact position to correct any floating point drift
-      if (containerRef.current) {
-        containerRef.current.style.transform = `translate3d(${state.targetX}px, 0, 0)`;
+      if (state.winner) {
+          onSpinEnd(state.winner);
       }
-      
-      onSpinEnd(winner);
     }
-  };
+  }, [onSpinEnd]);
 
   useEffect(() => {
     if (isSpinning) {
-      const winner = generateStrip();
-      const itemWidth = CARD_WIDTH + CARD_GAP;
-      
-      // Target Calculation:
-      // REDUCED JITTER:
-      // Previously +/- 40% of width (chaotic).
-      // Now +/- 20% of width (cleaner, lands more reliably on the card).
-      const jitter = (Math.random() * (CARD_WIDTH * 0.4)) - (CARD_WIDTH * 0.2);
-      
-      // Note: We add CARD_WIDTH/2 to center the card itself
-      const targetX = -1 * ((WINNING_INDEX * itemWidth) + (CARD_WIDTH / 2)) + jitter;
+        const winner = generateStrip();
+        const itemWidth = CARD_WIDTH + CARD_GAP;
+        
+        // Random offset within the winning card to simulate analog stopping
+        // +/- 30% of card width
+        const randomOffset = (Math.random() * (CARD_WIDTH * 0.6)) - (CARD_WIDTH * 0.3);
+        
+        // Target: We want the WINNING_INDEX card to be at the center.
+        // The container is padded left by (50% - cardWidth/2).
+        // So at x=0, index 0 is centered.
+        // To center index N, we move x to -N * itemWidth.
+        const targetX = -1 * (WINNING_INDEX * itemWidth) + randomOffset;
 
-      // Reset State
-      stateRef.current = {
-        startTime: 0,
-        startX: 0,
-        targetX: targetX,
-        currentX: 0,
-        lastIndex: 0,
-        isAnimating: true
-      };
+        stateRef.current = {
+            startTime: 0,
+            startX: 0,
+            targetX: targetX,
+            currentX: 0,
+            lastIndex: 0,
+            isAnimating: true,
+            winner: winner
+        };
 
-      // Ensure audio context is running
-      audioService.init();
-      
-      // Start loop
-      animationFrameId.current = requestAnimationFrame(animate);
+        onSpinStart();
+        
+        // Start Loop
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = requestAnimationFrame(animate);
     }
+    
     return () => {
-      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
-    };
-  }, [isSpinning, generateStrip]);
+        cancelAnimationFrame(animationFrameId.current);
+    }
+  }, [isSpinning, generateStrip, onSpinStart, animate]);
+
+  const stripWidth = strip.length * (CARD_WIDTH + CARD_GAP);
 
   return (
-    <div className="relative w-full h-[240px] overflow-hidden bg-[#07080b] rounded-xl border-y-[3px] border-[#1e2330] shadow-[inset_0_0_40px_rgba(0,0,0,0.8)]">
-      
-      {/* Center Needle */}
-      <div className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-yellow-400 z-40 shadow-[0_0_15px_#facc15] opacity-90"></div>
-      <div className="absolute left-1/2 top-0 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-yellow-400 z-40 filter drop-shadow-[0_0_5px_#facc15]"></div>
-      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-yellow-400 z-40 filter drop-shadow-[0_0_5px_#facc15]"></div>
+    <div className="relative w-full h-[240px] overflow-hidden bg-[#13161f] border-y border-[#1e2330] flex items-center shadow-inner rounded-xl">
+        
+        {/* Center Indicator (The Line) */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#00e701] z-30 transform -translate-x-1/2 shadow-[0_0_15px_#00e701]"></div>
+        
+        {/* Triangles */}
+        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1 text-[#00e701] z-30 filter drop-shadow-[0_0_5px_rgba(0,231,1,0.8)]">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
+        </div>
+        <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1 text-[#00e701] z-30 rotate-180 filter drop-shadow-[0_0_5px_rgba(0,231,1,0.8)]">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
+        </div>
 
-      {/* Side Vignettes for focus */}
-      <div className="absolute inset-0 z-30 pointer-events-none bg-[linear-gradient(90deg,#07080b_0%,transparent_30%,transparent_70%,#07080b_100%)]"></div>
+        {/* Fade gradients on sides */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
 
-      {/* The Rolling Strip */}
-      <div 
-        ref={containerRef}
-        className="flex items-center h-full z-10 relative will-change-transform"
-        style={{ 
-            paddingLeft: '50%', // Start at center
-            width: 'max-content',
-            gap: `${CARD_GAP}px`,
-            backfaceVisibility: 'hidden', // Optimize rendering
-        }}
-      >
-        {strip.map((item, index) => (
-          <LootCard 
-            key={`${item.id}-${index}`} 
-            item={item} 
-            width={CARD_WIDTH} 
-          />
-        ))}
-      </div>
+        {/* The Sliding Strip */}
+        <div 
+            className="flex items-center h-full will-change-transform"
+            ref={containerRef}
+            style={{ 
+                width: `${stripWidth}px`,
+                // Padding left ensures index 0 starts at the center line (since we translate negative)
+                paddingLeft: `calc(50% - ${CARD_WIDTH/2}px)`
+            }}
+        >
+            {strip.map((item, index) => (
+                <div key={`${item.id}-${index}`} style={{ marginRight: `${CARD_GAP}px` }}>
+                    <LootCard item={item} width={CARD_WIDTH} />
+                </div>
+            ))}
+        </div>
     </div>
   );
 };

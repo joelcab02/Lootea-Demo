@@ -3,7 +3,7 @@ import { LootItem, Rarity } from './types';
 export const CARD_WIDTH = 180; // px
 export const CARD_GAP = 16; // px
 export const VISIBLE_CARDS = 5; 
-export const SPIN_DURATION = 5800; // Adjusted to 5.8s for better pacing with the subtler ease
+export const SPIN_DURATION = 5200; // Slightly faster (was 5800) for a smoother, less draggy finish
 export const TOTAL_CARDS_IN_STRIP = 60; 
 export const WINNING_INDEX = 35; 
 
