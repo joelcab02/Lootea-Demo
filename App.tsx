@@ -14,7 +14,8 @@ const Icons = {
   Refresh: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
   Plus: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>,
   ArrowLeft: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>,
-  Close: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  Close: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
+  Menu: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
 };
 
 const App: React.FC = () => {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
   const [winner, setWinner] = useState<LootItem | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSpin = () => {
     if (isSpinning) return;
@@ -61,62 +63,73 @@ const App: React.FC = () => {
     <div className="flex h-screen bg-[#0a0c10] text-white font-sans overflow-hidden selection:bg-[#00e701] selection:text-black">
       
       {/* SIDEBAR */}
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
         
         {/* HEADER */}
-        <header className="flex items-center justify-between h-16 px-6 bg-[#0a0c10]/95 backdrop-blur border-b border-[#1e2330] sticky top-0 z-40">
-            <div className="flex items-center gap-4 text-slate-400">
+        <header className="flex items-center justify-between h-14 md:h-16 px-4 md:px-6 bg-[#0a0c10]/95 backdrop-blur border-b border-[#1e2330] sticky top-0 z-40">
+            <div className="flex items-center gap-3 md:gap-4 text-slate-400">
+                {/* Mobile Menu Button */}
+                <button 
+                  onClick={() => setSidebarOpen(true)}
+                  className="lg:hidden text-white p-1 hover:bg-[#1e2330] rounded"
+                >
+                  <Icons.Menu />
+                </button>
+
                 <button className="hover:text-white flex items-center gap-2 text-xs font-bold uppercase tracking-wider transition-colors">
                   <Icons.ArrowLeft />
-                  Back to Packs
+                  <span className="hidden sm:inline">Back to Packs</span>
                 </button>
             </div>
 
-            <div className="flex items-center gap-4">
-                <div className="hidden md:flex items-center bg-[#161922] rounded-md border border-[#1e2330] px-3 py-1.5 gap-3">
+            <div className="flex items-center gap-2 md:gap-4">
+                {/* Wallet - Visible on mobile now, compacted */}
+                <div className="flex items-center bg-[#161922] rounded-md border border-[#1e2330] px-2 py-1 md:px-3 md:py-1.5 gap-2 md:gap-3">
                    <span className="text-[#00e701]"><Icons.Wallet /></span>
-                   <span className="font-mono font-bold text-sm tracking-wide">$2,450.00</span>
-                   <button className="bg-[#252a38] hover:bg-[#303645] text-xs font-bold px-2 py-1 rounded text-slate-300 transition-colors">
+                   <span className="font-mono font-bold text-xs md:text-sm tracking-wide">$2,450.00</span>
+                   <button className="bg-[#252a38] hover:bg-[#303645] text-xs font-bold px-1.5 py-0.5 rounded text-slate-300 transition-colors">
                       <Icons.Plus />
                    </button>
                 </div>
 
-                <button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white px-5 py-2 rounded font-bold text-xs uppercase tracking-wide shadow-lg shadow-blue-500/20 transition-all">
+                <button className="hidden md:block bg-[#3b82f6] hover:bg-[#2563eb] text-white px-5 py-2 rounded font-bold text-xs uppercase tracking-wide shadow-lg shadow-blue-500/20 transition-all">
                     Deposit
                 </button>
+                
+                {/* Mobile Deposit Icon Button (Optional fallback if needed, but wallet has +) */}
 
-                <div className="w-9 h-9 rounded bg-[#00e701] flex items-center justify-center text-black font-black text-sm cursor-pointer hover:scale-105 transition-transform">
+                <div className="w-8 h-8 md:w-9 md:h-9 rounded bg-[#00e701] flex items-center justify-center text-black font-black text-xs md:text-sm cursor-pointer hover:scale-105 transition-transform">
                     U
                 </div>
             </div>
         </header>
 
         {/* HERO CASE AREA */}
-        <div className="flex flex-col items-center pt-10 pb-12 relative">
+        <div className="flex flex-col items-center pt-6 md:pt-10 pb-12 relative">
             
             {/* Ambient Glow */}
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[60%] h-[400px] bg-[#00e701] opacity-[0.03] blur-[100px] pointer-events-none"></div>
             
             {/* Case Title */}
-            <div className="z-10 text-center mb-10">
-                <div className="flex items-center justify-center gap-3 mb-3">
-                    <img src="https://i.imgur.com/Fh76q9j.png" className="w-8 h-8 object-contain opacity-50 grayscale" alt="icon" />
-                    <h1 className="text-3xl md:text-4xl font-black text-white uppercase italic tracking-tighter">
+            <div className="z-10 text-center mb-6 md:mb-10">
+                <div className="flex items-center justify-center gap-2 md:gap-3 mb-2 md:mb-3">
+                    <img src="https://i.imgur.com/Fh76q9j.png" className="w-6 h-6 md:w-8 md:h-8 object-contain opacity-50 grayscale" alt="icon" />
+                    <h1 className="text-2xl md:text-4xl font-black text-white uppercase italic tracking-tighter">
                         Treat Yourself
                     </h1>
-                    <img src="https://i.imgur.com/Fh76q9j.png" className="w-8 h-8 object-contain opacity-50 grayscale" alt="icon" />
+                    <img src="https://i.imgur.com/Fh76q9j.png" className="w-6 h-6 md:w-8 md:h-8 object-contain opacity-50 grayscale" alt="icon" />
                 </div>
-                <p className="text-slate-500 font-mono text-sm font-bold tracking-wider">
-                    <span className="text-[#00e701] text-lg mr-2">$26.93</span> 
+                <p className="text-slate-500 font-mono text-xs md:text-sm font-bold tracking-wider">
+                    <span className="text-[#00e701] text-base md:text-lg mr-2">$26.93</span> 
                     <span className="opacity-50">COST TO OPEN</span>
                 </p>
             </div>
 
             {/* SPINNER COMPONENT */}
-            <div className="w-full max-w-[1100px] px-4 z-10 mb-10">
+            <div className="w-full max-w-[1100px] px-0 sm:px-4 z-10 mb-6 md:mb-10">
                 <Spinner 
                     isSpinning={isSpinning} 
                     onSpinStart={() => {}} 
@@ -127,14 +140,14 @@ const App: React.FC = () => {
             {/* ACTION BAR */}
             <div className="z-10 flex flex-col md:flex-row items-center gap-4 w-full max-w-[1100px] px-4">
                 
-                {/* Quantity Selector - Separated Squares */}
-                <div className="flex gap-2">
+                {/* Quantity Selector */}
+                <div className="flex gap-2 w-full md:w-auto justify-center md:justify-start">
                     {[1, 2, 3, 4, 5].map(num => (
                         <button 
                           key={num} 
                           onClick={() => setQuantity(num)}
                           className={`
-                            w-12 h-12 rounded-md font-bold text-sm transition-all border
+                            flex-1 md:flex-none w-10 h-10 md:w-12 md:h-12 rounded-md font-bold text-sm transition-all border
                             ${quantity === num 
                                 ? 'bg-[#1e2330] border-[#00e701] text-white shadow-[0_0_10px_rgba(0,231,1,0.15)]' 
                                 : 'bg-[#13161f] border-[#1e2330] text-slate-500 hover:bg-[#1e2330] hover:text-slate-300'}
@@ -145,7 +158,7 @@ const App: React.FC = () => {
                     ))}
                 </div>
 
-                <div className="flex-1 w-full md:w-auto"></div>
+                <div className="flex-1 hidden md:block"></div>
 
                 {/* Main Button */}
                 <button 
@@ -153,7 +166,7 @@ const App: React.FC = () => {
                     disabled={isSpinning}
                     className="
                         w-full md:w-auto min-w-[240px] relative px-8 py-3.5 bg-[#00e701] hover:bg-[#00c201] active:scale-[0.98] transition-all
-                        rounded-md text-black font-black text-base uppercase tracking-widest shadow-[0_0_20px_rgba(0,231,1,0.25)]
+                        rounded-md text-black font-black text-sm md:text-base uppercase tracking-widest shadow-[0_0_20px_rgba(0,231,1,0.25)]
                         disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2
                     "
                 >
@@ -161,12 +174,12 @@ const App: React.FC = () => {
                 </button>
 
                 {/* Options */}
-                <div className="flex gap-2">
-                     <button className="flex items-center gap-2 px-4 h-12 rounded-md bg-[#13161f] border border-[#1e2330] text-slate-400 hover:text-white hover:bg-[#1e2330] transition-colors text-xs font-bold uppercase tracking-wide">
+                <div className="flex gap-2 w-full md:w-auto">
+                     <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 h-12 rounded-md bg-[#13161f] border border-[#1e2330] text-slate-400 hover:text-white hover:bg-[#1e2330] transition-colors text-xs font-bold uppercase tracking-wide">
                         <Icons.Refresh />
-                        <span className="hidden sm:block">Demo</span>
+                        <span className="block md:hidden lg:block">Demo</span>
                      </button>
-                     <button className="w-12 h-12 rounded-md bg-[#13161f] border border-[#1e2330] flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#1e2330] transition-colors">
+                     <button className="w-12 h-12 rounded-md bg-[#13161f] border border-[#1e2330] flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#1e2330] transition-colors shrink-0">
                         <Icons.Lightning />
                      </button>
                 </div>

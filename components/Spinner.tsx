@@ -169,7 +169,7 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
   const stripWidth = strip.length * (CARD_WIDTH + CARD_GAP);
 
   return (
-    <div className="relative w-full h-[240px] overflow-hidden bg-[#13161f] border-y border-[#1e2330] flex items-center shadow-inner rounded-xl">
+    <div className="relative w-full h-[200px] sm:h-[240px] overflow-hidden bg-[#13161f] border-y border-[#1e2330] flex items-center shadow-inner rounded-xl transition-all duration-300">
         
         {/* Center Indicator (The Line) */}
         <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#00e701] z-30 transform -translate-x-1/2 shadow-[0_0_15px_#00e701]"></div>
@@ -183,8 +183,8 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
         </div>
 
         {/* Fade gradients on sides */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
 
         {/* The Sliding Strip */}
         <div 

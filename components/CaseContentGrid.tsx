@@ -6,11 +6,11 @@ export default function CaseContentGrid() {
   const sortedItems = [...ITEMS_DB].sort((a, b) => b.price - a.price);
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto mt-8 p-6 bg-[#0d1019] border-t border-[#1e2330]">
-      <div className="flex items-center justify-between mb-8">
+    <div className="w-full max-w-[1400px] mx-auto mt-4 md:mt-8 p-4 md:p-6 bg-[#0d1019] border-t border-[#1e2330]">
+      <div className="flex items-center justify-between mb-6 md:mb-8">
         <div className="flex items-center gap-3">
-            <div className="h-8 w-1 bg-[#00e701] rounded-full shadow-[0_0_10px_#00e701]"></div>
-            <h2 className="text-xl font-black text-white uppercase tracking-tight italic">
+            <div className="h-6 w-1 md:h-8 bg-[#00e701] rounded-full shadow-[0_0_10px_#00e701]"></div>
+            <h2 className="text-lg md:text-xl font-black text-white uppercase tracking-tight italic">
                 Case Contents
             </h2>
             <span className="bg-[#1e2330] text-slate-400 px-2 py-1 rounded text-xs font-bold">{sortedItems.length}</span>
@@ -21,28 +21,28 @@ export default function CaseContentGrid() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
         {sortedItems.map((item) => (
-          <div key={item.id} className="group relative bg-[#161922] hover:bg-[#1c202b] border border-[#1e2330] hover:border-slate-600 transition-all duration-200 rounded-lg p-4 flex flex-col items-center hover:-translate-y-1">
+          <div key={item.id} className="group relative bg-[#161922] hover:bg-[#1c202b] border border-[#1e2330] hover:border-slate-600 transition-all duration-200 rounded-lg p-3 md:p-4 flex flex-col items-center hover:-translate-y-1">
             
             {/* Odds Badge - PackDraw Style (Top Center) */}
-            <div className="text-[10px] font-mono font-bold text-[#535b70] group-hover:text-[#00e701] transition-colors mb-2">
+            <div className="text-[9px] md:text-[10px] font-mono font-bold text-[#535b70] group-hover:text-[#00e701] transition-colors mb-2">
               {item.odds.toFixed(4)}%
             </div>
 
             {/* Image Area */}
-            <div className="relative w-28 h-28 my-2 transition-transform duration-300 group-hover:scale-110">
+            <div className="relative w-20 h-20 md:w-28 md:h-28 my-2 transition-transform duration-300 group-hover:scale-110">
                 {/* Subtle glow behind image based on rarity */}
                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-25 blur-2xl rounded-full transition-opacity duration-500 ${RARITY_COLORS[item.rarity].replace('text-', 'bg-')}`}></div>
                 <img src={item.image} alt={item.name} className="w-full h-full object-contain drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]" />
             </div>
 
             {/* Info */}
-            <div className="text-center w-full mt-auto pt-4">
-               <div className={`text-xs font-bold truncate mb-1 text-white group-hover:text-white/90 tracking-wide uppercase`}>
+            <div className="text-center w-full mt-auto pt-2 md:pt-4">
+               <div className={`text-[10px] md:text-xs font-bold truncate mb-1 text-white group-hover:text-white/90 tracking-wide uppercase`}>
                 {item.name}
                </div>
-               <div className="text-sm font-mono font-bold text-slate-400 group-hover:text-white transition-colors">
+               <div className="text-xs md:text-sm font-mono font-bold text-slate-400 group-hover:text-white transition-colors">
                 ${item.price.toLocaleString('es-MX')}
                </div>
             </div>

@@ -17,42 +17,72 @@ const Icons = {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
   ),
   Logo: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none"><path d="M2 9l10-5 10 5v10l-10 5-10-5V9z" /></svg> // Simplified generic box logo
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none"><path d="M2 9l10-5 10 5v10l-10 5-10-5V9z" /></svg>
+  ),
+  Close: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
   )
 };
 
-export default function Sidebar() {
-  return (
-    <div className="hidden lg:flex flex-col w-64 h-full bg-[#0d1019] border-r border-[#1e2330] text-slate-400 shrink-0 z-50">
-      {/* Logo Area */}
-      <div className="h-20 flex items-center gap-3 px-6 border-b border-[#1e2330]">
-         <Icons.Logo />
-         <span className="font-black text-white text-xl tracking-tight italic">PACKDRAW</span>
-      </div>
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto py-6 space-y-1 px-3">
-        <SidebarItem icon={<Icons.Box />} label="Packs" active />
-        <SidebarItem icon={<Icons.Swords />} label="Battles" />
-        <SidebarItem icon={<Icons.Refresh />} label="Deals" />
-        <SidebarItem icon={<Icons.Gift />} label="Rewards" />
-        <SidebarItem icon={<Icons.Users />} label="Affiliates" />
-      </div>
-      
-      {/* Bottom Promo */}
-      <div className="p-4 border-t border-[#1e2330]">
-        <div className="bg-gradient-to-br from-[#1c202b] to-[#161922] p-4 rounded-xl border border-[#2a3040] shadow-lg group cursor-pointer">
-            <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-white transition-colors">Daily Race</p>
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            </div>
-            <div className="text-white font-bold font-mono text-lg mb-3">$100,000</div>
-            <button className="w-full py-2 bg-[#00e701] hover:bg-[#00c201] text-black text-xs font-black rounded uppercase transition-all shadow-[0_0_10px_rgba(0,231,1,0.2)]">
-                Join Race
-            </button>
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+  return (
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <div className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-[#0d1019] border-r border-[#1e2330] text-slate-400 shrink-0
+        transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:flex lg:flex-col
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        
+        {/* Logo Area */}
+        <div className="h-16 lg:h-20 flex items-center justify-between px-6 border-b border-[#1e2330]">
+           <div className="flex items-center gap-3">
+             <Icons.Logo />
+             <span className="font-black text-white text-xl tracking-tight italic">PACKDRAW</span>
+           </div>
+           {/* Mobile Close Button */}
+           <button onClick={onClose} className="lg:hidden text-slate-400 hover:text-white">
+             <Icons.Close />
+           </button>
+        </div>
+  
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto py-6 space-y-1 px-3">
+          <SidebarItem icon={<Icons.Box />} label="Packs" active />
+          <SidebarItem icon={<Icons.Swords />} label="Battles" />
+          <SidebarItem icon={<Icons.Refresh />} label="Deals" />
+          <SidebarItem icon={<Icons.Gift />} label="Rewards" />
+          <SidebarItem icon={<Icons.Users />} label="Affiliates" />
+        </div>
+        
+        {/* Bottom Promo */}
+        <div className="p-4 border-t border-[#1e2330]">
+          <div className="bg-gradient-to-br from-[#1c202b] to-[#161922] p-4 rounded-xl border border-[#2a3040] shadow-lg group cursor-pointer">
+              <div className="flex justify-between items-start mb-2">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-white transition-colors">Daily Race</p>
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+              </div>
+              <div className="text-white font-bold font-mono text-lg mb-3">$100,000</div>
+              <button className="w-full py-2 bg-[#00e701] hover:bg-[#00c201] text-black text-xs font-black rounded uppercase transition-all shadow-[0_0_10px_rgba(0,231,1,0.2)]">
+                  Join Race
+              </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
