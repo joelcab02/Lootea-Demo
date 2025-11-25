@@ -136,28 +136,29 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-4 md:pt-8 pb-6 relative shrink-0">
+        <div className="flex flex-col items-center pt-8 md:pt-12 pb-8 relative shrink-0">
             
             {/* Ambient Glow - Hardware Accelerated */}
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none gpu-accelerate"></div>
             
             {/* Box Info */}
-            <div className="z-10 text-center mb-4 md:mb-8 w-full max-w-[1100px] px-4">
-                <div className="flex flex-col items-center gap-1">
-                    <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-1">
+            <div className="z-10 text-center mb-6 md:mb-10 w-full max-w-[1100px] px-4">
+                <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-2">
                         <span className="text-xl">📱</span>
-                        <span className="text-[10px] font-black uppercase italic tracking-tighter bg-[#FFC800]/10 px-2 py-0.5 rounded border border-[#FFC800]/20">
+                        <span className="text-xs font-black uppercase italic tracking-tighter bg-[#FFC800]/10 px-3 py-1 rounded border border-[#FFC800]/20">
                             Apple Collection
                         </span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-110">
+                    {/* UPDATED: HERO TITLE MASSIVE SCALE */}
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-105 leading-[0.9]">
                         1% iPhone Box
                     </h1>
                 </div>
             </div>
 
             {/* SPINNER */}
-            <div className="w-full max-w-[1200px] px-0 md:px-4 z-10 mb-6 md:mb-8">
+            <div className="w-full max-w-[1200px] px-0 md:px-4 z-10 mb-8 md:mb-12">
                 <Spinner 
                     isSpinning={isSpinning} 
                     onSpinStart={() => {}} 
@@ -224,7 +225,8 @@ const App: React.FC = () => {
         </div>
 
         {/* CONTENT SECTIONS SPACER */}
-        <div className="flex flex-col gap-16 pb-12">
+        {/* UPDATED: Increased vertical spacing */}
+        <div className="flex flex-col gap-24 md:gap-32 pb-16">
             {/* CASE CONTENTS GRID */}
             <CaseContentGrid />
             

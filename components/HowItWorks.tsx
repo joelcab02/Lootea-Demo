@@ -9,17 +9,17 @@ const Icons = {
 
 export default function HowItWorks() {
   return (
-    <section className="relative w-full max-w-[1400px] mx-auto py-16 md:py-24 px-4 md:px-6 overflow-hidden z-20">
+    <section className="relative w-full max-w-[1400px] mx-auto px-4 md:px-6 overflow-hidden z-20">
         
         {/* Decor Background */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-[#FFC800]/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-        {/* Header */}
-        <div className="text-center mb-12 md:mb-16 relative z-10">
-            <span className="inline-block py-1 px-3 rounded bg-[#FFC800]/10 border border-[#FFC800]/20 text-[#FFC800] text-[10px] md:text-[11px] font-black uppercase italic tracking-wider mb-4">
+        {/* Header - UPDATED: Reduced size for consistency */}
+        <div className="text-center mb-10 md:mb-14 relative z-10">
+            <span className="inline-block py-1 px-3 rounded bg-[#FFC800]/10 border border-[#FFC800]/20 text-[#FFC800] text-[10px] md:text-[11px] font-black uppercase italic tracking-wider mb-3">
                 Tutorial
             </span>
-            <h2 className="text-3xl md:text-6xl font-black text-white italic uppercase tracking-tighter mb-4 drop-shadow-2xl">
+            <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter mb-3 drop-shadow-xl">
                 ¿Cómo Jugar?
             </h2>
             <p className="text-slate-400 font-bold max-w-2xl mx-auto tracking-tight text-sm md:text-base">
@@ -66,13 +66,13 @@ function Card({ num, title, desc, icon, isGold = false }: { num: string, title: 
             relative p-6 md:p-8 rounded-3xl border flex flex-col items-center text-center overflow-hidden group transition-all duration-300 hover:-translate-y-2
             ${isGold 
                 ? 'bg-[#FFC800] border-[#FFC800] text-black shadow-[0_0_40px_rgba(255,200,0,0.3)]' 
-                : 'bg-[#13151b] border-[#1e2330] hover:border-[#FFC800] hover:shadow-[0_0_30px_rgba(255,200,0,0.1)]'}
+                : 'bg-[#1a1d26] border-[#1e2330] hover:border-[#FFC800] hover:shadow-[0_0_30px_rgba(255,200,0,0.1)]'}
         `}>
             
             {/* Number Background - Adjusted size for mobile to prevent overlap */}
             <div className={`
-                absolute top-2 right-4 text-6xl md:text-8xl font-black italic tracking-tighter leading-none select-none pointer-events-none transition-transform duration-500 group-hover:scale-110 z-0
-                ${isGold ? 'text-black opacity-10' : 'text-[#1e2330] group-hover:text-[#2a3040]'}
+                absolute top-2 right-4 text-6xl md:text-7xl font-black italic tracking-tighter leading-none select-none pointer-events-none transition-transform duration-500 group-hover:scale-110 z-0
+                ${isGold ? 'text-black opacity-10' : 'text-[#0d1019] opacity-40 group-hover:opacity-50'}
             `}>
                 {num}
             </div>
