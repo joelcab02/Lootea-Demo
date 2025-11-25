@@ -142,19 +142,24 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
   const stripWidth = strip.length * (CARD_WIDTH + CARD_GAP);
 
   return (
-    <div className="relative w-full h-[170px] sm:h-[240px] overflow-hidden bg-[#13161f] border-y border-[#1e2330] flex items-center shadow-inner rounded-xl transition-all duration-300">
+    <div className="relative w-full h-[150px] sm:h-[240px] overflow-hidden bg-[#0a0c10] border-y-2 border-[#1e2330] flex items-center shadow-inner transition-all duration-300">
         
-        <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#FFC800] z-30 transform -translate-x-1/2 shadow-[0_0_15px_#FFC800] opacity-80"></div>
+        {/* Center Indicator Line */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#FFC800] z-30 transform -translate-x-1/2 shadow-[0_0_20px_#FFC800] opacity-90"></div>
         
-        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1 text-[#FFC800] z-30">
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
+        {/* Top Triangle Arrow */}
+        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 16L4 4h16z"/></svg>
         </div>
-        <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1 text-[#FFC800] z-30 rotate-180">
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
+        
+        {/* Bottom Triangle Arrow */}
+        <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_-2px_4px_rgba(0,0,0,0.5)]">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8l8 12H4z"/></svg>
         </div>
 
-        <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-32 bg-gradient-to-r from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-32 bg-gradient-to-l from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
+        {/* Side Gradients for depth */}
+        <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-40 bg-gradient-to-r from-[#0d1019] via-[#0d1019]/80 to-transparent z-20 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-40 bg-gradient-to-l from-[#0d1019] via-[#0d1019]/80 to-transparent z-20 pointer-events-none"></div>
 
         <div 
             className="flex items-center h-full will-change-transform"
