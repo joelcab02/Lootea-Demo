@@ -8,9 +8,10 @@ interface SpinnerProps {
   isSpinning: boolean;
   onSpinStart: () => void;
   onSpinEnd: (item: LootItem) => void;
+  customDuration?: number; // Added support for fast spin
 }
 
-const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd }) => {
+const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, customDuration }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [strip, setStrip] = useState<LootItem[]>([]);
   
@@ -22,7 +23,8 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
     currentX: 0,
     lastIndex: 0,
     isAnimating: false,
-    winner: null as LootItem | null
+    winner: null as LootItem | null,
+    duration: SPIN_DURATION
   });
 
   const animationFrameId = useRef<number>(0);
@@ -73,7 +75,7 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
     if (!state.startTime) state.startTime = timestamp;
     
     const elapsed = timestamp - state.startTime;
-    const progress = Math.min(elapsed / SPIN_DURATION, 1);
+    const progress = Math.min(elapsed / state.duration, 1);
     
     const ease = easeOutBackCustom(progress);
     const totalDistance = state.targetX; 
@@ -92,7 +94,6 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
         const isEnding = progress > 0.90; // Only consider ending very late
         
         // OPTIMIZATION: Audio only, NO vibration in loop.
-        // Vibration blocks main thread on Android Chrome/Webview.
         audioService.playTick(velocityNormalized, isEnding);
         
         state.lastIndex = currentIndex;
@@ -122,6 +123,9 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
         const randomOffset = (Math.random() * (CARD_WIDTH * 0.6)) - (CARD_WIDTH * 0.3);
         const targetX = -1 * (WINNING_INDEX * itemWidth) + randomOffset;
 
+        // Use custom duration if provided, otherwise default
+        const duration = customDuration || SPIN_DURATION;
+
         stateRef.current = {
             startTime: 0,
             startX: 0,
@@ -129,7 +133,8 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
             currentX: 0,
             lastIndex: 0,
             isAnimating: true,
-            winner: winner
+            winner: winner,
+            duration: duration
         };
 
         onSpinStart();
@@ -137,7 +142,7 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
         animationFrameId.current = requestAnimationFrame(animate);
     }
     return () => cancelAnimationFrame(animationFrameId.current);
-  }, [isSpinning, generateStrip, onSpinStart, animate]);
+  }, [isSpinning, generateStrip, onSpinStart, animate, customDuration]);
 
   const stripWidth = strip.length * (CARD_WIDTH + CARD_GAP);
 
