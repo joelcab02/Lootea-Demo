@@ -13,7 +13,7 @@ const CaseContentGrid = () => {
             <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter italic mb-1 drop-shadow-lg">
                 Contenido de la Caja
             </h2>
-            <p className="text-slate-500 text-xs md:text-sm font-bold tracking-tight">Probabilidades y premios disponibles</p>
+            <p className="text-slate-500 text-xs md:text-sm font-bold tracking-tight">Premios disponibles</p>
         </div>
         
         <div className="flex gap-2 items-center">
@@ -26,8 +26,6 @@ const CaseContentGrid = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
         {sortedItems.map((item) => {
             const isEmoji = !item.image.startsWith('http');
-            // Calculate width visual, min 4% so it's always visible
-            const barWidth = Math.max(4, Math.min(100, item.odds * 4)); 
 
             return (
               <div key={item.id} className="group relative bg-gradient-to-b from-[#13151b] to-[#0a0c10] border border-[#1e2330] hover:border-[#FFC800] transition-all duration-200 rounded-xl overflow-hidden flex flex-col h-[220px] md:h-auto">
@@ -66,21 +64,11 @@ const CaseContentGrid = () => {
                     </div>
                 </div>
 
-                {/* Bottom Action Area */}
-                <div className="p-2.5 bg-[#0a0c10] border-t border-[#1e2330] mt-auto">
-                    {/* Price Button - Bigger click target */}
-                    <div className="bg-[#FFC800] hover:bg-[#EAB308] cursor-pointer text-black font-black italic text-xs md:text-sm text-center py-1.5 md:py-2 rounded uppercase tracking-tighter mb-2 shadow-sm transition-colors">
+                {/* Bottom Info Area - Redesigned (No button look, no odds) */}
+                <div className="py-3 bg-[#0a0c10]/50 border-t border-[#1e2330] mt-auto flex flex-col items-center justify-center gap-0.5">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Valor Estimado</span>
+                    <div className="text-[#FFC800] font-mono font-bold text-sm md:text-base tracking-tighter">
                         ${item.price.toLocaleString('es-MX')}
-                    </div>
-                    
-                    {/* Odds Bar */}
-                    <div className="flex justify-between items-center text-[9px] md:text-[9px] font-bold text-slate-500 uppercase mb-1 tracking-tight">
-                        <span>Probabilidad</span>
-                        <span className="text-slate-300">{item.odds}%</span>
-                    </div>
-                    {/* Progress Bar Visual */}
-                    <div className="w-full h-1.5 bg-[#161922] rounded-full overflow-hidden border border-[#1e2330]">
-                        <div className={`h-full ${RARITY_COLORS[item.rarity].replace('text-', 'bg-')}`} style={{ width: `${barWidth}%` }}></div>
                     </div>
                 </div>
 

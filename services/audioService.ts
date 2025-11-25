@@ -7,6 +7,7 @@ class AudioService {
   private clickBuffer: AudioBuffer | null = null;
   private winBuffer: AudioBuffer | null = null;
   private masterGain: GainNode | null = null;
+  private isMuted: boolean = false;
   
   private CLICK_URL = 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3';
   private WIN_URL = 'https://assets.mixkit.co/active_storage/sfx/269/269-preview.mp3';
@@ -18,10 +19,25 @@ class AudioService {
       const AudioCtor = window.AudioContext || (window as any).webkitAudioContext;
       this.context = new AudioCtor({ latencyHint: 'interactive' }); 
       this.masterGain = this.context.createGain();
-      this.masterGain.gain.value = 0.5; 
+      this.updateGain(); // Set initial volume based on mute state
       this.masterGain.connect(this.context.destination);
     }
     return this.context;
+  }
+
+  public setMute(muted: boolean) {
+    this.isMuted = muted;
+    if (this.masterGain) {
+        this.updateGain();
+    }
+  }
+
+  private updateGain() {
+    if (!this.masterGain) return;
+    // Smooth transition to avoid clicking/popping
+    const targetVolume = this.isMuted ? 0 : 0.5;
+    const ctx = this.getContext();
+    this.masterGain.gain.setTargetAtTime(targetVolume, ctx.currentTime, 0.1);
   }
 
   public async init() {

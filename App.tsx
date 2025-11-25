@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Spinner from './components/Spinner';
 import Sidebar from './components/Sidebar';
 import CaseContentGrid from './components/CaseContentGrid';
@@ -20,9 +20,12 @@ const Icons = {
   Menu: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>,
   Box: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>,
   Shield: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>,
+  ShieldCheck: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 1L3 5.3V11C3 16.5 6.8 21.7 12 23C17.2 21.7 21 16.5 21 11V5.3L12 1ZM10 17L6 13L7.4 11.6L10 14.2L16.6 7.6L18 9L10 17Z"/></svg>,
   Truck: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>,
   Logo: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#FFC800" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
-  ChevronRight: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  ChevronRight: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>,
+  Volume2: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>,
+  VolumeX: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
 };
 
 const App: React.FC = () => {
@@ -35,8 +38,13 @@ const App: React.FC = () => {
   // NEW STATES
   const [fastMode, setFastMode] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   const BOX_PRICE = 99.00;
+
+  useEffect(() => {
+    audioService.setMute(isMuted);
+  }, [isMuted]);
 
   const handleSpin = () => {
     if (isSpinning) return;
@@ -147,6 +155,26 @@ const App: React.FC = () => {
                 </div>
             </div>
         </header>
+
+        {/* TRUST BAR - FAIRNESS & SOUND */}
+        <div className="w-full bg-[#13151b] border-b border-[#1e2330] flex items-center justify-between px-3 md:px-16 py-2 select-none z-30 relative">
+            <div className="flex items-center gap-2">
+                <div className="text-green-500">
+                    <Icons.ShieldCheck />
+                </div>
+                <span className="text-slate-300 font-black italic uppercase tracking-tighter text-[10px] md:text-xs leading-none mt-[1px]">
+                    Fairness Guaranteed
+                </span>
+            </div>
+            
+            <button 
+                onClick={() => setIsMuted(!isMuted)}
+                className="text-slate-500 hover:text-white transition-colors flex items-center gap-2 active:scale-95 p-1"
+                title={isMuted ? "Unmute" : "Mute"}
+            >
+                {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
+            </button>
+        </div>
 
         {/* HERO AREA */}
         <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative shrink-0">
