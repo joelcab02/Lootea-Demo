@@ -50,8 +50,8 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Logo Area */}
         <div className="h-16 lg:h-20 flex items-center justify-between px-6 border-b border-[#1e2330]">
            <div className="flex items-center gap-3">
-             <Icons.Logo />
-             <span className="font-black text-white text-xl tracking-tighter italic">LOOTEA</span>
+             <div className="w-5 h-5"><Icons.Logo /></div>
+             <span className="font-black text-white text-lg tracking-tighter italic">LOOTEA</span>
            </div>
            {/* Mobile Close Button */}
            <button onClick={onClose} className="lg:hidden text-slate-400 hover:text-white">

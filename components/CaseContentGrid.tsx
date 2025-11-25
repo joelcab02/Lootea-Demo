@@ -9,15 +9,15 @@ const CaseContentGrid = () => {
     <div className="w-full max-w-[1400px] mx-auto mt-2 md:mt-8 p-3 md:p-6 bg-[#0d1019]">
       <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-[#1e2330] pb-6">
         <div>
-            {/* UPDATED: Increased size to match Section Title Hierarchy (Level 2) */}
-            <h2 className="text-3xl md:text-5xl font-black text-[#FFC800] uppercase tracking-tighter italic mb-2 drop-shadow-lg">
+            {/* UPDATED: Reduced size for cleaner hierarchy */}
+            <h2 className="text-2xl md:text-4xl font-black text-[#FFC800] uppercase tracking-tighter italic mb-1 drop-shadow-lg">
                 Contenido de la Caja
             </h2>
             <p className="text-slate-500 text-xs md:text-sm font-bold tracking-tight">Probabilidades y premios disponibles</p>
         </div>
         
         <div className="flex gap-2 items-center">
-           <div className="bg-[#161922] border border-[#1e2330] px-4 py-2 rounded text-sm font-black italic tracking-tighter text-slate-400">
+           <div className="bg-[#161922] border border-[#1e2330] px-4 py-2 rounded text-xs md:text-sm font-black italic tracking-tighter text-slate-400">
              {sortedItems.length} Ítems
            </div>
         </div>

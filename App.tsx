@@ -111,12 +111,12 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* CENTER: LOGO (MOBILE ONLY) - Larger */}
-            <div className="flex lg:hidden items-center justify-center gap-2.5">
-                <div className="w-8 h-8 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
+            {/* CENTER: LOGO (MOBILE ONLY) - Refined Size */}
+            <div className="flex lg:hidden items-center justify-center gap-2">
+                <div className="w-6 h-6 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
                     <Icons.Logo />
                 </div>
-                <span className="font-gamer font-bold text-[26px] italic tracking-tighter text-white select-none relative top-[1px]">
+                <span className="font-gamer font-bold text-2xl italic tracking-tighter text-white select-none relative top-[1px]">
                     LOOTEA
                 </span>
             </div>
@@ -124,10 +124,10 @@ const App: React.FC = () => {
             {/* RIGHT: WALLET - Optimized for Touch */}
             <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
                 <div className="flex items-center bg-[#FFC800] rounded-lg text-black pl-3 pr-2 py-2 gap-2 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow cursor-pointer group">
-                    <span className="font-mono font-black text-sm md:text-sm tracking-tighter group-active:scale-95 transition-transform">
+                    <span className="font-mono font-black text-xs md:text-sm tracking-tighter group-active:scale-95 transition-transform">
                         $2,450
                     </span>
-                    <div className="w-6 h-6 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors">
+                    <div className="w-5 h-5 md:w-6 md:h-6 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors">
                         <Icons.Plus />
                     </div>
                 </div>
@@ -136,22 +136,22 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-8 md:pt-12 pb-8 relative shrink-0">
+        <div className="flex flex-col items-center pt-6 md:pt-10 pb-8 relative shrink-0">
             
             {/* Ambient Glow - Hardware Accelerated */}
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none gpu-accelerate"></div>
             
-            {/* Box Info */}
-            <div className="z-10 text-center mb-6 md:mb-10 w-full max-w-[1100px] px-4">
+            {/* Box Info - Typography Scaled Down */}
+            <div className="z-10 text-center mb-6 md:mb-8 w-full max-w-[1100px] px-4">
                 <div className="flex flex-col items-center gap-2">
-                    <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-2">
-                        <span className="text-xl">📱</span>
-                        <span className="text-xs font-black uppercase italic tracking-tighter bg-[#FFC800]/10 px-3 py-1 rounded border border-[#FFC800]/20">
+                    <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-1">
+                        <span className="text-lg">📱</span>
+                        <span className="text-[10px] font-black uppercase italic tracking-tighter bg-[#FFC800]/10 px-2 py-0.5 rounded border border-[#FFC800]/20">
                             Apple Collection
                         </span>
                     </div>
-                    {/* UPDATED: HERO TITLE MASSIVE SCALE */}
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-105 leading-[0.9]">
+                    {/* UPDATED: HERO TITLE SMALLER */}
+                    <h1 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-105 leading-[0.9]">
                         1% iPhone Box
                     </h1>
                 </div>
@@ -168,7 +168,7 @@ const App: React.FC = () => {
 
             {/* ACTION CONTROLS */}
             <div className="z-20 w-full max-w-[1200px] px-4">
-                <div className="bg-[#161922] border border-[#2a3040] p-3 md:p-5 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-4 md:gap-8 items-stretch relative overflow-hidden">
+                <div className="bg-[#161922] border border-[#2a3040] p-3 md:p-4 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-4 md:gap-8 items-stretch relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
                     {/* Quantity */}
@@ -178,7 +178,7 @@ const App: React.FC = () => {
                             key={num} 
                             onClick={() => setQuantity(num)}
                             className={`
-                              flex-1 md:w-16 h-14 md:h-14 rounded-lg font-black italic text-lg md:text-xl transition-all flex items-center justify-center relative
+                              flex-1 md:w-16 h-12 md:h-14 rounded-lg font-black italic text-lg md:text-xl transition-all flex items-center justify-center relative
                               ${quantity === num 
                                   ? 'bg-[#2a3040] border border-[#FFC800] text-[#FFC800] shadow-[0_0_15px_rgba(255,200,0,0.15)] z-10' 
                                   : 'text-slate-500 hover:text-slate-300 hover:bg-[#1e2330]'}
@@ -189,13 +189,13 @@ const App: React.FC = () => {
                       ))}
                     </div>
 
-                    {/* Open Button */}
+                    {/* Open Button - OPTIMIZED: Taller and cleaner layout to avoid clipping */}
                     <button 
                         onClick={handleSpin}
                         disabled={isSpinning}
                         className={`
                             group relative flex-1
-                            h-20 md:h-auto
+                            h-20 md:h-24
                             bg-[#FFC800] hover:bg-[#ffcf33]
                             text-black font-black uppercase tracking-tighter text-3xl md:text-4xl italic
                             rounded-xl
@@ -203,18 +203,18 @@ const App: React.FC = () => {
                             shadow-[0_8px_0_#b38b00] active:shadow-none
                             translate-y-0 active:translate-y-[8px] active:mt-[8px] active:mb-0
                             disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
-                            flex items-center justify-between px-6 md:px-12 overflow-hidden gap-6
+                            flex items-center justify-between px-6 md:px-10 overflow-hidden gap-4
                         `}
                         style={{marginBottom: isSpinning ? '0px' : '8px'}}
                     >
                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
 
                        {isSpinning ? (
-                           <span className="w-full text-center animate-pulse text-xl tracking-tighter opacity-80">ABRIENDO...</span>
+                           <span className="w-full text-center animate-pulse text-lg tracking-tighter opacity-80">ABRIENDO...</span>
                        ) : (
                            <>
                             <span className="drop-shadow-sm transform group-hover:scale-105 transition-transform z-10">ABRIR</span>
-                            <div className="bg-black/20 px-4 md:px-6 py-1.5 rounded-lg font-mono text-xl md:text-3xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter z-10 border border-black/5">
+                            <div className="bg-black/20 px-3 md:px-5 py-1 rounded-lg font-mono text-xl md:text-2xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter z-10 border border-black/5 whitespace-nowrap min-w-fit">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </div>
                            </>
@@ -225,8 +225,7 @@ const App: React.FC = () => {
         </div>
 
         {/* CONTENT SECTIONS SPACER */}
-        {/* UPDATED: Increased vertical spacing */}
-        <div className="flex flex-col gap-24 md:gap-32 pb-16">
+        <div className="flex flex-col gap-16 space-y-16 pb-16">
             {/* CASE CONTENTS GRID */}
             <CaseContentGrid />
             

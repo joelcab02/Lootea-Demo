@@ -14,15 +14,15 @@ export default function HowItWorks() {
         {/* Decor Background */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-[#FFC800]/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-        {/* Header - UPDATED: Reduced size for consistency */}
-        <div className="text-center mb-10 md:mb-14 relative z-10">
-            <span className="inline-block py-1 px-3 rounded bg-[#FFC800]/10 border border-[#FFC800]/20 text-[#FFC800] text-[10px] md:text-[11px] font-black uppercase italic tracking-wider mb-3">
+        {/* Header - Scaled Down */}
+        <div className="text-center mb-8 md:mb-12 relative z-10">
+            <span className="inline-block py-0.5 px-2 rounded bg-[#FFC800]/10 border border-[#FFC800]/20 text-[#FFC800] text-[10px] font-black uppercase italic tracking-wider mb-2">
                 Tutorial
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter mb-3 drop-shadow-xl">
+            <h2 className="text-2xl md:text-4xl font-black text-white italic uppercase tracking-tighter mb-2 drop-shadow-xl">
                 ¿Cómo Jugar?
             </h2>
-            <p className="text-slate-400 font-bold max-w-2xl mx-auto tracking-tight text-sm md:text-base">
+            <p className="text-slate-400 font-bold max-w-2xl mx-auto tracking-tight text-xs md:text-sm">
                 4 PASOS PARA CONSEGUIR TU DREAM SETUP
             </p>
         </div>
@@ -63,23 +63,23 @@ export default function HowItWorks() {
 function Card({ num, title, desc, icon, isGold = false }: { num: string, title: string, desc: string, icon: React.ReactNode, isGold?: boolean }) {
     return (
         <div className={`
-            relative p-6 md:p-8 rounded-3xl border flex flex-col items-center text-center overflow-hidden group transition-all duration-300 hover:-translate-y-2
+            relative p-6 md:p-6 rounded-3xl border flex flex-col items-center text-center overflow-hidden group transition-all duration-300 hover:-translate-y-2
             ${isGold 
                 ? 'bg-[#FFC800] border-[#FFC800] text-black shadow-[0_0_40px_rgba(255,200,0,0.3)]' 
                 : 'bg-[#1a1d26] border-[#1e2330] hover:border-[#FFC800] hover:shadow-[0_0_30px_rgba(255,200,0,0.1)]'}
         `}>
             
-            {/* Number Background - Adjusted size for mobile to prevent overlap */}
+            {/* Number Background - Smaller/Subtler */}
             <div className={`
-                absolute top-2 right-4 text-6xl md:text-7xl font-black italic tracking-tighter leading-none select-none pointer-events-none transition-transform duration-500 group-hover:scale-110 z-0
+                absolute top-2 right-4 text-5xl md:text-6xl font-black italic tracking-tighter leading-none select-none pointer-events-none transition-transform duration-500 group-hover:scale-110 z-0
                 ${isGold ? 'text-black opacity-10' : 'text-[#0d1019] opacity-40 group-hover:opacity-50'}
             `}>
                 {num}
             </div>
 
-            {/* Icon */}
+            {/* Icon - Scaled */}
             <div className={`
-                w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl mb-4 md:mb-6 relative z-10 shadow-lg
+                w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-2xl mb-3 md:mb-4 relative z-10 shadow-lg
                 ${isGold 
                     ? 'bg-black text-[#FFC800]' 
                     : 'bg-[#0a0c10] text-white group-hover:text-[#FFC800] group-hover:scale-110 transition-all duration-300'}
@@ -88,10 +88,10 @@ function Card({ num, title, desc, icon, isGold = false }: { num: string, title: 
             </div>
 
             {/* Content */}
-            <h3 className={`text-xl md:text-2xl font-black italic uppercase tracking-tighter mb-2 relative z-10 ${isGold ? 'text-black' : 'text-white'}`}>
+            <h3 className={`text-lg md:text-xl font-black italic uppercase tracking-tighter mb-1 relative z-10 ${isGold ? 'text-black' : 'text-white'}`}>
                 {title}
             </h3>
-            <p className={`text-xs md:text-sm font-bold relative z-10 leading-relaxed ${isGold ? 'text-black/70' : 'text-slate-500 group-hover:text-slate-400'}`}>
+            <p className={`text-xs font-bold relative z-10 leading-relaxed ${isGold ? 'text-black/70' : 'text-slate-500 group-hover:text-slate-400'}`}>
                 {desc}
             </p>
 
