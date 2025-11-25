@@ -142,7 +142,7 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
   const stripWidth = strip.length * (CARD_WIDTH + CARD_GAP);
 
   return (
-    <div className="relative w-full h-[200px] sm:h-[240px] overflow-hidden bg-[#13161f] border-y border-[#1e2330] flex items-center shadow-inner rounded-xl transition-all duration-300">
+    <div className="relative w-full h-[170px] sm:h-[240px] overflow-hidden bg-[#13161f] border-y border-[#1e2330] flex items-center shadow-inner rounded-xl transition-all duration-300">
         
         <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#FFC800] z-30 transform -translate-x-1/2 shadow-[0_0_15px_#FFC800] opacity-80"></div>
         
@@ -153,8 +153,8 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
         </div>
 
-        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-32 bg-gradient-to-r from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-32 bg-gradient-to-l from-[#0a0c10] to-transparent z-20 pointer-events-none"></div>
 
         <div 
             className="flex items-center h-full will-change-transform"

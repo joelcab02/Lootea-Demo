@@ -31,9 +31,9 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
       )}
       
       {/* Image Container */}
-      <div className={`relative z-10 w-24 h-24 sm:w-32 sm:h-32 mb-3 flex items-center justify-center ${!isSpinner ? 'transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1' : ''}`}>
+      <div className={`relative z-10 w-20 h-20 sm:w-32 sm:h-32 mb-2 sm:mb-3 flex items-center justify-center ${!isSpinner ? 'transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1' : ''}`}>
         {isEmoji ? (
-             <span className={`text-6xl sm:text-7xl select-none ${!isSpinner ? 'filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform transition-transform' : ''}`}>
+             <span className={`text-5xl sm:text-7xl select-none ${!isSpinner ? 'filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform transition-transform' : ''}`}>
                  {item.image}
              </span>
         ) : (
@@ -51,7 +51,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
       {/* Text Info */}
       <div className="relative z-10 text-center w-full px-2">
         
-        <h3 className={`font-bold text-white text-xs sm:text-[13px] leading-tight uppercase tracking-wider truncate w-full mb-1.5 opacity-90 ${!isSpinner && 'group-hover:opacity-100 transition-opacity'}`}>
+        <h3 className={`font-bold text-white text-xs sm:text-[13px] leading-tight uppercase tracking-wider truncate w-full mb-1 opacity-90 ${!isSpinner && 'group-hover:opacity-100 transition-opacity'}`}>
           {item.name}
         </h3>
         
