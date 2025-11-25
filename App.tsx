@@ -134,7 +134,7 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-6 md:pt-10 pb-8 relative shrink-0">
+        <div className="flex flex-col items-center pt-4 md:pt-6 pb-6 relative shrink-0">
             
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none gpu-accelerate"></div>
             
@@ -152,8 +152,8 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* SPINNER */}
-            <div className="w-full max-w-[1200px] px-0 md:px-4 z-10 mb-8 md:mb-12">
+            {/* SPINNER - WIDER */}
+            <div className="w-full max-w-[1600px] px-0 z-10 mb-8 md:mb-10">
                 <Spinner 
                     isSpinning={isSpinning} 
                     onSpinStart={() => {}} 
@@ -162,9 +162,9 @@ const App: React.FC = () => {
                 />
             </div>
 
-            {/* COCKPIT CONTROLS - REDESIGNED */}
-            <div className="z-20 w-full max-w-[1000px] px-4">
-                <div className="bg-[#161922] border border-[#2a3040] p-4 rounded-3xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-visible">
+            {/* COCKPIT CONTROLS - WIDER */}
+            <div className="z-20 w-full max-w-[1200px] px-4">
+                <div className="bg-[#161922] border border-[#2a3040] p-3 md:p-4 rounded-3xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-visible">
                     
                     {/* LEFT GROUP: TOOLS */}
                     <div className="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start">
@@ -269,8 +269,6 @@ const App: React.FC = () => {
 
         <Footer />
 
-      </div>
-
       {/* WIN MODAL */}
       {showModal && winner && (
          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
@@ -307,6 +305,7 @@ const App: React.FC = () => {
          </div>
       )}
     </div>
+  </div>
   );
 };
 

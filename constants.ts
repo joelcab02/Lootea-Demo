@@ -1,8 +1,8 @@
 import { LootItem, Rarity } from './types';
 
-export const CARD_WIDTH = 180; // px
-export const CARD_GAP = 16; // px
-export const VISIBLE_CARDS = 5; 
+export const CARD_WIDTH = 220; // px
+export const CARD_GAP = 12; // px
+export const VISIBLE_CARDS = 7; 
 export const SPIN_DURATION = 5500; 
 export const TOTAL_CARDS_IN_STRIP = 60; 
 export const WINNING_INDEX = 35; 
