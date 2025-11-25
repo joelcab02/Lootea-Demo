@@ -80,15 +80,15 @@ const App: React.FC = () => {
         <LiveDrops />
         
         {/* HEADER */}
-        {/* Optimized: Solid bg on mobile for performance, blurred on desktop */}
-        <header className="flex items-center justify-between h-[60px] md:h-20 px-4 md:px-8 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl">
+        {/* Optimized: Taller on mobile (h-[72px]) for premium feel */}
+        <header className="flex items-center justify-between h-[72px] md:h-20 px-4 md:px-8 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
             
             {/* LEFT SECTION */}
             <div className="flex items-center gap-4 w-20 md:w-auto flex-1 md:flex-none">
-                {/* Mobile Menu Button */}
+                {/* Mobile Menu Button - Larger touch target */}
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden text-slate-400 hover:text-white active:scale-95 transition-transform p-1 -ml-2"
+                  className="lg:hidden text-slate-400 hover:text-white active:scale-95 transition-transform p-2 -ml-3"
                 >
                   <Icons.Menu />
                 </button>
@@ -110,23 +110,23 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* CENTER: LOGO (MOBILE ONLY) */}
-            <div className="flex lg:hidden items-center justify-center gap-2">
-                <div className="w-6 h-6 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
+            {/* CENTER: LOGO (MOBILE ONLY) - Larger */}
+            <div className="flex lg:hidden items-center justify-center gap-2.5">
+                <div className="w-8 h-8 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
                     <Icons.Logo />
                 </div>
-                <span className="font-gamer font-bold text-2xl italic tracking-tighter text-white select-none">
+                <span className="font-gamer font-bold text-[26px] italic tracking-tighter text-white select-none relative top-[1px]">
                     LOOTEA
                 </span>
             </div>
 
-            {/* RIGHT: WALLET */}
+            {/* RIGHT: WALLET - Optimized for Touch */}
             <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
-                <div className="flex items-center bg-[#FFC800] rounded text-black pl-2 pr-1 py-1 gap-1.5 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow cursor-pointer group">
-                    <span className="font-mono font-black text-xs md:text-sm tracking-tighter group-active:scale-95 transition-transform">
+                <div className="flex items-center bg-[#FFC800] rounded-lg text-black pl-3 pr-2 py-2 gap-2 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow cursor-pointer group">
+                    <span className="font-mono font-black text-sm md:text-sm tracking-tighter group-active:scale-95 transition-transform">
                         $2,450
                     </span>
-                    <div className="w-5 h-5 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors">
+                    <div className="w-6 h-6 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors">
                         <Icons.Plus />
                     </div>
                 </div>
