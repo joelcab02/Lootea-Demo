@@ -10,7 +10,7 @@ const CaseContentGrid = () => {
       <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-[#1e2330] pb-6">
         <div>
             {/* UPDATED: Reduced size for cleaner hierarchy */}
-            <h2 className="text-2xl md:text-4xl font-black text-[#FFC800] uppercase tracking-tighter italic mb-1 drop-shadow-lg">
+            <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter italic mb-1 drop-shadow-lg">
                 Contenido de la Caja
             </h2>
             <p className="text-slate-500 text-xs md:text-sm font-bold tracking-tight">Probabilidades y premios disponibles</p>
