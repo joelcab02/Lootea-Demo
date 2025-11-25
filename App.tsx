@@ -14,7 +14,7 @@ const Icons = {
   Wallet: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>,
   Lightning: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>,
   Refresh: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
-  Plus: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>,
+  Plus: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>,
   ArrowLeft: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>,
   Close: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
   Menu: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>,
@@ -84,35 +84,50 @@ const App: React.FC = () => {
         {/* LIVE DROP TICKER */}
         <LiveDrops />
         
-        {/* HEADER */}
-        <header className="flex items-center justify-between h-[72px] md:h-20 px-4 md:px-8 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
+        {/* HEADER - OPTIMIZED FOR MOBILE PROPORTIONS */}
+        <header className="flex items-center justify-between h-[70px] md:h-[140px] px-4 md:px-16 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
             {/* Left Nav */}
             <div className="flex items-center gap-4 w-20 md:w-auto flex-1 md:flex-none">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="text-slate-400 hover:text-white active:scale-95 transition-transform p-2 -ml-3 mr-1"
+                  className="text-slate-400 hover:text-white active:scale-95 transition-transform p-2 md:p-3 -ml-2 md:-ml-3 mr-2 md:mr-6"
                 >
                   <Icons.Menu />
                 </button>
-                <div className="hidden lg:flex items-center gap-3 text-sm">
+                
+                {/* Desktop Logo */}
+                <div className="hidden md:flex items-center gap-3 mr-8 cursor-pointer group select-none relative">
+                    <div className="absolute inset-0 bg-[#FFC800]/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full"></div>
+                    <div className="w-10 h-10 md:w-12 md:h-12 text-[#FFC800] filter drop-shadow-[0_0_15px_rgba(255,200,0,0.6)] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 relative z-10">
+                        <Icons.Logo />
+                    </div>
+                    <div className="flex flex-col relative z-10 justify-center">
+                        <span className="font-gamer font-black text-3xl md:text-5xl italic tracking-tighter text-white leading-none group-hover:text-[#FFC800] transition-colors drop-shadow-lg">
+                            LOOTEA
+                        </span>
+                    </div>
+                </div>
+
+                {/* Divider & Breadcrumbs */}
+                <div className="hidden lg:flex items-center gap-4 text-sm pl-8 border-l border-[#1e2330] h-16 ml-2">
                     <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group">
                          <div className="group-hover:-translate-x-1 transition-transform">
                             <Icons.ArrowLeft />
                          </div>
-                         <span className="font-black italic uppercase tracking-tighter text-xs">Regresar</span>
+                         <span className="font-black italic uppercase tracking-tighter text-xs md:text-sm">Regresar</span>
                     </button>
                     <span className="text-slate-700">|</span>
                     <div className="flex items-center gap-2 text-slate-400">
-                        <span className="font-bold uppercase tracking-tight text-[10px] cursor-pointer hover:text-white transition-colors">Cajas</span>
+                        <span className="font-bold uppercase tracking-tight text-[11px] md:text-xs cursor-pointer hover:text-white transition-colors">Cajas</span>
                         <div className="text-slate-600"><Icons.ChevronRight /></div>
-                        <span className="font-bold uppercase tracking-tight text-[10px] text-[#FFC800]">Apple Collection</span>
+                        <span className="font-bold uppercase tracking-tight text-[11px] md:text-xs text-[#FFC800]">Apple Collection</span>
                     </div>
                 </div>
             </div>
 
-            {/* Logo Mobile */}
-            <div className="flex lg:hidden items-center justify-center gap-2">
-                <div className="w-6 h-6 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
+            {/* Logo Mobile - Scaled Down for better proportion */}
+            <div className="flex md:hidden items-center justify-center gap-2">
+                <div className="w-7 h-7 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
                     <Icons.Logo />
                 </div>
                 <span className="font-gamer font-bold text-2xl italic tracking-tighter text-white select-none relative top-[1px]">
@@ -120,13 +135,13 @@ const App: React.FC = () => {
                 </span>
             </div>
 
-            {/* Wallet */}
+            {/* Wallet - Compact on Mobile */}
             <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
-                <div className="flex items-center bg-[#FFC800] rounded-lg text-black pl-3 pr-2 py-2 gap-2 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow cursor-pointer group">
-                    <span className="font-mono font-black text-xs md:text-sm tracking-tighter group-active:scale-95 transition-transform">
+                <div className="flex items-center bg-[#FFC800] rounded-lg md:rounded-xl text-black pl-3 pr-2 py-1.5 md:pl-4 md:pr-3 md:py-3 gap-2 md:gap-3 shadow-[0_0_10px_rgba(255,200,0,0.2)] md:shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:shadow-[0_0_25px_rgba(255,200,0,0.45)] transition-shadow cursor-pointer group">
+                    <span className="font-mono font-black text-xs md:text-lg tracking-tighter group-active:scale-95 transition-transform">
                         $2,450
                     </span>
-                    <div className="w-5 h-5 md:w-6 md:h-6 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors">
+                    <div className="w-5 h-5 md:w-8 md:h-8 bg-black/10 rounded md:rounded-lg flex items-center justify-center group-hover:bg-black/20 transition-colors p-1 md:p-1.5">
                         <Icons.Plus />
                     </div>
                 </div>
@@ -134,7 +149,7 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-4 md:pt-6 pb-6 relative shrink-0">
+        <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative shrink-0">
             
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none gpu-accelerate"></div>
             
