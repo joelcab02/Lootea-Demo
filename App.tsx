@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import CaseContentGrid from './components/CaseContentGrid';
 import Footer from './components/Footer';
 import LiveDrops from './components/LiveDrops';
+import HowItWorks from './components/HowItWorks';
 import { LootItem, Rarity } from './types';
 import { audioService } from './services/audioService';
 import { RARITY_COLORS } from './constants';
@@ -222,9 +223,15 @@ const App: React.FC = () => {
             </div>
         </div>
 
-        {/* CASE CONTENTS GRID */}
-        <CaseContentGrid />
-        
+        {/* CONTENT SECTIONS SPACER */}
+        <div className="flex flex-col gap-16 pb-12">
+            {/* CASE CONTENTS GRID */}
+            <CaseContentGrid />
+            
+            {/* HOW IT WORKS */}
+            <HowItWorks />
+        </div>
+
         {/* FOOTER */}
         <Footer />
 
