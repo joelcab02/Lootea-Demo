@@ -87,7 +87,11 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
     state.currentX = newX;
 
     const itemWidth = CARD_WIDTH + CARD_GAP;
-    const tickPosition = Math.abs(newX) + (itemWidth * 0.5);
+    
+    // LOGIC CHANGE: Track the exact center crossing.
+    // Previously we added (itemWidth * 0.5) which offset the trigger to the gap.
+    // By using raw distance, floor increments exactly when the center of the card hits the needle.
+    const tickPosition = Math.abs(newX); 
     const currentIndex = Math.floor(tickPosition / itemWidth);
 
     if (currentIndex !== state.lastIndex) {
@@ -120,8 +124,11 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
     if (isSpinning) {
         const winner = generateStrip();
         const itemWidth = CARD_WIDTH + CARD_GAP;
-        const randomOffset = (Math.random() * (CARD_WIDTH * 0.6)) - (CARD_WIDTH * 0.3);
-        const targetX = -1 * (WINNING_INDEX * itemWidth) + randomOffset;
+        
+        // LOGIC CHANGE: Removed randomOffset.
+        // This ensures the spinner stops EXACTLY at the center of the winning card,
+        // simulating a "gravity" or "magnetic" pull to the center.
+        const targetX = -1 * (WINNING_INDEX * itemWidth);
 
         // Use custom duration if provided, otherwise default
         const duration = customDuration || SPIN_DURATION;
