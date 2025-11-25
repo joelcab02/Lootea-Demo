@@ -171,14 +171,14 @@ const App: React.FC = () => {
                 <div className="bg-[#161922] border border-[#2a3040] p-3 md:p-4 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-4 md:gap-8 items-stretch relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-                    {/* Quantity */}
+                    {/* Quantity - Adjusted Height for Mobile */}
                     <div className="flex bg-[#0d1019] rounded-xl p-1.5 border border-[#1e2330] shrink-0 w-full md:w-auto items-center">
                       {[1, 2, 3, 4, 5].map(num => (
                           <button 
                             key={num} 
                             onClick={() => setQuantity(num)}
                             className={`
-                              flex-1 md:w-16 h-12 md:h-14 rounded-lg font-black italic text-lg md:text-xl transition-all flex items-center justify-center relative
+                              flex-1 md:w-16 h-14 md:h-16 rounded-lg font-black italic text-lg md:text-xl transition-all flex items-center justify-center relative
                               ${quantity === num 
                                   ? 'bg-[#2a3040] border border-[#FFC800] text-[#FFC800] shadow-[0_0_15px_rgba(255,200,0,0.15)] z-10' 
                                   : 'text-slate-500 hover:text-slate-300 hover:bg-[#1e2330]'}
@@ -189,21 +189,21 @@ const App: React.FC = () => {
                       ))}
                     </div>
 
-                    {/* Open Button - OPTIMIZED: Taller and cleaner layout to avoid clipping */}
+                    {/* Open Button - OPTIMIZED PROPORTIONS: Larger on Mobile (h-24), Cleaner on Desktop (h-20) */}
                     <button 
                         onClick={handleSpin}
                         disabled={isSpinning}
                         className={`
                             group relative flex-1
-                            h-20 md:h-24
+                            h-24 md:h-20
                             bg-[#FFC800] hover:bg-[#ffcf33]
-                            text-black font-black uppercase tracking-tighter text-3xl md:text-4xl italic
+                            text-black font-black uppercase tracking-tighter text-4xl md:text-3xl italic
                             rounded-xl
                             transition-all duration-100 ease-out
                             shadow-[0_8px_0_#b38b00] active:shadow-none
                             translate-y-0 active:translate-y-[8px] active:mt-[8px] active:mb-0
                             disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
-                            flex items-center justify-between px-6 md:px-10 overflow-hidden gap-4
+                            flex items-center justify-between px-8 md:px-10 overflow-hidden gap-4
                         `}
                         style={{marginBottom: isSpinning ? '0px' : '8px'}}
                     >
@@ -214,7 +214,7 @@ const App: React.FC = () => {
                        ) : (
                            <>
                             <span className="drop-shadow-sm transform group-hover:scale-105 transition-transform z-10">ABRIR</span>
-                            <div className="bg-black/20 px-3 md:px-5 py-1 rounded-lg font-mono text-xl md:text-2xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter z-10 border border-black/5 whitespace-nowrap min-w-fit">
+                            <div className="bg-black/20 px-4 md:px-5 py-1.5 md:py-1 rounded-lg font-mono text-xl md:text-2xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter z-10 border border-black/5 whitespace-nowrap min-w-fit">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </div>
                            </>
