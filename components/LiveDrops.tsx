@@ -40,16 +40,16 @@ const LiveDrops = () => {
   };
 
   return (
-    <div className="w-full bg-[#0a0c10] border-b border-[#1e2330] h-9 md:h-11 overflow-hidden flex items-center relative z-30 select-none">
+    <div className="w-full bg-[#0a0c10] border-b border-[#1e2330] h-12 md:h-12 overflow-hidden flex items-center relative z-30 select-none">
         {/* Fade gradients */}
-        <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#0a0c10] to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#0a0c10] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#0a0c10] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0a0c10] to-transparent z-10 pointer-events-none"></div>
         
         {/* Marquee Container with hardware acceleration */}
         <div className="flex items-center gap-6 animate-marquee whitespace-nowrap pl-4 hover:pause will-change-transform transform-gpu">
             {[...drops, ...drops].map((drop, idx) => (
-                <div key={`${drop.id}-${idx}`} className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-pointer group">
-                    <div className={`w-6 h-6 rounded bg-[#13151b] border border-[#1e2330] group-hover:border-[#FFC800] flex items-center justify-center text-sm transition-colors`}>
+                <div key={`${drop.id}-${idx}`} className="flex items-center gap-3 opacity-70 hover:opacity-100 transition-opacity cursor-pointer group">
+                    <div className={`w-8 h-8 rounded bg-[#13151b] border border-[#1e2330] group-hover:border-[#FFC800] flex items-center justify-center text-lg transition-colors`}>
                         {drop.item.image.startsWith('http') ? (
                             <img src={drop.item.image} alt="" className="w-full h-full object-contain p-0.5" />
                         ) : (
@@ -57,14 +57,14 @@ const LiveDrops = () => {
                         )}
                     </div>
                     <div className="flex flex-col justify-center">
-                        <span className="text-[8px] md:text-[9px] text-slate-500 font-bold uppercase tracking-tighter leading-none mb-0.5">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter leading-none mb-0.5">
                             {drop.user}
                         </span>
-                        <span className={`text-[9px] md:text-[10px] font-black italic uppercase tracking-tighter leading-none ${RARITY_COLORS[drop.item.rarity]} drop-shadow-sm`}>
+                        <span className={`text-[11px] font-black italic uppercase tracking-tighter leading-none ${RARITY_COLORS[drop.item.rarity]} drop-shadow-sm`}>
                             {drop.item.name}
                         </span>
                     </div>
-                    <div className="w-[1px] h-4 bg-[#1e2330] ml-4"></div>
+                    <div className="w-[1px] h-5 bg-[#1e2330] ml-2"></div>
                 </div>
             ))}
         </div>

@@ -149,7 +149,7 @@ const App: React.FC = () => {
                             Apple Collection
                         </span>
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-110">
+                    <h1 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-110">
                         1% iPhone Box
                     </h1>
                 </div>
@@ -176,7 +176,7 @@ const App: React.FC = () => {
                             key={num} 
                             onClick={() => setQuantity(num)}
                             className={`
-                              flex-1 md:w-16 h-12 md:h-14 rounded-lg font-black italic text-sm md:text-xl transition-all flex items-center justify-center relative
+                              flex-1 md:w-16 h-14 md:h-14 rounded-lg font-black italic text-lg md:text-xl transition-all flex items-center justify-center relative
                               ${quantity === num 
                                   ? 'bg-[#2a3040] border border-[#FFC800] text-[#FFC800] shadow-[0_0_15px_rgba(255,200,0,0.15)] z-10' 
                                   : 'text-slate-500 hover:text-slate-300 hover:bg-[#1e2330]'}
@@ -193,9 +193,9 @@ const App: React.FC = () => {
                         disabled={isSpinning}
                         className={`
                             group relative flex-1
-                            h-16 md:h-auto
+                            h-20 md:h-auto
                             bg-[#FFC800] hover:bg-[#ffcf33]
-                            text-black font-black uppercase tracking-tighter text-2xl md:text-4xl italic
+                            text-black font-black uppercase tracking-tighter text-3xl md:text-4xl italic
                             rounded-xl
                             transition-all duration-100 ease-out
                             shadow-[0_8px_0_#b38b00] active:shadow-none
