@@ -62,8 +62,6 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
   }, [generateStrip]);
 
   // REFINED Ease Out Back
-  // Update: drastically reduced 'c1' to 0.12 (was 0.25). 
-  // This fixes the "returns too much" issue by making the overshoot very subtle.
   const easeOutBackCustom = (x: number): number => {
     const c1 = 0.12; 
     const c3 = c1 + 1;
@@ -172,13 +170,13 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
     <div className="relative w-full h-[200px] sm:h-[240px] overflow-hidden bg-[#13161f] border-y border-[#1e2330] flex items-center shadow-inner rounded-xl transition-all duration-300">
         
         {/* Center Indicator (The Line) */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#00e701] z-30 transform -translate-x-1/2 shadow-[0_0_15px_#00e701]"></div>
+        <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#FFC800] z-30 transform -translate-x-1/2 shadow-[0_0_15px_#FFC800]"></div>
         
         {/* Triangles */}
-        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1 text-[#00e701] z-30 filter drop-shadow-[0_0_5px_rgba(0,231,1,0.8)]">
+        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_0_5px_rgba(255,200,0,0.8)]">
              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
         </div>
-        <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1 text-[#00e701] z-30 rotate-180 filter drop-shadow-[0_0_5px_rgba(0,231,1,0.8)]">
+        <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1 text-[#FFC800] z-30 rotate-180 filter drop-shadow-[0_0_5px_rgba(255,200,0,0.8)]">
              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-18h24z"/></svg>
         </div>
 
