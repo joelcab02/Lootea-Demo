@@ -3,6 +3,7 @@ import Spinner from './components/Spinner';
 import Sidebar from './components/Sidebar';
 import CaseContentGrid from './components/CaseContentGrid';
 import Footer from './components/Footer';
+import LiveDrops from './components/LiveDrops';
 import { LootItem, Rarity } from './types';
 import { audioService } from './services/audioService';
 import { RARITY_COLORS } from './constants';
@@ -19,7 +20,8 @@ const Icons = {
   Box: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>,
   Shield: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>,
   Truck: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>,
-  Logo: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#FFC800" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+  Logo: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#FFC800" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
+  ChevronRight: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
 };
 
 const App: React.FC = () => {
@@ -74,61 +76,70 @@ const App: React.FC = () => {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
         
-        {/* HEADER - OPTIMIZED FOR MOBILE CASINO FEEL */}
+        {/* LIVE DROP TICKER */}
+        <LiveDrops />
+        
+        {/* HEADER */}
         <header className="flex items-center justify-between h-[60px] md:h-20 px-4 md:px-8 bg-[#0d1019]/95 backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl">
             
-            {/* Left: Mobile Menu */}
-            <div className="flex items-center w-20 md:w-auto">
+            {/* LEFT SECTION */}
+            <div className="flex items-center gap-4 w-20 md:w-auto flex-1 md:flex-none">
+                {/* Mobile Menu Button */}
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="md:hidden text-slate-400 hover:text-white active:scale-95 transition-transform p-2 -ml-2"
+                  className="lg:hidden text-slate-400 hover:text-white active:scale-95 transition-transform p-1 -ml-2"
                 >
                   <Icons.Menu />
                 </button>
 
-                {/* Desktop Back Button */}
-                <button className="hidden md:flex group items-center gap-2 text-slate-500 hover:text-white transition-colors">
-                  <div className="group-hover:-translate-x-1 transition-transform duration-200">
-                    <Icons.ArrowLeft />
-                  </div>
-                  <span className="text-xs font-black uppercase italic tracking-tighter">Regresar</span>
-                </button>
+                {/* DESKTOP BREADCRUMBS (Replaces Logo on Desktop) */}
+                <div className="hidden lg:flex items-center gap-3 text-sm">
+                    <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group">
+                         <div className="group-hover:-translate-x-1 transition-transform">
+                            <Icons.ArrowLeft />
+                         </div>
+                         <span className="font-black italic uppercase tracking-tighter text-xs">Regresar</span>
+                    </button>
+                    <span className="text-slate-700">|</span>
+                    <div className="flex items-center gap-2 text-slate-400">
+                        <span className="font-bold uppercase tracking-tight text-[10px] cursor-pointer hover:text-white transition-colors">Cajas</span>
+                        <div className="text-slate-600"><Icons.ChevronRight /></div>
+                        <span className="font-bold uppercase tracking-tight text-[10px] text-[#FFC800]">Apple Collection</span>
+                    </div>
+                </div>
             </div>
 
-            {/* Center: LOGO */}
-            <div className="flex items-center justify-center gap-2 md:gap-3 flex-1">
-                <div className="w-6 h-6 md:w-8 md:h-8 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
+            {/* CENTER: LOGO (MOBILE ONLY) */}
+            <div className="flex lg:hidden items-center justify-center gap-2">
+                <div className="w-6 h-6 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
                     <Icons.Logo />
                 </div>
-                <span className="font-gamer font-bold text-2xl md:text-3xl italic tracking-tighter text-white select-none">
+                <span className="font-gamer font-bold text-2xl italic tracking-tighter text-white select-none">
                     LOOTEA
                 </span>
             </div>
 
-            {/* Right: Wallet & Deposit */}
-            <div className="flex items-center justify-end gap-3 w-20 md:w-auto">
-                {/* Mobile Wallet - Compact High Contrast */}
-                <div className="flex items-center bg-[#FFC800] rounded text-black pl-2 pr-1 py-1 gap-1.5 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow cursor-pointer">
-                    <span className="font-mono font-black text-xs md:text-sm tracking-tighter">
+            {/* RIGHT: WALLET */}
+            <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
+                <div className="flex items-center bg-[#FFC800] rounded text-black pl-2 pr-1 py-1 gap-1.5 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow cursor-pointer group">
+                    <span className="font-mono font-black text-xs md:text-sm tracking-tighter group-active:scale-95 transition-transform">
                         $2,450
                     </span>
-                    <div className="w-5 h-5 bg-black/10 rounded flex items-center justify-center">
+                    <div className="w-5 h-5 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors">
                         <Icons.Plus />
                     </div>
                 </div>
-
-                {/* Desktop User Profile (Hidden on Mobile) */}
-                <div className="hidden md:block w-10 h-10 bg-[#1e2330] rounded-full border border-[#2a3040]"></div>
+                <div className="hidden md:block w-10 h-10 bg-[#1e2330] rounded-full border border-[#2a3040] hover:border-[#FFC800]/50 transition-colors cursor-pointer"></div>
             </div>
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-4 md:pt-8 pb-6 relative">
+        <div className="flex flex-col items-center pt-4 md:pt-8 pb-6 relative shrink-0">
             
             {/* Ambient Glow */}
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none"></div>
             
-            {/* Box Info - Compact on Mobile */}
+            {/* Box Info */}
             <div className="z-10 text-center mb-4 md:mb-8 w-full max-w-[1100px] px-4">
                 <div className="flex flex-col items-center gap-1">
                     <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-1">
@@ -152,27 +163,19 @@ const App: React.FC = () => {
                 />
             </div>
 
-            {/* ACTION CONTROLS - UNIFIED DESIGN (Mobile & Desktop) */}
-            <div className="z-20 w-full max-w-[1000px] px-4">
-                {/* 
-                   CONTROL PANEL CONTAINER
-                   The border and background create a unified "console" feel.
-                   On mobile it stacks, on desktop it's side-by-side, but the aesthetic is 100% matched.
-                */}
-                <div className="bg-[#161922] border border-[#2a3040] p-3 md:p-5 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-4 md:gap-6 items-stretch relative overflow-hidden">
-                    
-                    {/* Subtle panel reflection/glow */}
+            {/* ACTION CONTROLS */}
+            <div className="z-20 w-full max-w-[1200px] px-4">
+                <div className="bg-[#161922] border border-[#2a3040] p-3 md:p-5 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-4 md:gap-8 items-stretch relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-                    {/* Quantity Selector - SOLID BAR (No Scroll) */}
+                    {/* Quantity */}
                     <div className="flex bg-[#0d1019] rounded-xl p-1.5 border border-[#1e2330] shrink-0 w-full md:w-auto items-center">
-                      {/* Using flex-1 on buttons ensures they fill the width evenly on mobile */}
                       {[1, 2, 3, 4, 5].map(num => (
                           <button 
                             key={num} 
                             onClick={() => setQuantity(num)}
                             className={`
-                              flex-1 md:w-14 h-11 md:h-14 rounded-lg font-black italic text-sm md:text-xl transition-all flex items-center justify-center relative
+                              flex-1 md:w-16 h-12 md:h-14 rounded-lg font-black italic text-sm md:text-xl transition-all flex items-center justify-center relative
                               ${quantity === num 
                                   ? 'bg-[#2a3040] border border-[#FFC800] text-[#FFC800] shadow-[0_0_15px_rgba(255,200,0,0.15)] z-10' 
                                   : 'text-slate-500 hover:text-slate-300 hover:bg-[#1e2330]'}
@@ -183,7 +186,7 @@ const App: React.FC = () => {
                       ))}
                     </div>
 
-                    {/* NEW 3D TACTILE BUTTON - Full Width/Height Match */}
+                    {/* Open Button */}
                     <button 
                         onClick={handleSpin}
                         disabled={isSpinning}
@@ -194,14 +197,13 @@ const App: React.FC = () => {
                             text-black font-black uppercase tracking-tighter text-2xl md:text-4xl italic
                             rounded-xl
                             transition-all duration-100 ease-out
-                            shadow-[0_6px_0_#b38b00] active:shadow-none
-                            translate-y-0 active:translate-y-[6px] active:mt-[6px] active:mb-0
+                            shadow-[0_8px_0_#b38b00] active:shadow-none
+                            translate-y-0 active:translate-y-[8px] active:mt-[8px] active:mb-0
                             disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
-                            flex items-center justify-between px-6 md:px-10 overflow-hidden
+                            flex items-center justify-between px-6 md:px-12 overflow-hidden gap-6
                         `}
-                        style={{marginBottom: isSpinning ? '0px' : '6px'}} // Spacer for the shadow
+                        style={{marginBottom: isSpinning ? '0px' : '8px'}}
                     >
-                       {/* Sheen Effect */}
                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
 
                        {isSpinning ? (
@@ -209,7 +211,7 @@ const App: React.FC = () => {
                        ) : (
                            <>
                             <span className="drop-shadow-sm transform group-hover:scale-105 transition-transform z-10">ABRIR</span>
-                            <div className="bg-black/20 px-3 md:px-5 py-1.5 rounded-lg font-mono text-base md:text-2xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter z-10 border border-black/5">
+                            <div className="bg-black/20 px-4 md:px-6 py-1.5 rounded-lg font-mono text-xl md:text-3xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter z-10 border border-black/5">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </div>
                            </>
@@ -217,13 +219,12 @@ const App: React.FC = () => {
                     </button>
                 </div>
             </div>
-
         </div>
 
         {/* CASE CONTENTS GRID */}
         <CaseContentGrid />
         
-        {/* RICH FOOTER */}
+        {/* FOOTER */}
         <Footer />
 
       </div>
