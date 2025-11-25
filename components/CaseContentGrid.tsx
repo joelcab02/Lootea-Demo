@@ -9,14 +9,14 @@ const CaseContentGrid = () => {
     <div className="w-full max-w-[1400px] mx-auto mt-2 md:mt-8 p-3 md:p-6 bg-[#0d1019]">
       <div className="flex items-center justify-between mb-4 md:mb-8 border-b border-[#1e2330] pb-4">
         <div>
-            <h2 className="text-lg md:text-2xl font-black text-[#FFC800] uppercase tracking-tight italic mb-1">
+            <h2 className="text-lg md:text-2xl font-black text-[#FFC800] uppercase tracking-tighter italic mb-1">
                 Contenido de la Caja (15 Ítems)
             </h2>
-            <p className="text-slate-500 text-xs font-bold">Abre para recibir o cambiar uno de estos productos:</p>
+            <p className="text-slate-500 text-xs font-bold tracking-tight">Abre para recibir o cambiar uno de estos productos:</p>
         </div>
         
         <div className="hidden md:flex gap-2">
-           <div className="bg-[#161922] border border-[#1e2330] px-3 py-1 rounded text-xs font-bold text-slate-400">
+           <div className="bg-[#161922] border border-[#1e2330] px-3 py-1 rounded text-xs font-black italic tracking-tighter text-slate-400">
              {sortedItems.length} Ítems
            </div>
         </div>
@@ -39,7 +39,7 @@ const CaseContentGrid = () => {
 
                     {/* Name */}
                     <div className="text-center w-full mb-1">
-                        <div className={`text-[10px] md:text-xs font-black leading-tight text-white group-hover:text-[#FFC800] transition-colors tracking-wide uppercase h-6 md:h-8 flex items-center justify-center`}>
+                        <div className={`text-[10px] md:text-xs font-black italic leading-tight text-white group-hover:text-[#FFC800] transition-colors tracking-tighter uppercase h-6 md:h-8 flex items-center justify-center`}>
                             {item.name}
                         </div>
                     </div>
@@ -68,12 +68,12 @@ const CaseContentGrid = () => {
                 {/* Bottom Action Area (RillaBox Style) */}
                 <div className="p-2 bg-[#0a0c10] border-t border-[#1e2330] mt-auto">
                     {/* Price Button */}
-                    <div className="bg-[#FFC800] hover:bg-[#EAB308] cursor-pointer text-black font-black text-[10px] md:text-sm text-center py-1 md:py-2 rounded uppercase tracking-wide mb-1 md:mb-2 shadow-sm transition-colors">
+                    <div className="bg-[#FFC800] hover:bg-[#EAB308] cursor-pointer text-black font-black italic text-[10px] md:text-sm text-center py-1 md:py-2 rounded uppercase tracking-tighter mb-1 md:mb-2 shadow-sm transition-colors">
                         ${item.price.toLocaleString('es-MX')}
                     </div>
                     
                     {/* Odds Bar */}
-                    <div className="flex justify-between items-center text-[8px] md:text-[9px] font-bold text-slate-500 uppercase mb-1">
+                    <div className="flex justify-between items-center text-[8px] md:text-[9px] font-bold text-slate-500 uppercase mb-1 tracking-tight">
                         <span>Probabilidad</span>
                         <span className="text-slate-300">{item.odds}%</span>
                     </div>

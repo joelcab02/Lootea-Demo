@@ -91,7 +91,7 @@ const App: React.FC = () => {
                   <div className="group-hover:-translate-x-1 transition-transform duration-200">
                     <Icons.ArrowLeft />
                   </div>
-                  <span className="text-xs font-black uppercase tracking-widest">Regresar</span>
+                  <span className="text-xs font-black uppercase italic tracking-tighter">Regresar</span>
                 </button>
             </div>
 
@@ -100,7 +100,7 @@ const App: React.FC = () => {
                 <div className="w-6 h-6 md:w-8 md:h-8 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
                     <Icons.Logo />
                 </div>
-                <span className="font-gamer font-bold text-2xl md:text-3xl italic tracking-tight text-white select-none">
+                <span className="font-gamer font-bold text-2xl md:text-3xl italic tracking-tighter text-white select-none">
                     LOOTEA
                 </span>
             </div>
@@ -109,7 +109,7 @@ const App: React.FC = () => {
             <div className="flex items-center justify-end gap-3 w-20 md:w-auto">
                 {/* Mobile Wallet - Compact High Contrast */}
                 <div className="flex items-center bg-[#FFC800] rounded text-black pl-2 pr-1 py-1 gap-1.5 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_20px_rgba(255,200,0,0.4)] transition-shadow cursor-pointer">
-                    <span className="font-mono font-black text-xs md:text-sm tracking-tight">
+                    <span className="font-mono font-black text-xs md:text-sm tracking-tighter">
                         $2,450
                     </span>
                     <div className="w-5 h-5 bg-black/10 rounded flex items-center justify-center">
@@ -133,7 +133,7 @@ const App: React.FC = () => {
                 <div className="flex flex-col items-center gap-1">
                     <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-1">
                         <span className="text-xl">📱</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest bg-[#FFC800]/10 px-2 py-0.5 rounded border border-[#FFC800]/20">
+                        <span className="text-[10px] font-black uppercase italic tracking-tighter bg-[#FFC800]/10 px-2 py-0.5 rounded border border-[#FFC800]/20">
                             Apple Collection
                         </span>
                     </div>
@@ -153,8 +153,8 @@ const App: React.FC = () => {
             </div>
 
             {/* ACTION CONTROLS - RE-DESIGNED BUTTON */}
-            <div className="z-10 w-full max-w-[1000px] px-4">
-                <div className="flex flex-col md:flex-row items-center gap-4 bg-[#161922] border border-[#2a3040] p-4 rounded-2xl shadow-xl">
+            <div className="z-10 w-full max-w-[1200px] px-4">
+                <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 bg-[#161922] border border-[#2a3040] p-4 rounded-2xl shadow-xl">
                     
                     {/* Quantity Selector */}
                     <div className="w-full md:w-auto overflow-x-auto no-scrollbar">
@@ -164,7 +164,7 @@ const App: React.FC = () => {
                                 key={num} 
                                 onClick={() => setQuantity(num)}
                                 className={`
-                                  w-12 h-12 md:w-14 md:h-14 rounded-xl font-black text-sm md:text-lg transition-all border flex items-center justify-center
+                                  w-12 h-12 md:w-14 md:h-14 rounded-xl font-black italic text-sm md:text-lg transition-all border flex items-center justify-center
                                   ${quantity === num 
                                       ? 'bg-[#2a3040] border-[#FFC800] text-[#FFC800] shadow-[0_0_10px_rgba(255,200,0,0.2)]' 
                                       : 'bg-[#0d1019] border-[#2a3040] text-slate-500 hover:bg-[#1e2330] hover:text-slate-300'}
@@ -184,23 +184,23 @@ const App: React.FC = () => {
                         disabled={isSpinning}
                         className={`
                             group relative w-full flex-1
-                            h-14 md:h-16
+                            h-14 md:h-20
                             bg-[#FFC800] hover:bg-[#ffcf33]
-                            text-black font-black uppercase tracking-widest text-lg md:text-xl italic
+                            text-black font-black uppercase tracking-tighter text-2xl md:text-3xl italic
                             rounded-xl
                             transition-all duration-100 ease-out
-                            shadow-[0_6px_0_#b38b00] active:shadow-none
-                            translate-y-0 active:translate-y-[6px]
+                            shadow-[0_8px_0_#b38b00] active:shadow-none
+                            translate-y-0 active:translate-y-[8px]
                             disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
-                            flex items-center justify-center gap-4 md:gap-6
+                            flex items-center justify-between px-6 md:px-10
                         `}
                     >
                        {isSpinning ? (
-                           <span className="animate-pulse">Abriendo...</span>
+                           <span className="w-full text-center animate-pulse text-lg tracking-tighter">Abriendo...</span>
                        ) : (
                            <>
-                            <span className="drop-shadow-sm">ABRIR CAJA</span>
-                            <div className="bg-black/20 px-3 py-1 rounded-md font-mono text-sm md:text-base font-bold text-black/90 group-hover:bg-black/25 transition-colors">
+                            <span className="drop-shadow-sm transform group-hover:scale-105 transition-transform">ABRIR CAJA</span>
+                            <div className="bg-black/20 px-3 md:px-4 py-1 rounded-md font-mono text-base md:text-xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </div>
                            </>
@@ -208,7 +208,7 @@ const App: React.FC = () => {
                     </button>
 
                     {/* Mobile: Demo Toggle */}
-                    <button className="md:hidden absolute top-2 right-2 text-[9px] text-slate-600 font-bold uppercase p-2">
+                    <button className="md:hidden absolute top-2 right-2 text-[9px] text-slate-600 font-bold uppercase p-2 tracking-tighter">
                         Demo
                     </button>
                 </div>
@@ -233,7 +233,7 @@ const App: React.FC = () => {
                 </button>
                 
                 <div className="mb-6 md:mb-8">
-                    <div className={`inline-block px-4 py-1 rounded border text-[10px] font-black uppercase tracking-widest ${winner.rarity === 'LEGENDARY' ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-slate-700/20 border-slate-600 text-slate-400'}`}>
+                    <div className={`inline-block px-4 py-1 rounded border text-[10px] font-black uppercase italic tracking-tighter ${winner.rarity === 'LEGENDARY' ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-slate-700/20 border-slate-600 text-slate-400'}`}>
                         {winner.rarity} Drop
                     </div>
                 </div>
@@ -245,14 +245,14 @@ const App: React.FC = () => {
                     </span>
                 </div>
 
-                <h2 className="text-xl md:text-2xl font-black text-white mb-2 md:mb-3 leading-none uppercase italic">{winner.name}</h2>
-                <p className="text-slate-400 text-xs md:text-sm mb-6 md:mb-8">Valor Estimado: <span className="text-[#FFC800] font-mono font-bold ml-1">${winner.price.toLocaleString()} MXN</span></p>
+                <h2 className="text-xl md:text-2xl font-black text-white mb-2 md:mb-3 leading-none uppercase italic tracking-tighter">{winner.name}</h2>
+                <p className="text-slate-400 text-xs md:text-sm mb-6 md:mb-8 font-bold">Valor Estimado: <span className="text-[#FFC800] font-mono font-bold ml-1 tracking-tighter">${winner.price.toLocaleString()} MXN</span></p>
 
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={() => setShowModal(false)} className="py-3 bg-[#1e2330] hover:bg-[#2a3040] text-slate-300 hover:text-white border border-[#2a3040] font-black rounded text-xs uppercase tracking-wide transition-colors">
+                    <button onClick={() => setShowModal(false)} className="py-3 bg-[#1e2330] hover:bg-[#2a3040] text-slate-300 hover:text-white border border-[#2a3040] font-black rounded text-xs uppercase italic tracking-tighter transition-colors">
                         Vender
                     </button>
-                    <button onClick={() => setShowModal(false)} className="py-3 bg-[#FFC800] hover:bg-[#EAB308] text-black font-black rounded text-xs uppercase tracking-wide transition-colors shadow-[0_0_15px_rgba(255,200,0,0.3)]">
+                    <button onClick={() => setShowModal(false)} className="py-3 bg-[#FFC800] hover:bg-[#EAB308] text-black font-black rounded text-xs uppercase italic tracking-tighter transition-colors shadow-[0_0_15px_rgba(255,200,0,0.3)]">
                         Enviar
                     </button>
                 </div>

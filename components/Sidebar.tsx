@@ -51,7 +51,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="h-16 lg:h-20 flex items-center justify-between px-6 border-b border-[#1e2330]">
            <div className="flex items-center gap-3">
              <Icons.Logo />
-             <span className="font-black text-white text-xl tracking-tight italic">LOOTEA</span>
+             <span className="font-black text-white text-xl tracking-tighter italic">LOOTEA</span>
            </div>
            {/* Mobile Close Button */}
            <button onClick={onClose} className="lg:hidden text-slate-400 hover:text-white">
@@ -73,11 +73,11 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="bg-gradient-to-br from-[#1c202b] to-[#161922] p-4 rounded-xl border border-[#2a3040] shadow-lg group cursor-pointer relative overflow-hidden">
               <div className="absolute top-0 right-0 p-2 opacity-20"><Icons.Swords /></div>
               <div className="flex justify-between items-start mb-2 relative z-10">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-white transition-colors">Carrera Diaria</p>
+                <p className="text-[10px] font-black italic uppercase tracking-tighter text-slate-500 group-hover:text-white transition-colors">Carrera Diaria</p>
                 <div className="w-2 h-2 rounded-full bg-[#FFC800] animate-pulse"></div>
               </div>
-              <div className="text-white font-bold font-mono text-lg mb-3 relative z-10">$100,000 MXN</div>
-              <button className="w-full py-2 bg-[#FFC800] hover:bg-[#EAB308] text-black text-xs font-black rounded uppercase transition-all shadow-[0_0_10px_rgba(255,200,0,0.2)] relative z-10">
+              <div className="text-white font-black italic font-mono text-lg mb-3 relative z-10 tracking-tighter">$100,000 MXN</div>
+              <button className="w-full py-2 bg-[#FFC800] hover:bg-[#EAB308] text-black text-xs font-black italic rounded uppercase transition-all shadow-[0_0_10px_rgba(255,200,0,0.2)] relative z-10 tracking-tighter">
                   Participar
               </button>
           </div>
@@ -89,7 +89,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
 
 function SidebarItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
     return (
-        <button className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-black uppercase tracking-wide transition-all duration-200 group ${active ? 'bg-[#1e2330] text-white shadow-inner border border-[#2a3040]' : 'text-slate-500 hover:bg-[#161922] hover:text-white border border-transparent'}`}>
+        <button className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-black italic uppercase tracking-tighter transition-all duration-200 group ${active ? 'bg-[#1e2330] text-white shadow-inner border border-[#2a3040]' : 'text-slate-500 hover:bg-[#161922] hover:text-white border border-transparent'}`}>
             <span className={`${active ? 'text-[#FFC800]' : 'text-slate-600 group-hover:text-slate-300'}`}>{icon}</span>
             <span>{label}</span>
         </button>

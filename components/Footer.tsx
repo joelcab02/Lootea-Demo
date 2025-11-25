@@ -43,7 +43,7 @@ function Footer() {
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                     </div>
                     <div>
-                        <h4 className="font-bold text-white uppercase">Métodos de Pago</h4>
+                        <h4 className="font-bold text-white uppercase tracking-tight">Métodos de Pago</h4>
                         <p className="text-slate-500 text-xs">Seguros y Encriptados</p>
                     </div>
                 </div>
@@ -75,7 +75,7 @@ function Footer() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                    <h5 className="font-bold text-white uppercase mb-1">Legal</h5>
+                    <h5 className="font-bold text-white uppercase mb-1 tracking-tight">Legal</h5>
                     <FooterLink>Términos de Servicio</FooterLink>
                     <FooterLink>Privacidad</FooterLink>
                     <FooterLink>Política AML</FooterLink>
@@ -83,14 +83,14 @@ function Footer() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                    <h5 className="font-bold text-white uppercase mb-1">Juegos</h5>
+                    <h5 className="font-bold text-white uppercase mb-1 tracking-tight">Juegos</h5>
                     <FooterLink>Cajas Misteriosas</FooterLink>
                     <FooterLink>Batallas de Cajas</FooterLink>
                     <FooterLink>Mejoras (Upgrader)</FooterLink>
                 </div>
 
                 <div className="flex flex-col gap-3">
-                    <h5 className="font-bold text-white uppercase mb-1">Ayuda</h5>
+                    <h5 className="font-bold text-white uppercase mb-1 tracking-tight">Ayuda</h5>
                     <FooterLink>Soporte 24/7</FooterLink>
                     <FooterLink>Preguntas Frecuentes</FooterLink>
                     <FooterLink>Provably Fair</FooterLink>
@@ -98,7 +98,7 @@ function Footer() {
             </div>
 
             <div className="text-center pt-8 border-t border-[#1e2330]">
-                <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">
+                <p className="text-slate-600 text-xs font-black italic uppercase tracking-tighter">
                     &copy; 2025 LOOTEA MÉXICO. TODOS LOS DERECHOS RESERVADOS.
                 </p>
             </div>
@@ -113,7 +113,7 @@ function FeatureCard({ icon, title, desc }: { icon: React.ReactNode, title: stri
             <div className="w-12 h-12 bg-[#FFC800] rounded-xl flex items-center justify-center text-black mb-4 shadow-[0_0_15px_rgba(255,200,0,0.2)]">
                 {icon}
             </div>
-            <h3 className="text-white font-bold text-lg mb-2">{title}</h3>
+            <h3 className="text-white font-black italic text-lg mb-2 tracking-tighter">{title}</h3>
             <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
         </div>
     )
@@ -121,7 +121,7 @@ function FeatureCard({ icon, title, desc }: { icon: React.ReactNode, title: stri
 
 function PaymentIcon({ label }: { label: string }) {
     return (
-        <div className="h-10 px-4 bg-[#1e2330] rounded border border-[#2a3040] flex items-center justify-center text-[10px] font-black text-slate-400 select-none">
+        <div className="h-10 px-4 bg-[#1e2330] rounded border border-[#2a3040] flex items-center justify-center text-[10px] font-black italic text-slate-400 select-none tracking-tighter">
             {label}
         </div>
     )
