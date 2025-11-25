@@ -80,7 +80,8 @@ const App: React.FC = () => {
         <LiveDrops />
         
         {/* HEADER */}
-        <header className="flex items-center justify-between h-[60px] md:h-20 px-4 md:px-8 bg-[#0d1019]/95 backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl">
+        {/* Optimized: Solid bg on mobile for performance, blurred on desktop */}
+        <header className="flex items-center justify-between h-[60px] md:h-20 px-4 md:px-8 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl">
             
             {/* LEFT SECTION */}
             <div className="flex items-center gap-4 w-20 md:w-auto flex-1 md:flex-none">
@@ -136,8 +137,8 @@ const App: React.FC = () => {
         {/* HERO AREA */}
         <div className="flex flex-col items-center pt-4 md:pt-8 pb-6 relative shrink-0">
             
-            {/* Ambient Glow */}
-            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none"></div>
+            {/* Ambient Glow - Hardware Accelerated */}
+            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none gpu-accelerate"></div>
             
             {/* Box Info */}
             <div className="z-10 text-center mb-4 md:mb-8 w-full max-w-[1100px] px-4">

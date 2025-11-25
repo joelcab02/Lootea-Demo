@@ -46,8 +46,8 @@ const CaseContentGrid = () => {
 
                     {/* Image Area */}
                     <div className="relative w-14 h-14 md:w-24 md:h-24 my-1 md:my-2 transition-transform duration-300 group-hover:scale-110 flex items-center justify-center">
-                        {/* Rarity Glow - subtle spotlight from top */}
-                        <div className={`absolute top-0 w-full h-full opacity-0 group-hover:opacity-20 bg-gradient-to-b from-white to-transparent blur-xl transition-opacity duration-500`}></div>
+                        {/* Rarity Glow - Optimized: hidden by default (no paint cost) -> block on hover */}
+                        <div className={`absolute top-0 w-full h-full hidden group-hover:block opacity-20 bg-gradient-to-b from-white to-transparent blur-xl transition-opacity duration-500`}></div>
                         
                         {isEmoji ? (
                             <span className="text-4xl md:text-6xl filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] select-none">

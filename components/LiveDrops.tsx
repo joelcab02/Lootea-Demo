@@ -45,8 +45,8 @@ const LiveDrops = () => {
         <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#0a0c10] to-transparent z-10 pointer-events-none"></div>
         <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#0a0c10] to-transparent z-10 pointer-events-none"></div>
         
-        {/* Marquee Container */}
-        <div className="flex items-center gap-6 animate-marquee whitespace-nowrap pl-4 hover:pause">
+        {/* Marquee Container with hardware acceleration */}
+        <div className="flex items-center gap-6 animate-marquee whitespace-nowrap pl-4 hover:pause will-change-transform transform-gpu">
             {[...drops, ...drops].map((drop, idx) => (
                 <div key={`${drop.id}-${idx}`} className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-pointer group">
                     <div className={`w-6 h-6 rounded bg-[#13151b] border border-[#1e2330] group-hover:border-[#FFC800] flex items-center justify-center text-sm transition-colors`}>
