@@ -1,6 +1,6 @@
 /**
  * Service to handle procedural audio generation for the spinner.
- * optimized for low latency and mechanical realism.
+ * OPTIMIZED FOR MOBILE PERFORMANCE: No real-time filters to prevent GC stutter.
  */
 class AudioService {
   private context: AudioContext | null = null;
@@ -8,7 +8,6 @@ class AudioService {
   private winBuffer: AudioBuffer | null = null;
   private masterGain: GainNode | null = null;
   
-  // External assets (Short, crisp mechanical clicks work best)
   private CLICK_URL = 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3';
   private WIN_URL = 'https://assets.mixkit.co/active_storage/sfx/269/269-preview.mp3';
 
@@ -17,9 +16,9 @@ class AudioService {
   private getContext(): AudioContext {
     if (!this.context) {
       const AudioCtor = window.AudioContext || (window as any).webkitAudioContext;
-      this.context = new AudioCtor({ latencyHint: 'interactive' }); // Request low latency
+      this.context = new AudioCtor({ latencyHint: 'interactive' }); 
       this.masterGain = this.context.createGain();
-      this.masterGain.gain.value = 0.5; // Baseline volume
+      this.masterGain.gain.value = 0.5; 
       this.masterGain.connect(this.context.destination);
     }
     return this.context;
@@ -54,60 +53,41 @@ class AudioService {
   }
 
   /**
-   * Plays a mechanical click based on wheel velocity.
-   * @param velocityNormalized 0.0 (stopped) to 1.0 (max speed)
-   * @param isEnding boolean - if true, we force a specific heavy sound for the drama
+   * Ultra-lightweight tick sound.
+   * Removed BiquadFilters completely to ensure 60fps on mobile.
    */
   public playTick(velocityNormalized: number, isEnding: boolean = false) {
     if (!this.clickBuffer || !this.masterGain) return;
     const ctx = this.getContext();
     
-    // Create source
     const source = ctx.createBufferSource();
     source.buffer = this.clickBuffer;
     
-    // --- REALISM PHYSICS ---
-    
-    // Pitch:
+    // Physics: Pitch Shift
     const jitter = (Math.random() * 0.1) - 0.05;
     
-    // If ending (slow drama), we drop the pitch to sound like a heavy gear locking in
-    // We use a very low threshold because the "return" movement is very slow
-    let baseRate = 0.5 + (velocityNormalized * 1.1); 
+    // Heavier/Slower sound at the end
+    let baseRate = 0.6 + (velocityNormalized * 1.0); 
     if (isEnding) {
-        baseRate = 0.4; // Consistent heavy clunk for the final settle
+        baseRate = 0.5; // Thud sound
     }
 
-    source.playbackRate.value = Math.max(0.3, Math.min(2.0, baseRate + jitter));
+    source.playbackRate.value = Math.max(0.4, Math.min(2.2, baseRate + jitter));
 
-    // Volume & Tone:
+    // Physics: Volume
     const gainNode = ctx.createGain();
-    
-    // Velocity Curve for Volume:
-    // Even at low velocity, we want audible clicks (friction)
-    const volume = 0.3 + (velocityNormalized * 0.7);
+    const volume = 0.2 + (velocityNormalized * 0.6);
     gainNode.gain.value = volume;
 
-    // Filter (Lowpass):
-    if (velocityNormalized < 0.3) {
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        // Allow more bass through on slow ticks
-        filter.frequency.value = 600 + (velocityNormalized * 2000); 
-        source.connect(filter);
-        filter.connect(gainNode);
-    } else {
-        source.connect(gainNode);
-    }
-
+    // DIRECT CONNECTION: Source -> Gain -> Master
+    // No filters here.
+    source.connect(gainNode);
     gainNode.connect(this.masterGain);
 
-    // Start immediately
     source.start(0);
     
-    // Release duration:
-    const duration = 0.1 + ((1 - velocityNormalized) * 0.15);
-    source.stop(ctx.currentTime + duration);
+    // Short release to clean up memory immediately
+    source.stop(ctx.currentTime + 0.1);
   }
 
   public playWin() {

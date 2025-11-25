@@ -12,7 +12,6 @@ interface LootCardProps {
 const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpinner = false }) => {
   const glowColorClass = RARITY_BG_GLOW[item.rarity];
   
-  // Simple check: if it starts with http, it's a URL, otherwise treated as Emoji/Text
   const isEmoji = !item.image.startsWith('http');
 
   return (
@@ -20,10 +19,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
       className={`relative flex-shrink-0 flex flex-col items-center justify-center h-full select-none ${isSpinner ? 'pointer-events-none' : 'group'}`}
       style={{ width: `${width}px` }}
     >
-      {/* THE GLOW (Behind item) 
-          Performance Fix: Only render the expensive blur in the static grid. 
-          In the spinner, moving blurs cause massive FPS drops.
-      */}
+      {/* Only render heavy glow effects when NOT spinning */}
       {!isSpinner && (
         <div 
           className={`
@@ -34,7 +30,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
         ></div>
       )}
       
-      {/* Image/Emoji container */}
+      {/* Image Container */}
       <div className={`relative z-10 w-24 h-24 sm:w-32 sm:h-32 mb-3 flex items-center justify-center ${!isSpinner ? 'transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1' : ''}`}>
         {isEmoji ? (
              <span className={`text-6xl sm:text-7xl select-none ${!isSpinner ? 'filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform transition-transform' : ''}`}>
@@ -55,12 +51,10 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
       {/* Text Info */}
       <div className="relative z-10 text-center w-full px-2">
         
-        {/* Item Name */}
         <h3 className={`font-bold text-white text-xs sm:text-[13px] leading-tight uppercase tracking-wider truncate w-full mb-1.5 opacity-90 ${!isSpinner && 'group-hover:opacity-100 transition-opacity'}`}>
           {item.name}
         </h3>
         
-        {/* Price Tag Badge */}
         <div className={`inline-flex items-center justify-center bg-[#0d1019]/80 border border-[#2a3040] rounded px-2.5 py-0.5 shadow-sm ${!isSpinner && 'backdrop-blur-sm group-hover:border-[#FFC800]/50 transition-colors'}`}>
             <span className="text-[#FFC800] font-mono font-bold text-[10px] sm:text-xs tracking-tight">
               ${item.price.toLocaleString('es-MX')}

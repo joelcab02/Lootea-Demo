@@ -9,7 +9,7 @@ import { RARITY_COLORS } from './constants';
 
 // SVG Icons for App
 const Icons = {
-  Wallet: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>,
+  Wallet: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>,
   Lightning: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>,
   Refresh: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
   Plus: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>,
@@ -74,42 +74,42 @@ const App: React.FC = () => {
       <div className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
         
         {/* HEADER */}
-        <header className="flex items-center justify-between h-16 px-4 md:px-6 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40">
+        <header className="flex items-center justify-between h-14 md:h-16 px-3 md:px-6 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40">
             {/* Left Side: Navigation */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
                 {/* Mobile Menu Trigger */}
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden text-slate-400 hover:text-white transition-colors p-1"
+                  className="lg:hidden text-slate-400 hover:text-white transition-colors p-1.5"
                 >
                   <Icons.Menu />
                 </button>
 
                 {/* Back Button */}
-                <button className="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+                <button className="group flex items-center gap-1.5 md:gap-2 text-slate-400 hover:text-white transition-colors">
                   <div className="group-hover:-translate-x-1 transition-transform duration-200">
                     <Icons.ArrowLeft />
                   </div>
-                  <span className="text-xs md:text-sm font-bold uppercase tracking-widest whitespace-nowrap">REGRESAR</span>
+                  <span className="text-[10px] md:text-sm font-black uppercase tracking-widest whitespace-nowrap">REGRESAR</span>
                 </button>
             </div>
 
             {/* Right Side: Wallet & Actions */}
-            <div className="flex items-center gap-3">
-                {/* Wallet Balance Display */}
-                <div className="flex items-center bg-[#161922] border border-[#2a3040] rounded-lg p-1 pr-1.5 md:pr-2 gap-2 md:gap-3">
-                   <div className="flex items-center justify-center w-8 h-8 rounded bg-[#1e2330] text-[#FFC800]">
+            <div className="flex items-center gap-2 md:gap-3">
+                {/* Wallet Balance Display - Compact on mobile */}
+                <div className="flex items-center bg-[#161922] border border-[#2a3040] rounded-lg p-1 pr-1.5 md:pr-2 gap-1.5 md:gap-3">
+                   <div className="flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded bg-[#1e2330] text-[#FFC800] p-1 md:p-1.5">
                       <Icons.Wallet />
                    </div>
-                   <span className="font-mono font-bold text-xs md:text-sm text-white tracking-wide whitespace-nowrap">
-                      $2,450.00 MXN
+                   <span className="font-mono font-black text-[11px] md:text-sm text-white tracking-wide whitespace-nowrap">
+                      $2,450.00 <span className="hidden sm:inline">MXN</span>
                    </span>
-                   <button className="w-6 h-6 flex items-center justify-center bg-[#FFC800] hover:bg-[#EAB308] rounded text-black transition-colors active:scale-95">
+                   <button className="w-6 h-6 md:w-6 md:h-6 flex items-center justify-center bg-[#FFC800] hover:bg-[#EAB308] rounded text-black transition-colors active:scale-95 ml-0.5">
                       <Icons.Plus />
                    </button>
                 </div>
 
-                {/* Deposit Button - Hidden on Mobile to save space, relies on Wallet + button */}
+                {/* Deposit Button - Hidden on Mobile */}
                 <button className="hidden md:flex bg-[#FFC800] hover:bg-[#EAB308] text-black px-6 py-2 rounded-lg font-black text-xs uppercase tracking-widest shadow-[0_0_15px_rgba(255,200,0,0.2)] transition-all active:scale-95">
                     DEPOSITAR
                 </button>
@@ -117,36 +117,36 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO CASE AREA */}
-        <div className="flex flex-col items-center pt-6 md:pt-10 pb-12 relative">
+        <div className="flex flex-col items-center pt-6 md:pt-10 pb-8 md:pb-12 relative">
             
             {/* Ambient Glow */}
-            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[60%] h-[400px] bg-[#FFC800] opacity-[0.03] blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] md:w-[60%] h-[300px] md:h-[400px] bg-[#FFC800] opacity-[0.03] blur-[80px] md:blur-[100px] pointer-events-none"></div>
             
             {/* RillaBox Style Title Section */}
             <div className="z-10 text-center mb-6 md:mb-10 w-full max-w-[1100px] px-4">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 md:w-16 md:h-16 bg-[#161922] rounded-lg border border-[#2a3040] flex items-center justify-center shadow-2xl relative overflow-hidden">
+                    <div className="flex items-center gap-3 justify-center md:justify-start w-full md:w-auto">
+                        <div className="w-12 h-12 md:w-16 md:h-16 bg-[#161922] rounded-lg border border-[#2a3040] flex items-center justify-center shadow-2xl relative overflow-hidden shrink-0">
                              <div className="absolute inset-0 bg-gradient-to-br from-[#FFC800]/20 to-transparent"></div>
                              <span className="text-2xl md:text-3xl relative z-10">📱</span>
                         </div>
                         <div className="text-left">
-                             <h1 className="text-xl md:text-3xl font-black text-white uppercase italic tracking-tighter">
+                             <h1 className="text-lg md:text-3xl font-black text-white uppercase italic tracking-tighter leading-tight">
                                 1% iPhone Box
                             </h1>
-                            <p className="text-slate-500 text-xs md:text-sm font-bold tracking-wider">
+                            <p className="text-slate-500 text-[10px] md:text-sm font-bold tracking-wider">
                                 CONTIENE PRODUCTOS APPLE & ACCESORIOS
                             </p>
                         </div>
                     </div>
 
-                    {/* Trust Badges */}
-                    <div className="flex gap-4">
-                         <div className="flex items-center gap-2 bg-[#161922] px-3 py-1.5 rounded border border-[#1e2330] text-[10px] text-slate-400">
+                    {/* Trust Badges - Wrap on small screens */}
+                    <div className="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
+                         <div className="flex items-center gap-1.5 bg-[#161922] px-2 md:px-3 py-1.5 rounded border border-[#1e2330] text-[9px] md:text-[10px] text-slate-400">
                              <span className="text-[#FFC800]"><Icons.Shield /></span>
                              <span className="uppercase font-bold">100% Auténtico</span>
                          </div>
-                         <div className="flex items-center gap-2 bg-[#161922] px-3 py-1.5 rounded border border-[#1e2330] text-[10px] text-slate-400">
+                         <div className="flex items-center gap-1.5 bg-[#161922] px-2 md:px-3 py-1.5 rounded border border-[#1e2330] text-[9px] md:text-[10px] text-slate-400">
                              <span className="text-[#FFC800]"><Icons.Truck /></span>
                              <span className="uppercase font-bold">Envío a México</span>
                          </div>
@@ -164,7 +164,7 @@ const App: React.FC = () => {
             </div>
 
             {/* ACTION BAR */}
-            <div className="z-10 flex flex-col md:flex-row items-center gap-4 w-full max-w-[1100px] px-4">
+            <div className="z-10 flex flex-col md:flex-row items-center gap-3 md:gap-4 w-full max-w-[1100px] px-4">
                 
                 {/* Quantity Selector */}
                 <div className="flex gap-2 w-full md:w-auto justify-center md:justify-start">
@@ -173,7 +173,7 @@ const App: React.FC = () => {
                           key={num} 
                           onClick={() => setQuantity(num)}
                           className={`
-                            flex-1 md:flex-none w-10 h-10 md:w-12 md:h-12 rounded md:rounded-lg font-bold text-sm transition-all border
+                            flex-1 md:flex-none w-10 h-10 md:w-12 md:h-12 rounded-lg font-black text-sm transition-all border
                             ${quantity === num 
                                 ? 'bg-[#FFC800] border-[#FFC800] text-black shadow-[0_0_15px_rgba(255,200,0,0.3)]' 
                                 : 'bg-[#161922] border-[#2a3040] text-slate-500 hover:bg-[#1e2330] hover:text-slate-300'}
@@ -208,7 +208,7 @@ const App: React.FC = () => {
 
                 {/* Options */}
                 <div className="flex gap-2 w-full md:w-auto">
-                     <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 h-12 rounded-lg bg-[#161922] border border-[#2a3040] text-slate-400 hover:text-white hover:bg-[#1e2330] transition-colors text-xs font-bold uppercase tracking-wide">
+                     <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 h-12 rounded-lg bg-[#161922] border border-[#2a3040] text-slate-400 hover:text-white hover:bg-[#1e2330] transition-colors text-xs font-black uppercase tracking-wide">
                         <Icons.Refresh />
                         <span className="block md:hidden lg:block">Demo</span>
                      </button>
@@ -253,7 +253,7 @@ const App: React.FC = () => {
                 <p className="text-slate-400 text-sm mb-8">Valor Estimado: <span className="text-[#FFC800] font-mono font-bold ml-1">${winner.price.toLocaleString()} MXN</span></p>
 
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={() => setShowModal(false)} className="py-3 bg-[#1e2330] hover:bg-[#2a3040] text-slate-300 hover:text-white border border-[#2a3040] font-bold rounded text-xs uppercase tracking-wide transition-colors">
+                    <button onClick={() => setShowModal(false)} className="py-3 bg-[#1e2330] hover:bg-[#2a3040] text-slate-300 hover:text-white border border-[#2a3040] font-black rounded text-xs uppercase tracking-wide transition-colors">
                         Vender
                     </button>
                     <button onClick={() => setShowModal(false)} className="py-3 bg-[#FFC800] hover:bg-[#EAB308] text-black font-black rounded text-xs uppercase tracking-wide transition-colors shadow-[0_0_15px_rgba(255,200,0,0.3)]">
