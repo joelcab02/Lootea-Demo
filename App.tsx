@@ -90,7 +90,7 @@ const App: React.FC = () => {
             <div className="flex items-center gap-4 w-20 md:w-auto flex-1 md:flex-none">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden text-slate-400 hover:text-white active:scale-95 transition-transform p-2 -ml-3"
+                  className="text-slate-400 hover:text-white active:scale-95 transition-transform p-2 -ml-3 mr-1"
                 >
                   <Icons.Menu />
                 </button>

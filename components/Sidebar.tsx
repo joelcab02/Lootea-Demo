@@ -32,35 +32,36 @@ interface SidebarProps {
 function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
-      {/* Mobile Overlay */}
+      {/* Overlay (Visible on all screens when open) */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar Container */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-[#0d1019] border-r border-[#1e2330] text-slate-400 shrink-0
-        transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:flex lg:flex-col
+        fixed inset-y-0 left-0 z-50 w-[320px] sm:w-[360px] bg-[#0d1019] border-r border-[#1e2330] text-slate-400 shrink-0 flex flex-col
+        transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        shadow-2xl
       `}>
         
         {/* Logo Area */}
-        <div className="h-16 lg:h-20 flex items-center justify-between px-6 border-b border-[#1e2330]">
+        <div className="h-20 flex items-center justify-between px-8 border-b border-[#1e2330]">
            <div className="flex items-center gap-3">
-             <div className="w-5 h-5"><Icons.Logo /></div>
-             <span className="font-black text-white text-lg tracking-tighter italic">LOOTEA</span>
+             <div className="w-6 h-6 text-[#FFC800]"><Icons.Logo /></div>
+             <span className="font-black text-white text-2xl tracking-tighter italic">LOOTEA</span>
            </div>
-           {/* Mobile Close Button */}
-           <button onClick={onClose} className="lg:hidden text-slate-400 hover:text-white">
+           {/* Close Button */}
+           <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-[#1e2330] rounded-lg">
              <Icons.Close />
            </button>
         </div>
   
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-6 space-y-1 px-3">
+        <div className="flex-1 overflow-y-auto py-8 space-y-2 px-6">
           <SidebarItem icon={<Icons.Box />} label="Cajas" active />
           <SidebarItem icon={<Icons.Swords />} label="Batallas" />
           <SidebarItem icon={<Icons.Refresh />} label="Ofertas" />
@@ -69,16 +70,16 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
         
         {/* Bottom Promo */}
-        <div className="p-4 border-t border-[#1e2330]">
-          <div className="bg-gradient-to-br from-[#1c202b] to-[#161922] p-4 rounded-xl border border-[#2a3040] shadow-lg group cursor-pointer relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-2 opacity-20"><Icons.Swords /></div>
-              <div className="flex justify-between items-start mb-2 relative z-10">
-                <p className="text-[10px] font-black italic uppercase tracking-tighter text-slate-500 group-hover:text-white transition-colors">Carrera Diaria</p>
-                <div className="w-2 h-2 rounded-full bg-[#FFC800] animate-pulse"></div>
+        <div className="p-6 border-t border-[#1e2330]">
+          <div className="bg-gradient-to-br from-[#1c202b] to-[#161922] p-5 rounded-2xl border border-[#2a3040] shadow-lg group cursor-pointer relative overflow-hidden hover:border-[#FFC800]/30 transition-colors">
+              <div className="absolute top-0 right-0 p-2 opacity-10 scale-150 group-hover:opacity-20 transition-opacity"><Icons.Swords /></div>
+              <div className="flex justify-between items-start mb-3 relative z-10">
+                <p className="text-xs font-black italic uppercase tracking-tighter text-slate-500 group-hover:text-white transition-colors">Carrera Diaria</p>
+                <div className="w-2 h-2 rounded-full bg-[#FFC800] animate-pulse shadow-[0_0_10px_#FFC800]"></div>
               </div>
-              <div className="text-white font-black italic font-mono text-lg mb-3 relative z-10 tracking-tighter">$100,000 MXN</div>
-              <button className="w-full py-2 bg-[#FFC800] hover:bg-[#EAB308] text-black text-xs font-black italic rounded uppercase transition-all shadow-[0_0_10px_rgba(255,200,0,0.2)] relative z-10 tracking-tighter">
-                  Participar
+              <div className="text-white font-black italic font-mono text-2xl mb-4 relative z-10 tracking-tighter">$100,000 MXN</div>
+              <button className="w-full py-3 bg-[#FFC800] hover:bg-[#EAB308] text-black text-sm font-black italic rounded-lg uppercase transition-all shadow-[0_0_15px_rgba(255,200,0,0.15)] group-hover:shadow-[0_0_25px_rgba(255,200,0,0.4)] relative z-10 tracking-tighter">
+                  Participar Ahora
               </button>
           </div>
         </div>
@@ -89,9 +90,9 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
 
 function SidebarItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
     return (
-        <button className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-black italic uppercase tracking-tighter transition-all duration-200 group ${active ? 'bg-[#1e2330] text-white shadow-inner border border-[#2a3040]' : 'text-slate-500 hover:bg-[#161922] hover:text-white border border-transparent'}`}>
+        <button className={`flex items-center gap-4 w-full px-5 py-4 rounded-xl text-sm font-black italic uppercase tracking-tighter transition-all duration-200 group ${active ? 'bg-[#1e2330] text-white shadow-inner border border-[#2a3040]' : 'text-slate-500 hover:bg-[#161922] hover:text-white border border-transparent'}`}>
             <span className={`${active ? 'text-[#FFC800]' : 'text-slate-600 group-hover:text-slate-300'}`}>{icon}</span>
-            <span>{label}</span>
+            <span className="text-base">{label}</span>
         </button>
     )
 }
