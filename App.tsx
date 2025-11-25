@@ -85,12 +85,12 @@ const App: React.FC = () => {
         <LiveDrops />
         
         {/* HEADER - OPTIMIZED FOR MOBILE PROPORTIONS */}
-        <header className="flex items-center justify-between h-[70px] md:h-[140px] px-4 md:px-16 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
+        <header className="flex items-center justify-between h-[56px] md:h-[140px] px-3 md:px-16 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
             {/* Left Nav */}
-            <div className="flex items-center gap-4 w-20 md:w-auto flex-1 md:flex-none">
+            <div className="flex items-center gap-3 w-20 md:w-auto flex-1 md:flex-none">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="text-slate-400 hover:text-white active:scale-95 transition-transform p-2 md:p-3 -ml-2 md:-ml-3 mr-2 md:mr-6"
+                  className="text-slate-400 hover:text-white active:scale-95 transition-transform p-1 md:p-3 -ml-1 md:-ml-3 mr-1 md:mr-6"
                 >
                   <Icons.Menu />
                 </button>
@@ -98,11 +98,11 @@ const App: React.FC = () => {
                 {/* Desktop Logo */}
                 <div className="hidden md:flex items-center gap-3 mr-8 cursor-pointer group select-none relative">
                     <div className="absolute inset-0 bg-[#FFC800]/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full"></div>
-                    <div className="w-10 h-10 md:w-12 md:h-12 text-[#FFC800] filter drop-shadow-[0_0_15px_rgba(255,200,0,0.6)] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 relative z-10">
+                    <div className="w-8 h-8 md:w-10 md:h-10 text-[#FFC800] filter drop-shadow-[0_0_15px_rgba(255,200,0,0.6)] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 relative z-10">
                         <Icons.Logo />
                     </div>
                     <div className="flex flex-col relative z-10 justify-center">
-                        <span className="font-gamer font-black text-3xl md:text-5xl italic tracking-tighter text-white leading-none group-hover:text-[#FFC800] transition-colors drop-shadow-lg">
+                        <span className="font-gamer font-black text-2xl md:text-4xl italic tracking-tighter text-white leading-none group-hover:text-[#FFC800] transition-colors drop-shadow-lg">
                             LOOTEA
                         </span>
                     </div>
@@ -125,23 +125,23 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* Logo Mobile - Scaled Down for better proportion */}
-            <div className="flex md:hidden items-center justify-center gap-2">
-                <div className="w-7 h-7 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
+            {/* Logo Mobile - Scaled Down */}
+            <div className="flex md:hidden items-center justify-center gap-2 absolute left-1/2 transform -translate-x-1/2">
+                <div className="w-5 h-5 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
                     <Icons.Logo />
                 </div>
-                <span className="font-gamer font-bold text-2xl italic tracking-tighter text-white select-none relative top-[1px]">
+                <span className="font-gamer font-bold text-xl italic tracking-tighter text-white select-none relative top-[1px]">
                     LOOTEA
                 </span>
             </div>
 
-            {/* Wallet - Compact on Mobile */}
+            {/* Wallet - Refined & Aesthetic */}
             <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
-                <div className="flex items-center bg-[#FFC800] rounded-lg md:rounded-xl text-black pl-3 pr-2 py-1.5 md:pl-4 md:pr-3 md:py-3 gap-2 md:gap-3 shadow-[0_0_10px_rgba(255,200,0,0.2)] md:shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:shadow-[0_0_25px_rgba(255,200,0,0.45)] transition-shadow cursor-pointer group">
-                    <span className="font-mono font-black text-xs md:text-lg tracking-tighter group-active:scale-95 transition-transform">
+                <div className="flex items-center bg-[#FFC800] rounded-md md:rounded-lg text-black pl-2.5 pr-1 py-1 md:pl-3 md:pr-1.5 md:py-1.5 gap-1.5 md:gap-2 shadow-[0_0_10px_rgba(255,200,0,0.15)] hover:shadow-[0_0_20px_rgba(255,200,0,0.3)] transition-all cursor-pointer group hover:brightness-110 active:scale-95">
+                    <span className="font-mono font-black text-xs md:text-sm tracking-tighter">
                         $2,450
                     </span>
-                    <div className="w-5 h-5 md:w-8 md:h-8 bg-black/10 rounded md:rounded-lg flex items-center justify-center group-hover:bg-black/20 transition-colors p-1 md:p-1.5">
+                    <div className="w-5 h-5 md:w-6 md:h-6 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors p-1">
                         <Icons.Plus />
                     </div>
                 </div>
