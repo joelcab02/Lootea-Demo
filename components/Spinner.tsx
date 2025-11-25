@@ -61,9 +61,11 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
     generateStrip();
   }, [generateStrip]);
 
-  // REFINED Ease Out Back
+  // REFINED Ease Out Back with Heavy Gravity
+  // The c1 constant determines overshoot. Higher = more overshoot.
+  // We want a significant overshoot that slowly pulls back.
   const easeOutBackCustom = (x: number): number => {
-    const c1 = 0.12; 
+    const c1 = 0.38; // Increased from 0.12 for more "heavy" overshoot feel
     const c3 = c1 + 1;
     return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
   };
@@ -75,7 +77,13 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
     if (!state.startTime) state.startTime = timestamp;
     
     const elapsed = timestamp - state.startTime;
-    const progress = Math.min(elapsed / state.duration, 1);
+    const rawProgress = Math.min(elapsed / state.duration, 1);
+    
+    // TIME WARP:
+    // This curve makes the "0 to 0.8" progress happen fast, 
+    // extending the time spent in the "0.8 to 1.0" range (the settling phase).
+    // This creates the suspense.
+    const progress = Math.pow(rawProgress, 0.75);
     
     const ease = easeOutBackCustom(progress);
     const totalDistance = state.targetX; 
@@ -88,14 +96,15 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
 
     const itemWidth = CARD_WIDTH + CARD_GAP;
     
-    // LOGIC CHANGE: Track the exact center crossing.
-    // Previously we added (itemWidth * 0.5) which offset the trigger to the gap.
-    // By using raw distance, floor increments exactly when the center of the card hits the needle.
-    const tickPosition = Math.abs(newX); 
+    // SOUND OFFSET:
+    // We delay the trigger slightly (-25px) so the sound hits 
+    // when the card is visually centered, rather than at the technical edge.
+    // This fixes the "sounds before the prize" feeling.
+    const tickPosition = Math.max(0, Math.abs(newX) - 25); 
     const currentIndex = Math.floor(tickPosition / itemWidth);
 
     if (currentIndex !== state.lastIndex) {
-        const isEnding = progress > 0.90; // Only consider ending very late
+        const isEnding = rawProgress > 0.85; 
         
         // OPTIMIZATION: Audio only, NO vibration in loop.
         audioService.playTick(velocityNormalized, isEnding);
@@ -107,12 +116,12 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
       containerRef.current.style.transform = `translate3d(${newX}px, 0, 0)`;
     }
 
-    if (progress < 1) {
+    if (rawProgress < 1) {
       animationFrameId.current = requestAnimationFrame(animate);
     } else {
       state.isAnimating = false;
       // Trigger a single haptic feedback on finish
-      if (navigator.vibrate) navigator.vibrate(20);
+      if (navigator.vibrate) navigator.vibrate(30);
       
       if (state.winner) {
           onSpinEnd(state.winner);
@@ -125,9 +134,8 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
         const winner = generateStrip();
         const itemWidth = CARD_WIDTH + CARD_GAP;
         
-        // LOGIC CHANGE: Removed randomOffset.
-        // This ensures the spinner stops EXACTLY at the center of the winning card,
-        // simulating a "gravity" or "magnetic" pull to the center.
+        // LOGIC: Target X is exactly the center of the winning index.
+        // The easing function handles the overshoot and return.
         const targetX = -1 * (WINNING_INDEX * itemWidth);
 
         // Use custom duration if provided, otherwise default
