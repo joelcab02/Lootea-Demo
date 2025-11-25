@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { ITEMS_DB, RARITY_COLORS } from '../constants';
 
-export default function CaseContentGrid() {
+const CaseContentGrid = () => {
   // Sort items: Legendary first, then price descending
   const sortedItems = [...ITEMS_DB].sort((a, b) => b.price - a.price);
 
@@ -39,7 +39,7 @@ export default function CaseContentGrid() {
 
                     {/* Name */}
                     <div className="text-center w-full mb-2">
-                        <div className={`text-[11px] md:text-xs font-bold leading-tight text-white group-hover:text-[#FFC800] transition-colors tracking-wide uppercase h-8 flex items-center justify-center`}>
+                        <div className={`text-[11px] md:text-xs font-black leading-tight text-white group-hover:text-[#FFC800] transition-colors tracking-wide uppercase h-8 flex items-center justify-center`}>
                             {item.name}
                         </div>
                     </div>
@@ -54,7 +54,13 @@ export default function CaseContentGrid() {
                                 {item.image}
                             </span>
                         ) : (
-                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                            <img 
+                                src={item.image} 
+                                alt={item.name} 
+                                className="w-full h-full object-contain" 
+                                loading="lazy" 
+                                decoding="async"
+                            />
                         )}
                     </div>
                 </div>
@@ -84,3 +90,5 @@ export default function CaseContentGrid() {
     </div>
   );
 }
+
+export default memo(CaseContentGrid);

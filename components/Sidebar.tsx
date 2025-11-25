@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 const Icons = {
   Box: () => (
@@ -29,7 +29,7 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       {/* Mobile Overlay */}
@@ -89,9 +89,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
 function SidebarItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
     return (
-        <button className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-bold transition-all duration-200 group ${active ? 'bg-[#1e2330] text-white shadow-inner border border-[#2a3040]' : 'text-slate-500 hover:bg-[#161922] hover:text-white border border-transparent'}`}>
+        <button className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-black uppercase tracking-wide transition-all duration-200 group ${active ? 'bg-[#1e2330] text-white shadow-inner border border-[#2a3040]' : 'text-slate-500 hover:bg-[#161922] hover:text-white border border-transparent'}`}>
             <span className={`${active ? 'text-[#FFC800]' : 'text-slate-600 group-hover:text-slate-300'}`}>{icon}</span>
             <span>{label}</span>
         </button>
     )
 }
+
+export default memo(Sidebar);

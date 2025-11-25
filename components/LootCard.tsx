@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { LootItem, Rarity } from '../types';
 import { RARITY_BG_GLOW } from '../constants';
 
@@ -16,14 +16,14 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false }) => {
 
   return (
     <div 
-      className="relative flex-shrink-0 flex flex-col items-center justify-center h-full select-none group"
+      className="relative flex-shrink-0 flex flex-col items-center justify-center h-full select-none group will-change-transform"
       style={{ width: `${width}px` }}
     >
       {/* THE GLOW (Behind item) */}
       <div 
         className={`
           absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-          w-20 h-20 sm:w-28 sm:h-28 rounded-full blur-[40px] opacity-10 group-hover:opacity-30 transition-opacity duration-500
+          w-20 h-20 sm:w-28 sm:h-28 rounded-full blur-[30px] opacity-10 group-hover:opacity-30 transition-opacity duration-500
           ${glowColorClass}
         `}
       ></div>
@@ -40,6 +40,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false }) => {
               alt={item.name}
               className="w-full h-full object-contain drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]"
               loading="eager"
+              draggable={false}
             />
         )}
       </div>
@@ -63,4 +64,4 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false }) => {
   );
 };
 
-export default LootCard;
+export default memo(LootCard);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 const Icons = {
     ShieldCheck: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>,
@@ -12,7 +12,7 @@ const Icons = {
     }
 };
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className="bg-[#0a0c10] border-t border-[#1e2330] pt-12 pb-8">
         <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
@@ -142,3 +142,5 @@ function SocialButton({ icon }: { icon: React.ReactNode }) {
         </a>
     )
 }
+
+export default memo(Footer);
