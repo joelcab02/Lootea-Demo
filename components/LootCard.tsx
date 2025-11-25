@@ -14,6 +14,15 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
   
   const isEmoji = !item.image.startsWith('http');
 
+  // Dynamic sizing based on context (Spinner needs to be more compact now)
+  const imageSizeClass = isSpinner 
+    ? 'w-24 h-24 sm:w-32 sm:h-32' 
+    : 'w-32 h-32 sm:w-44 sm:h-44';
+
+  const emojiSizeClass = isSpinner
+    ? 'text-6xl sm:text-7xl'
+    : 'text-7xl sm:text-8xl';
+
   return (
     <div 
       className={`relative flex-shrink-0 flex flex-col items-center justify-center h-full select-none ${isSpinner ? 'pointer-events-none' : 'group'}`}
@@ -30,10 +39,10 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
         ></div>
       )}
       
-      {/* Image Container - Significantly Larger on Mobile */}
-      <div className={`relative z-10 w-32 h-32 sm:w-44 sm:h-44 mb-3 sm:mb-5 flex items-center justify-center ${!isSpinner ? 'transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1' : ''}`}>
+      {/* Image Container */}
+      <div className={`relative z-10 ${imageSizeClass} mb-2 sm:mb-4 flex items-center justify-center ${!isSpinner ? 'transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1' : ''}`}>
         {isEmoji ? (
-             <span className={`text-7xl sm:text-8xl select-none ${!isSpinner ? 'filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform transition-transform' : ''}`}>
+             <span className={`${emojiSizeClass} select-none ${!isSpinner ? 'filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform transition-transform' : ''}`}>
                  {item.image}
              </span>
         ) : (
@@ -51,12 +60,12 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
       {/* Text Info - Bolder and Larger */}
       <div className="relative z-10 text-center w-full px-2">
         
-        <h3 className={`font-black italic text-white text-sm sm:text-lg leading-tight uppercase tracking-tighter truncate w-full mb-2 opacity-90 ${!isSpinner && 'group-hover:opacity-100 transition-opacity'}`}>
+        <h3 className={`font-black italic text-white text-sm sm:text-lg leading-tight uppercase tracking-tighter truncate w-full mb-1 sm:mb-2 opacity-90 ${!isSpinner && 'group-hover:opacity-100 transition-opacity'}`}>
           {item.name}
         </h3>
         
         {/* Price tag optimized for spinning visibility */}
-        <div className={`inline-flex items-center justify-center bg-[#0d1019]/90 border border-[#2a3040] rounded px-3 py-1 shadow-sm ${!isSpinner && 'backdrop-blur-sm group-hover:border-[#FFC800]/50 transition-colors'}`}>
+        <div className={`inline-flex items-center justify-center bg-[#0d1019]/90 border border-[#2a3040] rounded px-2 py-0.5 sm:px-3 sm:py-1 shadow-sm ${!isSpinner && 'backdrop-blur-sm group-hover:border-[#FFC800]/50 transition-colors'}`}>
             <span className="text-[#FFC800] font-mono font-bold text-xs sm:text-sm tracking-tighter">
               ${item.price.toLocaleString('es-MX')}
             </span>

@@ -5,6 +5,7 @@ import CaseContentGrid from './components/CaseContentGrid';
 import Footer from './components/Footer';
 import LiveDrops from './components/LiveDrops';
 import HowItWorks from './components/HowItWorks';
+import AssetGenerator from './components/AssetGenerator'; // New Import
 import { LootItem, Rarity } from './types';
 import { audioService } from './services/audioService';
 import { RARITY_COLORS } from './constants';
@@ -25,7 +26,8 @@ const Icons = {
   Logo: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#FFC800" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
   ChevronRight: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>,
   Volume2: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>,
-  VolumeX: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+  VolumeX: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>,
+  Paint: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
 };
 
 const App: React.FC = () => {
@@ -39,6 +41,7 @@ const App: React.FC = () => {
   const [fastMode, setFastMode] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [generatorOpen, setGeneratorOpen] = useState(false); // Generator state
 
   const BOX_PRICE = 99.00;
 
@@ -86,117 +89,131 @@ const App: React.FC = () => {
       {/* SIDEBAR */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
+      {/* ASSET GENERATOR (MODAL) */}
+      <AssetGenerator isOpen={generatorOpen} onClose={() => setGeneratorOpen(false)} />
+
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
         
         {/* LIVE DROP TICKER */}
         <LiveDrops />
         
-        {/* HEADER - OPTIMIZED FOR MOBILE PROPORTIONS */}
-        <header className="flex items-center justify-between h-[56px] md:h-[140px] px-3 md:px-16 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
+        {/* HEADER - COMPACTED FOR ATF */}
+        <header className="flex items-center justify-between h-[52px] md:h-[100px] px-3 md:px-12 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
             {/* Left Nav */}
             <div className="flex items-center gap-3 w-20 md:w-auto flex-1 md:flex-none">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="text-slate-400 hover:text-white active:scale-95 transition-transform p-1 md:p-3 -ml-1 md:-ml-3 mr-1 md:mr-6"
+                  className="text-slate-400 hover:text-white active:scale-95 transition-transform p-1 md:p-3 -ml-1 md:-ml-3 mr-1 md:mr-4"
                 >
                   <Icons.Menu />
                 </button>
                 
                 {/* Desktop Logo */}
-                <div className="hidden md:flex items-center gap-3 mr-8 cursor-pointer group select-none relative">
+                <div className="hidden md:flex items-center gap-3 mr-6 cursor-pointer group select-none relative">
                     <div className="absolute inset-0 bg-[#FFC800]/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full"></div>
-                    <div className="w-8 h-8 md:w-10 md:h-10 text-[#FFC800] filter drop-shadow-[0_0_15px_rgba(255,200,0,0.6)] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 relative z-10">
+                    <div className="w-8 h-8 md:w-8 md:h-8 text-[#FFC800] filter drop-shadow-[0_0_15px_rgba(255,200,0,0.6)] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 relative z-10">
                         <Icons.Logo />
                     </div>
                     <div className="flex flex-col relative z-10 justify-center">
-                        <span className="font-gamer font-black text-2xl md:text-4xl italic tracking-tighter text-white leading-none group-hover:text-[#FFC800] transition-colors drop-shadow-lg">
+                        <span className="font-gamer font-black text-2xl md:text-3xl italic tracking-tighter text-white leading-none group-hover:text-[#FFC800] transition-colors drop-shadow-lg">
                             LOOTEA
                         </span>
                     </div>
                 </div>
 
                 {/* Divider & Breadcrumbs */}
-                <div className="hidden lg:flex items-center gap-4 text-sm pl-8 border-l border-[#1e2330] h-16 ml-2">
+                <div className="hidden lg:flex items-center gap-4 text-sm pl-6 border-l border-[#1e2330] h-12 ml-2">
                     <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group">
                          <div className="group-hover:-translate-x-1 transition-transform">
                             <Icons.ArrowLeft />
                          </div>
-                         <span className="font-black italic uppercase tracking-tighter text-xs md:text-sm">Regresar</span>
+                         <span className="font-black italic uppercase tracking-tighter text-xs">Regresar</span>
                     </button>
                     <span className="text-slate-700">|</span>
                     <div className="flex items-center gap-2 text-slate-400">
-                        <span className="font-bold uppercase tracking-tight text-[11px] md:text-xs cursor-pointer hover:text-white transition-colors">Cajas</span>
+                        <span className="font-bold uppercase tracking-tight text-[11px] cursor-pointer hover:text-white transition-colors">Cajas</span>
                         <div className="text-slate-600"><Icons.ChevronRight /></div>
-                        <span className="font-bold uppercase tracking-tight text-[11px] md:text-xs text-[#FFC800]">Apple Collection</span>
+                        <span className="font-bold uppercase tracking-tight text-[11px] text-[#FFC800]">Apple Collection</span>
                     </div>
                 </div>
             </div>
 
             {/* Logo Mobile - Scaled Down */}
             <div className="flex md:hidden items-center justify-center gap-2 absolute left-1/2 transform -translate-x-1/2">
-                <div className="w-5 h-5 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
+                <div className="w-4 h-4 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
                     <Icons.Logo />
                 </div>
-                <span className="font-gamer font-bold text-xl italic tracking-tighter text-white select-none relative top-[1px]">
+                <span className="font-gamer font-bold text-lg italic tracking-tighter text-white select-none relative top-[1px]">
                     LOOTEA
                 </span>
             </div>
 
-            {/* Wallet - Refined & Aesthetic */}
+            {/* Right Actions: Asset Gen + Wallet */}
             <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
-                <div className="flex items-center bg-[#FFC800] rounded-md md:rounded-lg text-black pl-2.5 pr-1 py-1 md:pl-3 md:pr-1.5 md:py-1.5 gap-1.5 md:gap-2 shadow-[0_0_10px_rgba(255,200,0,0.15)] hover:shadow-[0_0_20px_rgba(255,200,0,0.3)] transition-all cursor-pointer group hover:brightness-110 active:scale-95">
-                    <span className="font-mono font-black text-xs md:text-sm tracking-tighter">
+                
+                {/* CREATE ASSETS BUTTON - VISIBLE NOW */}
+                <button 
+                    onClick={() => setGeneratorOpen(true)}
+                    className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#2a3040] hover:border-[#FFC800] hover:text-[#FFC800] text-slate-400 text-[10px] font-black italic uppercase tracking-tighter transition-all active:scale-95 group"
+                >
+                    <Icons.Paint />
+                    <span>Crear Assets</span>
+                </button>
+
+                {/* Wallet - Refined & Aesthetic */}
+                <div className="flex items-center bg-[#FFC800] rounded-md md:rounded-lg text-black pl-2 pr-1 py-1 md:pl-2.5 md:pr-1.5 md:py-1.5 gap-1 shadow-[0_0_10px_rgba(255,200,0,0.15)] hover:shadow-[0_0_20px_rgba(255,200,0,0.3)] transition-all cursor-pointer group hover:brightness-110 active:scale-95">
+                    <span className="font-mono font-black text-[10px] md:text-xs tracking-tighter">
                         $2,450
                     </span>
-                    <div className="w-5 h-5 md:w-6 md:h-6 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors p-1">
+                    <div className="w-4 h-4 md:w-5 md:h-5 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors p-0.5">
                         <Icons.Plus />
                     </div>
                 </div>
             </div>
         </header>
 
-        {/* TRUST BAR - FAIRNESS & SOUND */}
-        <div className="w-full bg-[#13151b] border-b border-[#1e2330] flex items-center justify-between px-3 md:px-16 py-2 select-none z-30 relative">
+        {/* TRUST BAR - COMPACT */}
+        <div className="w-full bg-[#13151b] border-b border-[#1e2330] flex items-center justify-between px-3 md:px-12 py-1.5 select-none z-30 relative h-[36px]">
             <div className="flex items-center gap-2">
-                <div className="text-green-500">
+                <div className="text-green-500 scale-90">
                     <Icons.ShieldCheck />
                 </div>
-                <span className="text-slate-300 font-black italic uppercase tracking-tighter text-[10px] md:text-xs leading-none mt-[1px]">
+                <span className="text-slate-300 font-black italic uppercase tracking-tighter text-[9px] md:text-[10px] leading-none mt-[1px]">
                     Fairness Guaranteed
                 </span>
             </div>
             
             <button 
                 onClick={() => setIsMuted(!isMuted)}
-                className="text-slate-500 hover:text-white transition-colors flex items-center gap-2 active:scale-95 p-1"
+                className="text-slate-500 hover:text-white transition-colors flex items-center gap-2 active:scale-95 p-1 scale-90"
                 title={isMuted ? "Unmute" : "Mute"}
             >
                 {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
             </button>
         </div>
 
-        {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative shrink-0">
+        {/* HERO AREA - TIGHTER VERTICAL SPACING */}
+        <div className="flex flex-col items-center pt-3 md:pt-6 pb-4 relative shrink-0">
             
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none gpu-accelerate"></div>
             
-            <div className="z-10 text-center mb-6 md:mb-8 w-full max-w-[1100px] px-4">
-                <div className="flex flex-col items-center gap-2">
-                    <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-1">
-                        <span className="text-lg">📱</span>
-                        <span className="text-[10px] font-black uppercase italic tracking-tighter bg-[#FFC800]/10 px-2 py-0.5 rounded border border-[#FFC800]/20">
+            <div className="z-10 text-center mb-3 md:mb-5 w-full max-w-[1100px] px-4">
+                <div className="flex flex-col items-center gap-1">
+                    <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-0.5">
+                        <span className="text-base md:text-lg">📱</span>
+                        <span className="text-[9px] md:text-[10px] font-black uppercase italic tracking-tighter bg-[#FFC800]/10 px-2 py-0.5 rounded border border-[#FFC800]/20">
                             Apple Collection
                         </span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-105 leading-[0.9]">
+                    <h1 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-105 leading-[0.9]">
                         1% iPhone Box
                     </h1>
                 </div>
             </div>
 
-            {/* SPINNER - WIDER */}
-            <div className="w-full max-w-[1600px] px-0 z-10 mb-8 md:mb-10">
+            {/* SPINNER - COMPACT HEIGHT */}
+            <div className="w-full max-w-[1600px] px-0 z-10 mb-4 md:mb-6">
                 <Spinner 
                     isSpinning={isSpinning} 
                     onSpinStart={() => {}} 
@@ -205,20 +222,20 @@ const App: React.FC = () => {
                 />
             </div>
 
-            {/* COCKPIT CONTROLS - WIDER */}
-            <div className="z-20 w-full max-w-[1200px] px-4">
-                <div className="bg-[#161922] border border-[#2a3040] p-3 md:p-4 rounded-3xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-visible">
+            {/* COCKPIT CONTROLS - COMPACT & ACCESSIBLE */}
+            <div className="z-20 w-full max-w-[1100px] px-3 md:px-4">
+                <div className="bg-[#161922] border border-[#2a3040] p-2 md:p-3 rounded-2xl md:rounded-3xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6 relative overflow-visible">
                     
                     {/* LEFT GROUP: TOOLS */}
-                    <div className="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start">
+                    <div className="flex items-center gap-2 w-full md:w-auto justify-center md:justify-start order-2 md:order-1">
                         {/* Quantity */}
-                        <div className="flex bg-[#0d1019] rounded-xl p-1 border border-[#1e2330]">
+                        <div className="flex bg-[#0d1019] rounded-lg p-1 border border-[#1e2330]">
                             {[1, 2, 3, 4, 5].map(num => (
                                 <button 
                                 key={num} 
                                 onClick={() => setQuantity(num)}
                                 className={`
-                                    w-10 h-10 md:w-10 md:h-12 rounded-lg font-black italic text-base transition-all flex items-center justify-center
+                                    w-8 h-8 md:w-9 md:h-10 rounded-md font-black italic text-sm transition-all flex items-center justify-center
                                     ${quantity === num 
                                         ? 'bg-[#2a3040] text-[#FFC800] shadow-sm z-10' 
                                         : 'text-slate-500 hover:text-slate-300 hover:bg-[#1e2330]'}
@@ -233,7 +250,7 @@ const App: React.FC = () => {
                         <button 
                             onClick={() => setFastMode(!fastMode)}
                             className={`
-                                h-12 w-12 md:h-[58px] md:w-[58px] rounded-xl flex items-center justify-center border transition-all duration-200
+                                h-10 w-10 md:h-[48px] md:w-[48px] rounded-lg flex items-center justify-center border transition-all duration-200
                                 ${fastMode 
                                     ? 'bg-[#FFC800]/10 border-[#FFC800] text-[#FFC800] shadow-[0_0_15px_rgba(255,200,0,0.2)]' 
                                     : 'bg-[#0d1019] border-[#1e2330] text-slate-500 hover:text-slate-300 hover:border-[#2a3040]'}
@@ -244,57 +261,55 @@ const App: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* CENTER: MAIN ACTION BUTTON */}
-                    <div className="w-full md:w-auto flex-1 flex justify-center">
+                    {/* CENTER: MAIN ACTION BUTTON - PRIMARY VISUAL WEIGHT */}
+                    <div className="w-full md:w-auto flex-1 flex justify-center order-1 md:order-2">
                         <button 
                             onClick={handleSpin}
                             disabled={isSpinning}
                             className={`
-                                group relative w-full md:w-80
-                                h-24 md:h-20
+                                group relative w-full md:w-72
+                                h-16 md:h-16
                                 bg-[#FFC800] hover:bg-[#ffcf33]
-                                text-black font-black uppercase tracking-tighter text-4xl md:text-3xl italic
+                                text-black font-black uppercase tracking-tighter text-2xl md:text-3xl italic
                                 rounded-xl
                                 transition-all duration-100 ease-out
-                                shadow-[0_6px_0_#b38b00] active:shadow-none
-                                translate-y-0 active:translate-y-[6px] active:mt-[6px] active:mb-0
+                                shadow-[0_4px_0_#b38b00] active:shadow-none
+                                translate-y-0 active:translate-y-[4px] active:mt-[4px] active:mb-0
                                 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
                                 flex flex-col items-center justify-center overflow-hidden
                             `}
-                            style={{marginBottom: isSpinning ? '0px' : '6px'}}
+                            style={{marginBottom: isSpinning ? '0px' : '4px'}}
                         >
                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
 
                            {isSpinning ? (
-                               <span className="animate-pulse opacity-80 text-2xl">ABRIENDO...</span>
+                               <span className="animate-pulse opacity-80 text-xl">ABRIENDO...</span>
                            ) : (
-                               <>
-                                <div className="flex items-center gap-3 z-10">
-                                    <span className="drop-shadow-sm group-hover:scale-105 transition-transform">ABRIR</span>
-                                </div>
-                                <div className="text-sm font-bold font-mono bg-black/10 px-3 rounded text-black/70 mt-1">
-                                    ${(BOX_PRICE * quantity).toFixed(2)}
-                                </div>
-                               </>
+                               <div className="flex flex-row items-baseline gap-3">
+                                   <span>ABRIR</span>
+                                   <span className="text-sm font-bold font-mono text-black/60 bg-black/10 px-2 rounded">
+                                       ${(BOX_PRICE * quantity).toFixed(2)}
+                                   </span>
+                               </div>
                            )}
                         </button>
                     </div>
 
                     {/* RIGHT GROUP: DEMO SWITCH */}
-                    <div className="flex items-center justify-center md:justify-end w-full md:w-auto">
+                    <div className="flex items-center justify-center md:justify-end w-full md:w-auto order-3">
                         <div 
-                            className="bg-[#0d1019] border border-[#1e2330] rounded-xl p-1.5 flex items-center cursor-pointer relative"
+                            className="bg-[#0d1019] border border-[#1e2330] rounded-lg p-1 flex items-center cursor-pointer relative"
                             onClick={() => setDemoMode(!demoMode)}
                         >
                             <div className={`
-                                absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-[#2a3040] rounded-lg transition-all duration-300
-                                ${demoMode ? 'left-[calc(50%+3px)] bg-blue-500/20' : 'left-1.5'}
+                                absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#2a3040] rounded-md transition-all duration-300
+                                ${demoMode ? 'left-[calc(50%+2px)] bg-blue-500/20' : 'left-1'}
                             `}></div>
                             
-                            <div className={`px-4 py-2 rounded-lg text-xs font-black italic uppercase tracking-tighter relative z-10 transition-colors ${!demoMode ? 'text-white' : 'text-slate-500'}`}>
+                            <div className={`px-3 py-1.5 rounded-md text-[10px] font-black italic uppercase tracking-tighter relative z-10 transition-colors ${!demoMode ? 'text-white' : 'text-slate-500'}`}>
                                 Real
                             </div>
-                            <div className={`px-4 py-2 rounded-lg text-xs font-black italic uppercase tracking-tighter relative z-10 transition-colors ${demoMode ? 'text-blue-400' : 'text-slate-500'}`}>
+                            <div className={`px-3 py-1.5 rounded-md text-[10px] font-black italic uppercase tracking-tighter relative z-10 transition-colors ${demoMode ? 'text-blue-400' : 'text-slate-500'}`}>
                                 Demo
                             </div>
                         </div>
@@ -305,12 +320,12 @@ const App: React.FC = () => {
         </div>
 
         {/* CONTENT SECTIONS SPACER */}
-        <div className="flex flex-col gap-16 space-y-16 pb-16">
+        <div className="flex flex-col gap-12 space-y-12 pb-16">
             <CaseContentGrid />
             <HowItWorks />
         </div>
 
-        <Footer />
+        <Footer onOpenGenerator={() => setGeneratorOpen(true)} />
 
       {/* WIN MODAL */}
       {showModal && winner && (

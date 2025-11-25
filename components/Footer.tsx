@@ -5,6 +5,7 @@ const Icons = {
     RefreshCW: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
     Truck: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>,
     Logo: () => <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFC800" stroke="none"><path d="M2 9l10-5 10 5v10l-10 5-10-5V9z" /></svg>,
+    Wrench: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
     Social: {
         X: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z" /><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" /></svg>,
         Insta: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>,
@@ -12,7 +13,11 @@ const Icons = {
     }
 };
 
-function Footer() {
+interface FooterProps {
+    onOpenGenerator?: () => void;
+}
+
+function Footer({ onOpenGenerator }: FooterProps) {
   return (
     <footer className="bg-[#0a0c10] border-t border-[#1e2330] pt-12 pb-8">
         <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
@@ -97,10 +102,14 @@ function Footer() {
                 </div>
             </div>
 
-            <div className="text-center pt-8 border-t border-[#1e2330]">
+            <div className="text-center pt-8 border-t border-[#1e2330] flex flex-col items-center gap-4">
                 <p className="text-slate-600 text-xs font-black italic uppercase tracking-tighter">
                     &copy; 2025 LOOTEA MÉXICO. TODOS LOS DERECHOS RESERVADOS.
                 </p>
+                {/* ADMIN TRIGGER */}
+                <button onClick={onOpenGenerator} className="text-[#1e2330] hover:text-[#FFC800] transition-colors p-2" title="Asset Generator">
+                    <Icons.Wrench />
+                </button>
             </div>
         </div>
     </footer>
