@@ -123,13 +123,13 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-4 md:pt-10 pb-6 relative">
+        <div className="flex flex-col items-center pt-4 md:pt-8 pb-6 relative">
             
             {/* Ambient Glow */}
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none"></div>
             
             {/* Box Info - Compact on Mobile */}
-            <div className="z-10 text-center mb-3 md:mb-8 w-full max-w-[1100px] px-4">
+            <div className="z-10 text-center mb-4 md:mb-8 w-full max-w-[1100px] px-4">
                 <div className="flex flex-col items-center gap-1">
                     <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-1">
                         <span className="text-xl">📱</span>
@@ -137,14 +137,14 @@ const App: React.FC = () => {
                             Apple Collection
                         </span>
                     </div>
-                    <h1 className="text-2xl md:text-4xl font-black text-white uppercase italic tracking-tighter drop-shadow-lg">
+                    <h1 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-110">
                         1% iPhone Box
                     </h1>
                 </div>
             </div>
 
             {/* SPINNER */}
-            <div className="w-full max-w-[1200px] px-0 md:px-4 z-10 mb-4 md:mb-8">
+            <div className="w-full max-w-[1200px] px-0 md:px-4 z-10 mb-6 md:mb-8">
                 <Spinner 
                     isSpinning={isSpinning} 
                     onSpinStart={() => {}} 
@@ -152,64 +152,68 @@ const App: React.FC = () => {
                 />
             </div>
 
-            {/* ACTION CONTROLS - RE-DESIGNED BUTTON */}
-            <div className="z-10 w-full max-w-[1200px] px-4">
-                <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 bg-[#161922] border border-[#2a3040] p-4 rounded-2xl shadow-xl">
+            {/* ACTION CONTROLS - UNIFIED DESIGN (Mobile & Desktop) */}
+            <div className="z-20 w-full max-w-[1000px] px-4">
+                {/* 
+                   CONTROL PANEL CONTAINER
+                   The border and background create a unified "console" feel.
+                   On mobile it stacks, on desktop it's side-by-side, but the aesthetic is 100% matched.
+                */}
+                <div className="bg-[#161922] border border-[#2a3040] p-3 md:p-5 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-4 md:gap-6 items-stretch relative overflow-hidden">
                     
-                    {/* Quantity Selector */}
-                    <div className="w-full md:w-auto overflow-x-auto no-scrollbar">
-                      <div className="flex gap-2 min-w-max mx-auto md:mx-0 justify-center">
-                          {[1, 2, 3, 4, 5].map(num => (
-                              <button 
-                                key={num} 
-                                onClick={() => setQuantity(num)}
-                                className={`
-                                  w-12 h-12 md:w-14 md:h-14 rounded-xl font-black italic text-sm md:text-lg transition-all border flex items-center justify-center
-                                  ${quantity === num 
-                                      ? 'bg-[#2a3040] border-[#FFC800] text-[#FFC800] shadow-[0_0_10px_rgba(255,200,0,0.2)]' 
-                                      : 'bg-[#0d1019] border-[#2a3040] text-slate-500 hover:bg-[#1e2330] hover:text-slate-300'}
-                                `}
-                              >
-                                  {num}
-                              </button>
-                          ))}
-                      </div>
+                    {/* Subtle panel reflection/glow */}
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+                    {/* Quantity Selector - SOLID BAR (No Scroll) */}
+                    <div className="flex bg-[#0d1019] rounded-xl p-1.5 border border-[#1e2330] shrink-0 w-full md:w-auto items-center">
+                      {/* Using flex-1 on buttons ensures they fill the width evenly on mobile */}
+                      {[1, 2, 3, 4, 5].map(num => (
+                          <button 
+                            key={num} 
+                            onClick={() => setQuantity(num)}
+                            className={`
+                              flex-1 md:w-14 h-11 md:h-14 rounded-lg font-black italic text-sm md:text-xl transition-all flex items-center justify-center relative
+                              ${quantity === num 
+                                  ? 'bg-[#2a3040] border border-[#FFC800] text-[#FFC800] shadow-[0_0_15px_rgba(255,200,0,0.15)] z-10' 
+                                  : 'text-slate-500 hover:text-slate-300 hover:bg-[#1e2330]'}
+                            `}
+                          >
+                              {num}
+                          </button>
+                      ))}
                     </div>
 
-                    <div className="hidden md:block w-px h-12 bg-[#2a3040] mx-2"></div>
-
-                    {/* NEW 3D TACTILE BUTTON */}
+                    {/* NEW 3D TACTILE BUTTON - Full Width/Height Match */}
                     <button 
                         onClick={handleSpin}
                         disabled={isSpinning}
                         className={`
-                            group relative w-full flex-1
-                            h-14 md:h-20
+                            group relative flex-1
+                            h-16 md:h-auto
                             bg-[#FFC800] hover:bg-[#ffcf33]
-                            text-black font-black uppercase tracking-tighter text-2xl md:text-3xl italic
+                            text-black font-black uppercase tracking-tighter text-2xl md:text-4xl italic
                             rounded-xl
                             transition-all duration-100 ease-out
-                            shadow-[0_8px_0_#b38b00] active:shadow-none
-                            translate-y-0 active:translate-y-[8px]
+                            shadow-[0_6px_0_#b38b00] active:shadow-none
+                            translate-y-0 active:translate-y-[6px] active:mt-[6px] active:mb-0
                             disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
-                            flex items-center justify-between px-6 md:px-10
+                            flex items-center justify-between px-6 md:px-10 overflow-hidden
                         `}
+                        style={{marginBottom: isSpinning ? '0px' : '6px'}} // Spacer for the shadow
                     >
+                       {/* Sheen Effect */}
+                       <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
+
                        {isSpinning ? (
-                           <span className="w-full text-center animate-pulse text-lg tracking-tighter">Abriendo...</span>
+                           <span className="w-full text-center animate-pulse text-xl tracking-tighter opacity-80">ABRIENDO...</span>
                        ) : (
                            <>
-                            <span className="drop-shadow-sm transform group-hover:scale-105 transition-transform">ABRIR CAJA</span>
-                            <div className="bg-black/20 px-3 md:px-4 py-1 rounded-md font-mono text-base md:text-xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter">
+                            <span className="drop-shadow-sm transform group-hover:scale-105 transition-transform z-10">ABRIR</span>
+                            <div className="bg-black/20 px-3 md:px-5 py-1.5 rounded-lg font-mono text-base md:text-2xl font-black text-black/90 group-hover:bg-black/25 transition-colors tracking-tighter z-10 border border-black/5">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </div>
                            </>
                        )}
-                    </button>
-
-                    {/* Mobile: Demo Toggle */}
-                    <button className="md:hidden absolute top-2 right-2 text-[9px] text-slate-600 font-bold uppercase p-2 tracking-tighter">
-                        Demo
                     </button>
                 </div>
             </div>

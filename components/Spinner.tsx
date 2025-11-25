@@ -142,7 +142,7 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd })
   const stripWidth = strip.length * (CARD_WIDTH + CARD_GAP);
 
   return (
-    <div className="relative w-full h-[150px] sm:h-[240px] overflow-hidden bg-[#0a0c10] border-y-2 border-[#1e2330] flex items-center shadow-inner transition-all duration-300">
+    <div className="relative w-full h-[180px] sm:h-[240px] overflow-hidden bg-[#0a0c10] border-y-2 border-[#1e2330] flex items-center shadow-inner transition-all duration-300">
         
         {/* Center Indicator Line */}
         <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#FFC800] z-30 transform -translate-x-1/2 shadow-[0_0_20px_#FFC800] opacity-90"></div>
