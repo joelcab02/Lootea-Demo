@@ -42,27 +42,30 @@ const AssetGenerator: React.FC<AssetGeneratorProps> = ({ isOpen, onClose }) => {
         if (bgMode === 'black') bgHex = '#000000';
 
         // 4. Construct the "Packdraw Style" Prompt
+        // REFINED: Added explicit centering, padding, and zoom instructions.
         const prompt = `
-            A professional, high-fidelity 3D product render of ${selectedItem.name}.
+            Generate a professional, hyper-realistic 3D product render of: ${selectedItem.name}.
             
-            Style & Composition:
-            - Isometric perspective, object floating in the center of the frame.
-            - Unreal Engine 5 render style, hyper-realistic, 8k resolution.
-            - Sleek, premium, glossy materials. High contrast.
+            CRITICAL COMPOSITION RULES:
+            1. CENTER THE OBJECT: The product must be strictly in the absolute center of the square frame.
+            2. ADD PADDING: Camera must be zoomed out slightly to leave 15% empty space (margin) around the object on all sides. DO NOT cut off the edges.
+            3. FULL VISIBILITY: The entire silhouette of the object must be visible.
             
-            Lighting:
-            - Cinematic studio lighting.
-            - Main key light from top-left.
-            - Strong yellow and gold rim lighting (color #FFC800) to accentuate the edges and silhouette.
+            Style & Lighting:
+            - Isometric view, floating in the air.
+            - Unreal Engine 5 render style, 8k resolution, highly detailed textures.
+            - Glossy, premium finish.
+            - Cinematic lighting: Main light from top-left, strong RIM LIGHTS in Gold (#FFC800) to separate the object from the background.
             
             Background:
-            - Solid, flat, matte color hex code ${bgHex}.
-            - ABSOLUTELY NO SHADOWS CAST ON THE FLOOR (Object is floating).
-            - The background must be exactly ${bgHex} so it can be removed or blended easily.
+            - Solid, flat, matte color hex code: ${bgHex}.
+            - ABSOLUTELY NO SHADOWS CAST ON THE FLOOR (Object is floating in void).
+            - The background must be a uniform single color (${bgHex}) for perfect blending.
             
             Restrictions:
-            - No text, no labels, no watermarks, no logos other than the product's own branding.
-            - Just the isolated product centered.
+            - No text, no labels, no watermarks.
+            - No background props or podiums.
+            - Just the isolated product.
         `;
 
         // 5. Call API
