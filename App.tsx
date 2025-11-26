@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Spinner from './components/Spinner';
 import Sidebar from './components/Sidebar';
 import CaseContentGrid from './components/CaseContentGrid';
@@ -7,8 +7,8 @@ import LiveDrops from './components/LiveDrops';
 import HowItWorks from './components/HowItWorks';
 import AssetGenerator from './components/AssetGenerator'; // New Import
 import { LootItem, Rarity } from './types';
+import { ITEMS_DB, RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';
-import { RARITY_COLORS } from './constants';
 
 // SVG Icons for App
 const Icons = {
@@ -31,6 +31,7 @@ const Icons = {
 };
 
 const App: React.FC = () => {
+  const [items, setItems] = useState<LootItem[]>(ITEMS_DB); // Dynamic Items State
   const [isSpinning, setIsSpinning] = useState(false);
   const [winner, setWinner] = useState<LootItem | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -48,6 +49,13 @@ const App: React.FC = () => {
   useEffect(() => {
     audioService.setMute(isMuted);
   }, [isMuted]);
+
+  // Function to update item assets dynamically (from Asset Generator)
+  const handleUpdateItem = useCallback((id: string, newImage: string) => {
+    setItems(prevItems => prevItems.map(item => 
+        item.id === id ? { ...item, image: newImage } : item
+    ));
+  }, []);
 
   const handleSpin = () => {
     if (isSpinning) return;
@@ -90,13 +98,17 @@ const App: React.FC = () => {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* ASSET GENERATOR (MODAL) */}
-      <AssetGenerator isOpen={generatorOpen} onClose={() => setGeneratorOpen(false)} />
+      <AssetGenerator 
+        isOpen={generatorOpen} 
+        onClose={() => setGeneratorOpen(false)} 
+        onUpdateItem={handleUpdateItem} 
+      />
 
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
         
         {/* LIVE DROP TICKER */}
-        <LiveDrops />
+        <LiveDrops items={items} />
         
         {/* HEADER - COMPACTED FOR ATF */}
         <header className="flex items-center justify-between h-[52px] md:h-[100px] px-3 md:px-12 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
@@ -215,6 +227,7 @@ const App: React.FC = () => {
             {/* SPINNER - COMPACT HEIGHT */}
             <div className="w-full max-w-[1600px] px-0 z-10 mb-4 md:mb-6">
                 <Spinner 
+                    items={items}
                     isSpinning={isSpinning} 
                     onSpinStart={() => {}} 
                     onSpinEnd={handleSpinEnd}
@@ -321,7 +334,7 @@ const App: React.FC = () => {
 
         {/* CONTENT SECTIONS SPACER */}
         <div className="flex flex-col gap-12 space-y-12 pb-16">
-            <CaseContentGrid />
+            <CaseContentGrid items={items} />
             <HowItWorks />
         </div>
 
@@ -343,9 +356,14 @@ const App: React.FC = () => {
 
                 <div className="relative w-40 h-40 md:w-56 md:h-56 mx-auto mb-6 md:mb-8 group perspective-1000 flex items-center justify-center">
                     <div className={`absolute inset-0 rounded-full blur-[60px] opacity-20 ${RARITY_COLORS[winner.rarity].replace('text-', 'bg-')}`}></div>
-                    <span className="text-8xl md:text-9xl filter drop-shadow-2xl animate-bounce select-none relative z-10">
-                        {winner.image}
-                    </span>
+                    {/* Render Win Image or Emoji */}
+                    {winner.image.startsWith('http') || winner.image.startsWith('data:') ? (
+                        <img src={winner.image} alt={winner.name} className="w-full h-full object-contain filter drop-shadow-2xl relative z-10 animate-bounce" />
+                    ) : (
+                        <span className="text-8xl md:text-9xl filter drop-shadow-2xl animate-bounce select-none relative z-10">
+                            {winner.image}
+                        </span>
+                    )}
                 </div>
 
                 <h2 className="text-xl md:text-2xl font-black text-white mb-2 md:mb-3 leading-none uppercase italic tracking-tighter">{winner.name}</h2>

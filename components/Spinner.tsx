@@ -1,17 +1,18 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { LootItem, Rarity } from '../types';
-import { CARD_WIDTH, CARD_GAP, ITEMS_DB, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../constants';
+import { CARD_WIDTH, CARD_GAP, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../constants';
 import LootCard from './LootCard';
 import { audioService } from '../services/audioService';
 
 interface SpinnerProps {
+  items: LootItem[]; // Updated to accept dynamic items
   isSpinning: boolean;
   onSpinStart: () => void;
   onSpinEnd: (item: LootItem) => void;
-  customDuration?: number; // Added support for fast spin
+  customDuration?: number; 
 }
 
-const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, customDuration }) => {
+const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [strip, setStrip] = useState<LootItem[]>([]);
   
@@ -30,7 +31,10 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
   const animationFrameId = useRef<number>(0);
 
   const generateStrip = useCallback(() => {
-    const randomWinner = ITEMS_DB[Math.floor(Math.random() * ITEMS_DB.length)];
+    // Safety check if items array is empty
+    if (!items || items.length === 0) return null;
+
+    const randomWinner = items[Math.floor(Math.random() * items.length)];
     const newStrip: LootItem[] = [];
     
     // Generate strip with consistent randomness
@@ -38,14 +42,14 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
       if (i === WINNING_INDEX) {
         newStrip.push(randomWinner);
       } else {
-        let item = ITEMS_DB[Math.floor(Math.random() * ITEMS_DB.length)];
+        let item = items[Math.floor(Math.random() * items.length)];
         newStrip.push(item);
       }
     }
 
     // Near miss logic
     if (randomWinner.rarity !== Rarity.LEGENDARY) {
-        const baitItem = ITEMS_DB.find(i => i.rarity === Rarity.LEGENDARY) || ITEMS_DB[ITEMS_DB.length - 1];
+        const baitItem = items.find(i => i.rarity === Rarity.LEGENDARY) || items[items.length - 1];
         const offset = Math.random() > 0.5 ? 1 : -1;
         if (newStrip[WINNING_INDEX + offset]) {
             newStrip[WINNING_INDEX + offset] = baitItem;
@@ -54,7 +58,7 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
 
     setStrip(newStrip);
     return randomWinner;
-  }, []);
+  }, [items]);
 
   useEffect(() => {
     audioService.init().catch(() => {});
@@ -62,10 +66,8 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
   }, [generateStrip]);
 
   // REFINED Ease Out Back with Heavy Gravity
-  // The c1 constant determines overshoot. Higher = more overshoot.
-  // We want a significant overshoot that slowly pulls back.
   const easeOutBackCustom = (x: number): number => {
-    const c1 = 0.38; // Increased from 0.12 for more "heavy" overshoot feel
+    const c1 = 0.38; 
     const c3 = c1 + 1;
     return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
   };
@@ -79,10 +81,6 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
     const elapsed = timestamp - state.startTime;
     const rawProgress = Math.min(elapsed / state.duration, 1);
     
-    // TIME WARP:
-    // This curve makes the "0 to 0.8" progress happen fast, 
-    // extending the time spent in the "0.8 to 1.0" range (the settling phase).
-    // This creates the suspense.
     const progress = Math.pow(rawProgress, 0.75);
     
     const ease = easeOutBackCustom(progress);
@@ -96,19 +94,12 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
 
     const itemWidth = CARD_WIDTH + CARD_GAP;
     
-    // SOUND OFFSET:
-    // We delay the trigger slightly (-25px) so the sound hits 
-    // when the card is visually centered, rather than at the technical edge.
-    // This fixes the "sounds before the prize" feeling.
     const tickPosition = Math.max(0, Math.abs(newX) - 25); 
     const currentIndex = Math.floor(tickPosition / itemWidth);
 
     if (currentIndex !== state.lastIndex) {
         const isEnding = rawProgress > 0.85; 
-        
-        // OPTIMIZATION: Audio only, NO vibration in loop.
         audioService.playTick(velocityNormalized, isEnding);
-        
         state.lastIndex = currentIndex;
     }
 
@@ -120,7 +111,6 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
       animationFrameId.current = requestAnimationFrame(animate);
     } else {
       state.isAnimating = false;
-      // Trigger a single haptic feedback on finish
       if (navigator.vibrate) navigator.vibrate(30);
       
       if (state.winner) {
@@ -132,13 +122,10 @@ const Spinner: React.FC<SpinnerProps> = ({ isSpinning, onSpinStart, onSpinEnd, c
   useEffect(() => {
     if (isSpinning) {
         const winner = generateStrip();
-        const itemWidth = CARD_WIDTH + CARD_GAP;
-        
-        // LOGIC: Target X is exactly the center of the winning index.
-        // The easing function handles the overshoot and return.
-        const targetX = -1 * (WINNING_INDEX * itemWidth);
+        if (!winner) return; // Safety check
 
-        // Use custom duration if provided, otherwise default
+        const itemWidth = CARD_WIDTH + CARD_GAP;
+        const targetX = -1 * (WINNING_INDEX * itemWidth);
         const duration = customDuration || SPIN_DURATION;
 
         stateRef.current = {

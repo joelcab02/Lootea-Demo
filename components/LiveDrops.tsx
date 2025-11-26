@@ -1,5 +1,5 @@
 import React, { useEffect, useState, memo } from 'react';
-import { ITEMS_DB, RARITY_COLORS } from '../constants';
+import { RARITY_COLORS } from '../constants';
 import { LootItem } from '../types';
 
 // Mock user names localized for Mexico
@@ -11,12 +11,25 @@ interface LiveDrop {
   item: LootItem;
 }
 
-const LiveDrops = () => {
+interface LiveDropsProps {
+    items: LootItem[];
+}
+
+const LiveDrops: React.FC<LiveDropsProps> = ({ items }) => {
   const [drops, setDrops] = useState<LiveDrop[]>([]);
 
   // Initialize and simulate live feed
   useEffect(() => {
+    // Safety check
+    if (!items || items.length === 0) return;
+
     // Initial population
+    const generateRandomDrop = (id: string): LiveDrop => {
+        const user = USERS[Math.floor(Math.random() * USERS.length)];
+        const item = items[Math.floor(Math.random() * items.length)]; 
+        return { id, user, item };
+    };
+
     const initialDrops = Array.from({ length: 15 }).map((_, i) => generateRandomDrop(`init-${i}`));
     setDrops(initialDrops);
 
@@ -31,13 +44,7 @@ const LiveDrops = () => {
     }, 2500);
 
     return () => clearInterval(interval);
-  }, []);
-
-  const generateRandomDrop = (id: string): LiveDrop => {
-      const user = USERS[Math.floor(Math.random() * USERS.length)];
-      const item = ITEMS_DB[Math.floor(Math.random() * ITEMS_DB.length)]; 
-      return { id, user, item };
-  };
+  }, [items]); // Re-run if items change (like when user updates an asset)
 
   return (
     <div className="w-full bg-[#0a0c10] border-b border-[#1e2330] h-12 md:h-12 overflow-hidden flex items-center relative z-30 select-none">
@@ -49,8 +56,8 @@ const LiveDrops = () => {
         <div className="flex items-center gap-6 animate-marquee whitespace-nowrap pl-4 hover:pause will-change-transform transform-gpu">
             {[...drops, ...drops].map((drop, idx) => (
                 <div key={`${drop.id}-${idx}`} className="flex items-center gap-3 opacity-70 hover:opacity-100 transition-opacity cursor-pointer group">
-                    <div className={`w-8 h-8 rounded bg-[#13151b] border border-[#1e2330] group-hover:border-[#FFC800] flex items-center justify-center text-lg transition-colors`}>
-                        {drop.item.image.startsWith('http') ? (
+                    <div className={`w-8 h-8 rounded bg-[#13151b] border border-[#1e2330] group-hover:border-[#FFC800] flex items-center justify-center text-lg transition-colors overflow-hidden`}>
+                        {drop.item.image.startsWith('http') || drop.item.image.startsWith('data:') ? (
                             <img src={drop.item.image} alt="" className="w-full h-full object-contain p-0.5" />
                         ) : (
                             <span>{drop.item.image}</span>

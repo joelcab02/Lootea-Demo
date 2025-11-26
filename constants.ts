@@ -16,6 +16,8 @@ export const ITEMS_DB: LootItem[] = [
     rarity: Rarity.LEGENDARY, 
     price: 29999, 
     odds: 0.05,
+    // [INSTRUCTIONS]: Paste your generated Image Code inside the quotes below.
+    // It should look like: image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...'
     image: '📱' 
   },
   { 

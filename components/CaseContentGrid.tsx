@@ -1,9 +1,13 @@
 import React, { memo } from 'react';
-import { ITEMS_DB, RARITY_COLORS } from '../constants';
+import { LootItem } from '../types';
 
-const CaseContentGrid = () => {
+interface CaseContentGridProps {
+    items: LootItem[];
+}
+
+const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
   // Sort items: Legendary first, then price descending
-  const sortedItems = [...ITEMS_DB].sort((a, b) => b.price - a.price);
+  const sortedItems = [...items].sort((a, b) => b.price - a.price);
 
   return (
     <div className="w-full max-w-[1400px] mx-auto mt-2 md:mt-8 p-3 md:p-6 bg-[#0d1019]">
@@ -25,13 +29,14 @@ const CaseContentGrid = () => {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
         {sortedItems.map((item) => {
-            const isEmoji = !item.image.startsWith('http');
+            // FIX: Ensure correct detection of base64 images
+            const isEmoji = !item.image.startsWith('http') && !item.image.startsWith('data:');
 
             return (
               <div key={item.id} className="group relative bg-gradient-to-b from-[#13151b] to-[#0a0c10] border border-[#1e2330] hover:border-[#FFC800] transition-all duration-200 rounded-xl overflow-hidden flex flex-col h-[220px] md:h-auto">
                 
                 {/* Content Area */}
-                <div className="p-3 md:p-4 flex flex-col items-center flex-1 justify-center">
+                <div className="p-3 md:p-4 flex flex-col items-center flex-1 justify-center overflow-hidden">
                     {/* Stars / Decor */}
                     <div className="absolute top-2 right-2 text-[8px] text-slate-700">★</div>
                     <div className="absolute top-2 left-2 text-[8px] text-slate-700">★</div>
@@ -42,7 +47,7 @@ const CaseContentGrid = () => {
                         <div className={`absolute top-0 w-full h-full hidden group-hover:block opacity-20 bg-gradient-to-b from-white to-transparent blur-xl transition-opacity duration-500`}></div>
                         
                         {isEmoji ? (
-                            <span className="text-6xl md:text-6xl filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] select-none">
+                            <span className="text-6xl md:text-6xl filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] select-none truncate">
                                 {item.image}
                             </span>
                         ) : (
@@ -58,7 +63,7 @@ const CaseContentGrid = () => {
                     
                     {/* Name - Larger text */}
                     <div className="text-center w-full mt-2">
-                        <div className={`text-xs md:text-xs font-black italic leading-tight text-white group-hover:text-[#FFC800] transition-colors tracking-tighter uppercase line-clamp-2 px-1`}>
+                        <div className={`text-xs md:text-xs font-black italic leading-tight text-white group-hover:text-[#FFC800] transition-colors tracking-tighter uppercase line-clamp-2 px-1 text-ellipsis overflow-hidden`}>
                             {item.name}
                         </div>
                     </div>

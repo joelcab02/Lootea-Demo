@@ -12,9 +12,10 @@ interface LootCardProps {
 const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpinner = false }) => {
   const glowColorClass = RARITY_BG_GLOW[item.rarity];
   
-  const isEmoji = !item.image.startsWith('http');
+  // FIX: Added check for 'data:' to support generated 3D assets
+  const isEmoji = !item.image.startsWith('http') && !item.image.startsWith('data:');
 
-  // Dynamic sizing based on context (Spinner needs to be more compact now)
+  // Dynamic sizing based on context
   const imageSizeClass = isSpinner 
     ? 'w-24 h-24 sm:w-32 sm:h-32' 
     : 'w-32 h-32 sm:w-44 sm:h-44';
@@ -25,7 +26,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
 
   return (
     <div 
-      className={`relative flex-shrink-0 flex flex-col items-center justify-center h-full select-none ${isSpinner ? 'pointer-events-none' : 'group'}`}
+      className={`relative flex-shrink-0 flex flex-col items-center justify-center h-full select-none overflow-hidden ${isSpinner ? 'pointer-events-none' : 'group'}`}
       style={{ width: `${width}px` }}
     >
       {/* Only render heavy glow effects when NOT spinning */}
