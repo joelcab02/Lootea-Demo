@@ -13,7 +13,8 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
   const glowColorClass = RARITY_BG_GLOW[item.rarity];
   
   // FIX: Added check for 'data:' to support generated 3D assets
-  const isEmoji = !item.image.startsWith('http') && !item.image.startsWith('data:');
+  const isGenerated = item.image.startsWith('data:');
+  const isEmoji = !item.image.startsWith('http') && !isGenerated;
 
   // Dynamic sizing based on context
   const imageSizeClass = isSpinner 
@@ -50,10 +51,12 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
             <img 
               src={item.image} 
               alt={item.name}
-              className={`w-full h-full object-contain ${!isSpinner ? 'drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]' : ''}`}
+              // FIX: Removed drop-shadow for generated assets. Added mix-blend-mode: lighten to hide black backgrounds
+              className={`w-full h-full object-contain ${!isSpinner && !isGenerated ? 'drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]' : ''}`}
               loading={isSpinner ? "eager" : "lazy"}
               decoding="async"
               draggable={false}
+              style={isGenerated ? { mixBlendMode: 'lighten' } : {}} 
             />
         )}
       </div>

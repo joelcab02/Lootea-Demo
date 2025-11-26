@@ -30,7 +30,8 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
         {sortedItems.map((item) => {
             // FIX: Ensure correct detection of base64 images
-            const isEmoji = !item.image.startsWith('http') && !item.image.startsWith('data:');
+            const isGenerated = item.image.startsWith('data:');
+            const isEmoji = !item.image.startsWith('http') && !isGenerated;
 
             return (
               <div key={item.id} className="group relative bg-gradient-to-b from-[#13151b] to-[#0a0c10] border border-[#1e2330] hover:border-[#FFC800] transition-all duration-200 rounded-xl overflow-hidden flex flex-col h-[220px] md:h-auto">
@@ -54,9 +55,11 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
                             <img 
                                 src={item.image} 
                                 alt={item.name} 
-                                className="w-full h-full object-contain" 
+                                // FIX: Apply lighten blend mode to hide black background
+                                className={`w-full h-full object-contain ${!isGenerated ? 'drop-shadow-xl' : ''}`}
                                 loading="lazy" 
                                 decoding="async"
+                                style={isGenerated ? { mixBlendMode: 'lighten' } : {}}
                             />
                         )}
                     </div>

@@ -55,41 +55,41 @@ const AssetGenerator: React.FC<AssetGeneratorProps> = ({ isOpen, onClose, onUpda
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
         // 4. Determine Background Hex
-        let bgHex = '#0d1019'; // Default Site Dark Blue
+        // OPTIMIZATION: Force Pure Black #000000 for 'site' mode to use with mix-blend-mode: lighten
+        let bgHex = '#000000'; 
         if (bgMode === 'green') bgHex = '#00FF00';
-        if (bgMode === 'black') bgHex = '#000000';
+        // 'black' stays #000000
 
-        // 5. Construct Prompt (Refined for Telephoto/Product Shot)
+        // 5. Construct Prompt (Refined for Full Object & Seamless Blending)
         const prompt = `
-            Create a professional 3D product visualization of: ${selectedItem.name}.
+            Create a premium 3D game asset of: ${selectedItem.name}.
             
-            COMPOSITION & CAMERA:
-            - View: High-angle 3/4 perspective (Three-quarter view). 
-            - Lens: 85mm Telephoto lens (to flatten perspective and avoid fisheye distortion).
-            - Position: Floating in mid-air, angled dynamically.
-            - Framing: STRICTLY CENTERED in the square frame with 15% padding on all sides.
+            COMPOSITION:
+            - View: FULL SHOT. The ENTIRE object must be visible. DO NOT CUT OFF ANY EDGES.
+            - Position: Floating in mid-air, angled slightly (3/4 view).
+            - Framing: Center the object perfectly. Fill about 80% of the canvas. Leave a safety margin around all sides.
             
-            LIGHTING & STYLE:
-            - Style: Hyper-realistic, Hard Surface Modeling, Unreal Engine 5.
-            - Lighting: Studio lighting setup. Softbox fill light.
-            - Accents: Strong RIM LIGHTING in Warm Gold (#FFC800) to highlight the edges and silhouette.
-            - Materials: Premium glossy glass, brushed titanium/metal, physically based rendering (PBR).
+            LIGHTING & STYLE (LOOTEA BRANDING):
+            - Style: Hyper-realistic, Unreal Engine 5 render, Glossy, Premium e-commerce.
+            - Lighting: Dramatic Studio Lighting with high contrast.
+            - RIM LIGHT: Strong, bright GOLDEN/YELLOW RIM LIGHT (#FFC800) highlighting the edges of the object.
+            - The object should look like a glowing, desirable reward.
             
-            GEOMETRY RULES:
+            BACKGROUND - CRITICAL FOR TRANSPARENCY:
+            - COLOR: PURE VOID BLACK (#000000).
+            - FINISH: MATTE, FLAT, UNIFORM.
+            - NO shadows cast on a floor (the object is floating in space).
+            - NO reflections on the background.
+            - NO gradients or vignettes. It must be #000000 pixels everywhere around the object.
+            
+            GEOMETRY:
             - Accurate proportions.
-            - Perfect symmetry for manufactured objects.
-            - If it's a phone: Ensure camera lenses are circular and correctly placed (not melted).
-            - If it's a laptop: Show it slightly open or closed, ensuring straight lines.
-            - Avoid hallucinations.
-            
-            BACKGROUND:
-            - Uniform solid color hex: ${bgHex}.
-            - NO shadows on the floor (item is floating).
-            - NO gradients in the background.
+            - Perfect symmetry.
+            - No hallucinations or distorted text.
             
             RESTRICTIONS:
-            - No text, watermarks, or logos (except product branding like Apple logo).
-            - No podiums or stands.
+            - No text overlays.
+            - No podiums, no stands, no tables.
         `;
 
         // 6. Call API
@@ -202,9 +202,10 @@ const AssetGenerator: React.FC<AssetGeneratorProps> = ({ isOpen, onClose, onUpda
                 <div className="grid grid-cols-3 gap-2">
                     <button 
                         onClick={() => setBgMode('site')}
-                        className={`p-2 rounded border text-[10px] font-black uppercase transition-all ${bgMode === 'site' ? 'bg-[#0d1019] border-[#FFC800] text-[#FFC800]' : 'bg-[#0d1019] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
+                        className={`p-2 rounded border text-[10px] font-black uppercase transition-all ${bgMode === 'site' ? 'bg-black border-[#FFC800] text-[#FFC800]' : 'bg-[#0d1019] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
+                        title="Generates Black BG + Lighten Blend (Best for Website)"
                     >
-                        Site Blend
+                        Auto Blend
                     </button>
                     <button 
                         onClick={() => setBgMode('green')}
@@ -260,7 +261,7 @@ const AssetGenerator: React.FC<AssetGeneratorProps> = ({ isOpen, onClose, onUpda
                         </button>
                     </div>
                     <p className="text-slate-500 text-[9px] mt-2 text-center">
-                        "Test in App" is temporary. "Copy Code" is for <code>constants.ts</code>.
+                        "Test in App" applies 'lighten' blend mode for transparency.
                     </p>
                 </div>
             )}
@@ -273,11 +274,17 @@ const AssetGenerator: React.FC<AssetGeneratorProps> = ({ isOpen, onClose, onUpda
         </div>
 
         {/* Preview Side */}
-        <div className="p-6 md:w-1/2 bg-[#0d1019] flex flex-col items-center justify-center relative min-h-[300px]">
+        <div className="p-6 md:w-1/2 bg-[#0a0c10] flex flex-col items-center justify-center relative min-h-[300px]">
             
             {generatedImage ? (
                 <div className="relative group w-full aspect-square flex items-center justify-center">
-                    <img src={generatedImage} className="w-full h-full object-contain rounded-lg shadow-2xl border border-[#1e2330]" alt="Generated Asset" />
+                    <img 
+                        src={generatedImage} 
+                        className="w-full h-full object-contain rounded-lg shadow-2xl border border-[#1e2330]" 
+                        alt="Generated Asset"
+                        // Preview with Lighten Blend Mode to show how it looks on site
+                        style={{ mixBlendMode: bgMode === 'site' ? 'lighten' : 'normal' }}
+                    />
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg backdrop-blur-sm cursor-pointer" onClick={() => {
                         const link = document.createElement('a');
                         link.href = generatedImage;
