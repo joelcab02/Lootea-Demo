@@ -34,7 +34,7 @@ const App: React.FC = () => {
   const [items, setItems] = useState<LootItem[]>(() => getItems()); // Get items from odds store
   const [isSpinning, setIsSpinning] = useState(false);
   const [winner, setWinner] = useState<LootItem | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
@@ -65,7 +65,7 @@ const App: React.FC = () => {
   const handleSpin = () => {
     if (isSpinning) return;
     setWinner(null);
-    setShowModal(false);
+    setShowResult(false);
     setIsSpinning(true);
     audioService.init();
   };
@@ -73,10 +73,8 @@ const App: React.FC = () => {
   const handleSpinEnd = (item: LootItem) => {
     setIsSpinning(false);
     setWinner(item);
-    setTimeout(() => {
-      setShowModal(true);
-      triggerWinEffects(item);
-    }, 300);
+    setShowResult(true);
+    triggerWinEffects(item);
   };
 
   const triggerWinEffects = (item: LootItem) => {
@@ -214,7 +212,7 @@ const App: React.FC = () => {
             </div>
 
             {/* SPINNER - COMPACT HEIGHT */}
-            <div className="w-full max-w-[1600px] px-0 z-10 mb-4 md:mb-6">
+            <div className="w-full max-w-[1600px] px-0 z-10 mb-4 md:mb-6 relative">
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 
@@ -222,6 +220,53 @@ const App: React.FC = () => {
                     onSpinEnd={handleSpinEnd}
                     customDuration={fastMode ? 2000 : 5500}
                 />
+                
+                {/* WIN RESULT PANEL - Aparece debajo del spinner */}
+                {showResult && winner && (
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-[100] animate-in slide-in-from-top-2 fade-in duration-300">
+                    <div className="bg-[#161922]/95 backdrop-blur-sm border border-[#2a3040] rounded-xl px-6 py-4 flex items-center gap-4 shadow-2xl">
+                      {/* Rarity badge */}
+                      <div className={`
+                        px-3 py-1 rounded text-[10px] font-black uppercase italic tracking-tighter border
+                        ${winner.rarity === 'LEGENDARY' 
+                          ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' 
+                          : winner.rarity === 'EPIC'
+                            ? 'bg-purple-500/10 border-purple-500/30 text-purple-400'
+                            : winner.rarity === 'RARE'
+                              ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                              : 'bg-slate-700/20 border-slate-600 text-slate-400'}
+                      `}>
+                        {winner.rarity}
+                      </div>
+                      
+                      {/* Item info */}
+                      <div className="flex flex-col">
+                        <span className="text-white font-black uppercase italic tracking-tighter text-sm md:text-base">
+                          {winner.name}
+                        </span>
+                        <span className="text-[#FFC800] font-mono font-bold text-xs">
+                          ${winner.price.toLocaleString()} MXN
+                        </span>
+                      </div>
+                      
+                      {/* Action buttons */}
+                      <div className="flex gap-2 ml-4">
+                        <button 
+                          onClick={() => setShowResult(false)}
+                          className="px-4 py-2 bg-[#1e2330] hover:bg-[#2a3040] text-slate-300 hover:text-white border border-[#2a3040] font-black rounded text-[10px] uppercase italic tracking-tighter transition-colors"
+                        >
+                          Vender
+                        </button>
+                        <button 
+                          onClick={() => setShowResult(false)}
+                          className="px-4 py-2 bg-[#FFC800] hover:bg-[#EAB308] text-black font-black rounded text-[10px] uppercase italic tracking-tighter transition-colors"
+                        >
+                          Enviar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
             </div>
 
             {/* COCKPIT CONTROLS - COMPACT & ACCESSIBLE */}
@@ -329,45 +374,12 @@ const App: React.FC = () => {
 
         <Footer />
 
-      {/* WIN MODAL */}
-      {showModal && winner && (
-         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-[#161922] border border-[#FFC800]/50 rounded-xl p-6 md:p-8 max-w-sm w-full text-center relative shadow-2xl animate-in zoom-in-95 duration-300">
-                <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
-                    <Icons.Close />
-                </button>
-                
-                <div className="mb-6 md:mb-8">
-                    <div className={`inline-block px-4 py-1 rounded border text-[10px] font-black uppercase italic tracking-tighter ${winner.rarity === 'LEGENDARY' ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-slate-700/20 border-slate-600 text-slate-400'}`}>
-                        {winner.rarity} Drop
-                    </div>
-                </div>
-
-                <div className="relative w-40 h-40 md:w-56 md:h-56 mx-auto mb-6 md:mb-8 group perspective-1000 flex items-center justify-center">
-                    <div className={`absolute inset-0 rounded-full blur-[60px] opacity-20 ${RARITY_COLORS[winner.rarity].replace('text-', 'bg-')}`}></div>
-                    {/* Render Win Image or Emoji */}
-                    {winner.image.startsWith('http') || winner.image.startsWith('data:') ? (
-                        <img src={winner.image} alt={winner.name} className="w-full h-full object-contain filter drop-shadow-2xl relative z-10 animate-bounce" />
-                    ) : (
-                        <span className="text-8xl md:text-9xl filter drop-shadow-2xl animate-bounce select-none relative z-10">
-                            {winner.image}
-                        </span>
-                    )}
-                </div>
-
-                <h2 className="text-xl md:text-2xl font-black text-white mb-2 md:mb-3 leading-none uppercase italic tracking-tighter">{winner.name}</h2>
-                <p className="text-slate-400 text-xs md:text-sm mb-6 md:mb-8 font-bold">Valor Estimado: <span className="text-[#FFC800] font-mono font-bold ml-1 tracking-tighter">${winner.price.toLocaleString()} MXN</span></p>
-
-                <div className="grid grid-cols-2 gap-3">
-                    <button onClick={() => setShowModal(false)} className="py-3 bg-[#1e2330] hover:bg-[#2a3040] text-slate-300 hover:text-white border border-[#2a3040] font-black rounded text-xs uppercase italic tracking-tighter transition-colors">
-                        Vender
-                    </button>
-                    <button onClick={() => setShowModal(false)} className="py-3 bg-[#FFC800] hover:bg-[#EAB308] text-black font-black rounded text-xs uppercase italic tracking-tighter transition-colors shadow-[0_0_15px_rgba(255,200,0,0.3)]">
-                        Enviar
-                    </button>
-                </div>
-            </div>
-         </div>
+      {/* WIN RESULT OVERLAY - Fondo oscuro cuando hay ganador */}
+      {showResult && winner && (
+        <div 
+          className="fixed inset-0 z-[90] bg-black/60 pointer-events-none transition-opacity duration-300"
+          style={{ opacity: showResult ? 1 : 0 }}
+        />
       )}
     </div>
   </div>
