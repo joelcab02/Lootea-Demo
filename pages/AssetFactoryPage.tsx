@@ -211,7 +211,8 @@ const AssetFactoryPage: React.FC = () => {
 
   const handleCopyCode = () => {
       if (!generatedImage) return;
-      navigator.clipboard.writeText(`'${generatedImage}'`);
+      // Copy raw base64 string without quotes for direct use in Admin Panel
+      navigator.clipboard.writeText(generatedImage);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
   };
