@@ -14,13 +14,14 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
   
   // Check image type
   const isGenerated = item.image.startsWith('data:');
-  const isCdnImage = item.image.includes('supabase.co/storage');
+  const isCdnImage = item.image.includes('supabase.co/storage') || item.image.includes('cloudinary.com');
   const isLoading = item.image === '⏳';
   const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
   
-  // Apply screen blend mode to hide black backgrounds (for AI-generated assets)
-  // This makes pure black (#000) transparent while keeping other colors
-  const needsBlendMode = isGenerated || isCdnImage;
+  // Only apply blend mode for Supabase images (legacy)
+  // Cloudinary images already have transparent backgrounds
+  const isCloudinaryImage = item.image.includes('cloudinary.com');
+  const needsBlendMode = (isGenerated || (isCdnImage && !isCloudinaryImage));
 
   // Dynamic sizing based on context
   const imageSizeClass = isSpinner 

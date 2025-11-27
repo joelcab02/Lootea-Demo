@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
 import { processAndUploadImage } from '../services/imageService';
+import { uploadWithBackgroundRemoval, isCloudinaryConfigured } from '../services/cloudinaryService';
 
 type BgMode = 'site' | 'green' | 'black';
 type ViewAngle = 'front' | '3/4' | 'side' | 'top';
@@ -266,12 +267,22 @@ const AssetFactoryPage: React.FC = () => {
       setTimeout(() => setCopySuccess(false), 2000);
   };
 
-  const handleUploadToCDN = async () => {
+  const handleUploadToCDN = async (useCloudinary: boolean = false) => {
     if (!generatedImage || cdnUrl || isUploading) return;
     
     setIsUploading(true);
     try {
-      const url = await processAndUploadImage(generatedImage, productName || 'asset');
+      let url: string;
+      
+      if (useCloudinary && isCloudinaryConfigured()) {
+        // Upload to Cloudinary with automatic background removal
+        console.log('🎨 Using Cloudinary with background removal...');
+        url = await uploadWithBackgroundRemoval(generatedImage, productName || 'asset');
+      } else {
+        // Upload to Supabase Storage (original method)
+        url = await processAndUploadImage(generatedImage, productName || 'asset');
+      }
+      
       setCdnUrl(url);
       navigator.clipboard.writeText(url);
       setCopySuccess(true);
@@ -556,39 +567,71 @@ const AssetFactoryPage: React.FC = () => {
                   onClick={() => handleDownload()}
                   className="w-full py-3 rounded-lg text-xs font-black uppercase tracking-wider bg-blue-600 hover:bg-blue-500 text-white transition-colors"
                 >
-                  📥 Descargar PNG
+                  Descargar PNG
                 </button>
-                
-                {/* Upload to CDN button */}
-                <button 
-                  onClick={handleUploadToCDN}
-                  disabled={isUploading || !!cdnUrl}
-                  className={`w-full py-3 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${
-                    cdnUrl 
-                      ? 'bg-green-600 text-white cursor-default' 
-                      : isUploading 
-                        ? 'bg-slate-600 text-slate-400 cursor-wait'
-                        : 'bg-[#FFC800] hover:bg-[#EAB308] text-black'
-                  }`}
-                >
-                  {cdnUrl ? '✓ Subido a CDN' : isUploading ? '⏳ Subiendo...' : '☁️ Subir a CDN'}
-                </button>
-
-                {/* Show CDN URL if uploaded */}
-                {cdnUrl && (
-                  <div className="w-full p-2 bg-[#1e2330] rounded-lg">
-                    <p className="text-[10px] text-slate-400 mb-1">URL del CDN:</p>
-                    <p className="text-[10px] text-green-400 break-all font-mono">{cdnUrl}</p>
-                  </div>
-                )}
                 
                 <button 
                   onClick={handleCopyCode}
                   className={`w-full py-3 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${copySuccess ? 'bg-green-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-white'}`}
                 >
-                  {copySuccess ? '¡COPIADO!' : cdnUrl ? '📋 Copiar URL' : '📋 Copiar Base64'}
+                  {copySuccess ? 'COPIADO' : cdnUrl ? 'Copiar URL' : 'Copiar Base64'}
                 </button>
               </div>
+              
+              {/* Upload options */}
+              <div className="space-y-2 pt-2 border-t border-[#2a3040]">
+                <p className="text-[10px] text-slate-500 uppercase font-bold">Subir a CDN:</p>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Supabase Storage (original) */}
+                  <button 
+                    onClick={() => handleUploadToCDN(false)}
+                    disabled={isUploading || !!cdnUrl}
+                    className={`w-full py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
+                      cdnUrl 
+                        ? 'bg-green-600/50 text-green-300 cursor-default' 
+                        : isUploading 
+                          ? 'bg-slate-600 text-slate-400 cursor-wait'
+                          : 'bg-slate-700 hover:bg-slate-600 text-white'
+                    }`}
+                  >
+                    {cdnUrl ? 'Subido' : isUploading ? 'Subiendo...' : 'Supabase'}
+                  </button>
+                  
+                  {/* Cloudinary with background removal */}
+                  <button 
+                    onClick={() => handleUploadToCDN(true)}
+                    disabled={isUploading || !!cdnUrl || !isCloudinaryConfigured()}
+                    className={`w-full py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors ${
+                      !isCloudinaryConfigured()
+                        ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                        : cdnUrl 
+                          ? 'bg-green-600/50 text-green-300 cursor-default' 
+                          : isUploading 
+                            ? 'bg-slate-600 text-slate-400 cursor-wait'
+                            : 'bg-purple-600 hover:bg-purple-500 text-white'
+                    }`}
+                    title={!isCloudinaryConfigured() ? 'Configura VITE_CLOUDINARY_CLOUD_NAME y VITE_CLOUDINARY_UPLOAD_PRESET' : 'Sube con fondo transparente automático'}
+                  >
+                    {!isCloudinaryConfigured() ? 'Cloudinary (No config)' : cdnUrl ? 'Subido' : isUploading ? 'Procesando...' : 'Cloudinary (Sin fondo)'}
+                  </button>
+                </div>
+                
+                {/* Info about Cloudinary */}
+                {!isCloudinaryConfigured() && (
+                  <p className="text-[9px] text-slate-600 mt-1">
+                    Configura Cloudinary en .env para remover fondos automáticamente
+                  </p>
+                )}
+              </div>
+
+              {/* Show CDN URL if uploaded */}
+              {cdnUrl && (
+                <div className="w-full p-2 bg-[#0d1019] rounded-lg border border-green-500/30">
+                  <p className="text-[10px] text-slate-400 mb-1">URL del CDN (copiada):</p>
+                  <p className="text-[10px] text-green-400 break-all font-mono">{cdnUrl}</p>
+                </div>
+              )}
             </div>
           )}
 
