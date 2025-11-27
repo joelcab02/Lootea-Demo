@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import AdminPage from './pages/AdminDashboard';
 import AssetFactoryPage from './pages/AssetFactoryPage';
-import MigrationPage from './pages/MigrationPage';
 import BoxPage from './pages/BoxPage';
 
 const rootElement = document.getElementById('root');
@@ -21,7 +20,6 @@ root.render(
         <Route path="/box/:slug" element={<BoxPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/assets" element={<AssetFactoryPage />} />
-        <Route path="/migrate" element={<MigrationPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
