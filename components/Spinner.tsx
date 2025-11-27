@@ -1,8 +1,9 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { LootItem, Rarity } from '../types';
 import { CARD_WIDTH, CARD_GAP, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../constants';
 import LootCard from './LootCard';
 import { audioService } from '../services/audioService';
+import { calculateTicketRanges, selectWeightedWinner, debugTicketDistribution, LootItemWithTickets } from '../services/oddsService';
 
 interface SpinnerProps {
   items: LootItem[]; // Updated to accept dynamic items
@@ -16,6 +17,16 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
   const containerRef = useRef<HTMLDivElement>(null);
   const [strip, setStrip] = useState<LootItem[]>([]);
   
+  // Calculate ticket ranges once when items change (memoized)
+  const itemsWithTickets = useMemo(() => {
+    const calculated = calculateTicketRanges(items);
+    // Debug: Log ticket distribution on first load
+    if (calculated.length > 0) {
+      debugTicketDistribution(calculated);
+    }
+    return calculated;
+  }, [items]);
+  
   // Mutable state for animation loop to avoid React re-renders
   const stateRef = useRef({
     startTime: 0,
@@ -25,31 +36,42 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     lastIndex: 0,
     isAnimating: false,
     winner: null as LootItem | null,
-    duration: SPIN_DURATION
+    duration: SPIN_DURATION,
+    ticket: 0 // Track winning ticket for debugging
   });
 
   const animationFrameId = useRef<number>(0);
 
   const generateStrip = useCallback(() => {
     // Safety check if items array is empty
-    if (!items || items.length === 0) return null;
+    if (!itemsWithTickets || itemsWithTickets.length === 0) return null;
 
-    const randomWinner = items[Math.floor(Math.random() * items.length)];
+    // USE WEIGHTED ODDS: Select winner based on ticket system
+    const result = selectWeightedWinner(itemsWithTickets);
+    if (!result) return null;
+    
+    const { winner: randomWinner, ticket } = result;
+    
+    // Log the winning ticket for transparency
+    console.log(`🎰 Ticket #${ticket.toLocaleString()} → ${randomWinner.name} (${randomWinner.normalizedOdds}% odds)`);
+    
     const newStrip: LootItem[] = [];
     
-    // Generate strip with consistent randomness
+    // Generate strip with weighted randomness for visual variety
     for (let i = 0; i < TOTAL_CARDS_IN_STRIP; i++) {
       if (i === WINNING_INDEX) {
         newStrip.push(randomWinner);
       } else {
-        let item = items[Math.floor(Math.random() * items.length)];
+        // Use weighted selection for strip items too (more realistic distribution)
+        const stripResult = selectWeightedWinner(itemsWithTickets);
+        const item = stripResult ? stripResult.winner : itemsWithTickets[0];
         newStrip.push(item);
       }
     }
 
-    // Near miss logic
+    // Near miss logic: Place a legendary item near the winner for psychological effect
     if (randomWinner.rarity !== Rarity.LEGENDARY) {
-        const baitItem = items.find(i => i.rarity === Rarity.LEGENDARY) || items[items.length - 1];
+        const baitItem = itemsWithTickets.find(i => i.rarity === Rarity.LEGENDARY) || itemsWithTickets[itemsWithTickets.length - 1];
         const offset = Math.random() > 0.5 ? 1 : -1;
         if (newStrip[WINNING_INDEX + offset]) {
             newStrip[WINNING_INDEX + offset] = baitItem;
@@ -57,8 +79,12 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     }
 
     setStrip(newStrip);
+    
+    // Store ticket in state for potential UI display
+    stateRef.current.ticket = ticket;
+    
     return randomWinner;
-  }, [items]);
+  }, [itemsWithTickets]);
 
   useEffect(() => {
     audioService.init().catch(() => {});
@@ -136,7 +162,8 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
             lastIndex: 0,
             isAnimating: true,
             winner: winner,
-            duration: duration
+            duration: duration,
+            ticket: stateRef.current.ticket
         };
 
         onSpinStart();

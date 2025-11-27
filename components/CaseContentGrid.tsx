@@ -1,13 +1,17 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { LootItem } from '../types';
+import { calculateTicketRanges, LootItemWithTickets } from '../services/oddsService';
 
 interface CaseContentGridProps {
     items: LootItem[];
 }
 
 const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
-  // Sort items: Legendary first, then price descending
-  const sortedItems = [...items].sort((a, b) => b.price - a.price);
+  // Calculate ticket ranges and sort by price descending
+  const sortedItemsWithOdds = useMemo(() => {
+    const withTickets = calculateTicketRanges(items);
+    return [...withTickets].sort((a, b) => b.price - a.price);
+  }, [items]);
 
   return (
     <div className="w-full max-w-[1400px] mx-auto mt-2 md:mt-8 p-3 md:p-6 bg-[#0d1019]">
@@ -22,13 +26,13 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
         
         <div className="flex gap-2 items-center">
            <div className="bg-[#161922] border border-[#1e2330] px-4 py-2 rounded text-xs md:text-sm font-black italic tracking-tighter text-slate-400">
-             {sortedItems.length} Ítems
+             {sortedItemsWithOdds.length} Ítems
            </div>
         </div>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
-        {sortedItems.map((item) => {
+        {sortedItemsWithOdds.map((item) => {
             // FIX: Ensure correct detection of base64 images
             const isGenerated = item.image.startsWith('data:');
             const isEmoji = !item.image.startsWith('http') && !isGenerated;
@@ -72,11 +76,23 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
                     </div>
                 </div>
 
-                {/* Bottom Info Area - Redesigned (No button look, no odds) */}
-                <div className="py-3 bg-[#0a0c10]/50 border-t border-[#1e2330] mt-auto flex flex-col items-center justify-center gap-0.5">
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Valor Estimado</span>
-                    <div className="text-[#FFC800] font-mono font-bold text-sm md:text-base tracking-tighter">
-                        ${item.price.toLocaleString('es-MX')}
+                {/* Bottom Info Area - With Odds Display */}
+                <div className="py-3 bg-[#0a0c10]/50 border-t border-[#1e2330] mt-auto flex flex-col items-center justify-center gap-1">
+                    <div className="flex items-center justify-between w-full px-3">
+                        <div className="flex flex-col items-start">
+                            <span className="text-[8px] text-slate-600 font-bold uppercase tracking-wider">Valor</span>
+                            <div className="text-[#FFC800] font-mono font-bold text-xs md:text-sm tracking-tighter">
+                                ${item.price.toLocaleString('es-MX')}
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-end">
+                            <span className="text-[8px] text-slate-600 font-bold uppercase tracking-wider">Prob.</span>
+                            <div className="text-slate-400 font-mono font-bold text-xs md:text-sm tracking-tighter">
+                                {item.normalizedOdds < 1 
+                                    ? `${item.normalizedOdds.toFixed(2)}%` 
+                                    : `${item.normalizedOdds.toFixed(1)}%`}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

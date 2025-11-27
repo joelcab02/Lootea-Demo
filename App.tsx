@@ -5,10 +5,12 @@ import CaseContentGrid from './components/CaseContentGrid';
 import Footer from './components/Footer';
 import LiveDrops from './components/LiveDrops';
 import HowItWorks from './components/HowItWorks';
-import AssetGenerator from './components/AssetGenerator'; // New Import
+import AssetGenerator from './components/AssetGenerator';
+import AdminPanel from './components/AdminPanel';
 import { LootItem, Rarity } from './types';
-import { ITEMS_DB, RARITY_COLORS } from './constants';
+import { RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';
+import { getItems } from './services/oddsStore';
 
 // SVG Icons for App
 const Icons = {
@@ -31,7 +33,7 @@ const Icons = {
 };
 
 const App: React.FC = () => {
-  const [items, setItems] = useState<LootItem[]>(ITEMS_DB); // Dynamic Items State
+  const [items, setItems] = useState<LootItem[]>(() => getItems()); // Get items from odds store
   const [isSpinning, setIsSpinning] = useState(false);
   const [winner, setWinner] = useState<LootItem | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -42,7 +44,8 @@ const App: React.FC = () => {
   const [fastMode, setFastMode] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [generatorOpen, setGeneratorOpen] = useState(false); // Generator state
+  const [generatorOpen, setGeneratorOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false); // Admin panel state
 
   const BOX_PRICE = 99.00;
 
@@ -55,6 +58,11 @@ const App: React.FC = () => {
     setItems(prevItems => prevItems.map(item => 
         item.id === id ? { ...item, image: newImage } : item
     ));
+  }, []);
+
+  // Refresh items when odds change in admin panel
+  const handleOddsChange = useCallback(() => {
+    setItems(getItems());
   }, []);
 
   const handleSpin = () => {
@@ -102,6 +110,13 @@ const App: React.FC = () => {
         isOpen={generatorOpen} 
         onClose={() => setGeneratorOpen(false)} 
         onUpdateItem={handleUpdateItem} 
+      />
+
+      {/* ADMIN PANEL (MODAL) */}
+      <AdminPanel 
+        isOpen={adminOpen} 
+        onClose={() => setAdminOpen(false)} 
+        onOddsChange={handleOddsChange} 
       />
 
       {/* MAIN CONTENT AREA */}
@@ -164,7 +179,16 @@ const App: React.FC = () => {
             {/* Right Actions: Asset Gen + Wallet */}
             <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
                 
-                {/* CREATE ASSETS BUTTON - VISIBLE NOW */}
+                {/* ADMIN PANEL BUTTON */}
+                <button 
+                    onClick={() => setAdminOpen(true)}
+                    className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-purple-500/30 hover:border-purple-400 hover:text-purple-400 text-purple-400/70 text-[10px] font-black italic uppercase tracking-tighter transition-all active:scale-95 group bg-purple-500/5"
+                >
+                    <span>⚙️</span>
+                    <span>Admin</span>
+                </button>
+
+                {/* CREATE ASSETS BUTTON */}
                 <button 
                     onClick={() => setGeneratorOpen(true)}
                     className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#2a3040] hover:border-[#FFC800] hover:text-[#FFC800] text-slate-400 text-[10px] font-black italic uppercase tracking-tighter transition-all active:scale-95 group"

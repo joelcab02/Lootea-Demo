@@ -11,7 +11,14 @@ export interface LootItem {
   image: string; // URL or placeholder ID
   rarity: Rarity;
   price: number; // Estimated value in MXN
-  odds: number; // Probability percentage (e.g. 0.05)
+  odds: number; // Probability percentage (e.g. 0.05 = 0.05%)
+}
+
+// Extended type with calculated ticket ranges (used by oddsService)
+export interface LootItemWithTickets extends LootItem {
+  ticketStart: number; // First ticket in range (1-1,000,000)
+  ticketEnd: number;   // Last ticket in range
+  normalizedOdds: number; // Odds after normalization to 100%
 }
 
 export interface SpinnerConfig {
