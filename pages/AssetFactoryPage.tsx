@@ -61,6 +61,33 @@ const AssetFactoryPage: React.FC = () => {
   const [copySuccess, setCopySuccess] = useState(false);
   const [history, setHistory] = useState<{name: string; image: string; config: string}[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [referenceFileName, setReferenceFileName] = useState<string>('');
+
+  const handleReferenceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setError('Por favor sube una imagen válida');
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      setError('La imagen debe ser menor a 4MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setReferenceImage(event.target?.result as string);
+      setReferenceFileName(file.name);
+      setError(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearReferenceImage = () => {
+    setReferenceImage(null);
+    setReferenceFileName('');
+  };
 
   const handleGenerate = async () => {
     if (!productName.trim()) {
@@ -126,6 +153,7 @@ const AssetFactoryPage: React.FC = () => {
 
         const prompt = `
             Create a premium 3D game asset of: ${productDescription}.
+            ${referenceImage ? '\n            REFERENCE IMAGE: Use the attached image as reference for the exact product design, shape, colors and details. Replicate it faithfully in 3D style.' : ''}
             
             COMPOSITION:
             - View: FULL SHOT. The ENTIRE object must be visible. DO NOT CUT OFF ANY EDGES.
@@ -159,10 +187,25 @@ const AssetFactoryPage: React.FC = () => {
             - No podiums, no stands, no tables.
         `;
 
+        // Build content parts - include reference image if provided
+        const contentParts: any[] = [{ text: prompt }];
+        
+        if (referenceImage) {
+            const base64Match = referenceImage.match(/^data:image\/(\w+);base64,(.+)$/);
+            if (base64Match) {
+                contentParts.push({
+                    inlineData: {
+                        mimeType: `image/${base64Match[1]}`,
+                        data: base64Match[2]
+                    }
+                });
+            }
+        }
+
         const response = await ai.models.generateContent({
             model: 'gemini-3-pro-image-preview',
             contents: {
-                parts: [{ text: prompt }]
+                parts: contentParts
             },
             config: {
                 imageConfig: {
@@ -300,6 +343,59 @@ const AssetFactoryPage: React.FC = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Reference Image Upload */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
+              📷 Imagen de Referencia (opcional)
+            </label>
+            <p className="text-[10px] text-slate-500">
+              Si la IA no conoce bien el producto, sube una foto real como referencia.
+            </p>
+            
+            {referenceImage ? (
+              <div className="relative bg-[#0d1019] border border-[#2a3040] rounded-lg p-3">
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={referenceImage} 
+                    alt="Reference" 
+                    className="w-16 h-16 object-contain rounded bg-black"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-white truncate">{referenceFileName}</p>
+                    <p className="text-[10px] text-green-400">✓ Imagen cargada</p>
+                  </div>
+                  <button
+                    onClick={clearReferenceImage}
+                    className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                    title="Eliminar imagen"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center w-full h-20 bg-[#0d1019] border-2 border-dashed border-[#2a3040] hover:border-[#FFC800] rounded-lg cursor-pointer transition-colors group">
+                <div className="flex flex-col items-center justify-center">
+                  <svg className="w-5 h-5 mb-1 text-slate-500 group-hover:text-[#FFC800] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                  </svg>
+                  <p className="text-[10px] text-slate-500 group-hover:text-slate-300">
+                    Click para subir imagen
+                  </p>
+                </div>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleReferenceUpload}
+                />
+              </label>
+            )}
           </div>
 
           {/* Color Selection */}
