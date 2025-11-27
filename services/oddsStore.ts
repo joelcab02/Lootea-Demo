@@ -1,10 +1,9 @@
 /**
  * Odds Store - Centralized state management for odds configuration
- * Connected to Supabase for persistence
+ * 100% Supabase-driven - no hardcoded data
  */
 
 import { LootItem, Rarity } from '../types';
-import { ITEMS_DB } from '../constants';
 import { calculateTicketRanges, validateOdds, LootItemWithTickets } from './oddsService';
 import { supabase, DbLootItem } from './supabaseClient';
 
@@ -29,8 +28,8 @@ export interface StoreState {
 type Listener = (state: StoreState) => void;
 const listeners: Set<Listener> = new Set();
 
-// Initialize with default items from constants (fallback)
-let currentItems: LootItem[] = [...ITEMS_DB];
+// Initialize with empty array - all data comes from Supabase
+let currentItems: LootItem[] = [];
 let cachedState: StoreState | null = null;
 let isLoading = false;
 let isSynced = false;
@@ -64,7 +63,7 @@ function lootItemToDb(item: LootItem): DbLootItem {
 }
 
 /**
- * Initialize store - fetch from Supabase or seed with defaults
+ * Initialize store - fetch from Supabase (100% database-driven)
  */
 export async function initializeStore(): Promise<StoreState> {
   isLoading = true;
@@ -72,29 +71,27 @@ export async function initializeStore(): Promise<StoreState> {
   notifyListeners();
   
   try {
-    // Try to fetch from Supabase
+    // Fetch all items from Supabase
     const { data, error } = await supabase
       .from('loot_items')
       .select('*')
       .order('price', { ascending: false });
     
     if (error) {
-      console.warn('⚠️ Supabase fetch failed, using local defaults:', error.message);
-      currentItems = [...ITEMS_DB];
+      console.error('❌ Supabase fetch failed:', error.message);
       isSynced = false;
     } else if (data && data.length > 0) {
       console.log('✅ Loaded', data.length, 'items from Supabase');
       currentItems = data.map(dbToLootItem);
       isSynced = true;
     } else {
-      // No data in DB, seed with defaults
-      console.log('📦 No items in DB, seeding with defaults...');
-      await seedDatabase();
+      // No data in DB - show empty state, user must add items via Admin Panel
+      console.log('📦 No items in database. Add items via Admin Panel.');
+      currentItems = [];
       isSynced = true;
     }
   } catch (err) {
     console.error('❌ Store initialization error:', err);
-    currentItems = [...ITEMS_DB];
     isSynced = false;
   }
   
@@ -103,25 +100,6 @@ export async function initializeStore(): Promise<StoreState> {
   notifyListeners();
   
   return getOddsState();
-}
-
-/**
- * Seed database with default items
- */
-async function seedDatabase(): Promise<void> {
-  const itemsToInsert = ITEMS_DB.map(lootItemToDb);
-  
-  const { error } = await supabase
-    .from('loot_items')
-    .upsert(itemsToInsert, { onConflict: 'id' });
-  
-  if (error) {
-    console.error('❌ Failed to seed database:', error.message);
-    throw error;
-  }
-  
-  console.log('✅ Database seeded with', itemsToInsert.length, 'items');
-  currentItems = [...ITEMS_DB];
 }
 
 /**
@@ -233,27 +211,37 @@ export async function updateMultipleOdds(updates: OddsConfig[]): Promise<StoreSt
 }
 
 /**
- * Reset all odds to default values from ITEMS_DB (syncs to Supabase)
+ * Reset all odds to equal distribution (syncs to Supabase)
  */
 export async function resetToDefaults(): Promise<StoreState> {
-  currentItems = [...ITEMS_DB];
+  if (currentItems.length === 0) {
+    console.warn('No items to reset');
+    return getOddsState();
+  }
+  
+  // Distribute odds equally among all items
+  const equalOdds = 100 / currentItems.length;
+  
+  currentItems = currentItems.map(item => ({
+    ...item,
+    odds: equalOdds
+  }));
+  
   cachedState = null;
   notifyListeners();
   
   // Sync to Supabase
   try {
-    const itemsToUpsert = ITEMS_DB.map(lootItemToDb);
-    const { error } = await supabase
-      .from('loot_items')
-      .upsert(itemsToUpsert, { onConflict: 'id' });
+    const promises = currentItems.map(item => 
+      supabase
+        .from('loot_items')
+        .update({ odds: equalOdds })
+        .eq('id', item.id)
+    );
     
-    if (error) {
-      console.error('❌ Failed to reset in Supabase:', error.message);
-      isSynced = false;
-    } else {
-      console.log('🔄 Odds reset to defaults and synced');
-      isSynced = true;
-    }
+    await Promise.all(promises);
+    console.log('🔄 Odds reset to equal distribution and synced');
+    isSynced = true;
   } catch (err) {
     console.error('❌ Reset sync error:', err);
     isSynced = false;

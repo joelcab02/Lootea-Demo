@@ -73,6 +73,15 @@ ALTER TABLE odds_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE spin_results ENABLE ROW LEVEL SECURITY;
 
 -- Policies: Allow read for everyone, write for authenticated (or anon for demo)
+-- Drop existing policies first to avoid conflicts
+DROP POLICY IF EXISTS "Allow read access to loot_items" ON loot_items;
+DROP POLICY IF EXISTS "Allow insert to loot_items" ON loot_items;
+DROP POLICY IF EXISTS "Allow update to loot_items" ON loot_items;
+DROP POLICY IF EXISTS "Allow delete to loot_items" ON loot_items;
+DROP POLICY IF EXISTS "Allow read access to odds_history" ON odds_history;
+DROP POLICY IF EXISTS "Allow insert to odds_history" ON odds_history;
+DROP POLICY IF EXISTS "Allow all on spin_results" ON spin_results;
+
 CREATE POLICY "Allow read access to loot_items" ON loot_items
   FOR SELECT USING (true);
 

@@ -180,7 +180,7 @@ const AdminPage: React.FC = () => {
   };
 
   const handleReset = async () => {
-    if (confirm('¿Resetear todas las probabilidades a los valores por defecto?')) {
+    if (confirm('¿Distribuir las probabilidades equitativamente entre todos los items?')) {
       setIsSaving(true);
       await resetToDefaults();
       setIsSaving(false);
@@ -309,9 +309,9 @@ const AdminPage: React.FC = () => {
         <button 
           onClick={handleReset}
           disabled={isSaving}
-          className="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold hover:bg-red-500/20 transition-colors disabled:opacity-50"
+          className="px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-bold hover:bg-orange-500/20 transition-colors disabled:opacity-50"
         >
-          Reset
+          Igualar Odds
         </button>
 
         <button 
