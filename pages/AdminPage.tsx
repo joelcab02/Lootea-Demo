@@ -22,6 +22,15 @@ interface EditingItem {
   value: string;
 }
 
+// Modal for editing large image data
+interface ImageEditModal {
+  isOpen: boolean;
+  itemId: string;
+  itemName: string;
+  currentImage: string;
+  newImage: string;
+}
+
 interface NewItemForm {
   name: string;
   price: string;
@@ -47,6 +56,13 @@ const AdminPage: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState<NewItemForm>(emptyNewItem);
   const [isSaving, setIsSaving] = useState(false);
+  const [imageModal, setImageModal] = useState<ImageEditModal>({
+    isOpen: false,
+    itemId: '',
+    itemName: '',
+    currentImage: '',
+    newImage: ''
+  });
 
   // Subscribe to store changes
   useEffect(() => {
@@ -64,8 +80,29 @@ const AdminPage: React.FC = () => {
   }, []);
 
   // Start editing a field
-  const startEditing = (id: string, field: EditingItem['field'], currentValue: string | number) => {
+  const startEditing = (id: string, field: EditingItem['field'], currentValue: string | number, itemName?: string) => {
+    // For images, open the modal instead
+    if (field === 'image') {
+      setImageModal({
+        isOpen: true,
+        itemId: id,
+        itemName: itemName || '',
+        currentImage: String(currentValue),
+        newImage: String(currentValue)
+      });
+      return;
+    }
     setEditing({ id, field, value: String(currentValue) });
+  };
+
+  // Save image from modal
+  const saveImageFromModal = async () => {
+    if (!imageModal.itemId || !imageModal.newImage.trim()) return;
+    
+    setIsSaving(true);
+    await updateItem(imageModal.itemId, { image: imageModal.newImage.trim() });
+    setImageModal({ isOpen: false, itemId: '', itemName: '', currentImage: '', newImage: '' });
+    setIsSaving(false);
   };
 
   // Save the current edit
@@ -292,6 +329,87 @@ const AdminPage: React.FC = () => {
         </button>
       </div>
 
+      {/* Image Edit Modal */}
+      {imageModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-[#0d1019] border border-[#2a3040] rounded-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-[#1e2330]">
+              <h3 className="text-lg font-bold text-white">🖼️ Editar Imagen: {imageModal.itemName}</h3>
+              <button
+                onClick={() => setImageModal({ isOpen: false, itemId: '', itemName: '', currentImage: '', newImage: '' })}
+                className="text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="p-4 space-y-4">
+              {/* Preview */}
+              <div className="flex items-center gap-4">
+                <div className="w-24 h-24 bg-[#1e2330] rounded-lg flex items-center justify-center overflow-hidden border border-[#2a3040]">
+                  {imageModal.newImage.startsWith('data:') || imageModal.newImage.startsWith('http') ? (
+                    <img src={imageModal.newImage} alt="Preview" className="w-full h-full object-contain" />
+                  ) : (
+                    <span className="text-4xl">{imageModal.newImage || '📦'}</span>
+                  )}
+                </div>
+                <div className="text-sm text-slate-400">
+                  <p>Vista previa de la imagen</p>
+                  <p className="text-xs text-slate-600 mt-1">
+                    {imageModal.newImage.startsWith('data:') 
+                      ? `Base64 (${Math.round(imageModal.newImage.length / 1024)}KB)` 
+                      : imageModal.newImage.startsWith('http') 
+                        ? 'URL externa' 
+                        : 'Emoji'}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Input */}
+              <div>
+                <label className="text-xs text-slate-500 block mb-2">Pega aquí el código de imagen (base64, URL o emoji)</label>
+                <textarea
+                  value={imageModal.newImage}
+                  onChange={(e) => setImageModal({ ...imageModal, newImage: e.target.value })}
+                  placeholder="data:image/png;base64,... o https://... o 📱"
+                  className="w-full h-40 px-3 py-2 bg-[#1e2330] border border-[#2a3040] rounded-lg text-white text-xs font-mono focus:border-[#FFC800] outline-none resize-none"
+                />
+              </div>
+              
+              {/* Quick options */}
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs text-slate-500">Emojis rápidos:</span>
+                {['📱', '💻', '⌚', '🎧', '📦', '🎮', '📷', '🖥️'].map(emoji => (
+                  <button
+                    key={emoji}
+                    onClick={() => setImageModal({ ...imageModal, newImage: emoji })}
+                    className="w-8 h-8 bg-[#1e2330] hover:bg-[#2a3040] rounded flex items-center justify-center text-lg"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3 p-4 border-t border-[#1e2330] bg-[#13151b]">
+              <button
+                onClick={() => setImageModal({ isOpen: false, itemId: '', itemName: '', currentImage: '', newImage: '' })}
+                className="px-4 py-2 bg-slate-700 text-white font-bold rounded text-sm hover:bg-slate-600 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={saveImageFromModal}
+                disabled={isSaving}
+                className="px-4 py-2 bg-[#FFC800] text-black font-bold rounded text-sm hover:bg-[#EAB308] transition-colors disabled:opacity-50"
+              >
+                {isSaving ? 'Guardando...' : 'Guardar Imagen'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Import/Export Panels */}
       {showExport && (
         <div className="px-6 py-4 bg-[#1a1d26] border-b border-[#1e2330]">
@@ -438,31 +556,19 @@ const AdminPage: React.FC = () => {
                   key={item.id} 
                   className="border-t border-[#1e2330] hover:bg-[#13151b] transition-colors group"
                 >
-                  {/* Image - Editable */}
+                  {/* Image - Opens Modal */}
                   <td className="py-3 pl-4">
-                    {editing?.id === item.id && editing.field === 'image' ? (
-                      <input
-                        type="text"
-                        value={editing.value}
-                        onChange={(e) => setEditing({ ...editing, value: e.target.value })}
-                        onBlur={saveEdit}
-                        onKeyDown={handleKeyDown}
-                        autoFocus
-                        className="w-20 px-2 py-1 bg-[#1e2330] border border-[#FFC800] rounded text-white text-xs outline-none"
-                      />
-                    ) : (
-                      <button
-                        onClick={() => startEditing(item.id, 'image', item.image)}
-                        className="w-10 h-10 bg-[#1e2330] hover:bg-[#2a3040] rounded-lg flex items-center justify-center text-lg overflow-hidden border border-transparent hover:border-[#FFC800] transition-all"
-                        title="Click para editar imagen"
-                      >
-                        {item.image.startsWith('data:') || item.image.startsWith('http') ? (
-                          <img src={item.image} alt="" className="w-full h-full object-contain" />
-                        ) : (
-                          <span>{item.image}</span>
-                        )}
-                      </button>
-                    )}
+                    <button
+                      onClick={() => startEditing(item.id, 'image', item.image, item.name)}
+                      className="w-10 h-10 bg-[#1e2330] hover:bg-[#2a3040] rounded-lg flex items-center justify-center text-lg overflow-hidden border border-transparent hover:border-[#FFC800] transition-all"
+                      title="Click para editar imagen"
+                    >
+                      {item.image.startsWith('data:') || item.image.startsWith('http') ? (
+                        <img src={item.image} alt="" className="w-full h-full object-contain" />
+                      ) : (
+                        <span>{item.image}</span>
+                      )}
+                    </button>
                   </td>
 
                   {/* Name - Editable */}
