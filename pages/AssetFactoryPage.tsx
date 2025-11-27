@@ -63,6 +63,8 @@ const AssetFactoryPage: React.FC = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
   const [referenceFileName, setReferenceFileName] = useState<string>('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [cdnUrl, setCdnUrl] = useState<string | null>(null);
 
   const handleReferenceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,6 +101,7 @@ const AssetFactoryPage: React.FC = () => {
     setError(null);
     setGeneratedImage(null);
     setCopySuccess(false);
+    setCdnUrl(null);
 
     const currentProduct = productName.trim();
     const finalColor = customColor || productColor;
@@ -223,21 +226,10 @@ const AssetFactoryPage: React.FC = () => {
                     const mimeType = part.inlineData.mimeType || 'image/png';
                     const imageData = `data:${mimeType};base64,${base64String}`;
                     
-                    // Show preview immediately with base64
+                    // Show preview with base64 (don't upload automatically)
                     setGeneratedImage(imageData);
-                    
-                    // Compress and upload to Storage in background
-                    try {
-                        const cdnUrl = await processAndUploadImage(imageData, currentProduct);
-                        // Update with CDN URL (faster loading next time)
-                        setGeneratedImage(cdnUrl);
-                        // Add to history with CDN URL
-                        setHistory(prev => [{name: productDescription, image: cdnUrl, config: configStr}, ...prev.slice(0, 9)]);
-                    } catch (uploadErr) {
-                        console.warn('Upload to Storage failed, using base64:', uploadErr);
-                        // Fallback: keep base64 in history
-                        setHistory(prev => [{name: productDescription, image: imageData, config: configStr}, ...prev.slice(0, 9)]);
-                    }
+                    // Add to history with base64
+                    setHistory(prev => [{name: productDescription, image: imageData, config: configStr}, ...prev.slice(0, 9)]);
                     
                     foundImage = true;
                     break;
@@ -269,10 +261,27 @@ const AssetFactoryPage: React.FC = () => {
 
   const handleCopyCode = () => {
       if (!generatedImage) return;
-      // Copy raw base64 string without quotes for direct use in Admin Panel
-      navigator.clipboard.writeText(generatedImage);
+      navigator.clipboard.writeText(cdnUrl || generatedImage);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
+  };
+
+  const handleUploadToCDN = async () => {
+    if (!generatedImage || cdnUrl || isUploading) return;
+    
+    setIsUploading(true);
+    try {
+      const url = await processAndUploadImage(generatedImage, productName || 'asset');
+      setCdnUrl(url);
+      navigator.clipboard.writeText(url);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Upload failed:', err);
+      setError('Error al subir imagen. Intenta de nuevo.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleDownload = (image?: string, name?: string) => {
@@ -550,11 +559,34 @@ const AssetFactoryPage: React.FC = () => {
                   📥 Descargar PNG
                 </button>
                 
+                {/* Upload to CDN button */}
+                <button 
+                  onClick={handleUploadToCDN}
+                  disabled={isUploading || !!cdnUrl}
+                  className={`w-full py-3 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${
+                    cdnUrl 
+                      ? 'bg-green-600 text-white cursor-default' 
+                      : isUploading 
+                        ? 'bg-slate-600 text-slate-400 cursor-wait'
+                        : 'bg-[#FFC800] hover:bg-[#EAB308] text-black'
+                  }`}
+                >
+                  {cdnUrl ? '✓ Subido a CDN' : isUploading ? '⏳ Subiendo...' : '☁️ Subir a CDN'}
+                </button>
+
+                {/* Show CDN URL if uploaded */}
+                {cdnUrl && (
+                  <div className="w-full p-2 bg-[#1e2330] rounded-lg">
+                    <p className="text-[10px] text-slate-400 mb-1">URL del CDN:</p>
+                    <p className="text-[10px] text-green-400 break-all font-mono">{cdnUrl}</p>
+                  </div>
+                )}
+                
                 <button 
                   onClick={handleCopyCode}
-                  className={`w-full py-3 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${copySuccess ? 'bg-green-500 text-white' : 'bg-slate-700 hover:bg-green-600 text-white'}`}
+                  className={`w-full py-3 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${copySuccess ? 'bg-green-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-white'}`}
                 >
-                  {copySuccess ? '¡COPIADO!' : '📋 Copiar Base64'}
+                  {copySuccess ? '¡COPIADO!' : cdnUrl ? '📋 Copiar URL' : '📋 Copiar Base64'}
                 </button>
               </div>
             </div>
