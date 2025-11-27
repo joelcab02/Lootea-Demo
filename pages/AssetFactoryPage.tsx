@@ -1,24 +1,46 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
-import { ITEMS_DB } from '../constants';
-import { LootItem } from '../types';
 
 type BgMode = 'site' | 'green' | 'black';
 
+// Ejemplos de productos para sugerencias
+const PRODUCT_SUGGESTIONS = [
+  "iPhone 16 Pro Max Gold",
+  "MacBook Pro 16 M4",
+  "PlayStation 5 Pro",
+  "Nike Air Jordan 1 Chicago",
+  "Rolex Submariner",
+  "Louis Vuitton Neverfull",
+  "Tesla Model S Key",
+  "AirPods Pro 2",
+  "Nintendo Switch OLED",
+  "Dyson Airwrap",
+  "Canon EOS R5",
+  "Hermès Birkin Bag",
+];
+
 const AssetFactoryPage: React.FC = () => {
-  const [selectedItem, setSelectedItem] = useState<LootItem>(ITEMS_DB[0]);
+  const [productName, setProductName] = useState<string>('');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bgMode, setBgMode] = useState<BgMode>('site');
   const [copySuccess, setCopySuccess] = useState(false);
+  const [history, setHistory] = useState<{name: string; image: string}[]>([]);
 
   const handleGenerate = async () => {
+    if (!productName.trim()) {
+      setError('Por favor escribe el nombre de un producto');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setGeneratedImage(null);
     setCopySuccess(false);
+
+    const currentProduct = productName.trim();
 
     try {
         // @ts-ignore
@@ -46,7 +68,7 @@ const AssetFactoryPage: React.FC = () => {
         if (bgMode === 'green') bgHex = '#00FF00';
 
         const prompt = `
-            Create a premium 3D game asset of: ${selectedItem.name}.
+            Create a premium 3D game asset of: ${currentProduct}.
             
             COMPOSITION:
             - View: FULL SHOT. The ENTIRE object must be visible. DO NOT CUT OFF ANY EDGES.
@@ -95,7 +117,10 @@ const AssetFactoryPage: React.FC = () => {
                 if (part.inlineData) {
                     const base64String = part.inlineData.data;
                     const mimeType = part.inlineData.mimeType || 'image/png';
-                    setGeneratedImage(`data:${mimeType};base64,${base64String}`);
+                    const imageData = `data:${mimeType};base64,${base64String}`;
+                    setGeneratedImage(imageData);
+                    // Add to history
+                    setHistory(prev => [{name: currentProduct, image: imageData}, ...prev.slice(0, 9)]);
                     foundImage = true;
                     break;
                 }
@@ -139,11 +164,13 @@ const AssetFactoryPage: React.FC = () => {
       setTimeout(() => setCopySuccess(false), 2000);
   };
 
-  const handleDownload = () => {
-    if (!generatedImage) return;
+  const handleDownload = (image?: string, name?: string) => {
+    const img = image || generatedImage;
+    const productLabel = name || productName || 'asset';
+    if (!img) return;
     const link = document.createElement('a');
-    link.href = generatedImage;
-    link.download = `${selectedItem.name.replace(/ /g, '_')}_3D.png`;
+    link.href = img;
+    link.download = `${productLabel.replace(/ /g, '_')}_3D.png`;
     link.click();
   };
 
@@ -174,29 +201,36 @@ const AssetFactoryPage: React.FC = () => {
       <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]">
         
         {/* Controls Side */}
-        <div className="p-6 lg:w-1/2 xl:w-2/5 border-b lg:border-b-0 lg:border-r border-[#1e2330] flex flex-col gap-6">
+        <div className="p-6 lg:w-1/2 xl:w-2/5 border-b lg:border-b-0 lg:border-r border-[#1e2330] flex flex-col gap-6 overflow-y-auto max-h-[calc(100vh-64px)]">
           <div>
             <p className="text-sm text-slate-400">
-              Genera assets 3D estilo "Packdraw" con IA. Los assets se generan con fondo negro para usar con blend mode.
+              Genera renders 3D de cualquier producto. Escribe el nombre y la IA creará un asset premium.
             </p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase">1. Seleccionar Item</label>
-            <select 
-              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-3 text-sm focus:border-[#FFC800] outline-none"
-              value={selectedItem.id}
-              onChange={(e) => {
-                const item = ITEMS_DB.find(i => i.id === e.target.value);
-                if (item) setSelectedItem(item);
-              }}
-            >
-              {ITEMS_DB.map(item => (
-                <option key={item.id} value={item.id}>
-                  {item.name} ({item.rarity})
-                </option>
+            <label className="text-xs font-bold text-slate-400 uppercase">1. Nombre del Producto</label>
+            <input
+              type="text"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleGenerate()}
+              placeholder="Ej: iPhone 16 Pro Max Gold"
+              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-3 text-sm focus:border-[#FFC800] outline-none placeholder:text-slate-600"
+            />
+            
+            {/* Quick Suggestions */}
+            <div className="flex flex-wrap gap-2 mt-2">
+              {PRODUCT_SUGGESTIONS.slice(0, 6).map((suggestion) => (
+                <button
+                  key={suggestion}
+                  onClick={() => setProductName(suggestion)}
+                  className="px-2 py-1 text-[10px] bg-[#1e2330] hover:bg-[#2a3040] border border-[#2a3040] hover:border-[#FFC800] rounded text-slate-400 hover:text-white transition-all"
+                >
+                  {suggestion}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -246,7 +280,7 @@ const AssetFactoryPage: React.FC = () => {
               
               <div className="grid grid-cols-2 gap-3">
                 <button 
-                  onClick={handleDownload}
+                  onClick={() => handleDownload()}
                   className="w-full py-3 rounded-lg text-xs font-black uppercase tracking-wider bg-blue-600 hover:bg-blue-500 text-white transition-colors"
                 >
                   📥 Descargar PNG
@@ -262,6 +296,36 @@ const AssetFactoryPage: React.FC = () => {
             </div>
           )}
 
+          {/* History */}
+          {history.length > 0 && (
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-400 uppercase">Historial</label>
+              <div className="grid grid-cols-4 gap-2">
+                {history.map((item, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setGeneratedImage(item.image);
+                      setProductName(item.name);
+                    }}
+                    className="relative group aspect-square bg-[#1e2330] rounded-lg overflow-hidden border border-[#2a3040] hover:border-[#FFC800] transition-all"
+                    title={item.name}
+                  >
+                    <img 
+                      src={item.image} 
+                      alt={item.name}
+                      className="w-full h-full object-contain"
+                      style={{ mixBlendMode: 'lighten' }}
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-[8px] text-white font-bold text-center px-1 line-clamp-2">{item.name}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-auto pt-4 text-xs text-slate-600">
             *Usa Gemini 3 Pro Image Preview. Requiere API key de pago.
             <br/>
@@ -272,19 +336,24 @@ const AssetFactoryPage: React.FC = () => {
         {/* Preview Side */}
         <div className="flex-1 p-6 bg-[#0d1019] flex flex-col items-center justify-center">
           {generatedImage ? (
-            <div className="relative group w-full max-w-lg aspect-square flex items-center justify-center">
-              <img 
-                src={generatedImage} 
-                className="w-full h-full object-contain rounded-xl shadow-2xl border border-[#1e2330]" 
-                alt="Generated Asset"
-                style={{ mixBlendMode: bgMode === 'site' ? 'lighten' : 'normal' }}
-              />
+            <div className="w-full max-w-lg">
+              <div className="relative group aspect-square flex items-center justify-center mb-4">
+                <img 
+                  src={generatedImage} 
+                  className="w-full h-full object-contain rounded-xl shadow-2xl border border-[#1e2330]" 
+                  alt="Generated Asset"
+                  style={{ mixBlendMode: bgMode === 'site' ? 'lighten' : 'normal' }}
+                />
+              </div>
+              {productName && (
+                <p className="text-center text-sm text-slate-400 font-bold">{productName}</p>
+              )}
             </div>
           ) : (
             <div className="text-center opacity-30 select-none">
               <div className="text-8xl mb-6 grayscale">🎨</div>
               <div className="font-black italic uppercase text-slate-500 text-xl">Preview Area</div>
-              <div className="text-sm font-bold text-slate-600 mt-2">Las imágenes aparecen aquí</div>
+              <div className="text-sm font-bold text-slate-600 mt-2">Escribe un producto y genera su render 3D</div>
             </div>
           )}
         </div>
