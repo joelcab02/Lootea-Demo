@@ -43,7 +43,13 @@ const AssetFactoryPage: React.FC = () => {
     const currentProduct = productName.trim();
 
     try {
-        const apiKey = 'AIzaSyB2rTy9Fq0ufirhzb3kwT3Tu-T5Sq1_Hdc';
+        // API key from environment variable
+        const apiKey = import.meta.env.VITE_GOOGLE_AI_KEY || process.env.API_KEY;
+        
+        if (!apiKey) {
+            throw new Error("API Key no configurada. Configura VITE_GOOGLE_AI_KEY en las variables de entorno.");
+        }
+        
         const ai = new GoogleGenAI({ apiKey });
 
         let bgHex = '#000000'; 
