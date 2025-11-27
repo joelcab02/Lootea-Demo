@@ -6,14 +6,16 @@ import { audioService } from '../../services/audioService';
 import { calculateTicketRanges, selectWeightedWinner, debugTicketDistribution, LootItemWithTickets } from '../../services/oddsService';
 
 interface SpinnerProps {
-  items: LootItem[]; // Updated to accept dynamic items
+  items: LootItem[];
   isSpinning: boolean;
   onSpinStart: () => void;
   onSpinEnd: (item: LootItem) => void;
-  customDuration?: number; 
+  customDuration?: number;
+  winner?: LootItem | null;
+  showResult?: boolean;
 }
 
-const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration }) => {
+const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [strip, setStrip] = useState<LootItem[]>([]);
   
@@ -175,19 +177,29 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
 
   const stripWidth = strip.length * (CARD_WIDTH + CARD_GAP);
 
+  // Check if this item is the winner (for highlighting)
+  const isWinnerItem = (item: LootItem, index: number) => {
+    return showResult && winner && index === WINNING_INDEX && item.id === winner.id;
+  };
+
   return (
     <div className="relative w-full h-[210px] sm:h-[260px] overflow-hidden bg-[#0a0c10] border-y-2 border-[#1e2330] flex items-center shadow-inner transition-all duration-300">
         
-        {/* Center Indicator Line */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-[#FFC800] z-30 transform -translate-x-1/2 shadow-[0_0_20px_#FFC800] opacity-90"></div>
+        {/* Dark overlay when showing result */}
+        {showResult && winner && (
+          <div className="absolute inset-0 bg-black/70 z-25 transition-opacity duration-500" />
+        )}
+        
+        {/* Center Indicator Line - hide when showing result */}
+        <div className={`absolute left-1/2 top-0 bottom-0 w-1 bg-[#FFC800] z-30 transform -translate-x-1/2 shadow-[0_0_20px_#FFC800] transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-90'}`}></div>
         
         {/* Top Triangle Arrow */}
-        <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+        <div className={`absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-100'}`}>
              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 16L4 4h16z"/></svg>
         </div>
         
         {/* Bottom Triangle Arrow */}
-        <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_-2px_4px_rgba(0,0,0,0.5)]">
+        <div className={`absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_-2px_4px_rgba(0,0,0,0.5)] transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-100'}`}>
              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8l8 12H4z"/></svg>
         </div>
 
@@ -205,11 +217,37 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                 backfaceVisibility: 'hidden'
             }}
         >
-            {strip.map((item, index) => (
-                <div key={`${item.id}-${index}`} style={{ marginRight: `${CARD_GAP}px` }}>
-                    <LootCard item={item} width={CARD_WIDTH} isSpinner={true} />
-                </div>
-            ))}
+            {strip.map((item, index) => {
+                const isWinner = isWinnerItem(item, index);
+                return (
+                  <div 
+                    key={`${item.id}-${index}`} 
+                    className={`relative transition-all duration-500 ${isWinner ? 'z-40 scale-110' : showResult ? 'opacity-20' : ''}`}
+                    style={{ marginRight: `${CARD_GAP}px` }}
+                  >
+                    {/* Winner glow effect */}
+                    {isWinner && (
+                      <div className="absolute -inset-4 bg-[#FFC800]/30 rounded-2xl blur-xl animate-pulse" />
+                    )}
+                    
+                    <div className={`relative ${isWinner ? 'ring-4 ring-[#FFC800] rounded-xl shadow-[0_0_40px_rgba(255,200,0,0.5)]' : ''}`}>
+                      <LootCard item={item} width={CARD_WIDTH} isSpinner={true} />
+                    </div>
+                    
+                    {/* Winner info overlay */}
+                    {isWinner && (
+                      <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
+                        <p className="text-white font-black uppercase italic tracking-tighter text-sm md:text-base drop-shadow-lg">
+                          {winner.name}
+                        </p>
+                        <p className="text-[#FFC800] font-mono font-bold text-sm md:text-lg drop-shadow-lg">
+                          ${winner.price.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+            })}
         </div>
     </div>
   );

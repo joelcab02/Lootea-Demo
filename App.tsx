@@ -219,57 +219,9 @@ const App: React.FC = () => {
                     onSpinStart={() => {}} 
                     onSpinEnd={handleSpinEnd}
                     customDuration={fastMode ? 2000 : 5500}
+                    winner={winner}
+                    showResult={showResult}
                 />
-            </div>
-            
-            {/* WIN RESULT PANEL - Aparece entre spinner y controles */}
-            <div className={`w-full max-w-[600px] px-4 transition-all duration-300 ${showResult && winner ? 'opacity-100 max-h-32 mb-4' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-              {winner && (
-                <div className="bg-[#161922] border-2 border-[#FFC800]/50 rounded-xl px-4 py-3 flex items-center justify-between gap-4 shadow-[0_0_30px_rgba(255,200,0,0.15)]">
-                  {/* Left: Rarity + Info */}
-                  <div className="flex items-center gap-3">
-                    {/* Rarity badge */}
-                    <div className={`
-                      px-3 py-1.5 rounded text-[10px] font-black uppercase italic tracking-tighter border
-                      ${winner.rarity === 'LEGENDARY' 
-                        ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.3)]' 
-                        : winner.rarity === 'EPIC'
-                          ? 'bg-purple-500/20 border-purple-500/50 text-purple-400'
-                          : winner.rarity === 'RARE'
-                            ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
-                            : 'bg-slate-700/30 border-slate-600 text-slate-400'}
-                    `}>
-                      {winner.rarity}
-                    </div>
-                    
-                    {/* Item info */}
-                    <div className="flex flex-col">
-                      <span className="text-white font-black uppercase italic tracking-tighter text-sm md:text-base leading-tight">
-                        {winner.name}
-                      </span>
-                      <span className="text-[#FFC800] font-mono font-bold text-xs">
-                        ${winner.price.toLocaleString()} MXN
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* Right: Action buttons */}
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => setShowResult(false)}
-                      className="px-4 py-2 bg-[#1e2330] hover:bg-[#2a3040] text-slate-300 hover:text-white border border-[#2a3040] font-black rounded-lg text-[10px] uppercase italic tracking-tighter transition-colors"
-                    >
-                      Vender
-                    </button>
-                    <button 
-                      onClick={() => setShowResult(false)}
-                      className="px-4 py-2 bg-[#FFC800] hover:bg-[#EAB308] text-black font-black rounded-lg text-[10px] uppercase italic tracking-tighter transition-colors shadow-[0_0_15px_rgba(255,200,0,0.3)]"
-                    >
-                      Enviar
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* COCKPIT CONTROLS - COMPACT & ACCESSIBLE */}
@@ -376,14 +328,6 @@ const App: React.FC = () => {
         </div>
 
         <Footer />
-
-      {/* WIN RESULT OVERLAY - Fondo oscuro cuando hay ganador */}
-      {showResult && winner && (
-        <div 
-          className="fixed inset-0 z-[90] bg-black/60 pointer-events-none transition-opacity duration-300"
-          style={{ opacity: showResult ? 1 : 0 }}
-        />
-      )}
     </div>
   </div>
   );
