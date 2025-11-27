@@ -1,11 +1,12 @@
 /**
  * Odds Store - Centralized state management for odds configuration
- * 100% Supabase-driven - no hardcoded data
+ * 100% Supabase-driven - supports multiple boxes
  */
 
 import { LootItem, Rarity } from '../types';
 import { calculateTicketRanges, validateOdds, LootItemWithTickets } from './oddsService';
 import { supabase, DbLootItem } from './supabaseClient';
+import { getBoxBySlug, BoxWithItems } from './boxService';
 
 // Types for the store
 export interface OddsConfig {
@@ -22,6 +23,7 @@ export interface StoreState {
   warnings: string[];
   isLoading: boolean;
   isSynced: boolean;
+  currentBoxSlug: string | null;
 }
 
 // Callbacks for state changes
@@ -33,6 +35,7 @@ let currentItems: LootItem[] = [];
 let cachedState: StoreState | null = null;
 let isLoading = false;
 let isSynced = false;
+let currentBoxSlug: string | null = null;
 
 /**
  * Convert DB item to LootItem
@@ -63,46 +66,29 @@ function lootItemToDb(item: LootItem): DbLootItem {
 }
 
 /**
- * Initialize store - fetch from Supabase (100% database-driven)
- * Uses two-phase loading: metadata first (fast), then images (background)
+ * Initialize store with a specific box by slug
+ * This is the NEW way - loads items for a specific box
  */
-export async function initializeStore(): Promise<StoreState> {
+export async function initializeStoreWithBox(boxSlug: string): Promise<StoreState> {
   isLoading = true;
   cachedState = null;
+  currentBoxSlug = boxSlug;
   notifyListeners();
   
   try {
-    // Phase 1: Fetch metadata only (fast - no images)
-    const { data, error } = await supabase
-      .from('loot_items')
-      .select('id, name, price, rarity, odds')
-      .order('price', { ascending: false });
+    const box = await getBoxBySlug(boxSlug);
     
-    if (error) {
-      console.error('❌ Supabase fetch failed:', error.message);
-      isSynced = false;
-    } else if (data && data.length > 0) {
-      console.log('✅ Loaded', data.length, 'items (metadata)');
-      // Initialize with placeholder images
-      currentItems = data.map(item => ({
-        id: item.id,
-        name: item.name,
-        price: Number(item.price),
-        rarity: item.rarity as Rarity,
-        odds: Number(item.odds),
-        image: '⏳' // Placeholder while loading
-      }));
+    if (box && box.items.length > 0) {
+      console.log(`✅ Loaded box "${box.name}" with ${box.items.length} items`);
+      currentItems = box.items;
       isSynced = true;
-      
-      // Phase 2: Load images in background
-      loadImagesInBackground();
     } else {
-      console.log('📦 No items in database. Add items via Admin Panel.');
+      console.log(`📦 Box "${boxSlug}" not found or empty`);
       currentItems = [];
       isSynced = true;
     }
   } catch (err) {
-    console.error('❌ Store initialization error:', err);
+    console.error('❌ Box initialization error:', err);
     isSynced = false;
   }
   
@@ -111,6 +97,15 @@ export async function initializeStore(): Promise<StoreState> {
   notifyListeners();
   
   return getOddsState();
+}
+
+/**
+ * Initialize store - fetch from Supabase (LEGACY - loads default box)
+ * Uses two-phase loading: metadata first (fast), then images (background)
+ */
+export async function initializeStore(): Promise<StoreState> {
+  // Default to apple-collection for backwards compatibility
+  return initializeStoreWithBox('apple-collection');
 }
 
 /**
@@ -160,7 +155,8 @@ export function getOddsState(): StoreState {
     totalOdds: validation.totalOdds,
     warnings: validation.warnings,
     isLoading,
-    isSynced
+    isSynced,
+    currentBoxSlug
   };
   
   return cachedState;
