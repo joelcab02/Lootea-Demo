@@ -3,31 +3,63 @@ import { Link } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
 
 type BgMode = 'site' | 'green' | 'black';
+type ViewAngle = 'front' | '3/4' | 'side' | 'top';
+type LightingStyle = 'studio' | 'neon' | 'golden' | 'dramatic';
+
+// Colores predefinidos
+const COLOR_PRESETS = [
+  { name: 'Original', value: '' },
+  { name: 'Negro', value: 'Matte Black' },
+  { name: 'Blanco', value: 'Pearl White' },
+  { name: 'Oro', value: 'Gold / Champagne Gold' },
+  { name: 'Plata', value: 'Silver / Chrome' },
+  { name: 'Azul', value: 'Deep Blue / Navy' },
+  { name: 'Rojo', value: 'Red / Cherry Red' },
+  { name: 'Rosa', value: 'Pink / Rose Gold' },
+  { name: 'Verde', value: 'Forest Green / Emerald' },
+  { name: 'Morado', value: 'Purple / Violet' },
+];
 
 // Ejemplos de productos para sugerencias
 const PRODUCT_SUGGESTIONS = [
-  "iPhone 16 Pro Max Gold",
-  "MacBook Pro 16 M4",
-  "PlayStation 5 Pro",
-  "Nike Air Jordan 1 Chicago",
+  "iPhone 16 Pro Max",
+  "MacBook Pro 16",
+  "PlayStation 5",
+  "Nike Air Jordan 1",
   "Rolex Submariner",
-  "Louis Vuitton Neverfull",
-  "Tesla Model S Key",
-  "AirPods Pro 2",
-  "Nintendo Switch OLED",
-  "Dyson Airwrap",
-  "Canon EOS R5",
-  "Hermès Birkin Bag",
+  "Louis Vuitton Bag",
+  "AirPods Pro",
+  "Nintendo Switch",
+];
+
+const VIEW_ANGLES: { value: ViewAngle; label: string }[] = [
+  { value: '3/4', label: '3/4 Vista' },
+  { value: 'front', label: 'Frontal' },
+  { value: 'side', label: 'Lateral' },
+  { value: 'top', label: 'Superior' },
+];
+
+const LIGHTING_STYLES: { value: LightingStyle; label: string; color: string }[] = [
+  { value: 'studio', label: 'Studio', color: '#FFC800' },
+  { value: 'golden', label: 'Golden Hour', color: '#FFB347' },
+  { value: 'neon', label: 'Neon Glow', color: '#00FFFF' },
+  { value: 'dramatic', label: 'Dramático', color: '#FF4500' },
 ];
 
 const AssetFactoryPage: React.FC = () => {
   const [productName, setProductName] = useState<string>('');
+  const [productColor, setProductColor] = useState<string>('');
+  const [customColor, setCustomColor] = useState<string>('');
+  const [productVariant, setProductVariant] = useState<string>('');
+  const [viewAngle, setViewAngle] = useState<ViewAngle>('3/4');
+  const [lightingStyle, setLightingStyle] = useState<LightingStyle>('studio');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bgMode, setBgMode] = useState<BgMode>('site');
   const [copySuccess, setCopySuccess] = useState(false);
-  const [history, setHistory] = useState<{name: string; image: string}[]>([]);
+  const [history, setHistory] = useState<{name: string; image: string; config: string}[]>([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleGenerate = async () => {
     if (!productName.trim()) {
@@ -41,6 +73,15 @@ const AssetFactoryPage: React.FC = () => {
     setCopySuccess(false);
 
     const currentProduct = productName.trim();
+    const finalColor = customColor || productColor;
+    
+    // Build product description
+    let productDescription = currentProduct;
+    if (finalColor) productDescription += ` in ${finalColor} color`;
+    if (productVariant) productDescription += `, ${productVariant} edition/variant`;
+    
+    // Build config string for history
+    const configStr = [finalColor, productVariant, viewAngle, lightingStyle].filter(Boolean).join(' | ');
 
     try {
         // API key from environment variable
@@ -52,21 +93,52 @@ const AssetFactoryPage: React.FC = () => {
         
         const ai = new GoogleGenAI({ apiKey });
 
-        let bgHex = '#000000'; 
-        if (bgMode === 'green') bgHex = '#00FF00';
+        // View angle descriptions
+        const viewDescriptions: Record<ViewAngle, string> = {
+          'front': 'Front view, facing the camera directly',
+          '3/4': 'Three-quarter view, angled slightly for depth',
+          'side': 'Side profile view, 90 degrees from front',
+          'top': 'Top-down view, looking from above at 45 degree angle'
+        };
+
+        // Lighting style descriptions
+        const lightingDescriptions: Record<LightingStyle, { rim: string; style: string }> = {
+          'studio': { 
+            rim: 'GOLDEN/YELLOW RIM LIGHT (#FFC800)', 
+            style: 'Clean studio lighting with soft shadows' 
+          },
+          'golden': { 
+            rim: 'WARM GOLDEN RIM LIGHT (#FFB347)', 
+            style: 'Golden hour warm lighting, sunset tones' 
+          },
+          'neon': { 
+            rim: 'CYAN/TEAL NEON RIM LIGHT (#00FFFF)', 
+            style: 'Cyberpunk neon glow, futuristic vibes' 
+          },
+          'dramatic': { 
+            rim: 'ORANGE/RED RIM LIGHT (#FF4500)', 
+            style: 'High contrast dramatic lighting, deep shadows' 
+          }
+        };
+
+        const lighting = lightingDescriptions[lightingStyle];
 
         const prompt = `
-            Create a premium 3D game asset of: ${currentProduct}.
+            Create a premium 3D game asset of: ${productDescription}.
             
             COMPOSITION:
             - View: FULL SHOT. The ENTIRE object must be visible. DO NOT CUT OFF ANY EDGES.
-            - Position: Floating in mid-air, angled slightly (3/4 view).
+            - Position: ${viewDescriptions[viewAngle]}. Floating in mid-air.
             - Framing: Center the object perfectly. Fill about 80% of the canvas. Leave a safety margin around all sides.
             
-            LIGHTING & STYLE (LOOTEA BRANDING):
+            PRODUCT CUSTOMIZATION:
+            ${finalColor ? `- COLOR: The product should be ${finalColor}. Apply this color realistically to the main body/surface.` : '- Use the product\'s original/default colors.'}
+            ${productVariant ? `- VARIANT: This is the ${productVariant} version/edition of the product.` : ''}
+            
+            LIGHTING & STYLE:
             - Style: Hyper-realistic, Unreal Engine 5 render, Glossy, Premium e-commerce.
-            - Lighting: Dramatic Studio Lighting with high contrast.
-            - RIM LIGHT: Strong, bright GOLDEN/YELLOW RIM LIGHT (#FFC800) highlighting the edges of the object.
+            - Lighting: ${lighting.style}
+            - RIM LIGHT: Strong, bright ${lighting.rim} highlighting the edges of the object.
             - The object should look like a glowing, desirable reward.
             
             BACKGROUND - CRITICAL FOR TRANSPARENCY:
@@ -107,8 +179,8 @@ const AssetFactoryPage: React.FC = () => {
                     const mimeType = part.inlineData.mimeType || 'image/png';
                     const imageData = `data:${mimeType};base64,${base64String}`;
                     setGeneratedImage(imageData);
-                    // Add to history
-                    setHistory(prev => [{name: currentProduct, image: imageData}, ...prev.slice(0, 9)]);
+                    // Add to history with config
+                    setHistory(prev => [{name: productDescription, image: imageData, config: configStr}, ...prev.slice(0, 9)]);
                     foundImage = true;
                     break;
                 }
@@ -188,20 +260,21 @@ const AssetFactoryPage: React.FC = () => {
             </p>
           </div>
 
+          {/* Product Name */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase">1. Nombre del Producto</label>
+            <label className="text-xs font-bold text-slate-400 uppercase">1. Producto</label>
             <input
               type="text"
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleGenerate()}
-              placeholder="Ej: iPhone 16 Pro Max Gold"
+              placeholder="Ej: iPhone 16 Pro Max"
               className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-3 text-sm focus:border-[#FFC800] outline-none placeholder:text-slate-600"
             />
             
             {/* Quick Suggestions */}
             <div className="flex flex-wrap gap-2 mt-2">
-              {PRODUCT_SUGGESTIONS.slice(0, 6).map((suggestion) => (
+              {PRODUCT_SUGGESTIONS.map((suggestion) => (
                 <button
                   key={suggestion}
                   onClick={() => setProductName(suggestion)}
@@ -213,29 +286,128 @@ const AssetFactoryPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Color Selection */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase">2. Modo de Fondo</label>
-            <div className="grid grid-cols-3 gap-3">
-              <button 
-                onClick={() => setBgMode('site')}
-                className={`p-3 rounded-lg border text-xs font-black uppercase transition-all ${bgMode === 'site' ? 'bg-black border-[#FFC800] text-[#FFC800]' : 'bg-[#0d1019] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
-              >
-                Auto Blend
-              </button>
-              <button 
-                onClick={() => setBgMode('green')}
-                className={`p-3 rounded-lg border text-xs font-black uppercase transition-all ${bgMode === 'green' ? 'bg-green-900/20 border-green-500 text-green-500' : 'bg-[#0d1019] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
-              >
-                Green Screen
-              </button>
-              <button 
-                onClick={() => setBgMode('black')}
-                className={`p-3 rounded-lg border text-xs font-black uppercase transition-all ${bgMode === 'black' ? 'bg-black border-white text-white' : 'bg-[#0d1019] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
-              >
-                Pure Black
-              </button>
+            <label className="text-xs font-bold text-slate-400 uppercase">2. Color</label>
+            <div className="flex flex-wrap gap-2">
+              {COLOR_PRESETS.map((color) => (
+                <button
+                  key={color.name}
+                  onClick={() => { setProductColor(color.value); setCustomColor(''); }}
+                  className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all ${
+                    productColor === color.value && !customColor
+                      ? 'bg-[#FFC800]/20 border-[#FFC800] text-[#FFC800]' 
+                      : 'bg-[#0d1019] border-[#2a3040] text-slate-400 hover:border-slate-500'
+                  }`}
+                >
+                  {color.name}
+                </button>
+              ))}
             </div>
+            <input
+              type="text"
+              value={customColor}
+              onChange={(e) => { setCustomColor(e.target.value); setProductColor(''); }}
+              placeholder="O escribe un color personalizado..."
+              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-2 text-xs focus:border-[#FFC800] outline-none placeholder:text-slate-600"
+            />
           </div>
+
+          {/* Variant/Edition */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-400 uppercase">3. Variante / Edición (opcional)</label>
+            <input
+              type="text"
+              value={productVariant}
+              onChange={(e) => setProductVariant(e.target.value)}
+              placeholder="Ej: Limited Edition, Pro Max, 512GB..."
+              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-2 text-xs focus:border-[#FFC800] outline-none placeholder:text-slate-600"
+            />
+          </div>
+
+          {/* Advanced Options Toggle */}
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="w-full text-left text-xs text-slate-500 hover:text-slate-300 flex items-center gap-2"
+          >
+            <span className={`transition-transform ${showAdvanced ? 'rotate-90' : ''}`}>▶</span>
+            Opciones avanzadas
+          </button>
+
+          {/* Advanced Options */}
+          {showAdvanced && (
+            <div className="space-y-4 p-4 bg-[#0d1019] rounded-lg border border-[#2a3040]">
+              {/* View Angle */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase">Ángulo de Vista</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {VIEW_ANGLES.map((angle) => (
+                    <button
+                      key={angle.value}
+                      onClick={() => setViewAngle(angle.value)}
+                      className={`p-2 rounded border text-[10px] font-bold transition-all ${
+                        viewAngle === angle.value
+                          ? 'bg-[#FFC800]/20 border-[#FFC800] text-[#FFC800]'
+                          : 'bg-[#1e2330] border-[#2a3040] text-slate-400 hover:border-slate-500'
+                      }`}
+                    >
+                      {angle.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Lighting Style */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase">Estilo de Iluminación</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {LIGHTING_STYLES.map((style) => (
+                    <button
+                      key={style.value}
+                      onClick={() => setLightingStyle(style.value)}
+                      className={`p-2 rounded border text-xs font-bold transition-all flex items-center gap-2 ${
+                        lightingStyle === style.value
+                          ? 'border-[#FFC800]'
+                          : 'bg-[#1e2330] border-[#2a3040] text-slate-400 hover:border-slate-500'
+                      }`}
+                      style={{ 
+                        backgroundColor: lightingStyle === style.value ? `${style.color}20` : undefined,
+                        color: lightingStyle === style.value ? style.color : undefined
+                      }}
+                    >
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: style.color }}></span>
+                      {style.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Background Mode */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase">Modo de Fondo</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button 
+                    onClick={() => setBgMode('site')}
+                    className={`p-2 rounded border text-[10px] font-black uppercase transition-all ${bgMode === 'site' ? 'bg-black border-[#FFC800] text-[#FFC800]' : 'bg-[#1e2330] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
+                  >
+                    Auto Blend
+                  </button>
+                  <button 
+                    onClick={() => setBgMode('green')}
+                    className={`p-2 rounded border text-[10px] font-black uppercase transition-all ${bgMode === 'green' ? 'bg-green-900/20 border-green-500 text-green-500' : 'bg-[#1e2330] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
+                  >
+                    Green Screen
+                  </button>
+                  <button 
+                    onClick={() => setBgMode('black')}
+                    className={`p-2 rounded border text-[10px] font-black uppercase transition-all ${bgMode === 'black' ? 'bg-black border-white text-white' : 'bg-[#1e2330] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
+                  >
+                    Pure Black
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           <button 
             onClick={handleGenerate}
