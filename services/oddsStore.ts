@@ -398,6 +398,133 @@ export async function importConfig(jsonString: string): Promise<StoreState> {
 }
 
 /**
+ * Update a complete item (all fields) - syncs to Supabase
+ */
+export async function updateItem(itemId: string, updates: Partial<LootItem>): Promise<StoreState> {
+  const itemIndex = currentItems.findIndex(item => item.id === itemId);
+  
+  if (itemIndex === -1) {
+    console.error(`oddsStore: Item ${itemId} not found`);
+    return getOddsState();
+  }
+  
+  // Update local state
+  currentItems = currentItems.map(item => 
+    item.id === itemId ? { ...item, ...updates } : item
+  );
+  
+  cachedState = null;
+  notifyListeners();
+  
+  // Sync to Supabase
+  try {
+    const dbUpdates: Partial<DbLootItem> = {};
+    if (updates.name !== undefined) dbUpdates.name = updates.name;
+    if (updates.price !== undefined) dbUpdates.price = updates.price;
+    if (updates.rarity !== undefined) dbUpdates.rarity = updates.rarity;
+    if (updates.odds !== undefined) dbUpdates.odds = updates.odds;
+    if (updates.image !== undefined) dbUpdates.image = updates.image;
+    
+    const { error } = await supabase
+      .from('loot_items')
+      .update(dbUpdates)
+      .eq('id', itemId);
+    
+    if (error) {
+      console.error('❌ Failed to update item:', error.message);
+      isSynced = false;
+    } else {
+      console.log(`✅ Updated item ${itemId}`);
+      isSynced = true;
+    }
+  } catch (err) {
+    console.error('❌ Update error:', err);
+    isSynced = false;
+  }
+  
+  cachedState = null;
+  return getOddsState();
+}
+
+/**
+ * Add a new item - syncs to Supabase
+ */
+export async function addItem(item: LootItem): Promise<StoreState> {
+  // Check if ID already exists
+  if (currentItems.find(i => i.id === item.id)) {
+    console.error(`oddsStore: Item ${item.id} already exists`);
+    return getOddsState();
+  }
+  
+  // Add to local state
+  currentItems = [...currentItems, item];
+  
+  cachedState = null;
+  notifyListeners();
+  
+  // Sync to Supabase
+  try {
+    const { error } = await supabase
+      .from('loot_items')
+      .insert(lootItemToDb(item));
+    
+    if (error) {
+      console.error('❌ Failed to add item:', error.message);
+      isSynced = false;
+    } else {
+      console.log(`✅ Added new item ${item.id}`);
+      isSynced = true;
+    }
+  } catch (err) {
+    console.error('❌ Add item error:', err);
+    isSynced = false;
+  }
+  
+  cachedState = null;
+  return getOddsState();
+}
+
+/**
+ * Delete an item - syncs to Supabase
+ */
+export async function deleteItem(itemId: string): Promise<StoreState> {
+  const itemIndex = currentItems.findIndex(item => item.id === itemId);
+  
+  if (itemIndex === -1) {
+    console.error(`oddsStore: Item ${itemId} not found`);
+    return getOddsState();
+  }
+  
+  // Remove from local state
+  currentItems = currentItems.filter(item => item.id !== itemId);
+  
+  cachedState = null;
+  notifyListeners();
+  
+  // Sync to Supabase
+  try {
+    const { error } = await supabase
+      .from('loot_items')
+      .delete()
+      .eq('id', itemId);
+    
+    if (error) {
+      console.error('❌ Failed to delete item:', error.message);
+      isSynced = false;
+    } else {
+      console.log(`✅ Deleted item ${itemId}`);
+      isSynced = true;
+    }
+  } catch (err) {
+    console.error('❌ Delete error:', err);
+    isSynced = false;
+  }
+  
+  cachedState = null;
+  return getOddsState();
+}
+
+/**
  * Log a spin result to Supabase for analytics
  */
 export async function logSpinResult(itemId: string, ticketNumber: number, userId: string = 'anonymous'): Promise<void> {

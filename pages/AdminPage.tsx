@@ -1,26 +1,51 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Rarity } from '../types';
+import { Rarity, LootItem } from '../types';
 import { 
   getOddsState, 
-  updateItemOdds, 
   resetToDefaults, 
   normalizeOdds,
   exportConfig,
   importConfig,
   subscribe,
   initializeStore,
+  updateItem,
+  addItem,
+  deleteItem,
   StoreState 
 } from '../services/oddsStore';
 import { RARITY_COLORS } from '../constants';
 
+interface EditingItem {
+  id: string;
+  field: 'name' | 'price' | 'odds' | 'rarity' | 'image';
+  value: string;
+}
+
+interface NewItemForm {
+  name: string;
+  price: string;
+  odds: string;
+  rarity: Rarity;
+  image: string;
+}
+
+const emptyNewItem: NewItemForm = {
+  name: '',
+  price: '',
+  odds: '1',
+  rarity: Rarity.COMMON,
+  image: '📦'
+};
+
 const AdminPage: React.FC = () => {
   const [state, setState] = useState<StoreState>(getOddsState);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState<string>('');
+  const [editing, setEditing] = useState<EditingItem | null>(null);
   const [showExport, setShowExport] = useState(false);
   const [importText, setImportText] = useState('');
   const [showImport, setShowImport] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newItem, setNewItem] = useState<NewItemForm>(emptyNewItem);
   const [isSaving, setIsSaving] = useState(false);
 
   // Subscribe to store changes
@@ -38,34 +63,82 @@ const AdminPage: React.FC = () => {
     });
   }, []);
 
-  const handleOddsChange = useCallback(async (itemId: string, value: string) => {
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue)) {
-      setIsSaving(true);
-      await updateItemOdds(itemId, numValue);
-      setIsSaving(false);
-    }
-  }, []);
-
-  const startEditing = (itemId: string, currentOdds: number) => {
-    setEditingId(itemId);
-    setEditValue(currentOdds.toString());
+  // Start editing a field
+  const startEditing = (id: string, field: EditingItem['field'], currentValue: string | number) => {
+    setEditing({ id, field, value: String(currentValue) });
   };
 
-  const finishEditing = async () => {
-    if (editingId) {
-      await handleOddsChange(editingId, editValue);
+  // Save the current edit
+  const saveEdit = async () => {
+    if (!editing) return;
+    
+    setIsSaving(true);
+    const { id, field, value } = editing;
+    
+    let updates: Partial<LootItem> = {};
+    
+    switch (field) {
+      case 'name':
+        updates.name = value;
+        break;
+      case 'price':
+        updates.price = parseFloat(value) || 0;
+        break;
+      case 'odds':
+        updates.odds = Math.max(0, Math.min(100, parseFloat(value) || 0));
+        break;
+      case 'rarity':
+        updates.rarity = value as Rarity;
+        break;
+      case 'image':
+        updates.image = value;
+        break;
     }
-    setEditingId(null);
-    setEditValue('');
+    
+    await updateItem(id, updates);
+    setEditing(null);
+    setIsSaving(false);
   };
 
+  // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      finishEditing();
+      saveEdit();
     } else if (e.key === 'Escape') {
-      setEditingId(null);
-      setEditValue('');
+      setEditing(null);
+    }
+  };
+
+  // Add new item
+  const handleAddItem = async () => {
+    if (!newItem.name.trim()) {
+      alert('El nombre es requerido');
+      return;
+    }
+    
+    setIsSaving(true);
+    
+    const item: LootItem = {
+      id: `item_${Date.now()}`,
+      name: newItem.name.trim(),
+      price: parseFloat(newItem.price) || 0,
+      odds: parseFloat(newItem.odds) || 1,
+      rarity: newItem.rarity,
+      image: newItem.image || '📦'
+    };
+    
+    await addItem(item);
+    setNewItem(emptyNewItem);
+    setShowAddForm(false);
+    setIsSaving(false);
+  };
+
+  // Delete item
+  const handleDeleteItem = async (itemId: string, itemName: string) => {
+    if (confirm(`¿Eliminar "${itemName}"? Esta acción no se puede deshacer.`)) {
+      setIsSaving(true);
+      await deleteItem(itemId);
+      setIsSaving(false);
     }
   };
 
@@ -256,91 +329,272 @@ const AdminPage: React.FC = () => {
         </div>
       )}
 
+      {/* Add New Item Form */}
+      {showAddForm && (
+        <div className="px-6 py-4 bg-[#1a1d26] border-b border-[#1e2330]">
+          <h3 className="text-sm font-bold text-white mb-4">➕ Agregar Nuevo Producto</h3>
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div className="md:col-span-2">
+              <label className="text-xs text-slate-500 block mb-1">Nombre *</label>
+              <input
+                type="text"
+                value={newItem.name}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                placeholder="iPhone 16 Pro Max"
+                className="w-full px-3 py-2 bg-[#0d1019] border border-[#2a3040] rounded text-white text-sm focus:border-[#FFC800] outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Precio ($)</label>
+              <input
+                type="number"
+                value={newItem.price}
+                onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                placeholder="1299"
+                className="w-full px-3 py-2 bg-[#0d1019] border border-[#2a3040] rounded text-white text-sm focus:border-[#FFC800] outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Odds (%)</label>
+              <input
+                type="number"
+                value={newItem.odds}
+                onChange={(e) => setNewItem({ ...newItem, odds: e.target.value })}
+                step="0.01"
+                placeholder="1"
+                className="w-full px-3 py-2 bg-[#0d1019] border border-[#2a3040] rounded text-white text-sm focus:border-[#FFC800] outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Rareza</label>
+              <select
+                value={newItem.rarity}
+                onChange={(e) => setNewItem({ ...newItem, rarity: e.target.value as Rarity })}
+                className="w-full px-3 py-2 bg-[#0d1019] border border-[#2a3040] rounded text-white text-sm focus:border-[#FFC800] outline-none"
+              >
+                <option value={Rarity.COMMON}>Common</option>
+                <option value={Rarity.RARE}>Rare</option>
+                <option value={Rarity.EPIC}>Epic</option>
+                <option value={Rarity.LEGENDARY}>Legendary</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Imagen (emoji/URL)</label>
+              <input
+                type="text"
+                value={newItem.image}
+                onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
+                placeholder="📱"
+                className="w-full px-3 py-2 bg-[#0d1019] border border-[#2a3040] rounded text-white text-sm focus:border-[#FFC800] outline-none"
+              />
+            </div>
+          </div>
+          <div className="flex gap-3 mt-4">
+            <button
+              onClick={handleAddItem}
+              disabled={isSaving}
+              className="px-4 py-2 bg-[#FFC800] text-black font-bold rounded text-xs hover:bg-[#EAB308] transition-colors disabled:opacity-50"
+            >
+              {isSaving ? 'Guardando...' : 'Agregar Producto'}
+            </button>
+            <button
+              onClick={() => { setShowAddForm(false); setNewItem(emptyNewItem); }}
+              className="px-4 py-2 bg-slate-700 text-white font-bold rounded text-xs hover:bg-slate-600 transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Items Table */}
       <div className="p-6">
-        <div className="bg-[#0d1019] border border-[#1e2330] rounded-xl overflow-hidden">
-          <table className="w-full">
+        {/* Add Button */}
+        {!showAddForm && (
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="mb-4 px-4 py-2 bg-[#FFC800] text-black font-bold rounded-lg text-sm hover:bg-[#EAB308] transition-colors flex items-center gap-2"
+          >
+            <span>➕</span> Agregar Producto
+          </button>
+        )}
+
+        <div className="bg-[#0d1019] border border-[#1e2330] rounded-xl overflow-hidden overflow-x-auto">
+          <table className="w-full min-w-[900px]">
             <thead className="bg-[#13151b]">
               <tr className="text-left text-xs text-slate-500 uppercase tracking-wider">
-                <th className="py-4 pl-4">Ítem</th>
+                <th className="py-4 pl-4 w-12">Img</th>
+                <th className="py-4">Nombre</th>
                 <th className="py-4">Rareza</th>
                 <th className="py-4 text-right">Precio</th>
                 <th className="py-4 text-right">Odds (%)</th>
                 <th className="py-4 text-right">Normalizado</th>
-                <th className="py-4 text-right pr-4">Tickets</th>
+                <th className="py-4 text-center pr-4">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {sortedItems.map((item) => (
                 <tr 
                   key={item.id} 
-                  className="border-t border-[#1e2330] hover:bg-[#13151b] transition-colors"
+                  className="border-t border-[#1e2330] hover:bg-[#13151b] transition-colors group"
                 >
-                  <td className="py-4 pl-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-[#1e2330] rounded-lg flex items-center justify-center text-lg overflow-hidden">
+                  {/* Image - Editable */}
+                  <td className="py-3 pl-4">
+                    {editing?.id === item.id && editing.field === 'image' ? (
+                      <input
+                        type="text"
+                        value={editing.value}
+                        onChange={(e) => setEditing({ ...editing, value: e.target.value })}
+                        onBlur={saveEdit}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                        className="w-20 px-2 py-1 bg-[#1e2330] border border-[#FFC800] rounded text-white text-xs outline-none"
+                      />
+                    ) : (
+                      <button
+                        onClick={() => startEditing(item.id, 'image', item.image)}
+                        className="w-10 h-10 bg-[#1e2330] hover:bg-[#2a3040] rounded-lg flex items-center justify-center text-lg overflow-hidden border border-transparent hover:border-[#FFC800] transition-all"
+                        title="Click para editar imagen"
+                      >
                         {item.image.startsWith('data:') || item.image.startsWith('http') ? (
                           <img src={item.image} alt="" className="w-full h-full object-contain" />
                         ) : (
                           <span>{item.image}</span>
                         )}
-                      </div>
-                      <span className="font-bold text-white">{item.name}</span>
-                    </div>
+                      </button>
+                    )}
                   </td>
 
-                  <td className="py-4">
-                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase border ${getRarityBadgeClass(item.rarity)}`}>
-                      {item.rarity}
-                    </span>
+                  {/* Name - Editable */}
+                  <td className="py-3">
+                    {editing?.id === item.id && editing.field === 'name' ? (
+                      <input
+                        type="text"
+                        value={editing.value}
+                        onChange={(e) => setEditing({ ...editing, value: e.target.value })}
+                        onBlur={saveEdit}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                        className="w-full max-w-[200px] px-2 py-1 bg-[#1e2330] border border-[#FFC800] rounded text-white text-sm outline-none"
+                      />
+                    ) : (
+                      <button
+                        onClick={() => startEditing(item.id, 'name', item.name)}
+                        className="font-bold text-white hover:text-[#FFC800] transition-colors text-left"
+                        title="Click para editar nombre"
+                      >
+                        {item.name}
+                      </button>
+                    )}
                   </td>
 
-                  <td className="py-4 text-right">
-                    <span className="text-[#FFC800] font-mono font-bold">
-                      ${item.price.toLocaleString()}
-                    </span>
+                  {/* Rarity - Editable */}
+                  <td className="py-3">
+                    {editing?.id === item.id && editing.field === 'rarity' ? (
+                      <select
+                        value={editing.value}
+                        onChange={(e) => setEditing({ ...editing, value: e.target.value })}
+                        onBlur={saveEdit}
+                        autoFocus
+                        className="px-2 py-1 bg-[#1e2330] border border-[#FFC800] rounded text-white text-xs outline-none"
+                      >
+                        <option value={Rarity.COMMON}>Common</option>
+                        <option value={Rarity.RARE}>Rare</option>
+                        <option value={Rarity.EPIC}>Epic</option>
+                        <option value={Rarity.LEGENDARY}>Legendary</option>
+                      </select>
+                    ) : (
+                      <button
+                        onClick={() => startEditing(item.id, 'rarity', item.rarity)}
+                        className={`px-2 py-1 rounded text-[10px] font-bold uppercase border ${getRarityBadgeClass(item.rarity)} hover:opacity-80 transition-opacity`}
+                        title="Click para editar rareza"
+                      >
+                        {item.rarity}
+                      </button>
+                    )}
                   </td>
 
-                  <td className="py-4 text-right">
-                    {editingId === item.id ? (
+                  {/* Price - Editable */}
+                  <td className="py-3 text-right">
+                    {editing?.id === item.id && editing.field === 'price' ? (
                       <input
                         type="number"
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        onBlur={finishEditing}
+                        value={editing.value}
+                        onChange={(e) => setEditing({ ...editing, value: e.target.value })}
+                        onBlur={saveEdit}
                         onKeyDown={handleKeyDown}
-                        step="0.01"
-                        min="0"
-                        max="100"
                         autoFocus
                         className="w-24 px-2 py-1 bg-[#1e2330] border border-[#FFC800] rounded text-white text-sm text-right font-mono outline-none"
                       />
                     ) : (
                       <button
-                        onClick={() => startEditing(item.id, item.odds)}
-                        className="px-3 py-1 bg-[#1e2330] hover:bg-[#2a3040] border border-transparent hover:border-[#FFC800] rounded text-white font-mono transition-all cursor-pointer"
+                        onClick={() => startEditing(item.id, 'price', item.price)}
+                        className="text-[#FFC800] font-mono font-bold hover:opacity-80 transition-opacity"
+                        title="Click para editar precio"
+                      >
+                        ${item.price.toLocaleString()}
+                      </button>
+                    )}
+                  </td>
+
+                  {/* Odds - Editable */}
+                  <td className="py-3 text-right">
+                    {editing?.id === item.id && editing.field === 'odds' ? (
+                      <input
+                        type="number"
+                        value={editing.value}
+                        onChange={(e) => setEditing({ ...editing, value: e.target.value })}
+                        onBlur={saveEdit}
+                        onKeyDown={handleKeyDown}
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        autoFocus
+                        className="w-20 px-2 py-1 bg-[#1e2330] border border-[#FFC800] rounded text-white text-sm text-right font-mono outline-none"
+                      />
+                    ) : (
+                      <button
+                        onClick={() => startEditing(item.id, 'odds', item.odds)}
+                        className="px-2 py-1 bg-[#1e2330] hover:bg-[#2a3040] border border-transparent hover:border-[#FFC800] rounded text-white font-mono transition-all"
+                        title="Click para editar odds"
                       >
                         {item.odds.toFixed(2)}%
                       </button>
                     )}
                   </td>
 
-                  <td className="py-4 text-right">
-                    <span className={`font-mono ${RARITY_COLORS[item.rarity]}`}>
+                  {/* Normalized Odds - Read Only */}
+                  <td className="py-3 text-right">
+                    <span className={`font-mono text-sm ${RARITY_COLORS[item.rarity]}`}>
                       {item.normalizedOdds.toFixed(2)}%
                     </span>
                   </td>
 
-                  <td className="py-4 text-right pr-4">
-                    <span className="text-slate-500 font-mono text-xs">
-                      {item.ticketStart.toLocaleString()} - {item.ticketEnd.toLocaleString()}
-                    </span>
+                  {/* Actions */}
+                  <td className="py-3 text-center pr-4">
+                    <button
+                      onClick={() => handleDeleteItem(item.id, item.name)}
+                      className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors opacity-0 group-hover:opacity-100"
+                      title="Eliminar producto"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                      </svg>
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        {/* Help Text */}
+        <p className="text-xs text-slate-600 mt-4 text-center">
+          💡 Click en cualquier campo para editarlo. Los cambios se guardan automáticamente en Supabase.
+        </p>
       </div>
     </div>
   );
