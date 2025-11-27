@@ -43,26 +43,8 @@ const AssetFactoryPage: React.FC = () => {
     const currentProduct = productName.trim();
 
     try {
-        // @ts-ignore
-        if (window.aistudio && !await window.aistudio.hasSelectedApiKey()) {
-            // @ts-ignore
-            await window.aistudio.openSelectKey();
-        }
-
-        if (!process.env.API_KEY) {
-             // @ts-ignore
-            if (window.aistudio) {
-                 // @ts-ignore
-                 await window.aistudio.openSelectKey();
-                 if (!process.env.API_KEY) {
-                     throw new Error("API Key is missing. Please select a Paid Key to use this model.");
-                 }
-            } else {
-                 throw new Error("API Key environment variable is undefined.");
-            }
-        }
-
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const apiKey = 'AIzaSyB2rTy9Fq0ufirhzb3kwT3Tu-T5Sq1_Hdc';
+        const ai = new GoogleGenAI({ apiKey });
 
         let bgHex = '#000000'; 
         if (bgMode === 'green') bgHex = '#00FF00';
@@ -135,20 +117,12 @@ const AssetFactoryPage: React.FC = () => {
         console.error("Asset Gen Error:", err);
         const msg = err.message || "Failed to generate image.";
         
-        if (msg.includes("403") || msg.includes("permission") || msg.includes("PERMISSION_DENIED") || msg.includes("API Key")) {
-            setError("Access Denied: You need a PAID API Key (Billing Enabled) to use the 3D Image Model.");
-            // @ts-ignore
-            if (window.aistudio) {
-                // @ts-ignore
-                await window.aistudio.openSelectKey();
-            }
+        if (msg.includes("403") || msg.includes("permission") || msg.includes("PERMISSION_DENIED")) {
+            setError("Access Denied: La API key no tiene permisos o billing habilitado.");
+        } else if (msg.includes("quota") || msg.includes("429")) {
+            setError("Límite de uso alcanzado. Intenta de nuevo en unos minutos.");
         } else if (msg.includes("Requested entity was not found")) {
-             setError("Model Error: Please re-select your API Key.");
-             // @ts-ignore
-             if (window.aistudio) {
-                // @ts-ignore
-                await window.aistudio.openSelectKey();
-            }
+            setError("Modelo no disponible. Intenta de nuevo.");
         } else {
             setError(msg);
         }
