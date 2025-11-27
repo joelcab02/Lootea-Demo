@@ -1,11 +1,12 @@
 /**
  * Odds Store - Centralized state management for odds configuration
- * This acts as a simple in-memory store. In production, this would connect to a backend.
+ * Connected to Supabase for persistence
  */
 
 import { LootItem, Rarity } from '../types';
 import { ITEMS_DB } from '../constants';
 import { calculateTicketRanges, validateOdds, LootItemWithTickets } from './oddsService';
+import { supabase, DbLootItem } from './supabaseClient';
 
 // Types for the store
 export interface OddsConfig {
@@ -20,15 +21,108 @@ export interface StoreState {
   isValid: boolean;
   totalOdds: number;
   warnings: string[];
+  isLoading: boolean;
+  isSynced: boolean;
 }
 
 // Callbacks for state changes
 type Listener = (state: StoreState) => void;
 const listeners: Set<Listener> = new Set();
 
-// Initialize with default items from constants
+// Initialize with default items from constants (fallback)
 let currentItems: LootItem[] = [...ITEMS_DB];
 let cachedState: StoreState | null = null;
+let isLoading = false;
+let isSynced = false;
+
+/**
+ * Convert DB item to LootItem
+ */
+function dbToLootItem(dbItem: DbLootItem): LootItem {
+  return {
+    id: dbItem.id,
+    name: dbItem.name,
+    price: Number(dbItem.price),
+    rarity: dbItem.rarity as Rarity,
+    odds: Number(dbItem.odds),
+    image: dbItem.image
+  };
+}
+
+/**
+ * Convert LootItem to DB format
+ */
+function lootItemToDb(item: LootItem): DbLootItem {
+  return {
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    rarity: item.rarity,
+    odds: item.odds,
+    image: item.image
+  };
+}
+
+/**
+ * Initialize store - fetch from Supabase or seed with defaults
+ */
+export async function initializeStore(): Promise<StoreState> {
+  isLoading = true;
+  cachedState = null;
+  notifyListeners();
+  
+  try {
+    // Try to fetch from Supabase
+    const { data, error } = await supabase
+      .from('loot_items')
+      .select('*')
+      .order('price', { ascending: false });
+    
+    if (error) {
+      console.warn('⚠️ Supabase fetch failed, using local defaults:', error.message);
+      currentItems = [...ITEMS_DB];
+      isSynced = false;
+    } else if (data && data.length > 0) {
+      console.log('✅ Loaded', data.length, 'items from Supabase');
+      currentItems = data.map(dbToLootItem);
+      isSynced = true;
+    } else {
+      // No data in DB, seed with defaults
+      console.log('📦 No items in DB, seeding with defaults...');
+      await seedDatabase();
+      isSynced = true;
+    }
+  } catch (err) {
+    console.error('❌ Store initialization error:', err);
+    currentItems = [...ITEMS_DB];
+    isSynced = false;
+  }
+  
+  isLoading = false;
+  cachedState = null;
+  notifyListeners();
+  
+  return getOddsState();
+}
+
+/**
+ * Seed database with default items
+ */
+async function seedDatabase(): Promise<void> {
+  const itemsToInsert = ITEMS_DB.map(lootItemToDb);
+  
+  const { error } = await supabase
+    .from('loot_items')
+    .upsert(itemsToInsert, { onConflict: 'id' });
+  
+  if (error) {
+    console.error('❌ Failed to seed database:', error.message);
+    throw error;
+  }
+  
+  console.log('✅ Database seeded with', itemsToInsert.length, 'items');
+  currentItems = [...ITEMS_DB];
+}
 
 /**
  * Get the current state of the odds store
@@ -45,16 +139,18 @@ export function getOddsState(): StoreState {
     lastUpdated: new Date(),
     isValid: validation.valid,
     totalOdds: validation.totalOdds,
-    warnings: validation.warnings
+    warnings: validation.warnings,
+    isLoading,
+    isSynced
   };
   
   return cachedState;
 }
 
 /**
- * Update odds for a specific item
+ * Update odds for a specific item (syncs to Supabase)
  */
-export function updateItemOdds(itemId: string, newOdds: number): StoreState {
+export async function updateItemOdds(itemId: string, newOdds: number): Promise<StoreState> {
   const itemIndex = currentItems.findIndex(item => item.id === itemId);
   
   if (itemIndex === -1) {
@@ -65,6 +161,7 @@ export function updateItemOdds(itemId: string, newOdds: number): StoreState {
   // Clamp odds to valid range
   const clampedOdds = Math.max(0, Math.min(100, newOdds));
   
+  // Update local state immediately (optimistic update)
   currentItems = currentItems.map(item => 
     item.id === itemId ? { ...item, odds: clampedOdds } : item
   );
@@ -73,13 +170,34 @@ export function updateItemOdds(itemId: string, newOdds: number): StoreState {
   cachedState = null;
   notifyListeners();
   
+  // Sync to Supabase in background
+  try {
+    const { error } = await supabase
+      .from('loot_items')
+      .update({ odds: clampedOdds })
+      .eq('id', itemId);
+    
+    if (error) {
+      console.error('❌ Failed to sync odds to Supabase:', error.message);
+      isSynced = false;
+    } else {
+      console.log(`✅ Synced ${itemId} odds: ${clampedOdds}%`);
+      isSynced = true;
+    }
+  } catch (err) {
+    console.error('❌ Supabase sync error:', err);
+    isSynced = false;
+  }
+  
+  cachedState = null;
   return getOddsState();
 }
 
 /**
- * Batch update multiple items' odds
+ * Batch update multiple items' odds (syncs to Supabase)
  */
-export function updateMultipleOdds(updates: OddsConfig[]): StoreState {
+export async function updateMultipleOdds(updates: OddsConfig[]): Promise<StoreState> {
+  // Update local state
   updates.forEach(({ itemId, odds }) => {
     const itemIndex = currentItems.findIndex(item => item.id === itemId);
     if (itemIndex !== -1) {
@@ -93,26 +211,62 @@ export function updateMultipleOdds(updates: OddsConfig[]): StoreState {
   cachedState = null;
   notifyListeners();
   
+  // Sync all updates to Supabase
+  try {
+    const promises = updates.map(({ itemId, odds }) => 
+      supabase
+        .from('loot_items')
+        .update({ odds: Math.max(0, Math.min(100, odds)) })
+        .eq('id', itemId)
+    );
+    
+    await Promise.all(promises);
+    console.log(`✅ Synced ${updates.length} odds updates to Supabase`);
+    isSynced = true;
+  } catch (err) {
+    console.error('❌ Batch sync error:', err);
+    isSynced = false;
+  }
+  
+  cachedState = null;
   return getOddsState();
 }
 
 /**
- * Reset all odds to default values from ITEMS_DB
+ * Reset all odds to default values from ITEMS_DB (syncs to Supabase)
  */
-export function resetToDefaults(): StoreState {
+export async function resetToDefaults(): Promise<StoreState> {
   currentItems = [...ITEMS_DB];
   cachedState = null;
   notifyListeners();
   
-  console.log('🔄 Odds reset to defaults');
+  // Sync to Supabase
+  try {
+    const itemsToUpsert = ITEMS_DB.map(lootItemToDb);
+    const { error } = await supabase
+      .from('loot_items')
+      .upsert(itemsToUpsert, { onConflict: 'id' });
+    
+    if (error) {
+      console.error('❌ Failed to reset in Supabase:', error.message);
+      isSynced = false;
+    } else {
+      console.log('🔄 Odds reset to defaults and synced');
+      isSynced = true;
+    }
+  } catch (err) {
+    console.error('❌ Reset sync error:', err);
+    isSynced = false;
+  }
+  
+  cachedState = null;
   return getOddsState();
 }
 
 /**
- * Auto-normalize odds to sum to exactly 100%
- * Distributes the difference proportionally
+ * Auto-normalize odds to sum to exactly 100% (syncs to Supabase)
  */
-export function normalizeOdds(): StoreState {
+export async function normalizeOdds(): Promise<StoreState> {
   const totalOdds = currentItems.reduce((sum, item) => sum + item.odds, 0);
   
   if (totalOdds <= 0) {
@@ -128,7 +282,24 @@ export function normalizeOdds(): StoreState {
   cachedState = null;
   notifyListeners();
   
-  console.log('✅ Odds normalized to 100%');
+  // Sync all normalized odds to Supabase
+  try {
+    const promises = currentItems.map(item => 
+      supabase
+        .from('loot_items')
+        .update({ odds: item.odds })
+        .eq('id', item.id)
+    );
+    
+    await Promise.all(promises);
+    console.log('✅ Odds normalized to 100% and synced');
+    isSynced = true;
+  } catch (err) {
+    console.error('❌ Normalize sync error:', err);
+    isSynced = false;
+  }
+  
+  cachedState = null;
   return getOddsState();
 }
 
@@ -178,9 +349,9 @@ export function exportConfig(): string {
 }
 
 /**
- * Import configuration from JSON
+ * Import configuration from JSON (syncs to Supabase)
  */
-export function importConfig(jsonString: string): StoreState {
+export async function importConfig(jsonString: string): Promise<StoreState> {
   try {
     const config = JSON.parse(jsonString);
     
@@ -188,11 +359,14 @@ export function importConfig(jsonString: string): StoreState {
       throw new Error('Config must be an array');
     }
     
+    const updates: OddsConfig[] = [];
+    
     config.forEach((item: any) => {
       if (item.id && typeof item.odds === 'number') {
         const existingItem = currentItems.find(i => i.id === item.id);
         if (existingItem) {
           existingItem.odds = item.odds;
+          updates.push({ itemId: item.id, odds: item.odds });
         }
       }
     });
@@ -200,10 +374,68 @@ export function importConfig(jsonString: string): StoreState {
     cachedState = null;
     notifyListeners();
     
-    console.log('📥 Config imported successfully');
+    // Sync to Supabase
+    if (updates.length > 0) {
+      const promises = updates.map(({ itemId, odds }) => 
+        supabase
+          .from('loot_items')
+          .update({ odds })
+          .eq('id', itemId)
+      );
+      
+      await Promise.all(promises);
+      isSynced = true;
+    }
+    
+    console.log('📥 Config imported and synced successfully');
+    cachedState = null;
     return getOddsState();
   } catch (error) {
     console.error('oddsStore: Failed to import config', error);
+    isSynced = false;
     return getOddsState();
+  }
+}
+
+/**
+ * Log a spin result to Supabase for analytics
+ */
+export async function logSpinResult(itemId: string, ticketNumber: number, userId: string = 'anonymous'): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('spin_results')
+      .insert({ item_id: itemId, ticket_number: ticketNumber, user_id: userId });
+    
+    if (error) {
+      console.warn('Failed to log spin result:', error.message);
+    }
+  } catch (err) {
+    console.warn('Spin logging error:', err);
+  }
+}
+
+/**
+ * Get spin statistics from Supabase
+ */
+export async function getSpinStats(): Promise<{ itemId: string; count: number }[]> {
+  try {
+    const { data, error } = await supabase
+      .from('spin_results')
+      .select('item_id')
+      .order('created_at', { ascending: false })
+      .limit(1000);
+    
+    if (error || !data) return [];
+    
+    // Count by item
+    const counts: Record<string, number> = {};
+    data.forEach(row => {
+      counts[row.item_id] = (counts[row.item_id] || 0) + 1;
+    });
+    
+    return Object.entries(counts).map(([itemId, count]) => ({ itemId, count }));
+  } catch (err) {
+    console.error('Failed to get spin stats:', err);
+    return [];
   }
 }

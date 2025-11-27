@@ -8,6 +8,7 @@ import {
   exportConfig,
   importConfig,
   subscribe,
+  initializeStore,
   StoreState 
 } from '../services/oddsStore';
 import { RARITY_COLORS } from '../constants';
@@ -25,6 +26,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onOddsChange }
   const [showExport, setShowExport] = useState(false);
   const [importText, setImportText] = useState('');
   const [showImport, setShowImport] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Subscribe to store changes
   useEffect(() => {
@@ -35,17 +37,22 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onOddsChange }
     return unsubscribe;
   }, [onOddsChange]);
 
-  // Refresh state when panel opens
+  // Initialize store and refresh state when panel opens
   useEffect(() => {
     if (isOpen) {
-      setState(getOddsState());
+      initializeStore().then(newState => {
+        setState(newState);
+        onOddsChange();
+      });
     }
-  }, [isOpen]);
+  }, [isOpen, onOddsChange]);
 
-  const handleOddsChange = useCallback((itemId: string, value: string) => {
+  const handleOddsChange = useCallback(async (itemId: string, value: string) => {
     const numValue = parseFloat(value);
     if (!isNaN(numValue)) {
-      updateItemOdds(itemId, numValue);
+      setIsSaving(true);
+      await updateItemOdds(itemId, numValue);
+      setIsSaving(false);
     }
   }, []);
 
@@ -54,9 +61,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onOddsChange }
     setEditValue(currentOdds.toString());
   };
 
-  const finishEditing = () => {
+  const finishEditing = async () => {
     if (editingId) {
-      handleOddsChange(editingId, editValue);
+      await handleOddsChange(editingId, editValue);
     }
     setEditingId(null);
     setEditValue('');
@@ -71,14 +78,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onOddsChange }
     }
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (confirm('¿Resetear todas las probabilidades a los valores por defecto?')) {
-      resetToDefaults();
+      setIsSaving(true);
+      await resetToDefaults();
+      setIsSaving(false);
     }
   };
 
-  const handleNormalize = () => {
-    normalizeOdds();
+  const handleNormalize = async () => {
+    setIsSaving(true);
+    await normalizeOdds();
+    setIsSaving(false);
   };
 
   const handleExport = () => {
@@ -87,9 +98,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onOddsChange }
     alert('Configuración copiada al portapapeles');
   };
 
-  const handleImport = () => {
+  const handleImport = async () => {
     if (importText.trim()) {
-      importConfig(importText);
+      setIsSaving(true);
+      await importConfig(importText);
+      setIsSaving(false);
       setImportText('');
       setShowImport(false);
     }
@@ -141,6 +154,32 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onOddsChange }
 
         {/* Stats Bar */}
         <div className="flex flex-wrap items-center gap-3 p-4 bg-[#13151b] border-b border-[#1e2330]">
+          {/* Sync Status */}
+          <div className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-2 ${
+            state.isLoading || isSaving
+              ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+              : state.isSynced 
+                ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
+          }`}>
+            {state.isLoading || isSaving ? (
+              <>
+                <span className="animate-spin">⏳</span>
+                <span>{isSaving ? 'Guardando...' : 'Cargando...'}</span>
+              </>
+            ) : state.isSynced ? (
+              <>
+                <span>☁️</span>
+                <span>Sincronizado</span>
+              </>
+            ) : (
+              <>
+                <span>⚠️</span>
+                <span>Local</span>
+              </>
+            )}
+          </div>
+
           <div className={`px-3 py-1.5 rounded-lg border text-xs font-bold ${
             Math.abs(state.totalOdds - 100) < 0.1 
               ? 'bg-green-500/10 border-green-500/30 text-green-400' 

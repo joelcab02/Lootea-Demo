@@ -5,12 +5,10 @@ import CaseContentGrid from './components/CaseContentGrid';
 import Footer from './components/Footer';
 import LiveDrops from './components/LiveDrops';
 import HowItWorks from './components/HowItWorks';
-import AssetGenerator from './components/AssetGenerator';
-import AdminPanel from './components/AdminPanel';
 import { LootItem, Rarity } from './types';
 import { RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';
-import { getItems } from './services/oddsStore';
+import { getItems, initializeStore } from './services/oddsStore';
 
 // SVG Icons for App
 const Icons = {
@@ -44,8 +42,6 @@ const App: React.FC = () => {
   const [fastMode, setFastMode] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [generatorOpen, setGeneratorOpen] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false); // Admin panel state
 
   const BOX_PRICE = 99.00;
 
@@ -53,16 +49,11 @@ const App: React.FC = () => {
     audioService.setMute(isMuted);
   }, [isMuted]);
 
-  // Function to update item assets dynamically (from Asset Generator)
-  const handleUpdateItem = useCallback((id: string, newImage: string) => {
-    setItems(prevItems => prevItems.map(item => 
-        item.id === id ? { ...item, image: newImage } : item
-    ));
-  }, []);
-
-  // Refresh items when odds change in admin panel
-  const handleOddsChange = useCallback(() => {
-    setItems(getItems());
+  // Initialize odds store from Supabase on app load
+  useEffect(() => {
+    initializeStore().then(() => {
+      setItems(getItems());
+    });
   }, []);
 
   const handleSpin = () => {
@@ -105,19 +96,6 @@ const App: React.FC = () => {
       {/* SIDEBAR */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* ASSET GENERATOR (MODAL) */}
-      <AssetGenerator 
-        isOpen={generatorOpen} 
-        onClose={() => setGeneratorOpen(false)} 
-        onUpdateItem={handleUpdateItem} 
-      />
-
-      {/* ADMIN PANEL (MODAL) */}
-      <AdminPanel 
-        isOpen={adminOpen} 
-        onClose={() => setAdminOpen(false)} 
-        onOddsChange={handleOddsChange} 
-      />
 
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
@@ -176,27 +154,8 @@ const App: React.FC = () => {
                 </span>
             </div>
 
-            {/* Right Actions: Asset Gen + Wallet */}
+            {/* Right Actions: Wallet */}
             <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
-                
-                {/* ADMIN PANEL BUTTON */}
-                <button 
-                    onClick={() => setAdminOpen(true)}
-                    className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-purple-500/30 hover:border-purple-400 hover:text-purple-400 text-purple-400/70 text-[10px] font-black italic uppercase tracking-tighter transition-all active:scale-95 group bg-purple-500/5"
-                >
-                    <span>⚙️</span>
-                    <span>Admin</span>
-                </button>
-
-                {/* CREATE ASSETS BUTTON */}
-                <button 
-                    onClick={() => setGeneratorOpen(true)}
-                    className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#2a3040] hover:border-[#FFC800] hover:text-[#FFC800] text-slate-400 text-[10px] font-black italic uppercase tracking-tighter transition-all active:scale-95 group"
-                >
-                    <Icons.Paint />
-                    <span>Crear Assets</span>
-                </button>
-
                 {/* Wallet - Refined & Aesthetic */}
                 <div className="flex items-center bg-[#FFC800] rounded-md md:rounded-lg text-black pl-2 pr-1 py-1 md:pl-2.5 md:pr-1.5 md:py-1.5 gap-1 shadow-[0_0_10px_rgba(255,200,0,0.15)] hover:shadow-[0_0_20px_rgba(255,200,0,0.3)] transition-all cursor-pointer group hover:brightness-110 active:scale-95">
                     <span className="font-mono font-black text-[10px] md:text-xs tracking-tighter">
@@ -362,7 +321,7 @@ const App: React.FC = () => {
             <HowItWorks />
         </div>
 
-        <Footer onOpenGenerator={() => setGeneratorOpen(true)} />
+        <Footer />
 
       {/* WIN MODAL */}
       {showModal && winner && (

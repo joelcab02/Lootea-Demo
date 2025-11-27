@@ -13,11 +13,7 @@ const Icons = {
     }
 };
 
-interface FooterProps {
-    onOpenGenerator?: () => void;
-}
-
-function Footer({ onOpenGenerator }: FooterProps) {
+function Footer() {
   return (
     <footer className="bg-[#0a0c10] border-t border-[#1e2330] pt-12 pb-8">
         <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
@@ -106,10 +102,6 @@ function Footer({ onOpenGenerator }: FooterProps) {
                 <p className="text-slate-600 text-xs font-black italic uppercase tracking-tighter">
                     &copy; 2025 LOOTEA MÉXICO. TODOS LOS DERECHOS RESERVADOS.
                 </p>
-                {/* ADMIN TRIGGER */}
-                <button onClick={onOpenGenerator} className="text-[#1e2330] hover:text-[#FFC800] transition-colors p-2" title="Asset Generator">
-                    <Icons.Wrench />
-                </button>
             </div>
         </div>
     </footer>
