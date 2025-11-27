@@ -75,66 +75,67 @@ const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0c10] flex">
+    <div className="min-h-screen bg-[#08090c] flex font-sans antialiased">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#0d1019] border-r border-[#1e2330] flex flex-col">
+      <aside className="w-60 bg-[#0c0e14] border-r border-[#1a1d24] flex flex-col fixed h-full">
         {/* Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-[#1e2330]">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#FFC800] rounded-lg flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <div className="h-14 flex items-center px-5 border-b border-[#1a1d24]">
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-[#FFC800] rounded flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
             </div>
-            <span className="font-black text-white text-lg tracking-tight">
-              LOOTEA <span className="text-[#FFC800]">ADMIN</span>
+            <span className="font-semibold text-white text-sm tracking-tight">
+              Lootea <span className="text-slate-500 font-normal">Admin</span>
             </span>
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-4">
+        <nav className="flex-1 py-3 px-2">
           {navItems.map(item => (
             item.link ? (
               <Link
                 key={item.id}
                 to={item.link}
-                className="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-white hover:bg-[#1e2330] transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-md text-slate-400 hover:text-white hover:bg-[#1a1d24] transition-all text-[13px]"
               >
                 {item.icon}
-                <span className="font-medium">{item.label}</span>
+                <span>{item.label}</span>
               </Link>
             ) : (
               <button
                 key={item.id}
                 onClick={() => navigate(item.id as Section)}
-                className={`w-full flex items-center gap-3 px-6 py-3 transition-colors ${
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md transition-all text-[13px] ${
                   section === item.id || section.startsWith(item.id)
-                    ? 'text-white bg-[#1e2330] border-l-2 border-[#FFC800]'
-                    : 'text-slate-400 hover:text-white hover:bg-[#1e2330]/50'
+                    ? 'text-white bg-[#1a1d24]'
+                    : 'text-slate-400 hover:text-white hover:bg-[#1a1d24]/50'
                 }`}
               >
                 {item.icon}
-                <span className="font-medium">{item.label}</span>
+                <span>{item.label}</span>
               </button>
             )
           ))}
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[#1e2330]">
+        <div className="p-3 border-t border-[#1a1d24]">
           <Link 
             to="/"
-            className="flex items-center gap-2 text-slate-500 hover:text-white text-sm"
+            className="flex items-center gap-2 text-slate-500 hover:text-white text-xs px-3 py-2 rounded-md hover:bg-[#1a1d24] transition-all"
           >
-            ← Volver al sitio
+            {icons.back}
+            <span>Volver al sitio</span>
           </Link>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 ml-60 overflow-auto bg-[#08090c]">
         {/* Top Bar */}
-        <header className="h-16 bg-[#0d1019] border-b border-[#1e2330] flex items-center justify-between px-6">
-          <h1 className="text-lg font-bold text-white">
+        <header className="h-14 bg-[#0c0e14] border-b border-[#1a1d24] flex items-center justify-between px-6 sticky top-0 z-10">
+          <h1 className="text-sm font-medium text-white">
             {section === 'dashboard' && 'Dashboard'}
             {section === 'boxes' && 'Cajas'}
             {section === 'box-edit' && (editId ? 'Editar Caja' : 'Nueva Caja')}
@@ -142,12 +143,13 @@ const AdminDashboard: React.FC = () => {
             {section === 'product-edit' && (editId ? 'Editar Producto' : 'Nuevo Producto')}
           </h1>
           
-          <div className={`px-3 py-1.5 rounded-full text-xs font-bold ${
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium ${
             isSaving 
-              ? 'bg-blue-500/20 text-blue-400' 
-              : 'bg-green-500/20 text-green-400'
+              ? 'bg-blue-500/10 text-blue-400' 
+              : 'bg-emerald-500/10 text-emerald-400'
           }`}>
-            {isSaving ? 'Guardando...' : 'Sincronizado'}
+            <div className={`w-1.5 h-1.5 rounded-full ${isSaving ? 'bg-blue-400 animate-pulse' : 'bg-emerald-400'}`}></div>
+            {isSaving ? 'Guardando' : 'Sincronizado'}
           </div>
         </header>
 
@@ -183,7 +185,7 @@ const AdminDashboard: React.FC = () => {
 // === LOADING STATE ===
 const LoadingState = () => (
   <div className="flex items-center justify-center h-64">
-    <div className="w-12 h-12 border-4 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin"></div>
+    <div className="w-8 h-8 border-2 border-[#FFC800]/20 border-t-[#FFC800] rounded-full animate-spin"></div>
   </div>
 );
 
@@ -193,42 +195,42 @@ const DashboardSection: React.FC<{
   boxes: Box[];
   navigate: (section: Section, id?: string) => void;
 }> = ({ stats, boxes, navigate }) => (
-  <div className="space-y-6">
+  <div className="space-y-5">
     {/* Stats Cards */}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="bg-[#13151b] border border-[#1e2330] rounded-xl p-6">
-        <div className="text-3xl font-black text-white">{stats.boxes}</div>
-        <div className="text-sm text-slate-500">Cajas activas</div>
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
+        <div className="text-2xl font-semibold text-white">{stats.boxes}</div>
+        <div className="text-xs text-slate-500 mt-1">Cajas activas</div>
       </div>
-      <div className="bg-[#13151b] border border-[#1e2330] rounded-xl p-6">
-        <div className="text-3xl font-black text-white">{stats.products}</div>
-        <div className="text-sm text-slate-500">Productos en catálogo</div>
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
+        <div className="text-2xl font-semibold text-white">{stats.products}</div>
+        <div className="text-xs text-slate-500 mt-1">Productos en catálogo</div>
       </div>
-      <div className="bg-[#13151b] border border-[#1e2330] rounded-xl p-6">
-        <div className="text-3xl font-black text-[#FFC800]">${stats.totalValue.toLocaleString()}</div>
-        <div className="text-sm text-slate-500">Valor total del inventario</div>
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
+        <div className="text-2xl font-semibold text-[#FFC800]">${stats.totalValue.toLocaleString()}</div>
+        <div className="text-xs text-slate-500 mt-1">Valor total del inventario</div>
       </div>
     </div>
 
     {/* Quick Actions */}
-    <div className="bg-[#13151b] border border-[#1e2330] rounded-xl p-6">
-      <h2 className="text-lg font-bold text-white mb-4">Acciones rápidas</h2>
-      <div className="flex flex-wrap gap-3">
+    <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
+      <h2 className="text-sm font-medium text-white mb-3">Acciones rápidas</h2>
+      <div className="flex flex-wrap gap-2">
         <button
           onClick={() => navigate('box-edit')}
-          className="px-4 py-2 bg-[#FFC800] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
+          className="px-3 py-1.5 bg-[#FFC800] text-black text-xs font-medium rounded hover:bg-[#EAB308] transition-colors"
         >
-          + Nueva Caja
+          Nueva Caja
         </button>
         <button
           onClick={() => navigate('product-edit')}
-          className="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 transition-colors"
+          className="px-3 py-1.5 bg-[#1a1d24] text-white text-xs font-medium rounded hover:bg-[#252830] transition-colors"
         >
-          + Nuevo Producto
+          Nuevo Producto
         </button>
         <Link
           to="/assets"
-          className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition-colors"
+          className="px-3 py-1.5 bg-[#1a1d24] text-white text-xs font-medium rounded hover:bg-[#252830] transition-colors"
         >
           Generar Assets
         </Link>
@@ -236,25 +238,25 @@ const DashboardSection: React.FC<{
     </div>
 
     {/* Recent Boxes */}
-    <div className="bg-[#13151b] border border-[#1e2330] rounded-xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-white">Cajas recientes</h2>
-        <button onClick={() => navigate('boxes')} className="text-sm text-[#FFC800] hover:underline">
-          Ver todas →
+    <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-sm font-medium text-white">Cajas recientes</h2>
+        <button onClick={() => navigate('boxes')} className="text-xs text-slate-400 hover:text-white transition-colors">
+          Ver todas
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {boxes.slice(0, 3).map(box => (
           <div 
             key={box.id}
             onClick={() => navigate('box-edit', box.id)}
-            className="bg-[#0d1019] border border-[#1e2330] rounded-lg p-4 hover:border-[#FFC800] cursor-pointer transition-colors"
+            className="bg-[#08090c] border border-[#1a1d24] rounded-md p-3 hover:border-[#FFC800]/50 cursor-pointer transition-all"
           >
             <div className="flex items-center justify-between">
-              <span className="font-bold text-white">{box.name}</span>
-              <span className="text-[#FFC800] font-bold">${box.price}</span>
+              <span className="text-sm font-medium text-white">{box.name}</span>
+              <span className="text-[#FFC800] text-sm font-medium">${box.price}</span>
             </div>
-            <div className="text-xs text-slate-500 mt-1">/box/{box.slug}</div>
+            <div className="text-[11px] text-slate-500 mt-1">/box/{box.slug}</div>
           </div>
         ))}
       </div>
@@ -280,59 +282,59 @@ const BoxesSection: React.FC<{
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <p className="text-slate-500">{boxes.length} cajas</p>
+        <p className="text-xs text-slate-500">{boxes.length} cajas</p>
         <button
           onClick={() => navigate('box-edit')}
-          className="px-4 py-2 bg-[#FFC800] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
+          className="px-3 py-1.5 bg-[#FFC800] text-black text-xs font-medium rounded hover:bg-[#EAB308] transition-colors"
         >
-          + Nueva Caja
+          Nueva Caja
         </button>
       </div>
 
-      <div className="bg-[#0d1019] border border-[#1e2330] rounded-xl overflow-hidden">
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg overflow-hidden">
         <table className="w-full">
-          <thead className="bg-[#13151b]">
-            <tr className="text-left text-xs text-slate-500 uppercase">
-              <th className="py-4 px-6">Caja</th>
-              <th className="py-4 px-6">Categoría</th>
-              <th className="py-4 px-6 text-right">Precio</th>
-              <th className="py-4 px-6 text-right">Acciones</th>
+          <thead className="bg-[#0c0e14] border-b border-[#1a1d24]">
+            <tr className="text-left text-[11px] text-slate-500 uppercase tracking-wide">
+              <th className="py-3 px-4 font-medium">Caja</th>
+              <th className="py-3 px-4 font-medium">Categoría</th>
+              <th className="py-3 px-4 text-right font-medium">Precio</th>
+              <th className="py-3 px-4 text-right font-medium">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {boxes.map(box => (
-              <tr key={box.id} className="border-t border-[#1e2330] hover:bg-[#13151b]">
-                <td className="py-4 px-6">
+              <tr key={box.id} className="border-t border-[#1a1d24] hover:bg-[#0f1116] transition-colors">
+                <td className="py-3 px-4">
                   <div>
-                    <div className="font-bold text-white">{box.name}</div>
-                    <div className="text-xs text-slate-500">/box/{box.slug}</div>
+                    <div className="text-sm font-medium text-white">{box.name}</div>
+                    <div className="text-[11px] text-slate-500">/box/{box.slug}</div>
                   </div>
                 </td>
-                <td className="py-4 px-6">
-                  <span className="px-2 py-1 bg-[#1e2330] rounded text-xs text-slate-400">
+                <td className="py-3 px-4">
+                  <span className="px-2 py-0.5 bg-[#1a1d24] rounded text-[11px] text-slate-400">
                     {box.category}
                   </span>
                 </td>
-                <td className="py-4 px-6 text-right">
-                  <span className="text-[#FFC800] font-bold">${box.price}</span>
+                <td className="py-3 px-4 text-right">
+                  <span className="text-[#FFC800] text-sm font-medium">${box.price}</span>
                 </td>
-                <td className="py-4 px-6 text-right">
-                  <div className="flex justify-end gap-2">
+                <td className="py-3 px-4 text-right">
+                  <div className="flex justify-end gap-1.5">
                     <Link
                       to={`/box/${box.slug}`}
-                      className="px-3 py-1.5 bg-blue-500/10 text-blue-400 text-xs font-bold rounded hover:bg-blue-500/20"
+                      className="px-2 py-1 text-slate-400 text-[11px] font-medium rounded hover:text-white hover:bg-[#1a1d24] transition-colors"
                     >
                       Ver
                     </Link>
                     <button
                       onClick={() => navigate('box-edit', box.id)}
-                      className="px-3 py-1.5 bg-[#FFC800]/10 text-[#FFC800] text-xs font-bold rounded hover:bg-[#FFC800]/20"
+                      className="px-2 py-1 text-slate-400 text-[11px] font-medium rounded hover:text-white hover:bg-[#1a1d24] transition-colors"
                     >
                       Editar
                     </button>
                     <button
                       onClick={() => handleDelete(box)}
-                      className="px-3 py-1.5 bg-red-500/10 text-red-400 text-xs font-bold rounded hover:bg-red-500/20"
+                      className="px-2 py-1 text-slate-500 text-[11px] font-medium rounded hover:text-red-400 hover:bg-red-500/10 transition-colors"
                     >
                       Eliminar
                     </button>
