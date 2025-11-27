@@ -2,62 +2,17 @@
  * BoxPage - Dynamic box page that loads any box by slug
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { initializeStoreWithBox, getItems, subscribe } from '../services/oddsStore';
-import { getBoxBySlug, Box } from '../services/boxService';
-import { LootItem } from '../types';
-import Spinner from '../components/Spinner';
-import CaseContentGrid from '../components/CaseContentGrid';
-import LiveDrops from '../components/LiveDrops';
-import Footer from '../components/Footer';
+import { useBox } from '../hooks/useBox';
+import Spinner from '../components/box/Spinner';
+import CaseContentGrid from '../components/box/CaseContentGrid';
+import LiveDrops from '../components/drops/LiveDrops';
+import Footer from '../components/layout/Footer';
 
 const BoxPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [box, setBox] = useState<Box | null>(null);
-  const [items, setItems] = useState<LootItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!slug) return;
-
-    const loadBox = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        // Load box metadata
-        const boxData = await getBoxBySlug(slug);
-        
-        if (!boxData) {
-          setError(`Caja "${slug}" no encontrada`);
-          setIsLoading(false);
-          return;
-        }
-
-        setBox(boxData);
-
-        // Initialize store with this box
-        await initializeStoreWithBox(slug);
-        setItems(getItems());
-      } catch (err) {
-        console.error('Error loading box:', err);
-        setError('Error al cargar la caja');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadBox();
-
-    // Subscribe to store updates
-    const unsubscribe = subscribe((state) => {
-      setItems(state.items);
-    });
-
-    return unsubscribe;
-  }, [slug]);
+  const { box, items, isLoading, error } = useBox(slug);
 
   if (isLoading) {
     return (

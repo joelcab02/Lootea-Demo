@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo } from 'react';
-import { RARITY_COLORS } from '../constants';
-import { LootItem } from '../types';
+import { RARITY_COLORS } from '../../constants';
+import { LootItem } from '../../types';
 
 // Mock user names localized for Mexico
 const USERS = ['Juan P.', 'Sofía M.', 'Carlos R.', 'Ana L.', 'Miguel T.', 'Diego S.', 'Valentina C.', 'Mateo G.', 'Lucía F.', 'Santiago H.', 'Alejandro B.', 'María J.'];

@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { LootItem, Rarity } from '../types';
-import { RARITY_BG_GLOW } from '../constants';
+import { LootItem, Rarity } from '../../types';
+import { RARITY_BG_GLOW } from '../../constants';
 
 interface LootCardProps {
   item: LootItem;

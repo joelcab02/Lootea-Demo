@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Spinner from './components/Spinner';
-import Sidebar from './components/Sidebar';
-import CaseContentGrid from './components/CaseContentGrid';
-import Footer from './components/Footer';
-import LiveDrops from './components/LiveDrops';
-import HowItWorks from './components/HowItWorks';
+import Spinner from './components/box/Spinner';
+import Sidebar from './components/layout/Sidebar';
+import CaseContentGrid from './components/box/CaseContentGrid';
+import Footer from './components/layout/Footer';
+import LiveDrops from './components/drops/LiveDrops';
+import HowItWorks from './components/ui/HowItWorks';
 import { LootItem, Rarity } from './types';
 import { RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';

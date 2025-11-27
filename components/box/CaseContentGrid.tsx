@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
-import { LootItem } from '../types';
-import { calculateTicketRanges, LootItemWithTickets } from '../services/oddsService';
+import { LootItem } from '../../types';
+import { calculateTicketRanges, LootItemWithTickets } from '../../services/oddsService';
 
 interface CaseContentGridProps {
     items: LootItem[];

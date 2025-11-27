@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import { LootItem, Rarity } from '../types';
-import { CARD_WIDTH, CARD_GAP, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../constants';
+import { LootItem, Rarity } from '../../types';
+import { CARD_WIDTH, CARD_GAP, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../../constants';
 import LootCard from './LootCard';
-import { audioService } from '../services/audioService';
-import { calculateTicketRanges, selectWeightedWinner, debugTicketDistribution, LootItemWithTickets } from '../services/oddsService';
+import { audioService } from '../../services/audioService';
+import { calculateTicketRanges, selectWeightedWinner, debugTicketDistribution, LootItemWithTickets } from '../../services/oddsService';
 
 interface SpinnerProps {
   items: LootItem[]; // Updated to accept dynamic items
