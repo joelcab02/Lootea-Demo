@@ -161,40 +161,39 @@ const AssetFactoryPage: React.FC = () => {
 
         // Build the prompt - enhanced for better results
         const prompt = `
-You are a world-class 3D product visualization artist. Create a PREMIUM LOOT BOX ASSET render.
+Create a premium product render for an e-commerce loot box platform.
 
 PRODUCT: ${productDescription}
-${referenceImage ? 'REFERENCE: Use the attached image as visual reference for the exact product design, shape, and details.' : ''}
+${referenceImage ? 'REFERENCE: Use the attached image as visual reference for the exact product design, colors, and details. Replicate it faithfully.' : ''}
 
-CRITICAL REQUIREMENTS:
-1. FRAMING: Full product visible, NO cropping. Object fills 75-85% of frame with safe margins.
-2. ANGLE: ${viewDescriptions[viewAngle]}
-3. FLOATING: Product levitates in void space - NO floor, NO surface, NO shadow beneath.
+COMPOSITION:
+- Full product visible, NO cropping, NO cut edges
+- ${viewDescriptions[viewAngle]}, floating in mid-air
+- Center the object, fill ~80% of canvas with safe margins
 
-VISUAL STYLE:
-- Render Engine: Unreal Engine 5 / Octane quality
-- Materials: Photorealistic PBR with subtle reflections
-- Surface: ${finalColor ? `${finalColor} color applied to main body` : 'Original product colors'}
-${productVariant ? `- Edition: ${productVariant} variant styling` : ''}
+PRODUCT APPEARANCE (CRITICAL):
+- KEEP THE PRODUCT'S REAL, ORIGINAL COLORS AND DESIGN
+- DO NOT tint or colorize the product itself
+- Photorealistic materials, accurate to the real product
+${finalColor ? `- Exception: Apply ${finalColor} color to the product body` : '- Use authentic product colors only'}
+${productVariant ? `- This is the ${productVariant} edition` : ''}
 
-LIGHTING SETUP:
-- Key Light: Soft diffused from upper-left
-- Fill Light: Subtle ambient
-- Rim/Edge Light: ${lighting.rim} - STRONG and visible on product edges
-- Style: ${lighting.style}
-- Overall: Premium e-commerce / gaming loot aesthetic
+LIGHTING (LOOTEA BRAND STYLE):
+- Clean studio lighting, soft shadows
+- ${lighting.rim} as a subtle EDGE GLOW only (not on the product surface)
+- The rim light should outline the product edges, NOT change product colors
+- ${lighting.style}
+- Premium, desirable, gaming reward aesthetic
 
-BACKGROUND (CRITICAL):
-- Color: PURE BLACK (#000000) - absolute void
-- NO gradients, NO vignettes, NO ambient occlusion on background
-- Background must be perfectly uniform black pixels for transparency compositing
+BACKGROUND:
+- PURE BLACK (#000000) void
+- NO gradients, NO floor, NO reflections
+- Uniform black for transparency compositing
 
-QUALITY STANDARDS:
-- 8K detail level, sharp focus
-- Accurate proportions and brand-faithful design
-- No text, watermarks, or UI elements
-- No stands, pedestals, or display surfaces
-- Clean, professional, desirable appearance
+QUALITY:
+- Hyper-realistic, Unreal Engine 5 quality
+- Sharp focus, accurate proportions
+- No text, watermarks, stands, or pedestals
         `.trim();
 
         // Build content parts - text + optional reference image
