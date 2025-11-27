@@ -82,6 +82,9 @@ CREATE POLICY "Allow insert to loot_items" ON loot_items
 CREATE POLICY "Allow update to loot_items" ON loot_items
   FOR UPDATE USING (true);
 
+CREATE POLICY "Allow delete to loot_items" ON loot_items
+  FOR DELETE USING (true);
+
 CREATE POLICY "Allow read access to odds_history" ON odds_history
   FOR SELECT USING (true);
 
