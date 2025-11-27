@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
+import { processAndUploadImage } from '../services/imageService';
 
 type BgMode = 'site' | 'green' | 'black';
 type ViewAngle = 'front' | '3/4' | 'side' | 'top';
@@ -178,9 +179,23 @@ const AssetFactoryPage: React.FC = () => {
                     const base64String = part.inlineData.data;
                     const mimeType = part.inlineData.mimeType || 'image/png';
                     const imageData = `data:${mimeType};base64,${base64String}`;
+                    
+                    // Show preview immediately with base64
                     setGeneratedImage(imageData);
-                    // Add to history with config
-                    setHistory(prev => [{name: productDescription, image: imageData, config: configStr}, ...prev.slice(0, 9)]);
+                    
+                    // Compress and upload to Storage in background
+                    try {
+                        const cdnUrl = await processAndUploadImage(imageData, currentProduct);
+                        // Update with CDN URL (faster loading next time)
+                        setGeneratedImage(cdnUrl);
+                        // Add to history with CDN URL
+                        setHistory(prev => [{name: productDescription, image: cdnUrl, config: configStr}, ...prev.slice(0, 9)]);
+                    } catch (uploadErr) {
+                        console.warn('Upload to Storage failed, using base64:', uploadErr);
+                        // Fallback: keep base64 in history
+                        setHistory(prev => [{name: productDescription, image: imageData, config: configStr}, ...prev.slice(0, 9)]);
+                    }
+                    
                     foundImage = true;
                     break;
                 }

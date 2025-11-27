@@ -35,7 +35,10 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
         {sortedItemsWithOdds.map((item) => {
             // FIX: Ensure correct detection of base64 images
             const isGenerated = item.image.startsWith('data:');
-            const isEmoji = !item.image.startsWith('http') && !isGenerated;
+            const isCdnImage = item.image.includes('supabase.co/storage');
+            const isLoading = item.image === '⏳';
+            const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
+            const needsBlendMode = isGenerated || isCdnImage;
 
             return (
               <div key={item.id} className="group relative bg-gradient-to-b from-[#13151b] to-[#0a0c10] border border-[#1e2330] hover:border-[#FFC800] transition-all duration-200 rounded-xl overflow-hidden flex flex-col h-[220px] md:h-auto">
@@ -51,7 +54,12 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
                         {/* Rarity Glow */}
                         <div className={`absolute top-0 w-full h-full hidden group-hover:block opacity-20 bg-gradient-to-b from-white to-transparent blur-xl transition-opacity duration-500`}></div>
                         
-                        {isEmoji ? (
+                        {isLoading ? (
+                            // Skeleton loader - professional iGaming pattern
+                            <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#1e2330] to-[#0d1019] animate-pulse flex items-center justify-center">
+                              <div className="w-8 h-8 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin"></div>
+                            </div>
+                        ) : isEmoji ? (
                             <span className="text-6xl md:text-6xl filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] select-none truncate">
                                 {item.image}
                             </span>
@@ -60,10 +68,10 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
                                 src={item.image} 
                                 alt={item.name} 
                                 // FIX: Apply lighten blend mode to hide black background
-                                className={`w-full h-full object-contain ${!isGenerated ? 'drop-shadow-xl' : ''}`}
+                                className={`w-full h-full object-contain ${!needsBlendMode ? 'drop-shadow-xl' : ''}`}
                                 loading="lazy" 
                                 decoding="async"
-                                style={isGenerated ? { mixBlendMode: 'lighten' } : {}}
+                                style={needsBlendMode ? { mixBlendMode: 'lighten' } : {}}
                             />
                         )}
                     </div>

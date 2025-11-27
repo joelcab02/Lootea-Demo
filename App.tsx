@@ -8,7 +8,7 @@ import HowItWorks from './components/HowItWorks';
 import { LootItem, Rarity } from './types';
 import { RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';
-import { getItems, initializeStore } from './services/oddsStore';
+import { getItems, initializeStore, subscribe } from './services/oddsStore';
 
 // SVG Icons for App
 const Icons = {
@@ -50,10 +50,16 @@ const App: React.FC = () => {
   }, [isMuted]);
 
   // Initialize odds store from Supabase on app load
+  // Subscribe to store changes (handles async image loading)
   useEffect(() => {
-    initializeStore().then(() => {
-      setItems(getItems());
+    initializeStore();
+    
+    // Subscribe to store updates - this catches when images load in background
+    const unsubscribe = subscribe((state) => {
+      setItems(state.items);
     });
+    
+    return unsubscribe;
   }, []);
 
   const handleSpin = () => {

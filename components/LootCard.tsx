@@ -14,7 +14,12 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
   
   // FIX: Added check for 'data:' to support generated 3D assets
   const isGenerated = item.image.startsWith('data:');
-  const isEmoji = !item.image.startsWith('http') && !isGenerated;
+  const isCdnImage = item.image.includes('supabase.co/storage'); // CDN images from Storage
+  const isLoading = item.image === '⏳';
+  const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
+  
+  // Apply lighten blend mode to hide black backgrounds (for generated assets and CDN WebP)
+  const needsBlendMode = isGenerated || isCdnImage;
 
   // Dynamic sizing based on context
   const imageSizeClass = isSpinner 
@@ -43,7 +48,12 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
       
       {/* Image Container */}
       <div className={`relative z-10 ${imageSizeClass} mb-2 sm:mb-4 flex items-center justify-center ${!isSpinner ? 'transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1' : ''}`}>
-        {isEmoji ? (
+        {isLoading ? (
+            // Skeleton loader - professional iGaming pattern
+            <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#1e2330] to-[#0d1019] animate-pulse flex items-center justify-center">
+              <div className="w-12 h-12 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin"></div>
+            </div>
+        ) : isEmoji ? (
              <span className={`${emojiSizeClass} select-none ${!isSpinner ? 'filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform transition-transform' : ''}`}>
                  {item.image}
              </span>
@@ -52,11 +62,11 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
               src={item.image} 
               alt={item.name}
               // FIX: Removed drop-shadow for generated assets. Added mix-blend-mode: lighten to hide black backgrounds
-              className={`w-full h-full object-contain ${!isSpinner && !isGenerated ? 'drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]' : ''}`}
+              className={`w-full h-full object-contain ${!isSpinner && !needsBlendMode ? 'drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]' : ''}`}
               loading={isSpinner ? "eager" : "lazy"}
               decoding="async"
               draggable={false}
-              style={isGenerated ? { mixBlendMode: 'lighten' } : {}} 
+              style={needsBlendMode ? { mixBlendMode: 'lighten' } : {}} 
             />
         )}
       </div>
