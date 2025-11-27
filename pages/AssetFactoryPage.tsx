@@ -61,6 +61,41 @@ const AssetFactoryPage: React.FC = () => {
   const [copySuccess, setCopySuccess] = useState(false);
   const [history, setHistory] = useState<{name: string; image: string; config: string}[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  
+  // Reference image state
+  const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [referenceFileName, setReferenceFileName] = useState<string>('');
+
+  // Handle reference image upload
+  const handleReferenceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Por favor sube una imagen válida');
+      return;
+    }
+    
+    // Validate file size (max 4MB for Gemini)
+    if (file.size > 4 * 1024 * 1024) {
+      setError('La imagen debe ser menor a 4MB');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setReferenceImage(event.target?.result as string);
+      setReferenceFileName(file.name);
+      setError(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearReferenceImage = () => {
+    setReferenceImage(null);
+    setReferenceFileName('');
+  };
 
   const handleGenerate = async () => {
     if (!productName.trim()) {
@@ -124,51 +159,67 @@ const AssetFactoryPage: React.FC = () => {
 
         const lighting = lightingDescriptions[lightingStyle];
 
+        // Build the prompt - enhanced for better results
         const prompt = `
-            Create a premium 3D game asset of: ${productDescription}.
-            
-            COMPOSITION:
-            - View: FULL SHOT. The ENTIRE object must be visible. DO NOT CUT OFF ANY EDGES.
-            - Position: ${viewDescriptions[viewAngle]}. Floating in mid-air.
-            - Framing: Center the object perfectly. Fill about 80% of the canvas. Leave a safety margin around all sides.
-            
-            PRODUCT CUSTOMIZATION:
-            ${finalColor ? `- COLOR: The product should be ${finalColor}. Apply this color realistically to the main body/surface.` : '- Use the product\'s original/default colors.'}
-            ${productVariant ? `- VARIANT: This is the ${productVariant} version/edition of the product.` : ''}
-            
-            LIGHTING & STYLE:
-            - Style: Hyper-realistic, Unreal Engine 5 render, Glossy, Premium e-commerce.
-            - Lighting: ${lighting.style}
-            - RIM LIGHT: Strong, bright ${lighting.rim} highlighting the edges of the object.
-            - The object should look like a glowing, desirable reward.
-            
-            BACKGROUND - CRITICAL FOR TRANSPARENCY:
-            - COLOR: PURE VOID BLACK (#000000).
-            - FINISH: MATTE, FLAT, UNIFORM.
-            - NO shadows cast on a floor (the object is floating in space).
-            - NO reflections on the background.
-            - NO gradients or vignettes. It must be #000000 pixels everywhere around the object.
-            
-            GEOMETRY:
-            - Accurate proportions.
-            - Perfect symmetry.
-            - No hallucinations or distorted text.
-            
-            RESTRICTIONS:
-            - No text overlays.
-            - No podiums, no stands, no tables.
-        `;
+You are a world-class 3D product visualization artist. Create a PREMIUM LOOT BOX ASSET render.
+
+PRODUCT: ${productDescription}
+${referenceImage ? 'REFERENCE: Use the attached image as visual reference for the exact product design, shape, and details.' : ''}
+
+CRITICAL REQUIREMENTS:
+1. FRAMING: Full product visible, NO cropping. Object fills 75-85% of frame with safe margins.
+2. ANGLE: ${viewDescriptions[viewAngle]}
+3. FLOATING: Product levitates in void space - NO floor, NO surface, NO shadow beneath.
+
+VISUAL STYLE:
+- Render Engine: Unreal Engine 5 / Octane quality
+- Materials: Photorealistic PBR with subtle reflections
+- Surface: ${finalColor ? `${finalColor} color applied to main body` : 'Original product colors'}
+${productVariant ? `- Edition: ${productVariant} variant styling` : ''}
+
+LIGHTING SETUP:
+- Key Light: Soft diffused from upper-left
+- Fill Light: Subtle ambient
+- Rim/Edge Light: ${lighting.rim} - STRONG and visible on product edges
+- Style: ${lighting.style}
+- Overall: Premium e-commerce / gaming loot aesthetic
+
+BACKGROUND (CRITICAL):
+- Color: PURE BLACK (#000000) - absolute void
+- NO gradients, NO vignettes, NO ambient occlusion on background
+- Background must be perfectly uniform black pixels for transparency compositing
+
+QUALITY STANDARDS:
+- 8K detail level, sharp focus
+- Accurate proportions and brand-faithful design
+- No text, watermarks, or UI elements
+- No stands, pedestals, or display surfaces
+- Clean, professional, desirable appearance
+        `.trim();
+
+        // Build content parts - text + optional reference image
+        const contentParts: any[] = [{ text: prompt }];
+        
+        if (referenceImage) {
+            // Extract base64 data from data URL
+            const base64Match = referenceImage.match(/^data:image\/(\w+);base64,(.+)$/);
+            if (base64Match) {
+                contentParts.push({
+                    inlineData: {
+                        mimeType: `image/${base64Match[1]}`,
+                        data: base64Match[2]
+                    }
+                });
+            }
+        }
 
         const response = await ai.models.generateContent({
-            model: 'gemini-3-pro-image-preview',
+            model: 'gemini-2.0-flash-exp-image-generation',
             contents: {
-                parts: [{ text: prompt }]
+                parts: contentParts
             },
             config: {
-                imageConfig: {
-                    aspectRatio: "1:1",
-                    imageSize: "1K"
-                }
+                responseModalities: ['Text', 'Image']
             }
         });
 
@@ -300,6 +351,60 @@ const AssetFactoryPage: React.FC = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Reference Image Upload */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
+              <span>📷</span> Imagen de Referencia (opcional)
+            </label>
+            <p className="text-[10px] text-slate-500">
+              Sube una foto del producto real para que la IA genere un render más preciso.
+            </p>
+            
+            {referenceImage ? (
+              <div className="relative bg-[#0d1019] border border-[#2a3040] rounded-lg p-3">
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={referenceImage} 
+                    alt="Reference" 
+                    className="w-16 h-16 object-contain rounded bg-black"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-white truncate">{referenceFileName}</p>
+                    <p className="text-[10px] text-green-400">✓ Imagen cargada</p>
+                  </div>
+                  <button
+                    onClick={clearReferenceImage}
+                    className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                    title="Eliminar imagen"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center w-full h-24 bg-[#0d1019] border-2 border-dashed border-[#2a3040] hover:border-[#FFC800] rounded-lg cursor-pointer transition-colors group">
+                <div className="flex flex-col items-center justify-center pt-2 pb-3">
+                  <svg className="w-6 h-6 mb-2 text-slate-500 group-hover:text-[#FFC800] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                  </svg>
+                  <p className="text-xs text-slate-500 group-hover:text-slate-300">
+                    <span className="font-semibold">Click para subir</span> o arrastra aquí
+                  </p>
+                  <p className="text-[10px] text-slate-600">PNG, JPG hasta 4MB</p>
+                </div>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleReferenceUpload}
+                />
+              </label>
+            )}
           </div>
 
           {/* Color Selection */}
