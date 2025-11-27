@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
-import AdminPage from './pages/AdminPage2';
+import AdminPage from './pages/AdminDashboard';
 import AssetFactoryPage from './pages/AssetFactoryPage';
 import MigrationPage from './pages/MigrationPage';
 import BoxPage from './pages/BoxPage';
