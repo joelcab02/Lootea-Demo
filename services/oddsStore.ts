@@ -64,6 +64,7 @@ function lootItemToDb(item: LootItem): DbLootItem {
 
 /**
  * Initialize store - fetch from Supabase (100% database-driven)
+ * Uses two-phase loading: metadata first (fast), then images (background)
  */
 export async function initializeStore(): Promise<StoreState> {
   isLoading = true;
@@ -71,21 +72,31 @@ export async function initializeStore(): Promise<StoreState> {
   notifyListeners();
   
   try {
-    // Fetch all items from Supabase
+    // Phase 1: Fetch metadata only (fast - no images)
     const { data, error } = await supabase
       .from('loot_items')
-      .select('*')
+      .select('id, name, price, rarity, odds')
       .order('price', { ascending: false });
     
     if (error) {
       console.error('❌ Supabase fetch failed:', error.message);
       isSynced = false;
     } else if (data && data.length > 0) {
-      console.log('✅ Loaded', data.length, 'items from Supabase');
-      currentItems = data.map(dbToLootItem);
+      console.log('✅ Loaded', data.length, 'items (metadata)');
+      // Initialize with placeholder images
+      currentItems = data.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: Number(item.price),
+        rarity: item.rarity as Rarity,
+        odds: Number(item.odds),
+        image: '⏳' // Placeholder while loading
+      }));
       isSynced = true;
+      
+      // Phase 2: Load images in background
+      loadImagesInBackground();
     } else {
-      // No data in DB - show empty state, user must add items via Admin Panel
       console.log('📦 No items in database. Add items via Admin Panel.');
       currentItems = [];
       isSynced = true;
@@ -100,6 +111,36 @@ export async function initializeStore(): Promise<StoreState> {
   notifyListeners();
   
   return getOddsState();
+}
+
+/**
+ * Load images in background after initial metadata load
+ */
+async function loadImagesInBackground(): Promise<void> {
+  try {
+    const { data, error } = await supabase
+      .from('loot_items')
+      .select('id, image');
+    
+    if (error || !data) {
+      console.warn('⚠️ Failed to load images:', error?.message);
+      return;
+    }
+    
+    // Update items with actual images
+    const imageMap = new Map(data.map(item => [item.id, item.image]));
+    
+    currentItems = currentItems.map(item => ({
+      ...item,
+      image: imageMap.get(item.id) || item.image
+    }));
+    
+    cachedState = null;
+    notifyListeners();
+    console.log('🖼️ Images loaded');
+  } catch (err) {
+    console.warn('⚠️ Background image load error:', err);
+  }
 }
 
 /**
