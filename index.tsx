@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
-import AdminPage from './pages/AdminDashboard';
-import AssetFactoryPage from './pages/AssetFactoryPage';
 import BoxPage from './pages/BoxPage';
+
+// Lazy load páginas de admin (no críticas para jugadores)
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AssetFactoryPage = lazy(() => import('./pages/AssetFactoryPage'));
+
+// Loading spinner para lazy components
+const PageLoader = () => (
+  <div className="min-h-screen bg-[#0a0c10] flex items-center justify-center">
+    <div className="w-10 h-10 border-3 border-[#FFC800]/20 border-t-[#FFC800] rounded-full animate-spin"></div>
+  </div>
+);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -15,12 +24,14 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/box/:slug" element={<BoxPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/assets" element={<AssetFactoryPage />} />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/box/:slug" element={<BoxPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/assets" element={<AssetFactoryPage />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   </React.StrictMode>
 );

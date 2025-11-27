@@ -18,6 +18,18 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              // Vendor chunks - librerías externas
+              'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+              'vendor-supabase': ['@supabase/supabase-js'],
+              // AI se carga solo cuando se necesita (lazy)
+            }
+          }
+        }
       }
     };
 });
