@@ -54,12 +54,24 @@ const AdminDashboard: React.FC = () => {
     setSearchParams(params);
   };
 
+  // SVG Icons
+  const icons = {
+    dashboard: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
+    boxes: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
+    products: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>,
+    assets: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
+    back: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>,
+    plus: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+    trash: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
+    check: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>,
+  };
+
   // Sidebar navigation items
   const navItems = [
-    { id: 'dashboard', icon: '📊', label: 'Dashboard' },
-    { id: 'boxes', icon: '📦', label: 'Cajas' },
-    { id: 'products', icon: '🎁', label: 'Productos' },
-    { id: 'assets', icon: '🎨', label: 'Asset Factory', link: '/assets' },
+    { id: 'dashboard', icon: icons.dashboard, label: 'Dashboard' },
+    { id: 'boxes', icon: icons.boxes, label: 'Cajas' },
+    { id: 'products', icon: icons.products, label: 'Productos' },
+    { id: 'assets', icon: icons.assets, label: 'Asset Factory', link: '/assets' },
   ];
 
   return (
@@ -68,8 +80,10 @@ const AdminDashboard: React.FC = () => {
       <aside className="w-64 bg-[#0d1019] border-r border-[#1e2330] flex flex-col">
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-[#1e2330]">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl">🎁</span>
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#FFC800] rounded-lg flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
             <span className="font-black text-white text-lg tracking-tight">
               LOOTEA <span className="text-[#FFC800]">ADMIN</span>
             </span>
@@ -85,7 +99,7 @@ const AdminDashboard: React.FC = () => {
                 to={item.link}
                 className="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-white hover:bg-[#1e2330] transition-colors"
               >
-                <span className="text-lg">{item.icon}</span>
+                {item.icon}
                 <span className="font-medium">{item.label}</span>
               </Link>
             ) : (
@@ -98,7 +112,7 @@ const AdminDashboard: React.FC = () => {
                     : 'text-slate-400 hover:text-white hover:bg-[#1e2330]/50'
                 }`}
               >
-                <span className="text-lg">{item.icon}</span>
+                {item.icon}
                 <span className="font-medium">{item.label}</span>
               </button>
             )
@@ -133,7 +147,7 @@ const AdminDashboard: React.FC = () => {
               ? 'bg-blue-500/20 text-blue-400' 
               : 'bg-green-500/20 text-green-400'
           }`}>
-            {isSaving ? '⏳ Guardando...' : '✓ Sincronizado'}
+            {isSaving ? 'Guardando...' : 'Sincronizado'}
           </div>
         </header>
 
@@ -216,7 +230,7 @@ const DashboardSection: React.FC<{
           to="/assets"
           className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition-colors"
         >
-          🎨 Generar Assets
+          Generar Assets
         </Link>
       </div>
     </div>
@@ -341,7 +355,7 @@ const BoxEditSection: React.FC<{
   setIsSaving: (v: boolean) => void;
   products: LootItem[];
 }> = ({ boxId, navigate, onSave, setIsSaving, products }) => {
-  const [form, setForm] = useState({ name: '', slug: '', price: '', image: '📦', category: 'general' });
+  const [form, setForm] = useState({ name: '', slug: '', price: '', image: '', category: 'general' });
   const [boxItems, setBoxItems] = useState<{item_id: string, odds: number}[]>([]);
   const isNew = !boxId;
 
@@ -358,7 +372,7 @@ const BoxEditSection: React.FC<{
         name: box.name,
         slug: box.slug,
         price: String(box.price),
-        image: box.image || '📦',
+        image: box.image || '',
         category: box.category || 'general'
       });
     }
@@ -530,7 +544,7 @@ const BoxEditSection: React.FC<{
                         : 'border-slate-600 hover:border-[#FFC800]'
                     }`}
                   >
-                    {inBox && '✓'}
+                    {inBox && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
                   </button>
                   
                   {/* Image */}
@@ -678,7 +692,7 @@ const ProductEditSection: React.FC<{
   onSave: () => void;
   setIsSaving: (v: boolean) => void;
 }> = ({ productId, navigate, onSave, setIsSaving }) => {
-  const [form, setForm] = useState({ name: '', price: '', rarity: Rarity.COMMON, image: '📦' });
+  const [form, setForm] = useState({ name: '', price: '', rarity: Rarity.COMMON, image: '' });
   const isNew = !productId;
 
   useEffect(() => {
@@ -694,7 +708,7 @@ const ProductEditSection: React.FC<{
         name: data.name,
         price: String(data.price),
         rarity: data.rarity as Rarity,
-        image: data.image || '📦'
+        image: data.image || ''
       });
     }
   };
@@ -794,7 +808,7 @@ const ProductEditSection: React.FC<{
                 {form.image.startsWith('http') || form.image.startsWith('data:') ? (
                   <img src={form.image} alt="" className="w-full h-full object-contain rounded" />
                 ) : (
-                  <span className="text-3xl">{form.image || '📦'}</span>
+                  <span className="text-slate-600 text-sm">Sin imagen</span>
                 )}
               </div>
               <span className="text-xs text-slate-500">Vista previa</span>
