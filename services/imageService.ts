@@ -49,11 +49,14 @@ export async function compressToWebP(
         return;
       }
       
+      // IMPORTANT: Clear canvas with transparent background
+      ctx.clearRect(0, 0, width, height);
+      
       // Use high-quality image smoothing
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       
-      // Draw the image
+      // Draw the image (preserves transparency if source has it)
       ctx.drawImage(img, 0, 0, width, height);
       
       // Convert to WebP blob

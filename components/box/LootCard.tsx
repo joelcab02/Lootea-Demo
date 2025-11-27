@@ -12,13 +12,14 @@ interface LootCardProps {
 const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpinner = false }) => {
   const glowColorClass = RARITY_BG_GLOW[item.rarity];
   
-  // FIX: Added check for 'data:' to support generated 3D assets
+  // Check image type
   const isGenerated = item.image.startsWith('data:');
-  const isCdnImage = item.image.includes('supabase.co/storage'); // CDN images from Storage
+  const isCdnImage = item.image.includes('supabase.co/storage');
   const isLoading = item.image === '⏳';
   const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
   
-  // Apply lighten blend mode to hide black backgrounds (for generated assets and CDN WebP)
+  // Apply screen blend mode to hide black backgrounds (for AI-generated assets)
+  // This makes pure black (#000) transparent while keeping other colors
   const needsBlendMode = isGenerated || isCdnImage;
 
   // Dynamic sizing based on context
@@ -61,12 +62,12 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
             <img 
               src={item.image} 
               alt={item.name}
-              // FIX: Removed drop-shadow for generated assets. Added mix-blend-mode: lighten to hide black backgrounds
               className={`w-full h-full object-contain ${!isSpinner && !needsBlendMode ? 'drop-shadow-[0_10px_15px_rgba(0,0,0,0.5)]' : ''}`}
               loading={isSpinner ? "eager" : "lazy"}
               decoding="async"
               draggable={false}
-              style={needsBlendMode ? { mixBlendMode: 'lighten' } : {}} 
+              // Use 'screen' blend mode - makes black pixels transparent, keeps bright colors
+              style={needsBlendMode ? { mixBlendMode: 'screen' } : {}} 
             />
         )}
       </div>
