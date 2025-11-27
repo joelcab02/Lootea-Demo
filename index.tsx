@@ -5,6 +5,7 @@ import App from './App';
 import AdminPage from './pages/AdminPage';
 import AssetFactoryPage from './pages/AssetFactoryPage';
 import MigrationPage from './pages/MigrationPage';
+import BoxPage from './pages/BoxPage';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -17,6 +18,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/box/:slug" element={<BoxPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/assets" element={<AssetFactoryPage />} />
         <Route path="/migrate" element={<MigrationPage />} />
