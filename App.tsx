@@ -109,59 +109,44 @@ const App: React.FC = () => {
         {/* LIVE DROP TICKER */}
         <LiveDrops items={items} />
         
-        {/* HEADER - COMPACTED FOR ATF */}
-        <header className="flex items-center justify-between h-[52px] md:h-[100px] px-3 md:px-12 bg-[#0d1019] md:bg-[#0d1019]/95 md:backdrop-blur-sm border-b border-[#1e2330] sticky top-0 z-40 shadow-xl transition-all duration-300">
+        {/* HEADER - iGaming Professional Style */}
+        <header className="flex items-center justify-between h-[56px] md:h-[72px] px-4 md:px-8 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40 shadow-xl">
             {/* Left Nav */}
-            <div className="flex items-center gap-3 w-20 md:w-auto flex-1 md:flex-none">
+            <div className="flex items-center gap-2 md:gap-4">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="text-slate-400 hover:text-white active:scale-95 transition-transform p-1 md:p-3 -ml-1 md:-ml-3 mr-1 md:mr-4"
+                  className="text-slate-400 hover:text-white active:scale-95 transition-all p-2 hover:bg-white/5 rounded-lg"
                 >
                   <Icons.Menu />
                 </button>
                 
-                {/* Desktop Logo */}
-                <div className="hidden md:flex items-center gap-3 mr-6 cursor-pointer group select-none relative">
-                    <div className="absolute inset-0 bg-[#FFC800]/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full"></div>
-                    <div className="w-8 h-8 md:w-8 md:h-8 text-[#FFC800] filter drop-shadow-[0_0_15px_rgba(255,200,0,0.6)] group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 relative z-10">
+                {/* Logo */}
+                <div className="flex items-center gap-2 cursor-pointer group select-none">
+                    <div className="w-6 h-6 md:w-7 md:h-7 text-[#FFC800] filter drop-shadow-[0_0_10px_rgba(255,200,0,0.5)] group-hover:scale-110 transition-transform">
                         <Icons.Logo />
                     </div>
-                    <div className="flex flex-col relative z-10 justify-center">
-                        <span className="font-gamer font-black text-2xl md:text-3xl italic tracking-tighter text-white leading-none group-hover:text-[#FFC800] transition-colors drop-shadow-lg">
-                            LOOTEA
-                        </span>
-                    </div>
+                    <span className="font-gamer font-black text-xl md:text-2xl italic tracking-tighter text-white group-hover:text-[#FFC800] transition-colors">
+                        LOOTEA
+                    </span>
                 </div>
 
-                {/* Divider & Breadcrumbs */}
-                <div className="hidden lg:flex items-center gap-4 text-sm pl-6 border-l border-[#1e2330] h-12 ml-2">
-                    <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group">
-                         <div className="group-hover:-translate-x-1 transition-transform">
-                            <Icons.ArrowLeft />
-                         </div>
-                         <span className="font-black italic uppercase tracking-tighter text-xs">Regresar</span>
+                {/* Breadcrumbs - Desktop only */}
+                <div className="hidden lg:flex items-center gap-3 pl-4 ml-4 border-l border-[#1e2330]">
+                    <button className="flex items-center gap-1.5 text-slate-500 hover:text-white transition-colors text-sm">
+                        <Icons.ArrowLeft />
+                        <span className="font-bold uppercase tracking-tight text-xs">Regresar</span>
                     </button>
                     <span className="text-slate-700">|</span>
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <span className="font-bold uppercase tracking-tight text-[11px] cursor-pointer hover:text-white transition-colors">Cajas</span>
-                        <div className="text-slate-600"><Icons.ChevronRight /></div>
-                        <span className="font-bold uppercase tracking-tight text-[11px] text-[#FFC800]">Apple Collection</span>
+                    <div className="flex items-center gap-1.5 text-slate-400 text-sm">
+                        <span className="font-medium uppercase tracking-tight text-xs hover:text-white cursor-pointer transition-colors">Cajas</span>
+                        <Icons.ChevronRight />
+                        <span className="font-bold uppercase tracking-tight text-xs text-[#FFC800]">Apple Collection</span>
                     </div>
                 </div>
-            </div>
-
-            {/* Logo Mobile - Scaled Down */}
-            <div className="flex md:hidden items-center justify-center gap-2 absolute left-1/2 transform -translate-x-1/2">
-                <div className="w-4 h-4 text-[#FFC800] filter drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
-                    <Icons.Logo />
-                </div>
-                <span className="font-gamer font-bold text-lg italic tracking-tighter text-white select-none relative top-[1px]">
-                    LOOTEA
-                </span>
             </div>
 
             {/* Right Actions: Auth */}
-            <div className="flex items-center justify-end gap-2 md:gap-3 flex-1 md:flex-none">
+            <div className="flex items-center gap-3">
                 <UserMenu />
             </div>
         </header>
