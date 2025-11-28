@@ -70,12 +70,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const isLogin = mode === 'login';
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/90" onClick={onClose} />
       
-      {/* Modal */}
-      <div className="relative z-[101] w-full max-w-sm bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl">
+      {/* Modal - Full width on mobile, slides up from bottom */}
+      <div className="relative z-[101] w-full sm:max-w-sm bg-[#0d1019] border-t sm:border border-[#1e2330] rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
         {/* Close button */}
         <button 
           onClick={onClose}

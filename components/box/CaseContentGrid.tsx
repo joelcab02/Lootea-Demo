@@ -46,13 +46,13 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
           </p>
         </div>
         
-        {/* Rarity Filter */}
-        <div className="flex gap-2">
+        {/* Rarity Filter - Scrollable on mobile */}
+        <div className="flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
           <FilterButton active={filter === 'ALL'} onClick={() => setFilter('ALL')}>
             Todos
           </FilterButton>
           <FilterButton active={filter === Rarity.LEGENDARY} onClick={() => setFilter(Rarity.LEGENDARY)} color="text-[#FFC800]">
-            Legendario
+            Leg.
           </FilterButton>
           <FilterButton active={filter === Rarity.EPIC} onClick={() => setFilter(Rarity.EPIC)} color="text-purple-400">
             Épico
@@ -83,7 +83,7 @@ function FilterButton({ children, active, onClick, color = 'text-white' }: {
     <button
       onClick={onClick}
       className={`
-        px-3 py-1.5 rounded-lg text-xs font-medium transition-all
+        px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-all whitespace-nowrap
         ${active 
           ? `bg-[#1e2330] ${color}` 
           : 'text-slate-500 hover:text-white hover:bg-[#1e2330]/50'}

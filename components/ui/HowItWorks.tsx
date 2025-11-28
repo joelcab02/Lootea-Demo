@@ -18,30 +18,30 @@ export default function HowItWorks() {
   return (
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
       {/* Header */}
-      <div className="text-center mb-10">
-        <h2 className="font-display text-2xl md:text-3xl text-white mb-2">
+      <div className="text-center mb-6 sm:mb-10">
+        <h2 className="font-display text-xl sm:text-2xl md:text-3xl text-white mb-1 sm:mb-2">
           ¿CÓMO FUNCIONA?
         </h2>
-        <p className="text-slate-500 text-sm max-w-md mx-auto">
+        <p className="text-slate-500 text-xs sm:text-sm max-w-md mx-auto">
           4 simples pasos para ganar productos reales
         </p>
       </div>
 
       {/* Steps */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
         {steps.map((step) => (
           <div 
             key={step.num}
             className={`
-              relative p-5 md:p-6 rounded-2xl text-center group transition-all duration-300 hover:-translate-y-1
+              relative p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl text-center group transition-all duration-300
               ${step.highlight 
                 ? 'bg-[#FFC800] text-black' 
-                : 'bg-[#13151b] border border-[#1e2330] hover:border-[#FFC800]/50'}
+                : 'bg-[#13151b] border border-[#1e2330]'}
             `}
           >
             {/* Step number */}
             <div className={`
-              absolute top-3 right-3 text-xs font-mono font-bold
+              absolute top-2 right-2 sm:top-3 sm:right-3 text-[10px] sm:text-xs font-mono
               ${step.highlight ? 'text-black/30' : 'text-slate-700'}
             `}>
               {step.num}
@@ -49,20 +49,20 @@ export default function HowItWorks() {
 
             {/* Icon */}
             <div className={`
-              w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4
+              w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-4
               ${step.highlight 
                 ? 'bg-black text-[#FFC800]' 
-                : 'bg-[#0d1019] text-slate-400 group-hover:text-[#FFC800]'}
+                : 'bg-[#0d1019] text-slate-400'}
               transition-colors
             `}>
               {step.icon}
             </div>
 
             {/* Content */}
-            <h3 className={`font-display text-base mb-1 ${step.highlight ? 'text-black' : 'text-white'}`}>
+            <h3 className={`font-display text-sm sm:text-base mb-0.5 sm:mb-1 ${step.highlight ? 'text-black' : 'text-white'}`}>
               {step.title.toUpperCase()}
             </h3>
-            <p className={`text-xs leading-relaxed ${step.highlight ? 'text-black/70' : 'text-slate-500'}`}>
+            <p className={`text-[10px] sm:text-xs leading-relaxed ${step.highlight ? 'text-black/70' : 'text-slate-500'}`}>
               {step.desc}
             </p>
           </div>

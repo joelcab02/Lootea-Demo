@@ -109,10 +109,10 @@ const App: React.FC = () => {
         {/* LIVE DROP TICKER */}
         <LiveDrops items={items} />
         
-        {/* HEADER - Clean iGaming Style */}
-        <header className="flex items-center justify-between py-4 md:py-5 px-5 md:px-10 bg-[#0d1019]/95 backdrop-blur-md border-b border-[#1e2330]/50 sticky top-0 z-40">
+        {/* HEADER - Mobile First */}
+        <header className="flex items-center justify-between py-3 px-4 md:py-5 md:px-10 bg-[#0d1019]/95 backdrop-blur-md border-b border-[#1e2330]/50 sticky top-0 z-40">
             {/* Left: Menu + Logo */}
-            <div className="flex items-center gap-4 md:gap-6">
+            <div className="flex items-center gap-3 md:gap-6">
                 <button 
                   onClick={() => setSidebarOpen(true)}
                   className="text-slate-500 hover:text-white transition-colors p-1"
@@ -120,18 +120,18 @@ const App: React.FC = () => {
                   <Icons.Menu />
                 </button>
                 
-                <div className="flex items-center gap-2.5 cursor-pointer group">
-                    <div className="w-8 h-8 text-[#FFC800] drop-shadow-[0_0_12px_rgba(255,200,0,0.6)] group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-2 cursor-pointer group">
+                    <div className="w-6 h-6 md:w-8 md:h-8 text-[#FFC800] drop-shadow-[0_0_12px_rgba(255,200,0,0.6)] group-hover:scale-110 transition-transform">
                         <Icons.Logo />
                     </div>
-                    <span className="font-display text-2xl md:text-3xl text-white group-hover:text-[#FFC800] transition-colors">
+                    <span className="font-display text-xl md:text-3xl text-white group-hover:text-[#FFC800] transition-colors">
                         LOOTEA
                     </span>
                 </div>
             </div>
 
-            {/* Center: Trust Badge - Desktop */}
-            <div className="hidden md:flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
+            {/* Center: Trust Badge - Desktop only */}
+            <div className="hidden lg:flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
                 <div className="text-green-500">
                     <Icons.ShieldCheck />
                 </div>
@@ -140,11 +140,11 @@ const App: React.FC = () => {
                 </span>
             </div>
 
-            {/* Right: Sound + Auth */}
-            <div className="flex items-center gap-3 md:gap-4">
+            {/* Right: Auth (sound hidden on mobile) */}
+            <div className="flex items-center gap-2 md:gap-4">
                 <button 
                     onClick={() => setIsMuted(!isMuted)}
-                    className="text-slate-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
+                    className="hidden sm:flex text-slate-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
                     title={isMuted ? "Unmute" : "Mute"}
                 >
                     {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
@@ -160,11 +160,11 @@ const App: React.FC = () => {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#FFC800] opacity-[0.03] blur-[100px] pointer-events-none"></div>
             
             {/* Box Title */}
-            <div className="z-10 text-center mb-6 md:mb-8">
-                <h1 className="font-display text-4xl md:text-6xl text-white drop-shadow-2xl mb-2">
+            <div className="z-10 text-center mb-4 md:mb-8 px-4">
+                <h1 className="font-display text-2xl sm:text-4xl md:text-6xl text-white drop-shadow-2xl mb-1 md:mb-2">
                     1% iPHONE BOX
                 </h1>
-                <p className="text-slate-500 text-sm md:text-base">
+                <p className="text-slate-500 text-xs sm:text-sm md:text-base">
                     Probabilidad real de ganar un iPhone 15 Pro Max
                 </p>
             </div>
@@ -216,39 +216,36 @@ const App: React.FC = () => {
                     )}
                 </button>
 
-                {/* Secondary Controls */}
-                <div className="flex items-center justify-between gap-4">
+                {/* Secondary Controls - Mobile optimized */}
+                <div className="flex items-center justify-between gap-2">
                     
-                    {/* Quantity Selector */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-slate-500 text-xs uppercase tracking-wide hidden sm:block">Cantidad:</span>
-                        <div className="flex bg-[#0d1019] rounded-lg p-1 border border-[#1e2330]">
-                            {[1, 2, 3, 4, 5].map(num => (
-                                <button 
-                                    key={num} 
-                                    onClick={() => setQuantity(num)}
-                                    className={`
-                                        w-9 h-9 rounded-md font-bold text-sm transition-all
-                                        ${quantity === num 
-                                            ? 'bg-[#FFC800] text-black' 
-                                            : 'text-slate-500 hover:text-white hover:bg-[#1e2330]'}
-                                    `}
-                                >
-                                    {num}
-                                </button>
-                            ))}
-                        </div>
+                    {/* Quantity Selector - Compact on mobile */}
+                    <div className="flex bg-[#0d1019] rounded-lg p-0.5 border border-[#1e2330]">
+                        {[1, 2, 3, 4, 5].map(num => (
+                            <button 
+                                key={num} 
+                                onClick={() => setQuantity(num)}
+                                className={`
+                                    w-8 h-8 sm:w-9 sm:h-9 rounded-md font-display text-xs sm:text-sm transition-all
+                                    ${quantity === num 
+                                        ? 'bg-[#FFC800] text-black' 
+                                        : 'text-slate-500 hover:text-white hover:bg-[#1e2330]'}
+                                `}
+                            >
+                                {num}
+                            </button>
+                        ))}
                     </div>
 
-                    {/* Fast Mode + Demo Toggle */}
-                    <div className="flex items-center gap-2">
+                    {/* Fast Mode + Demo Toggle - Icons only on mobile */}
+                    <div className="flex items-center gap-1.5 sm:gap-2">
                         <button 
                             onClick={() => setFastMode(!fastMode)}
                             className={`
-                                h-9 px-3 rounded-lg flex items-center gap-2 border transition-all text-sm
+                                h-8 sm:h-9 w-8 sm:w-auto sm:px-3 rounded-lg flex items-center justify-center gap-2 border transition-all text-sm
                                 ${fastMode 
                                     ? 'bg-[#FFC800]/10 border-[#FFC800]/50 text-[#FFC800]' 
-                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500 hover:text-white'}
+                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500'}
                             `}
                         >
                             <Icons.Lightning />
@@ -258,10 +255,10 @@ const App: React.FC = () => {
                         <button 
                             onClick={() => setDemoMode(!demoMode)}
                             className={`
-                                h-9 px-3 rounded-lg flex items-center gap-2 border transition-all text-sm
+                                h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1 border transition-all text-xs sm:text-sm
                                 ${demoMode 
                                     ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' 
-                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500 hover:text-white'}
+                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500'}
                             `}
                         >
                             <span className="font-medium">{demoMode ? 'Demo' : 'Real'}</span>
