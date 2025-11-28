@@ -5,7 +5,45 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Database types
+// Database types - Updated for normalized schema
+
+// New items table (UUID-based)
+export interface DbItem {
+  id: string;  // UUID
+  legacy_id?: string;  // Old text ID for reference
+  name: string;
+  description?: string;
+  price: number;
+  rarity: 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY';
+  image_url: string;
+  brand?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Box items junction table (UUID-based)
+export interface DbBoxItem {
+  id: string;  // UUID
+  box_id: string;  // UUID
+  item_id: string;  // UUID
+  odds: number;
+  created_at?: string;
+}
+
+// Box table
+export interface DbBox {
+  id: string;  // UUID
+  name: string;
+  slug: string;
+  price: number;
+  image?: string;
+  category: string;
+  is_active: boolean;
+  created_at?: string;
+}
+
+// Legacy types (for backwards compatibility during migration)
 export interface DbLootItem {
   id: string;
   name: string;
