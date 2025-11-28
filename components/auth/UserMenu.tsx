@@ -103,16 +103,16 @@ export const UserMenu: React.FC = () => {
   // Logged out - Show Sign In / Register buttons (iGaming style)
   return (
     <>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
         <button
           onClick={openLogin}
-          className="px-5 md:px-6 py-2.5 md:py-3 text-slate-300 hover:text-white bg-[#1a1d26] hover:bg-[#252830] border border-[#2a2d36] hover:border-[#FFC800]/40 rounded-lg transition-all text-sm md:text-base font-gamer font-bold italic uppercase tracking-tight"
+          className="px-4 py-2 text-slate-300 hover:text-white transition-all text-sm font-medium"
         >
           Entrar
         </button>
         <button
           onClick={openRegister}
-          className="px-5 md:px-6 py-2.5 md:py-3 bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg transition-all text-sm md:text-base font-gamer font-black italic uppercase tracking-tight shadow-[0_0_20px_rgba(255,200,0,0.4)] hover:shadow-[0_0_30px_rgba(255,200,0,0.6)] hover:scale-[1.03]"
+          className="px-5 py-2 bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-md transition-all text-sm font-gamer font-bold italic uppercase tracking-tight shadow-[0_0_15px_rgba(255,200,0,0.25)] hover:shadow-[0_0_20px_rgba(255,200,0,0.4)]"
         >
           Registro
         </button>
