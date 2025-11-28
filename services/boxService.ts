@@ -58,7 +58,7 @@ export async function getBoxesByCategory(category: string): Promise<Box[]> {
 
 /**
  * Get a single box by slug with all its items
- * Updated to use new normalized tables (items, box_items_v2)
+ * Uses normalized tables (items + box_items)
  */
 export async function getBoxBySlug(slug: string): Promise<BoxWithItems | null> {
   // Get box
@@ -73,9 +73,9 @@ export async function getBoxBySlug(slug: string): Promise<BoxWithItems | null> {
     return null;
   }
 
-  // Try new tables first (box_items_v2 + items)
-  const { data: boxItemsV2, error: itemsErrorV2 } = await supabase
-    .from('box_items_v2')
+  // Get box items with their details
+  const { data: boxItems, error: itemsError } = await supabase
+    .from('box_items')
     .select(`
       odds,
       item:items (
@@ -88,51 +88,18 @@ export async function getBoxBySlug(slug: string): Promise<BoxWithItems | null> {
     `)
     .eq('box_id', box.id);
 
-  // If new tables work, use them
-  if (!itemsErrorV2 && boxItemsV2 && boxItemsV2.length > 0) {
-    const items: LootItem[] = boxItemsV2
-      .filter(bi => bi.item)
-      .map(bi => ({
-        id: (bi.item as any).id,
-        name: (bi.item as any).name,
-        image: (bi.item as any).image_url,
-        price: Number((bi.item as any).price),
-        rarity: (bi.item as any).rarity as Rarity,
-        odds: Number(bi.odds)
-      }));
-
-    console.log('✅ Using new normalized tables (items + box_items_v2)');
-    return { ...box, items };
-  }
-
-  // Fallback to legacy tables (box_items + loot_items)
-  console.log('⚠️ Falling back to legacy tables');
-  const { data: boxItems, error: itemsError } = await supabase
-    .from('box_items')
-    .select(`
-      odds,
-      item:loot_items (
-        id,
-        name,
-        image,
-        price,
-        rarity
-      )
-    `)
-    .eq('box_id', box.id);
-
   if (itemsError) {
     console.error('Error loading box items:', itemsError);
     return { ...box, items: [] };
   }
 
-  // Transform to LootItem array with odds from box_items
+  // Transform to LootItem array
   const items: LootItem[] = (boxItems || [])
     .filter(bi => bi.item)
     .map(bi => ({
       id: (bi.item as any).id,
       name: (bi.item as any).name,
-      image: (bi.item as any).image,
+      image: (bi.item as any).image_url,
       price: Number((bi.item as any).price),
       rarity: (bi.item as any).rarity as Rarity,
       odds: Number(bi.odds)
