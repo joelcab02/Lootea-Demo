@@ -237,10 +237,10 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                     {/* Winner info overlay */}
                     {isWinner && (
                       <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
-                        <p className="text-white font-black uppercase italic tracking-tighter text-sm md:text-base drop-shadow-lg">
+                        <p className="font-display text-white text-sm md:text-base drop-shadow-lg uppercase">
                           {winner.name}
                         </p>
-                        <p className="text-[#FFC800] font-mono font-bold text-sm md:text-lg drop-shadow-lg">
+                        <p className="font-display text-[#FFC800] text-sm md:text-lg drop-shadow-lg">
                           ${winner.price.toLocaleString()}
                         </p>
                       </div>

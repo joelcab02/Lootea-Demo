@@ -124,7 +124,7 @@ const App: React.FC = () => {
                     <div className="w-8 h-8 text-[#FFC800] drop-shadow-[0_0_12px_rgba(255,200,0,0.6)] group-hover:scale-110 transition-transform">
                         <Icons.Logo />
                     </div>
-                    <span className="font-display font-black text-2xl md:text-3xl text-white group-hover:text-[#FFC800] transition-colors">
+                    <span className="font-display text-2xl md:text-3xl text-white group-hover:text-[#FFC800] transition-colors">
                         LOOTEA
                     </span>
                 </div>
@@ -161,7 +161,7 @@ const App: React.FC = () => {
             
             {/* Box Title */}
             <div className="z-10 text-center mb-6 md:mb-8">
-                <h1 className="font-display font-black text-4xl md:text-6xl italic text-white drop-shadow-2xl mb-2">
+                <h1 className="font-display text-4xl md:text-6xl text-white drop-shadow-2xl mb-2">
                     1% iPHONE BOX
                 </h1>
                 <p className="text-slate-500 text-sm md:text-base">
@@ -192,7 +192,7 @@ const App: React.FC = () => {
                     className="
                         group relative w-full h-16 md:h-[72px] mb-4
                         bg-gradient-to-b from-[#FFD000] to-[#FFC800]
-                        text-black font-display font-black uppercase text-2xl md:text-3xl italic
+                        text-black font-display uppercase text-2xl md:text-3xl
                         rounded-xl
                         transition-all duration-150
                         shadow-[0_6px_0_#b38b00,0_8px_20px_rgba(255,200,0,0.3)]
@@ -209,7 +209,7 @@ const App: React.FC = () => {
                     ) : (
                         <>
                             <span>ABRIR</span>
-                            <span className="text-lg md:text-xl font-mono font-bold bg-black/20 px-3 py-1 rounded-lg">
+                            <span className="font-display text-lg md:text-xl bg-black/20 px-3 py-1 rounded-lg">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </span>
                         </>

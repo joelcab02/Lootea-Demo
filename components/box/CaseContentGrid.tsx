@@ -130,15 +130,15 @@ function ItemCard({ item }: { item: LootItem & { normalizedOdds: number } }) {
 
       {/* Info */}
       <div className="p-3 pt-0 text-center">
-        <h3 className="text-xs font-bold text-white truncate mb-2 group-hover:text-[#FFC800] transition-colors">
+        <h3 className="font-display text-xs text-white truncate mb-2 group-hover:text-[#FFC800] transition-colors uppercase">
           {item.name}
         </h3>
         
         <div className="flex items-center justify-between text-xs">
-          <span className="text-[#FFC800] font-mono font-bold">
+          <span className="font-display text-[#FFC800]">
             ${item.price.toLocaleString()}
           </span>
-          <span className="text-slate-500 font-mono">
+          <span className="text-slate-500">
             {item.normalizedOdds < 1 
               ? `${item.normalizedOdds.toFixed(2)}%` 
               : `${item.normalizedOdds.toFixed(1)}%`}

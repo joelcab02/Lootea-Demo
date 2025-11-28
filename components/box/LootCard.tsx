@@ -73,16 +73,16 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
         )}
       </div>
 
-      {/* Text Info - Bolder and Larger */}
+      {/* Text Info */}
       <div className="relative z-10 text-center w-full px-2">
         
-        <h3 className={`font-black italic text-white text-sm sm:text-lg leading-tight uppercase tracking-tighter truncate w-full mb-1 sm:mb-2 opacity-90 ${!isSpinner && 'group-hover:opacity-100 transition-opacity'}`}>
+        <h3 className={`font-display text-white text-sm sm:text-lg leading-tight uppercase truncate w-full mb-1 sm:mb-2 opacity-90 ${!isSpinner && 'group-hover:opacity-100 transition-opacity'}`}>
           {item.name}
         </h3>
         
-        {/* Price tag optimized for spinning visibility */}
+        {/* Price tag */}
         <div className={`inline-flex items-center justify-center bg-[#0d1019]/90 border border-[#2a3040] rounded px-2 py-0.5 sm:px-3 sm:py-1 shadow-sm ${!isSpinner && 'backdrop-blur-sm group-hover:border-[#FFC800]/50 transition-colors'}`}>
-            <span className="text-[#FFC800] font-mono font-bold text-xs sm:text-sm tracking-tighter">
+            <span className="font-display text-[#FFC800] text-xs sm:text-sm">
               ${item.price.toLocaleString('es-MX')}
             </span>
         </div>
