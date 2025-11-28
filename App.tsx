@@ -109,50 +109,40 @@ const App: React.FC = () => {
         {/* LIVE DROP TICKER */}
         <LiveDrops items={items} />
         
-        {/* HEADER - iGaming Professional Style */}
-        <header className="flex items-center justify-between h-[60px] md:h-[70px] px-5 md:px-12 lg:px-16 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40 shadow-xl">
-            {/* Left Nav */}
-            <div className="flex items-center gap-4">
+        {/* HEADER */}
+        <header className="flex items-center justify-between h-16 md:h-20 px-6 md:px-10 xl:px-16 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40">
+            {/* Left: Menu + Logo + Breadcrumbs */}
+            <div className="flex items-center gap-5">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="text-slate-400 hover:text-white active:scale-95 transition-all p-2 hover:bg-white/5 rounded-lg"
+                  className="text-slate-400 hover:text-white transition-colors"
                 >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                  </svg>
+                  <Icons.Menu />
                 </button>
                 
-                {/* Logo */}
-                <div className="flex items-center gap-2 cursor-pointer group select-none">
-                    <div className="w-6 h-6 md:w-7 md:h-7 text-[#FFC800] filter drop-shadow-[0_0_10px_rgba(255,200,0,0.5)] group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-2 cursor-pointer group">
+                    <div className="w-7 h-7 text-[#FFC800] drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
                         <Icons.Logo />
                     </div>
-                    <span className="font-gamer font-black text-xl md:text-2xl italic tracking-tighter text-white group-hover:text-[#FFC800] transition-colors">
+                    <span className="font-gamer font-black text-2xl italic tracking-tighter text-white">
                         LOOTEA
                     </span>
                 </div>
 
-                {/* Breadcrumbs - Desktop only */}
-                <div className="hidden lg:flex items-center gap-3 pl-4 ml-4 border-l border-[#1e2330]">
-                    <button className="flex items-center gap-1.5 text-slate-500 hover:text-white transition-colors">
+                <div className="hidden lg:flex items-center gap-4 pl-5 ml-3 border-l border-[#1e2330] text-[13px]">
+                    <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors">
                         <Icons.ArrowLeft />
-                        <span className="font-medium text-xs uppercase tracking-wide">Regresar</span>
+                        <span>REGRESAR</span>
                     </button>
                     <span className="text-slate-700">|</span>
-                    <div className="flex items-center gap-1.5 text-slate-400">
-                        <span className="text-xs uppercase tracking-wide hover:text-white cursor-pointer transition-colors">Cajas</span>
-                        <Icons.ChevronRight />
-                        <span className="text-xs uppercase tracking-wide text-[#FFC800] font-medium">Apple Collection</span>
-                    </div>
+                    <span className="text-slate-500 hover:text-white cursor-pointer transition-colors">CAJAS</span>
+                    <Icons.ChevronRight />
+                    <span className="text-[#FFC800] font-semibold">APPLE COLLECTION</span>
                 </div>
             </div>
 
-            {/* Right Actions: Auth */}
-            <div className="flex items-center gap-3">
-                <UserMenu />
-            </div>
+            {/* Right: Auth */}
+            <UserMenu />
         </header>
 
         {/* TRUST BAR - COMPACT */}
