@@ -1,9 +1,11 @@
 /**
  * Auth Modal - Lootea Brand Style
  * Gold (#FFC800) accents, dark theme, gamer aesthetic
+ * Uses Portal to render outside parent container hierarchy
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { signIn, signUp, signInWithProvider } from '../../services/authService';
 
 interface AuthModalProps {
@@ -24,7 +26,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  if (!isOpen) return null;
+  // Create portal container
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,8 +69,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const isLogin = mode === 'login';
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/90" onClick={onClose} />
       
@@ -187,6 +197,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       </div>
     </div>
   );
+
+  // Render modal in portal (directly in document.body)
+  return createPortal(modalContent, document.body);
 };
 
 export default AuthModal;
