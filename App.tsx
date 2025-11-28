@@ -110,37 +110,41 @@ const App: React.FC = () => {
         <LiveDrops items={items} />
         
         {/* HEADER - iGaming Professional Style */}
-        <header className="flex items-center justify-between h-[56px] md:h-[72px] px-4 md:px-8 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40 shadow-xl">
+        <header className="flex items-center justify-between h-[64px] md:h-[80px] px-4 md:px-10 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40 shadow-xl">
             {/* Left Nav */}
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-3 md:gap-5">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="text-slate-400 hover:text-white active:scale-95 transition-all p-2 hover:bg-white/5 rounded-lg"
+                  className="text-slate-400 hover:text-white active:scale-95 transition-all p-2.5 hover:bg-white/5 rounded-lg"
                 >
-                  <Icons.Menu />
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                  </svg>
                 </button>
                 
                 {/* Logo */}
-                <div className="flex items-center gap-2 cursor-pointer group select-none">
-                    <div className="w-6 h-6 md:w-7 md:h-7 text-[#FFC800] filter drop-shadow-[0_0_10px_rgba(255,200,0,0.5)] group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-2.5 cursor-pointer group select-none">
+                    <div className="w-8 h-8 md:w-9 md:h-9 text-[#FFC800] filter drop-shadow-[0_0_12px_rgba(255,200,0,0.6)] group-hover:scale-110 transition-transform">
                         <Icons.Logo />
                     </div>
-                    <span className="font-gamer font-black text-xl md:text-2xl italic tracking-tighter text-white group-hover:text-[#FFC800] transition-colors">
+                    <span className="font-gamer font-black text-2xl md:text-3xl italic tracking-tighter text-white group-hover:text-[#FFC800] transition-colors">
                         LOOTEA
                     </span>
                 </div>
 
                 {/* Breadcrumbs - Desktop only */}
-                <div className="hidden lg:flex items-center gap-3 pl-4 ml-4 border-l border-[#1e2330]">
-                    <button className="flex items-center gap-1.5 text-slate-500 hover:text-white transition-colors text-sm">
+                <div className="hidden lg:flex items-center gap-4 pl-5 ml-5 border-l border-[#1e2330]">
+                    <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors">
                         <Icons.ArrowLeft />
-                        <span className="font-bold uppercase tracking-tight text-xs">Regresar</span>
+                        <span className="font-bold uppercase tracking-tight text-sm">Regresar</span>
                     </button>
-                    <span className="text-slate-700">|</span>
-                    <div className="flex items-center gap-1.5 text-slate-400 text-sm">
-                        <span className="font-medium uppercase tracking-tight text-xs hover:text-white cursor-pointer transition-colors">Cajas</span>
+                    <span className="text-slate-600">|</span>
+                    <div className="flex items-center gap-2 text-slate-400">
+                        <span className="font-medium uppercase tracking-tight text-sm hover:text-white cursor-pointer transition-colors">Cajas</span>
                         <Icons.ChevronRight />
-                        <span className="font-bold uppercase tracking-tight text-xs text-[#FFC800]">Apple Collection</span>
+                        <span className="font-bold uppercase tracking-tight text-sm text-[#FFC800]">Apple Collection</span>
                     </div>
                 </div>
             </div>
