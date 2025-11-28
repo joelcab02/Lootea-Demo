@@ -5,7 +5,7 @@
 
 import { LootItem, Rarity } from '../types';
 import { calculateTicketRanges, validateOdds, LootItemWithTickets } from './oddsService';
-import { supabase, DbLootItem } from './supabaseClient';
+import { supabase, DbItem } from './supabaseClient';
 import { getBoxBySlug, BoxWithItems } from './boxService';
 
 // Types for the store
@@ -37,33 +37,7 @@ let isLoading = false;
 let isSynced = false;
 let currentBoxSlug: string | null = null;
 
-/**
- * Convert DB item to LootItem
- */
-function dbToLootItem(dbItem: DbLootItem): LootItem {
-  return {
-    id: dbItem.id,
-    name: dbItem.name,
-    price: Number(dbItem.price),
-    rarity: dbItem.rarity as Rarity,
-    odds: Number(dbItem.odds),
-    image: dbItem.image
-  };
-}
-
-/**
- * Convert LootItem to DB format
- */
-function lootItemToDb(item: LootItem): DbLootItem {
-  return {
-    id: item.id,
-    name: item.name,
-    price: item.price,
-    rarity: item.rarity,
-    odds: item.odds,
-    image: item.image
-  };
-}
+// Note: DB conversion now handled by boxService using normalized schema
 
 /**
  * Initialize store with a specific box by slug
@@ -114,7 +88,7 @@ export async function initializeStore(): Promise<StoreState> {
 async function loadImagesInBackground(): Promise<void> {
   try {
     const { data, error } = await supabase
-      .from('loot_items')
+      .from('items')
       .select('id, image');
     
     if (error || !data) {
@@ -188,7 +162,7 @@ export async function updateItemOdds(itemId: string, newOdds: number): Promise<S
   // Sync to Supabase in background
   try {
     const { error } = await supabase
-      .from('loot_items')
+      .from('items')
       .update({ odds: clampedOdds })
       .eq('id', itemId);
     
@@ -230,7 +204,7 @@ export async function updateMultipleOdds(updates: OddsConfig[]): Promise<StoreSt
   try {
     const promises = updates.map(({ itemId, odds }) => 
       supabase
-        .from('loot_items')
+        .from('items')
         .update({ odds: Math.max(0, Math.min(100, odds)) })
         .eq('id', itemId)
     );
@@ -271,7 +245,7 @@ export async function resetToDefaults(): Promise<StoreState> {
   try {
     const promises = currentItems.map(item => 
       supabase
-        .from('loot_items')
+        .from('items')
         .update({ odds: equalOdds })
         .eq('id', item.id)
     );
@@ -311,7 +285,7 @@ export async function normalizeOdds(): Promise<StoreState> {
   try {
     const promises = currentItems.map(item => 
       supabase
-        .from('loot_items')
+        .from('items')
         .update({ odds: item.odds })
         .eq('id', item.id)
     );
@@ -403,7 +377,7 @@ export async function importConfig(jsonString: string): Promise<StoreState> {
     if (updates.length > 0) {
       const promises = updates.map(({ itemId, odds }) => 
         supabase
-          .from('loot_items')
+          .from('items')
           .update({ odds })
           .eq('id', itemId)
       );
@@ -441,17 +415,16 @@ export async function updateItem(itemId: string, updates: Partial<LootItem>): Pr
   cachedState = null;
   notifyListeners();
   
-  // Sync to Supabase
+  // Sync to Supabase (items table)
   try {
-    const dbUpdates: Partial<DbLootItem> = {};
+    const dbUpdates: Partial<DbItem> = {};
     if (updates.name !== undefined) dbUpdates.name = updates.name;
     if (updates.price !== undefined) dbUpdates.price = updates.price;
-    if (updates.rarity !== undefined) dbUpdates.rarity = updates.rarity;
-    if (updates.odds !== undefined) dbUpdates.odds = updates.odds;
-    if (updates.image !== undefined) dbUpdates.image = updates.image;
+    if (updates.rarity !== undefined) dbUpdates.rarity = updates.rarity as DbItem['rarity'];
+    if (updates.image !== undefined) dbUpdates.image_url = updates.image;
     
     const { error } = await supabase
-      .from('loot_items')
+      .from('items')
       .update(dbUpdates)
       .eq('id', itemId);
     
@@ -487,11 +460,17 @@ export async function addItem(item: LootItem): Promise<StoreState> {
   cachedState = null;
   notifyListeners();
   
-  // Sync to Supabase
+  // Sync to Supabase (items table)
   try {
     const { error } = await supabase
-      .from('loot_items')
-      .insert(lootItemToDb(item));
+      .from('items')
+      .insert({
+        name: item.name,
+        price: item.price,
+        rarity: item.rarity,
+        image_url: item.image,
+        is_active: true,
+      });
     
     if (error) {
       console.error('❌ Failed to add item:', error.message);
@@ -529,7 +508,7 @@ export async function deleteItem(itemId: string): Promise<StoreState> {
   // Sync to Supabase
   try {
     const { error } = await supabase
-      .from('loot_items')
+      .from('items')
       .delete()
       .eq('id', itemId);
     
@@ -550,29 +529,61 @@ export async function deleteItem(itemId: string): Promise<StoreState> {
 }
 
 /**
- * Log a spin result to Supabase for analytics
+ * Log a spin result to the new spins table
  */
-export async function logSpinResult(itemId: string, ticketNumber: number, userId: string = 'anonymous'): Promise<void> {
+export interface SpinData {
+  itemId: string;
+  boxId?: string;
+  ticketNumber: number;
+  userId?: string;
+  clientSeed?: string;
+  serverSeed?: string;
+  serverSeedHash?: string;
+  nonce?: number;
+  cost?: number;
+  itemValue?: number;
+  isDemo?: boolean;
+}
+
+export async function logSpinResult(data: SpinData): Promise<string | null> {
   try {
-    const { error } = await supabase
-      .from('spin_results')
-      .insert({ item_id: itemId, ticket_number: ticketNumber, user_id: userId });
+    const { data: spin, error } = await supabase
+      .from('spins')
+      .insert({
+        item_id: data.itemId,
+        box_id: data.boxId,
+        ticket_number: data.ticketNumber,
+        user_id: data.userId || null,
+        client_seed: data.clientSeed,
+        server_seed: data.serverSeed,
+        server_seed_hash: data.serverSeedHash,
+        nonce: data.nonce,
+        cost: data.cost || 0,
+        item_value: data.itemValue || 0,
+        is_demo: data.isDemo ?? true,
+      })
+      .select('id')
+      .single();
     
     if (error) {
-      console.warn('Failed to log spin result:', error.message);
+      console.warn('Failed to log spin:', error.message);
+      return null;
     }
+    
+    return spin?.id || null;
   } catch (err) {
     console.warn('Spin logging error:', err);
+    return null;
   }
 }
 
 /**
- * Get spin statistics from Supabase
+ * Get spin statistics from spins table
  */
 export async function getSpinStats(): Promise<{ itemId: string; count: number }[]> {
   try {
     const { data, error } = await supabase
-      .from('spin_results')
+      .from('spins')
       .select('item_id')
       .order('created_at', { ascending: false })
       .limit(1000);
@@ -582,12 +593,43 @@ export async function getSpinStats(): Promise<{ itemId: string; count: number }[
     // Count by item
     const counts: Record<string, number> = {};
     data.forEach(row => {
-      counts[row.item_id] = (counts[row.item_id] || 0) + 1;
+      if (row.item_id) {
+        counts[row.item_id] = (counts[row.item_id] || 0) + 1;
+      }
     });
     
     return Object.entries(counts).map(([itemId, count]) => ({ itemId, count }));
   } catch (err) {
     console.error('Failed to get spin stats:', err);
+    return [];
+  }
+}
+
+/**
+ * Get recent spins for live feed
+ */
+export async function getRecentSpins(limit: number = 10): Promise<any[]> {
+  try {
+    const { data, error } = await supabase
+      .from('spins')
+      .select(`
+        id,
+        ticket_number,
+        cost,
+        item_value,
+        is_demo,
+        created_at,
+        item:items (id, name, image_url, rarity, price),
+        box:boxes (id, name, slug)
+      `)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    
+    if (error || !data) return [];
+    
+    return data;
+  } catch (err) {
+    console.error('Failed to get recent spins:', err);
     return [];
   }
 }

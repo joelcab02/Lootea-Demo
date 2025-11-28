@@ -1,6 +1,8 @@
 # Lootea Database Schema
 
-## Current State (v0.1) - November 27, 2025
+## Current State (v1.0) - November 27, 2025
+
+> **Migration Complete!** Schema normalized with auth, fairness, and economy tables.
 
 ### Overview
 - **Project**: Loote V1
