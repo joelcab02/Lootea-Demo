@@ -9,6 +9,8 @@ import { LootItem, Rarity } from './types';
 import { RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';
 import { getItems, initializeStore, subscribe } from './services/oddsStore';
+import { UserMenu } from './components/auth/UserMenu';
+import { initAuth } from './services/authService';
 
 // SVG Icons for App
 const Icons = {
@@ -49,10 +51,10 @@ const App: React.FC = () => {
     audioService.setMute(isMuted);
   }, [isMuted]);
 
-  // Initialize odds store from Supabase on app load
-  // Subscribe to store changes (handles async image loading)
+  // Initialize odds store and auth on app load
   useEffect(() => {
     initializeStore();
+    initAuth();
     
     // Subscribe to store updates - this catches when images load in background
     const unsubscribe = subscribe((state) => {
@@ -158,17 +160,9 @@ const App: React.FC = () => {
                 </span>
             </div>
 
-            {/* Right Actions: Wallet */}
-            <div className="flex items-center justify-end gap-3 w-20 md:w-auto flex-1 md:flex-none">
-                {/* Wallet - Refined & Aesthetic */}
-                <div className="flex items-center bg-[#FFC800] rounded-md md:rounded-lg text-black pl-2 pr-1 py-1 md:pl-2.5 md:pr-1.5 md:py-1.5 gap-1 shadow-[0_0_10px_rgba(255,200,0,0.15)] hover:shadow-[0_0_20px_rgba(255,200,0,0.3)] transition-all cursor-pointer group hover:brightness-110 active:scale-95">
-                    <span className="font-mono font-black text-[10px] md:text-xs tracking-tighter">
-                        $2,450
-                    </span>
-                    <div className="w-4 h-4 md:w-5 md:h-5 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors p-0.5">
-                        <Icons.Plus />
-                    </div>
-                </div>
+            {/* Right Actions: Auth */}
+            <div className="flex items-center justify-end gap-2 md:gap-3 flex-1 md:flex-none">
+                <UserMenu />
             </div>
         </header>
 
