@@ -110,7 +110,7 @@ const App: React.FC = () => {
         <LiveDrops items={items} />
         
         {/* HEADER */}
-        <header className="flex items-center justify-between py-5 md:py-6 px-6 md:px-12 xl:px-20 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40">
+        <header className="flex items-center justify-between py-3 md:py-4 px-6 md:px-12 xl:px-20 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40">
             {/* Left: Menu + Logo + Breadcrumbs */}
             <div className="flex items-center gap-5">
                 <button 
