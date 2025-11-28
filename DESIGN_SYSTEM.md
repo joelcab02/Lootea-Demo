@@ -50,27 +50,61 @@
 
 ## 🔤 Tipografía
 
-### Font Family
-```css
-font-family: 'font-gamer', system-ui, sans-serif;
+### Sistema de Fuentes
 ```
+Display/Títulos: Montserrat (Black, Italic opcional)
+Body/UI:         Inter (Regular a Bold)
+Monospace:       System mono (para precios)
+```
+
+### Clases CSS
+| Clase | Uso |
+|-------|-----|
+| `font-display` | Títulos, CTAs, branding (Montserrat) |
+| `font-gamer` | Alias de font-display (legacy) |
+| Sin clase | Body text (Inter por defecto) |
+| `font-mono` | Precios, números |
 
 ### Estilos de Texto
 
 | Elemento | Clases Tailwind |
 |----------|-----------------|
-| **Logo** | `font-gamer font-black text-3xl italic tracking-tighter` |
-| **Títulos** | `font-gamer font-black italic tracking-tighter` |
-| **Botones CTA** | `font-gamer font-black italic uppercase tracking-tight` |
-| **Labels** | `text-xs font-medium uppercase tracking-wider` |
-| **Body** | `text-sm` o `text-base` |
-| **Monospace** | `font-mono font-black tracking-tighter` (para precios) |
+| **Logo** | `font-display font-black text-2xl md:text-3xl` |
+| **Títulos H1** | `font-display font-black text-4xl md:text-6xl italic` |
+| **Títulos H2** | `text-2xl md:text-3xl font-bold` |
+| **Subtítulos** | `text-slate-500 text-sm` |
+| **Botones CTA** | `font-display font-black text-2xl italic uppercase` |
+| **Botones secundarios** | `text-sm font-medium` o `font-bold` |
+| **Labels** | `text-xs font-medium uppercase tracking-wide` |
+| **Body** | `text-sm` o `text-base` (Inter automático) |
+| **Precios** | `font-mono font-bold` |
 
-### Ejemplo de Título
+### Ejemplos
 ```html
-<h1 class="font-gamer font-black text-2xl italic tracking-tighter text-white">
+<!-- Logo -->
+<span class="font-display font-black text-2xl md:text-3xl text-white">
   LOOTEA
+</span>
+
+<!-- Título principal -->
+<h1 class="font-display font-black text-4xl md:text-6xl italic text-white">
+  1% iPHONE BOX
 </h1>
+
+<!-- Título de sección -->
+<h2 class="text-2xl md:text-3xl font-bold text-white">
+  Contenido de la Caja
+</h2>
+
+<!-- Botón CTA -->
+<button class="font-display font-black text-2xl italic uppercase">
+  ABRIR
+</button>
+
+<!-- Precio -->
+<span class="font-mono font-bold text-[#FFC800]">
+  $99.00
+</span>
 ```
 
 ---
