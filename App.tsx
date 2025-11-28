@@ -109,83 +109,68 @@ const App: React.FC = () => {
         {/* LIVE DROP TICKER */}
         <LiveDrops items={items} />
         
-        {/* HEADER */}
-        <header className="flex items-center justify-between py-3 md:py-4 px-6 md:px-12 xl:px-20 bg-[#0d1019] border-b border-[#1e2330] sticky top-0 z-40">
-            {/* Left: Menu + Logo + Breadcrumbs */}
-            <div className="flex items-center gap-5">
+        {/* HEADER - Clean iGaming Style */}
+        <header className="flex items-center justify-between py-4 md:py-5 px-5 md:px-10 bg-[#0d1019]/95 backdrop-blur-md border-b border-[#1e2330]/50 sticky top-0 z-40">
+            {/* Left: Menu + Logo */}
+            <div className="flex items-center gap-4 md:gap-6">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="text-slate-400 hover:text-white transition-colors"
+                  className="text-slate-500 hover:text-white transition-colors p-1"
                 >
                   <Icons.Menu />
                 </button>
                 
-                <div className="flex items-center gap-2 cursor-pointer group">
-                    <div className="w-7 h-7 text-[#FFC800] drop-shadow-[0_0_8px_rgba(255,200,0,0.5)]">
+                <div className="flex items-center gap-2.5 cursor-pointer group">
+                    <div className="w-8 h-8 text-[#FFC800] drop-shadow-[0_0_12px_rgba(255,200,0,0.6)] group-hover:scale-110 transition-transform">
                         <Icons.Logo />
                     </div>
-                    <span className="font-gamer font-black text-2xl italic tracking-tighter text-white">
+                    <span className="font-gamer font-black text-2xl md:text-3xl italic tracking-tighter text-white group-hover:text-[#FFC800] transition-colors">
                         LOOTEA
                     </span>
                 </div>
-
-                <div className="hidden lg:flex items-center gap-4 pl-5 ml-3 border-l border-[#1e2330] text-[13px]">
-                    <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors">
-                        <Icons.ArrowLeft />
-                        <span>REGRESAR</span>
-                    </button>
-                    <span className="text-slate-700">|</span>
-                    <span className="text-slate-500 hover:text-white cursor-pointer transition-colors">CAJAS</span>
-                    <Icons.ChevronRight />
-                    <span className="text-[#FFC800] font-semibold">APPLE COLLECTION</span>
-                </div>
             </div>
 
-            {/* Right: Auth */}
-            <UserMenu />
-        </header>
-
-        {/* TRUST BAR - COMPACT */}
-        <div className="w-full bg-[#13151b] border-b border-[#1e2330] flex items-center justify-between px-3 md:px-12 py-1.5 select-none z-30 relative h-[36px]">
-            <div className="flex items-center gap-2">
-                <div className="text-green-500 scale-90">
+            {/* Center: Trust Badge - Desktop */}
+            <div className="hidden md:flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
+                <div className="text-green-500">
                     <Icons.ShieldCheck />
                 </div>
-                <span className="text-slate-300 font-black italic uppercase tracking-tighter text-[9px] md:text-[10px] leading-none mt-[1px]">
-                    Fairness Guaranteed
+                <span className="text-green-400 font-bold text-xs uppercase tracking-wide">
+                    Provably Fair
                 </span>
             </div>
-            
-            <button 
-                onClick={() => setIsMuted(!isMuted)}
-                className="text-slate-500 hover:text-white transition-colors flex items-center gap-2 active:scale-95 p-1 scale-90"
-                title={isMuted ? "Unmute" : "Mute"}
-            >
-                {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
-            </button>
-        </div>
 
-        {/* HERO AREA - TIGHTER VERTICAL SPACING */}
-        <div className="flex flex-col items-center pt-3 md:pt-6 pb-4 relative shrink-0">
+            {/* Right: Sound + Auth */}
+            <div className="flex items-center gap-3 md:gap-4">
+                <button 
+                    onClick={() => setIsMuted(!isMuted)}
+                    className="text-slate-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
+                    title={isMuted ? "Unmute" : "Mute"}
+                >
+                    {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
+                </button>
+                <UserMenu />
+            </div>
+        </header>
+
+        {/* HERO AREA */}
+        <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative shrink-0">
             
-            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#FFC800] opacity-[0.04] blur-[80px] pointer-events-none gpu-accelerate"></div>
+            {/* Ambient glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#FFC800] opacity-[0.03] blur-[100px] pointer-events-none"></div>
             
-            <div className="z-10 text-center mb-3 md:mb-5 w-full max-w-[1100px] px-4">
-                <div className="flex flex-col items-center gap-1">
-                    <div className="flex items-center justify-center gap-2 text-[#FFC800] mb-0.5">
-                        <span className="text-base md:text-lg">📱</span>
-                        <span className="text-[9px] md:text-[10px] font-black uppercase italic tracking-tighter bg-[#FFC800]/10 px-2 py-0.5 rounded border border-[#FFC800]/20">
-                            Apple Collection
-                        </span>
-                    </div>
-                    <h1 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-2xl transform scale-y-105 leading-[0.9]">
-                        1% iPhone Box
-                    </h1>
-                </div>
+            {/* Box Title */}
+            <div className="z-10 text-center mb-6 md:mb-8">
+                <h1 className="font-gamer font-black text-4xl md:text-6xl italic tracking-tighter text-white drop-shadow-2xl mb-2">
+                    1% iPHONE BOX
+                </h1>
+                <p className="text-slate-500 text-sm md:text-base">
+                    Probabilidad real de ganar un iPhone 15 Pro Max
+                </p>
             </div>
 
-            {/* SPINNER - COMPACT HEIGHT */}
-            <div className="w-full max-w-[1600px] px-0 z-10 mb-4 md:mb-6">
+            {/* SPINNER */}
+            <div className="w-full max-w-[1600px] z-10 mb-8">
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 
@@ -197,99 +182,91 @@ const App: React.FC = () => {
                 />
             </div>
 
-            {/* COCKPIT CONTROLS - COMPACT & ACCESSIBLE */}
-            <div className="z-20 w-full max-w-[1100px] px-3 md:px-4">
-                <div className="bg-[#161922] border border-[#2a3040] p-2 md:p-3 rounded-2xl md:rounded-3xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6 relative overflow-visible">
+            {/* CONTROLS - Clean & Simple */}
+            <div className="z-20 w-full max-w-[700px] px-4">
+                
+                {/* Main Button */}
+                <button 
+                    onClick={handleSpin}
+                    disabled={isSpinning}
+                    className="
+                        group relative w-full h-16 md:h-[72px] mb-4
+                        bg-gradient-to-b from-[#FFD000] to-[#FFC800]
+                        text-black font-gamer font-black uppercase tracking-tight text-2xl md:text-3xl italic
+                        rounded-xl
+                        transition-all duration-150
+                        shadow-[0_6px_0_#b38b00,0_8px_20px_rgba(255,200,0,0.3)]
+                        hover:shadow-[0_6px_0_#b38b00,0_8px_30px_rgba(255,200,0,0.5)]
+                        active:shadow-[0_2px_0_#b38b00] active:translate-y-1
+                        disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+                        flex items-center justify-center gap-4
+                    "
+                >
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
                     
-                    {/* LEFT GROUP: TOOLS */}
-                    <div className="flex items-center gap-2 w-full md:w-auto justify-center md:justify-start order-2 md:order-1">
-                        {/* Quantity */}
+                    {isSpinning ? (
+                        <span className="animate-pulse">ABRIENDO...</span>
+                    ) : (
+                        <>
+                            <span>ABRIR</span>
+                            <span className="text-lg md:text-xl font-mono font-bold bg-black/20 px-3 py-1 rounded-lg">
+                                ${(BOX_PRICE * quantity).toFixed(2)}
+                            </span>
+                        </>
+                    )}
+                </button>
+
+                {/* Secondary Controls */}
+                <div className="flex items-center justify-between gap-4">
+                    
+                    {/* Quantity Selector */}
+                    <div className="flex items-center gap-2">
+                        <span className="text-slate-500 text-xs uppercase tracking-wide hidden sm:block">Cantidad:</span>
                         <div className="flex bg-[#0d1019] rounded-lg p-1 border border-[#1e2330]">
                             {[1, 2, 3, 4, 5].map(num => (
                                 <button 
-                                key={num} 
-                                onClick={() => setQuantity(num)}
-                                className={`
-                                    w-8 h-8 md:w-9 md:h-10 rounded-md font-black italic text-sm transition-all flex items-center justify-center
-                                    ${quantity === num 
-                                        ? 'bg-[#2a3040] text-[#FFC800] shadow-sm z-10' 
-                                        : 'text-slate-500 hover:text-slate-300 hover:bg-[#1e2330]'}
-                                `}
+                                    key={num} 
+                                    onClick={() => setQuantity(num)}
+                                    className={`
+                                        w-9 h-9 rounded-md font-bold text-sm transition-all
+                                        ${quantity === num 
+                                            ? 'bg-[#FFC800] text-black' 
+                                            : 'text-slate-500 hover:text-white hover:bg-[#1e2330]'}
+                                    `}
                                 >
                                     {num}
                                 </button>
                             ))}
                         </div>
+                    </div>
 
-                        {/* Fast Mode Toggle */}
+                    {/* Fast Mode + Demo Toggle */}
+                    <div className="flex items-center gap-2">
                         <button 
                             onClick={() => setFastMode(!fastMode)}
                             className={`
-                                h-10 w-10 md:h-[48px] md:w-[48px] rounded-lg flex items-center justify-center border transition-all duration-200
+                                h-9 px-3 rounded-lg flex items-center gap-2 border transition-all text-sm
                                 ${fastMode 
-                                    ? 'bg-[#FFC800]/10 border-[#FFC800] text-[#FFC800] shadow-[0_0_15px_rgba(255,200,0,0.2)]' 
-                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500 hover:text-slate-300 hover:border-[#2a3040]'}
+                                    ? 'bg-[#FFC800]/10 border-[#FFC800]/50 text-[#FFC800]' 
+                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500 hover:text-white'}
                             `}
-                            title="Fast Spin"
                         >
                             <Icons.Lightning />
+                            <span className="hidden sm:block font-medium">Rápido</span>
                         </button>
-                    </div>
 
-                    {/* CENTER: MAIN ACTION BUTTON - PRIMARY VISUAL WEIGHT */}
-                    <div className="w-full md:w-auto flex-1 flex justify-center order-1 md:order-2">
                         <button 
-                            onClick={handleSpin}
-                            disabled={isSpinning}
+                            onClick={() => setDemoMode(!demoMode)}
                             className={`
-                                group relative w-full md:w-72
-                                h-16 md:h-16
-                                bg-[#FFC800] hover:bg-[#ffcf33]
-                                text-black font-black uppercase tracking-tighter text-2xl md:text-3xl italic
-                                rounded-xl
-                                transition-all duration-100 ease-out
-                                shadow-[0_4px_0_#b38b00] active:shadow-none
-                                translate-y-0 active:translate-y-[4px] active:mt-[4px] active:mb-0
-                                disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
-                                flex flex-col items-center justify-center overflow-hidden
+                                h-9 px-3 rounded-lg flex items-center gap-2 border transition-all text-sm
+                                ${demoMode 
+                                    ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' 
+                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500 hover:text-white'}
                             `}
-                            style={{marginBottom: isSpinning ? '0px' : '4px'}}
                         >
-                           <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
-
-                           {isSpinning ? (
-                               <span className="animate-pulse opacity-80 text-xl">ABRIENDO...</span>
-                           ) : (
-                               <div className="flex flex-row items-baseline gap-3">
-                                   <span>ABRIR</span>
-                                   <span className="text-sm font-bold font-mono text-black/60 bg-black/10 px-2 rounded">
-                                       ${(BOX_PRICE * quantity).toFixed(2)}
-                                   </span>
-                               </div>
-                           )}
+                            <span className="font-medium">{demoMode ? 'Demo' : 'Real'}</span>
                         </button>
                     </div>
-
-                    {/* RIGHT GROUP: DEMO SWITCH */}
-                    <div className="flex items-center justify-center md:justify-end w-full md:w-auto order-3">
-                        <div 
-                            className="bg-[#0d1019] border border-[#1e2330] rounded-lg p-1 flex items-center cursor-pointer relative"
-                            onClick={() => setDemoMode(!demoMode)}
-                        >
-                            <div className={`
-                                absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#2a3040] rounded-md transition-all duration-300
-                                ${demoMode ? 'left-[calc(50%+2px)] bg-blue-500/20' : 'left-1'}
-                            `}></div>
-                            
-                            <div className={`px-3 py-1.5 rounded-md text-[10px] font-black italic uppercase tracking-tighter relative z-10 transition-colors ${!demoMode ? 'text-white' : 'text-slate-500'}`}>
-                                Real
-                            </div>
-                            <div className={`px-3 py-1.5 rounded-md text-[10px] font-black italic uppercase tracking-tighter relative z-10 transition-colors ${demoMode ? 'text-blue-400' : 'text-slate-500'}`}>
-                                Demo
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>

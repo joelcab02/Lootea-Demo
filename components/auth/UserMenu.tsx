@@ -100,21 +100,21 @@ export const UserMenu: React.FC = () => {
     );
   }
 
-  // Logged out - Gamer typography style
+  // Logged out - Clean iGaming style
   return (
     <>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <button
           onClick={openLogin}
-          className="px-5 py-3 text-sm text-slate-400 hover:text-white transition-colors font-gamer font-bold italic uppercase tracking-tight"
+          className="px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors font-medium"
         >
-          ENTRAR
+          Entrar
         </button>
         <button
           onClick={openRegister}
-          className="px-6 py-3 text-sm bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg font-gamer font-black italic uppercase tracking-tight transition-colors shadow-[0_0_15px_rgba(255,200,0,0.3)]"
+          className="px-5 py-2.5 text-sm bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg font-bold transition-all shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:shadow-[0_0_25px_rgba(255,200,0,0.4)]"
         >
-          REGISTRO
+          Registro
         </button>
       </div>
 
