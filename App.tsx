@@ -97,14 +97,14 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#0d1019] text-white font-sans overflow-hidden selection:bg-[#FFC800] selection:text-black">
+    <div className="flex h-screen bg-[#0d1019] text-white font-sans overflow-hidden selection:bg-[#FFC800] selection:text-black overflow-x-hidden">
       
       {/* SIDEBAR */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
+      <div className="flex-1 flex flex-col relative overflow-y-auto overflow-x-hidden custom-scrollbar">
         
         {/* LIVE DROP TICKER */}
         <LiveDrops items={items} />
@@ -154,10 +154,10 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative shrink-0">
+        <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative shrink-0 overflow-hidden">
             
-            {/* Ambient glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#FFC800] opacity-[0.03] blur-[100px] pointer-events-none"></div>
+            {/* Ambient glow - contained */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[400px] bg-[#FFC800] opacity-[0.03] blur-[100px] pointer-events-none"></div>
             
             {/* Box Title */}
             <div className="z-10 text-center mb-4 md:mb-8 px-4">
