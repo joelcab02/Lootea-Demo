@@ -38,8 +38,8 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">
-            Contenido de la Caja
+          <h2 className="font-display text-2xl md:text-3xl text-white mb-1">
+            CONTENIDO DE LA CAJA
           </h2>
           <p className="text-slate-500 text-sm">
             {sortedItemsWithOdds.length} premios disponibles

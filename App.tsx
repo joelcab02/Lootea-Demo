@@ -135,7 +135,7 @@ const App: React.FC = () => {
                 <div className="text-green-500">
                     <Icons.ShieldCheck />
                 </div>
-                <span className="text-green-400 font-bold text-xs uppercase tracking-wide">
+                <span className="font-display text-green-400 text-xs uppercase">
                     Provably Fair
                 </span>
             </div>

@@ -51,7 +51,7 @@ export const UserMenu: React.FC = () => {
       <div className="flex items-center gap-2 md:gap-3">
         {/* Balance - Gold wallet style */}
         <div className="flex items-center bg-[#FFC800] rounded-md md:rounded-lg text-black pl-2 pr-1 py-1 md:pl-2.5 md:pr-1.5 md:py-1.5 gap-1 shadow-[0_0_10px_rgba(255,200,0,0.15)] hover:shadow-[0_0_20px_rgba(255,200,0,0.3)] transition-all cursor-pointer group hover:brightness-110">
-          <span className="font-mono font-black text-[10px] md:text-xs tracking-tighter">
+          <span className="font-display text-[10px] md:text-xs">
             ${balance.toFixed(0)}
           </span>
           <div className="w-4 h-4 md:w-5 md:h-5 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors">
@@ -65,7 +65,7 @@ export const UserMenu: React.FC = () => {
         {/* User dropdown */}
         <div className="relative group">
           <button className="flex items-center gap-2 bg-[#1a1d26] hover:bg-[#252830] border border-[#2a2d36] px-2 md:px-3 py-1.5 md:py-2 rounded-lg transition-all hover:border-[#FFC800]/30">
-            <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gradient-to-br from-[#FFC800] to-[#FF9500] flex items-center justify-center text-black text-[10px] md:text-xs font-black">
+            <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gradient-to-br from-[#FFC800] to-[#FF9500] flex items-center justify-center text-black text-[10px] md:text-xs font-display">
               {displayName.charAt(0).toUpperCase()}
             </div>
             <span className="text-white text-xs md:text-sm hidden sm:block font-medium">{displayName}</span>
@@ -112,7 +112,7 @@ export const UserMenu: React.FC = () => {
         </button>
         <button
           onClick={openRegister}
-          className="px-5 py-2.5 text-sm bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg font-bold transition-all shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:shadow-[0_0_25px_rgba(255,200,0,0.4)]"
+          className="px-5 py-2.5 text-sm bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg font-display transition-all shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:shadow-[0_0_25px_rgba(255,200,0,0.4)]"
         >
           Registro
         </button>

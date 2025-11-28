@@ -64,10 +64,10 @@ const LiveDrops: React.FC<LiveDropsProps> = ({ items }) => {
                         )}
                     </div>
                     <div className="flex flex-col justify-center">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter leading-none mb-0.5">
+                        <span className="font-display text-[10px] text-slate-400 uppercase leading-none mb-0.5">
                             {drop.user}
                         </span>
-                        <span className={`text-[11px] font-black italic uppercase tracking-tighter leading-none ${RARITY_COLORS[drop.item.rarity]} drop-shadow-sm`}>
+                        <span className={`font-display text-[11px] uppercase leading-none ${RARITY_COLORS[drop.item.rarity]} drop-shadow-sm`}>
                             {drop.item.name}
                         </span>
                     </div>

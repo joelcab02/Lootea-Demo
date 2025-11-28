@@ -19,8 +19,8 @@ export default function HowItWorks() {
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
       {/* Header */}
       <div className="text-center mb-10">
-        <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-          ¿Cómo funciona?
+        <h2 className="font-display text-2xl md:text-3xl text-white mb-2">
+          ¿CÓMO FUNCIONA?
         </h2>
         <p className="text-slate-500 text-sm max-w-md mx-auto">
           4 simples pasos para ganar productos reales
@@ -59,8 +59,8 @@ export default function HowItWorks() {
             </div>
 
             {/* Content */}
-            <h3 className={`font-bold text-base mb-1 ${step.highlight ? 'text-black' : 'text-white'}`}>
-              {step.title}
+            <h3 className={`font-display text-base mb-1 ${step.highlight ? 'text-black' : 'text-white'}`}>
+              {step.title.toUpperCase()}
             </h3>
             <p className={`text-xs leading-relaxed ${step.highlight ? 'text-black/70' : 'text-slate-500'}`}>
               {step.desc}
