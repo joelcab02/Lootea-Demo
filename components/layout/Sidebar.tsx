@@ -52,7 +52,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="h-20 flex items-center justify-between px-8 border-b border-[#1e2330]">
            <div className="flex items-center gap-3">
              <div className="w-6 h-6 text-[#FFC800]"><Icons.Logo /></div>
-             <span className="font-display text-white text-2xl">LOOTEA</span>
+             <span className="font-display text-white text-2xl uppercase">LOOTEA</span>
            </div>
            {/* Close Button */}
            <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-[#1e2330] rounded-lg">
@@ -77,7 +77,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <p className="font-display text-xs uppercase text-slate-500 group-hover:text-white transition-colors">Carrera Diaria</p>
                 <div className="w-2 h-2 rounded-full bg-[#FFC800] animate-pulse shadow-[0_0_10px_#FFC800]"></div>
               </div>
-              <div className="font-display text-white text-2xl mb-4 relative z-10">$100,000 MXN</div>
+              <div className="font-display text-white text-2xl mb-4 relative z-10 uppercase">$100,000 MXN</div>
               <button className="w-full py-3 bg-[#FFC800] hover:bg-[#EAB308] text-black text-sm font-display rounded-lg uppercase transition-all shadow-[0_0_15px_rgba(255,200,0,0.15)] group-hover:shadow-[0_0_25px_rgba(255,200,0,0.4)] relative z-10">
                   Participar Ahora
               </button>

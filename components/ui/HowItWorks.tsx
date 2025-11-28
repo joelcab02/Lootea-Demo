@@ -19,7 +19,7 @@ export default function HowItWorks() {
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
       {/* Header */}
       <div className="text-center mb-6 sm:mb-10">
-        <h2 className="font-display text-xl sm:text-2xl md:text-3xl text-white mb-1 sm:mb-2">
+        <h2 className="font-display text-xl sm:text-2xl md:text-3xl text-white mb-1 sm:mb-2 uppercase">
           ¿CÓMO FUNCIONA?
         </h2>
         <p className="text-slate-500 text-xs sm:text-sm max-w-md mx-auto">
@@ -59,7 +59,7 @@ export default function HowItWorks() {
             </div>
 
             {/* Content */}
-            <h3 className={`font-display text-sm sm:text-base mb-0.5 sm:mb-1 ${step.highlight ? 'text-black' : 'text-white'}`}>
+            <h3 className={`font-display text-sm sm:text-base mb-0.5 sm:mb-1 uppercase ${step.highlight ? 'text-black' : 'text-white'}`}>
               {step.title.toUpperCase()}
             </h3>
             <p className={`text-[10px] sm:text-xs leading-relaxed ${step.highlight ? 'text-black/70' : 'text-slate-500'}`}>

@@ -38,7 +38,7 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h2 className="font-display text-2xl md:text-3xl text-white mb-1">
+          <h2 className="font-display text-2xl md:text-3xl text-white mb-1 uppercase">
             CONTENIDO DE LA CAJA
           </h2>
           <p className="text-slate-500 text-sm">
@@ -135,7 +135,7 @@ const ItemCard: React.FC<{ item: LootItem & { normalizedOdds: number } }> = ({ i
         </h3>
         
         <div className="flex items-center justify-between text-xs">
-          <span className="font-display text-[#FFC800]">
+          <span className="font-display text-[#FFC800] uppercase">
             ${item.price.toLocaleString()}
           </span>
           <span className="text-slate-500">

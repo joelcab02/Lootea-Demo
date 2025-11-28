@@ -82,7 +82,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, active = false, isSpin
         
         {/* Price tag */}
         <div className={`inline-flex items-center justify-center bg-[#0d1019]/90 border border-[#2a3040] rounded px-2 py-0.5 sm:px-3 sm:py-1 shadow-sm ${!isSpinner && 'backdrop-blur-sm group-hover:border-[#FFC800]/50 transition-colors'}`}>
-            <span className="font-display text-[#FFC800] text-xs sm:text-sm">
+            <span className="font-display text-[#FFC800] text-xs sm:text-sm uppercase">
               ${item.price.toLocaleString('es-MX')}
             </span>
         </div>

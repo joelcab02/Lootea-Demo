@@ -124,7 +124,7 @@ const App: React.FC = () => {
                     <div className="w-6 h-6 md:w-8 md:h-8 text-[#FFC800] drop-shadow-[0_0_12px_rgba(255,200,0,0.6)] group-hover:scale-110 transition-transform">
                         <Icons.Logo />
                     </div>
-                    <span className="font-display text-xl md:text-3xl text-white group-hover:text-[#FFC800] transition-colors">
+                    <span className="font-display text-xl md:text-3xl text-white group-hover:text-[#FFC800] transition-colors uppercase">
                         LOOTEA
                     </span>
                 </div>
@@ -161,7 +161,7 @@ const App: React.FC = () => {
             
             {/* Box Title */}
             <div className="z-10 text-center mb-4 md:mb-8 px-4">
-                <h1 className="font-display text-2xl sm:text-4xl md:text-6xl text-white drop-shadow-2xl mb-1 md:mb-2">
+                <h1 className="font-display text-2xl sm:text-4xl md:text-6xl text-white drop-shadow-2xl mb-1 md:mb-2 uppercase">
                     1% iPHONE BOX
                 </h1>
                 <p className="text-slate-500 text-xs sm:text-sm md:text-base">
@@ -209,7 +209,7 @@ const App: React.FC = () => {
                     ) : (
                         <>
                             <span>ABRIR</span>
-                            <span className="font-display text-lg md:text-xl bg-black/20 px-3 py-1 rounded-lg">
+                            <span className="font-display text-lg md:text-xl bg-black/20 px-3 py-1 rounded-lg uppercase">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </span>
                         </>
@@ -226,7 +226,7 @@ const App: React.FC = () => {
                                 key={num} 
                                 onClick={() => setQuantity(num)}
                                 className={`
-                                    w-8 h-8 sm:w-9 sm:h-9 rounded-md font-display text-xs sm:text-sm transition-all
+                                    w-8 h-8 sm:w-9 sm:h-9 rounded-md font-display text-xs sm:text-sm transition-all uppercase
                                     ${quantity === num 
                                         ? 'bg-[#FFC800] text-black' 
                                         : 'text-slate-500 hover:text-white hover:bg-[#1e2330]'}

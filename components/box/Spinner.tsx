@@ -240,7 +240,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                         <p className="font-display text-white text-sm md:text-base drop-shadow-lg uppercase">
                           {winner.name}
                         </p>
-                        <p className="font-display text-[#FFC800] text-sm md:text-lg drop-shadow-lg">
+                        <p className="font-display text-[#FFC800] text-sm md:text-lg drop-shadow-lg uppercase">
                           ${winner.price.toLocaleString()}
                         </p>
                       </div>

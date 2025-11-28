@@ -63,7 +63,7 @@ function Footer() {
                 <div className="lg:col-span-2">
                     <div className="flex items-center gap-2 mb-4">
                         <Icons.Logo />
-                        <span className="font-display text-2xl text-white">LOOTEA</span>
+                        <span className="font-display text-2xl text-white uppercase">LOOTEA</span>
                     </div>
                     <p className="text-slate-500 text-sm leading-relaxed mb-6 max-w-sm">
                         La experiencia premium de Mystery Boxes en México. Abre cajas con probabilidad justa verificable y gana productos reales.
@@ -114,7 +114,7 @@ function FeatureCard({ icon, title, desc }: { icon: React.ReactNode, title: stri
             <div className="w-12 h-12 bg-[#FFC800] rounded-xl flex items-center justify-center text-black mb-4 shadow-[0_0_15px_rgba(255,200,0,0.2)]">
                 {icon}
             </div>
-            <h3 className="font-display text-white text-lg mb-2">{title}</h3>
+            <h3 className="font-display text-white text-lg mb-2 uppercase">{title}</h3>
             <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
         </div>
     )
@@ -122,7 +122,7 @@ function FeatureCard({ icon, title, desc }: { icon: React.ReactNode, title: stri
 
 function PaymentIcon({ label }: { label: string }) {
     return (
-        <div className="h-10 px-4 bg-[#1e2330] rounded border border-[#2a3040] flex items-center justify-center text-[10px] font-display text-slate-400 select-none">
+        <div className="h-10 px-4 bg-[#1e2330] rounded border border-[#2a3040] flex items-center justify-center text-[10px] font-display text-slate-400 select-none uppercase">
             {label}
         </div>
     )
