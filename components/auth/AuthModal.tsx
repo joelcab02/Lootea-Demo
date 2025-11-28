@@ -71,15 +71,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         
         <div className="p-8">
           {/* Logo */}
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFC800" stroke="none">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#FFC800" stroke="none" className="filter drop-shadow-[0_0_10px_rgba(255,200,0,0.5)]">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
-            <span className="font-black text-2xl italic tracking-tighter text-white">LOOTEA</span>
+            <span className="font-gamer font-black text-3xl italic tracking-tighter text-white drop-shadow-lg">LOOTEA</span>
           </div>
           
           {/* Header */}
-          <p className="text-slate-400 text-center mb-6 text-sm">
+          <p className="text-slate-400 text-center mb-6 text-sm font-medium">
             {isLogin ? 'Inicia sesión para continuar' : 'Regístrate para comenzar'}
           </p>
 
@@ -156,7 +156,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#FFC800] hover:bg-[#FFD700] text-black font-black py-3 px-4 rounded-lg transition-all disabled:opacity-50 uppercase tracking-wider text-sm shadow-[0_0_20px_rgba(255,200,0,0.2)] hover:shadow-[0_0_30px_rgba(255,200,0,0.4)]"
+              className="w-full bg-[#FFC800] hover:bg-[#FFD700] text-black font-gamer font-black italic py-3 px-4 rounded-lg transition-all disabled:opacity-50 uppercase tracking-tight text-base shadow-[0_0_20px_rgba(255,200,0,0.2)] hover:shadow-[0_0_30px_rgba(255,200,0,0.4)]"
             >
               {loading ? 'Cargando...' : (isLogin ? 'Iniciar Sesión' : 'Crear Cuenta')}
             </button>
