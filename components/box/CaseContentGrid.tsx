@@ -1,113 +1,157 @@
-import React, { memo, useMemo } from 'react';
-import { LootItem } from '../../types';
-import { calculateTicketRanges, LootItemWithTickets } from '../../services/oddsService';
+import React, { memo, useMemo, useState } from 'react';
+import { LootItem, Rarity } from '../../types';
+import { calculateTicketRanges } from '../../services/oddsService';
 
 interface CaseContentGridProps {
     items: LootItem[];
 }
 
+const RARITY_COLORS: Record<Rarity, string> = {
+  [Rarity.COMMON]: 'border-slate-600',
+  [Rarity.RARE]: 'border-blue-500',
+  [Rarity.EPIC]: 'border-purple-500',
+  [Rarity.LEGENDARY]: 'border-[#FFC800]',
+};
+
+const RARITY_GLOW: Record<Rarity, string> = {
+  [Rarity.COMMON]: '',
+  [Rarity.RARE]: 'shadow-[0_0_20px_rgba(59,130,246,0.3)]',
+  [Rarity.EPIC]: 'shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+  [Rarity.LEGENDARY]: 'shadow-[0_0_25px_rgba(255,200,0,0.4)]',
+};
+
 const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
-  // Calculate ticket ranges and sort by price descending
+  const [filter, setFilter] = useState<Rarity | 'ALL'>('ALL');
+  
   const sortedItemsWithOdds = useMemo(() => {
     const withTickets = calculateTicketRanges(items);
     return [...withTickets].sort((a, b) => b.price - a.price);
   }, [items]);
 
+  const filteredItems = useMemo(() => {
+    if (filter === 'ALL') return sortedItemsWithOdds;
+    return sortedItemsWithOdds.filter(item => item.rarity === filter);
+  }, [sortedItemsWithOdds, filter]);
+
   return (
-    <div className="w-full max-w-[1400px] mx-auto mt-2 md:mt-8 p-3 md:p-6 bg-[#0d1019]">
-      <div className="flex items-center justify-between mb-8 md:mb-12 border-b border-[#1e2330] pb-6">
+    <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-            {/* UPDATED: Reduced size for cleaner hierarchy */}
-            <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter italic mb-1 drop-shadow-lg">
-                Contenido de la Caja
-            </h2>
-            <p className="text-slate-500 text-xs md:text-sm font-bold tracking-tight">Premios disponibles</p>
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">
+            Contenido de la Caja
+          </h2>
+          <p className="text-slate-500 text-sm">
+            {sortedItemsWithOdds.length} premios disponibles
+          </p>
         </div>
         
-        <div className="flex gap-2 items-center">
-           <div className="bg-[#161922] border border-[#1e2330] px-4 py-2 rounded text-xs md:text-sm font-black italic tracking-tighter text-slate-400">
-             {sortedItemsWithOdds.length} Ítems
-           </div>
+        {/* Rarity Filter */}
+        <div className="flex gap-2">
+          <FilterButton active={filter === 'ALL'} onClick={() => setFilter('ALL')}>
+            Todos
+          </FilterButton>
+          <FilterButton active={filter === Rarity.LEGENDARY} onClick={() => setFilter(Rarity.LEGENDARY)} color="text-[#FFC800]">
+            Legendario
+          </FilterButton>
+          <FilterButton active={filter === Rarity.EPIC} onClick={() => setFilter(Rarity.EPIC)} color="text-purple-400">
+            Épico
+          </FilterButton>
+          <FilterButton active={filter === Rarity.RARE} onClick={() => setFilter(Rarity.RARE)} color="text-blue-400">
+            Raro
+          </FilterButton>
         </div>
       </div>
 
+      {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
-        {sortedItemsWithOdds.map((item) => {
-            // FIX: Ensure correct detection of base64 images
-            const isGenerated = item.image.startsWith('data:');
-            const isCdnImage = item.image.includes('supabase.co/storage');
-            const isLoading = item.image === '⏳';
-            const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
-            const needsBlendMode = isGenerated || isCdnImage;
-
-            return (
-              <div key={item.id} className="group relative bg-gradient-to-b from-[#13151b] to-[#0a0c10] border border-[#1e2330] hover:border-[#FFC800] transition-all duration-200 rounded-xl overflow-hidden flex flex-col h-[220px] md:h-auto">
-                
-                {/* Content Area */}
-                <div className="p-3 md:p-4 flex flex-col items-center flex-1 justify-center overflow-hidden">
-                    {/* Stars / Decor */}
-                    <div className="absolute top-2 right-2 text-[8px] text-slate-700">★</div>
-                    <div className="absolute top-2 left-2 text-[8px] text-slate-700">★</div>
-
-                    {/* Image Area - Bigger on mobile */}
-                    <div className="relative w-20 h-20 md:w-24 md:h-24 my-2 transition-transform duration-300 group-hover:scale-110 flex items-center justify-center">
-                        {/* Rarity Glow */}
-                        <div className={`absolute top-0 w-full h-full hidden group-hover:block opacity-20 bg-gradient-to-b from-white to-transparent blur-xl transition-opacity duration-500`}></div>
-                        
-                        {isLoading ? (
-                            // Skeleton loader - professional iGaming pattern
-                            <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#1e2330] to-[#0d1019] animate-pulse flex items-center justify-center">
-                              <div className="w-8 h-8 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin"></div>
-                            </div>
-                        ) : isEmoji ? (
-                            <span className="text-6xl md:text-6xl filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] select-none truncate">
-                                {item.image}
-                            </span>
-                        ) : (
-                            <img 
-                                src={item.image} 
-                                alt={item.name} 
-                                // FIX: Apply lighten blend mode to hide black background
-                                className={`w-full h-full object-contain ${!needsBlendMode ? 'drop-shadow-xl' : ''}`}
-                                loading="lazy" 
-                                decoding="async"
-                                style={needsBlendMode ? { mixBlendMode: 'lighten' } : {}}
-                            />
-                        )}
-                    </div>
-                    
-                    {/* Name - Larger text */}
-                    <div className="text-center w-full mt-2">
-                        <div className={`text-xs md:text-xs font-black italic leading-tight text-white group-hover:text-[#FFC800] transition-colors tracking-tighter uppercase line-clamp-2 px-1 text-ellipsis overflow-hidden`}>
-                            {item.name}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom Info Area - With Odds Display */}
-                <div className="py-3 bg-[#0a0c10]/50 border-t border-[#1e2330] mt-auto flex flex-col items-center justify-center gap-1">
-                    <div className="flex items-center justify-between w-full px-3">
-                        <div className="flex flex-col items-start">
-                            <span className="text-[8px] text-slate-600 font-bold uppercase tracking-wider">Valor</span>
-                            <div className="text-[#FFC800] font-mono font-bold text-xs md:text-sm tracking-tighter">
-                                ${item.price.toLocaleString('es-MX')}
-                            </div>
-                        </div>
-                        <div className="flex flex-col items-end">
-                            <span className="text-[8px] text-slate-600 font-bold uppercase tracking-wider">Prob.</span>
-                            <div className="text-slate-400 font-mono font-bold text-xs md:text-sm tracking-tighter">
-                                {item.normalizedOdds < 1 
-                                    ? `${item.normalizedOdds.toFixed(2)}%` 
-                                    : `${item.normalizedOdds.toFixed(1)}%`}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-              </div>
-            );
-        })}
+        {filteredItems.map((item) => (
+          <ItemCard key={item.id} item={item as LootItem & { normalizedOdds: number }} />
+        ))}
       </div>
+    </section>
+  );
+};
+
+function FilterButton({ children, active, onClick, color = 'text-white' }: { 
+  children: React.ReactNode; 
+  active: boolean; 
+  onClick: () => void;
+  color?: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        px-3 py-1.5 rounded-lg text-xs font-medium transition-all
+        ${active 
+          ? `bg-[#1e2330] ${color}` 
+          : 'text-slate-500 hover:text-white hover:bg-[#1e2330]/50'}
+      `}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ItemCard({ item }: { item: LootItem & { normalizedOdds: number } }) {
+  const isGenerated = item.image.startsWith('data:');
+  const isCdnImage = item.image.includes('supabase.co/storage');
+  const isCloudinary = item.image.includes('cloudinary.com');
+  const isLoading = item.image === '⏳';
+  const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
+  const needsBlendMode = isGenerated || (isCdnImage && !isCloudinary);
+
+  return (
+    <div className={`
+      group relative bg-[#13151b] rounded-xl overflow-hidden
+      border-2 ${RARITY_COLORS[item.rarity]}
+      hover:${RARITY_GLOW[item.rarity]}
+      transition-all duration-300 hover:-translate-y-1
+    `}>
+      {/* Image */}
+      <div className="p-4 pb-2">
+        <div className="relative w-full aspect-square flex items-center justify-center">
+          {isLoading ? (
+            <div className="w-16 h-16 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin" />
+          ) : isEmoji ? (
+            <span className="text-5xl">{item.image}</span>
+          ) : (
+            <img 
+              src={item.image} 
+              alt={item.name}
+              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+              loading="lazy"
+              style={needsBlendMode ? { mixBlendMode: 'lighten' } : {}}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="p-3 pt-0 text-center">
+        <h3 className="text-xs font-bold text-white truncate mb-2 group-hover:text-[#FFC800] transition-colors">
+          {item.name}
+        </h3>
+        
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-[#FFC800] font-mono font-bold">
+            ${item.price.toLocaleString()}
+          </span>
+          <span className="text-slate-500 font-mono">
+            {item.normalizedOdds < 1 
+              ? `${item.normalizedOdds.toFixed(2)}%` 
+              : `${item.normalizedOdds.toFixed(1)}%`}
+          </span>
+        </div>
+      </div>
+
+      {/* Rarity indicator line */}
+      <div className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+        item.rarity === Rarity.LEGENDARY ? 'bg-[#FFC800]' :
+        item.rarity === Rarity.EPIC ? 'bg-purple-500' :
+        item.rarity === Rarity.RARE ? 'bg-blue-500' : 'bg-slate-600'
+      }`} />
     </div>
   );
 }

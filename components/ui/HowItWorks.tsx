@@ -7,94 +7,67 @@ const Icons = {
   Truck: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>,
 };
 
+const steps = [
+  { num: '01', title: 'Elige', desc: 'Selecciona una caja de nuestra colección', icon: <Icons.Box /> },
+  { num: '02', title: 'Abre', desc: 'Gira y descubre tu premio al instante', icon: <Icons.Spin /> },
+  { num: '03', title: 'Decide', desc: 'Quédate el item o véndelo por saldo', icon: <Icons.Switch /> },
+  { num: '04', title: 'Recibe', desc: 'Envío gratis a todo México', icon: <Icons.Truck />, highlight: true },
+];
+
 export default function HowItWorks() {
   return (
-    <section className="relative w-full max-w-[1400px] mx-auto px-4 md:px-6 overflow-hidden z-20">
-        
-        {/* Decor Background */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-[#FFC800]/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+    <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
+      {/* Header */}
+      <div className="text-center mb-10">
+        <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+          ¿Cómo funciona?
+        </h2>
+        <p className="text-slate-500 text-sm max-w-md mx-auto">
+          4 simples pasos para ganar productos reales
+        </p>
+      </div>
 
-        {/* Header - Scaled Down */}
-        <div className="text-center mb-8 md:mb-12 relative z-10">
-            <span className="inline-block py-0.5 px-2 rounded bg-[#FFC800]/10 border border-[#FFC800]/20 text-[#FFC800] text-[10px] font-black uppercase italic tracking-wider mb-2">
-                Tutorial
-            </span>
-            <h2 className="text-2xl md:text-4xl font-black text-white italic uppercase tracking-tighter mb-2 drop-shadow-xl">
-                ¿Cómo Jugar?
-            </h2>
-            <p className="text-slate-400 font-bold max-w-2xl mx-auto tracking-tight text-xs md:text-sm">
-                4 PASOS PARA CONSEGUIR TU DREAM SETUP
-            </p>
-        </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 relative z-10">
-            <Card 
-                num="01" 
-                title="Selecciona" 
-                desc="Elige una caja de nuestra colección exclusiva."
-                icon={<Icons.Box />}
-            />
-            <Card 
-                num="02" 
-                title="Abre" 
-                desc="Gira la ruleta y descubre tu premio."
-                icon={<Icons.Spin />}
-            />
-            <Card 
-                num="03" 
-                title="Decide" 
-                desc="¿No te gusta? Véndelo por saldo al instante."
-                icon={<Icons.Switch />}
-            />
-            <Card 
-                num="04" 
-                title="Recibe" 
-                desc="Envío gratis y asegurado a todo México."
-                icon={<Icons.Truck />}
-                isGold
-            />
-        </div>
-
-    </section>
-  )
-}
-
-function Card({ num, title, desc, icon, isGold = false }: { num: string, title: string, desc: string, icon: React.ReactNode, isGold?: boolean }) {
-    return (
-        <div className={`
-            relative p-6 md:p-6 rounded-3xl border flex flex-col items-center text-center overflow-hidden group transition-all duration-300 hover:-translate-y-2
-            ${isGold 
-                ? 'bg-[#FFC800] border-[#FFC800] text-black shadow-[0_0_40px_rgba(255,200,0,0.3)]' 
-                : 'bg-[#1a1d26] border-[#1e2330] hover:border-[#FFC800] hover:shadow-[0_0_30px_rgba(255,200,0,0.1)]'}
-        `}>
-            
-            {/* Number Background - Smaller/Subtler */}
+      {/* Steps */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        {steps.map((step) => (
+          <div 
+            key={step.num}
+            className={`
+              relative p-5 md:p-6 rounded-2xl text-center group transition-all duration-300 hover:-translate-y-1
+              ${step.highlight 
+                ? 'bg-[#FFC800] text-black' 
+                : 'bg-[#13151b] border border-[#1e2330] hover:border-[#FFC800]/50'}
+            `}
+          >
+            {/* Step number */}
             <div className={`
-                absolute top-2 right-4 text-5xl md:text-6xl font-black italic tracking-tighter leading-none select-none pointer-events-none transition-transform duration-500 group-hover:scale-110 z-0
-                ${isGold ? 'text-black opacity-10' : 'text-[#0d1019] opacity-40 group-hover:opacity-50'}
+              absolute top-3 right-3 text-xs font-mono font-bold
+              ${step.highlight ? 'text-black/30' : 'text-slate-700'}
             `}>
-                {num}
+              {step.num}
             </div>
 
-            {/* Icon - Scaled */}
+            {/* Icon */}
             <div className={`
-                w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-2xl mb-3 md:mb-4 relative z-10 shadow-lg
-                ${isGold 
-                    ? 'bg-black text-[#FFC800]' 
-                    : 'bg-[#0a0c10] text-white group-hover:text-[#FFC800] group-hover:scale-110 transition-all duration-300'}
+              w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4
+              ${step.highlight 
+                ? 'bg-black text-[#FFC800]' 
+                : 'bg-[#0d1019] text-slate-400 group-hover:text-[#FFC800]'}
+              transition-colors
             `}>
-                {icon}
+              {step.icon}
             </div>
 
             {/* Content */}
-            <h3 className={`text-lg md:text-xl font-black italic uppercase tracking-tighter mb-1 relative z-10 ${isGold ? 'text-black' : 'text-white'}`}>
-                {title}
+            <h3 className={`font-bold text-base mb-1 ${step.highlight ? 'text-black' : 'text-white'}`}>
+              {step.title}
             </h3>
-            <p className={`text-xs font-bold relative z-10 leading-relaxed ${isGold ? 'text-black/70' : 'text-slate-500 group-hover:text-slate-400'}`}>
-                {desc}
+            <p className={`text-xs leading-relaxed ${step.highlight ? 'text-black/70' : 'text-slate-500'}`}>
+              {step.desc}
             </p>
-
-        </div>
-    )
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }
