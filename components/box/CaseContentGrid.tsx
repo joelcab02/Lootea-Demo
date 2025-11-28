@@ -94,7 +94,7 @@ function FilterButton({ children, active, onClick, color = 'text-white' }: {
   );
 }
 
-function ItemCard({ item }: { item: LootItem & { normalizedOdds: number } }) {
+const ItemCard: React.FC<{ item: LootItem & { normalizedOdds: number } }> = ({ item }) => {
   const isGenerated = item.image.startsWith('data:');
   const isCdnImage = item.image.includes('supabase.co/storage');
   const isCloudinary = item.image.includes('cloudinary.com');
