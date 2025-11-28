@@ -100,19 +100,19 @@ export const UserMenu: React.FC = () => {
     );
   }
 
-  // Logged out - Consistent button styling
+  // Logged out - Gamer typography style
   return (
     <>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <button
           onClick={openLogin}
-          className="px-4 py-2 text-[13px] text-slate-400 hover:text-white transition-colors uppercase tracking-wide"
+          className="px-5 py-3 text-sm text-slate-400 hover:text-white transition-colors font-gamer font-bold italic uppercase tracking-tight"
         >
           ENTRAR
         </button>
         <button
           onClick={openRegister}
-          className="px-5 py-2.5 text-[13px] bg-[#FFC800] hover:bg-[#FFD700] text-black rounded uppercase tracking-wide font-semibold transition-colors"
+          className="px-6 py-3 text-sm bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg font-gamer font-black italic uppercase tracking-tight transition-colors shadow-[0_0_15px_rgba(255,200,0,0.3)]"
         >
           REGISTRO
         </button>
