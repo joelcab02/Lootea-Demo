@@ -65,10 +65,8 @@ export async function uploadWithBackgroundRemoval(
   formData.append('file', blob);
   formData.append('upload_preset', UPLOAD_PRESET);
   formData.append('public_id', publicId);
-  
-  // Apply background removal transformation on upload
-  // This uses Cloudinary's AI-powered background removal
-  formData.append('background_removal', 'cloudinary_ai');
+  // Note: background_removal not allowed in unsigned uploads
+  // We apply it via URL transformation instead
   
   try {
     const response = await fetch(UPLOAD_URL, {
