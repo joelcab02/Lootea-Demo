@@ -7,7 +7,7 @@
  * REGISTER: Requires 18+ confirmation and terms acceptance
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { signIn, signUp, signInWithProvider } from '../../services/authService';
 
@@ -28,23 +28,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [shouldRender, setShouldRender] = useState(false);
-
-  // Handle mount/unmount with animation
-  useEffect(() => {
-    if (isOpen) {
-      setShouldRender(true);
-      // Trigger animation after mount
-      const timer = setTimeout(() => setVisible(true), 10);
-      return () => clearTimeout(timer);
-    } else {
-      setVisible(false);
-      // Unmount after animation
-      const timer = setTimeout(() => setShouldRender(false), 200);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen]);
 
   // Reset form when opening
   useEffect(() => {
@@ -57,13 +40,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   }, [initialMode, isOpen]);
 
-  // Handle close with animation
-  const handleClose = useCallback(() => {
-    setVisible(false);
-    setTimeout(onClose, 200);
-  }, [onClose]);
-
-  if (!shouldRender) return null;
+  if (!isOpen) return null;
 
   const isLogin = mode === 'login';
 
@@ -123,28 +100,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
-      {/* Backdrop - optimized */}
+      {/* Backdrop */}
       <div 
-        className={`absolute inset-0 bg-black transition-opacity duration-200 ${visible ? 'opacity-90' : 'opacity-0'}`}
-        onClick={handleClose} 
+        className="absolute inset-0 bg-black/90"
+        onClick={onClose} 
       />
       
-      {/* Modal - slide up on mobile, fade in on desktop */}
+      {/* Modal */}
       <div 
-        className={`
-          relative z-[101] w-full sm:max-w-sm bg-[#0d1019] border-t sm:border border-[#1e2330] 
-          rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto
-          transition-all duration-200 ease-out
-          ${visible 
-            ? 'translate-y-0 opacity-100' 
-            : 'translate-y-8 sm:translate-y-0 opacity-0 sm:scale-95'
-          }
-        `}
+        className="relative z-[101] w-full sm:max-w-sm bg-[#0d1019] border-t sm:border border-[#1e2330] rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
         style={{ contain: 'layout paint' }}
       >
         {/* Close button */}
         <button 
-          onClick={handleClose}
+          onClick={onClose}
           className="absolute top-3 right-3 z-10 text-slate-500 hover:text-white transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
