@@ -738,12 +738,24 @@ const ProductEditSection: React.FC<{
         odds: 0
       });
     } else {
-      await supabase.from('items').update({
+      const updateData = {
         name: form.name,
         price: parseFloat(form.price),
         rarity: form.rarity,
         image_url: form.image
-      }).eq('id', productId);
+      };
+      console.log('Updating product:', productId, updateData);
+      
+      const { data, error } = await supabase.from('items').update(updateData).eq('id', productId).select();
+      
+      console.log('Update result:', { data, error });
+      
+      if (error) {
+        console.error('Update error:', error);
+        alert('Error al actualizar: ' + error.message);
+        setIsSaving(false);
+        return;
+      }
     }
     
     onSave();
