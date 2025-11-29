@@ -156,8 +156,18 @@ const App: React.FC = () => {
         {/* HERO AREA */}
         <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative shrink-0 overflow-hidden">
             
-            {/* Ambient glow - contained */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[400px] bg-[#FFC800] opacity-[0.03] blur-[100px] pointer-events-none"></div>
+            {/* Premium ambient glow system */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {/* Main center glow */}
+                <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#FFC800] opacity-[0.06] blur-[120px]"></div>
+                
+                {/* Secondary glow - lower, wider */}
+                <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-[#FFB800] opacity-[0.04] blur-[150px]"></div>
+                
+                {/* Accent glow spots */}
+                <div className="absolute top-[15%] left-[20%] w-[200px] h-[200px] bg-[#FFC800] opacity-[0.03] blur-[80px] animate-pulse"></div>
+                <div className="absolute top-[25%] right-[15%] w-[250px] h-[250px] bg-[#FFD700] opacity-[0.025] blur-[100px] animate-pulse" style={{animationDelay: '1s'}}></div>
+            </div>
             
             {/* Box Title */}
             <div className="z-10 text-center mb-4 md:mb-8 px-4">
@@ -169,8 +179,10 @@ const App: React.FC = () => {
                 </p>
             </div>
 
-            {/* SPINNER */}
-            <div className="w-full max-w-[1600px] z-10 mb-8">
+            {/* SPINNER with glow backdrop */}
+            <div className="relative w-full max-w-[1600px] z-10 mb-8">
+                {/* Spinner glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] bg-[#FFC800] opacity-[0.08] blur-[80px] pointer-events-none"></div>
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 
