@@ -44,16 +44,12 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
 const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }) => {
   // Pre-calculate image properties
   const imageProps = useMemo(() => {
-    const isGenerated = item.image.startsWith('data:');
-    const isCdnImage = item.image.includes('supabase.co/storage');
-    const isCloudinary = item.image.includes('cloudinary.com');
     const isLoading = item.image === '⏳';
-    const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
-    const needsBlendMode = isGenerated || (isCdnImage && !isCloudinary);
-    return { isLoading, isEmoji, needsBlendMode };
+    const isEmoji = !item.image.startsWith('http') && !item.image.startsWith('data:') && !isLoading;
+    return { isLoading, isEmoji };
   }, [item.image]);
 
-  const { isLoading, isEmoji, needsBlendMode } = imageProps;
+  const { isLoading, isEmoji } = imageProps;
 
   return (
     <div 
@@ -89,7 +85,6 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
               className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
               loading="lazy"
               decoding="async"
-              style={needsBlendMode ? { mixBlendMode: 'lighten' } : undefined}
             />
           )}
         </div>

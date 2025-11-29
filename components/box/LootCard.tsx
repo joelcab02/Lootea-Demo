@@ -11,16 +11,12 @@ interface LootCardProps {
 const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) => {
   // Memoize image type calculations
   const imageProps = useMemo(() => {
-    const isGenerated = item.image.startsWith('data:');
-    const isCdnImage = item.image.includes('supabase.co/storage') || item.image.includes('cloudinary.com');
     const isLoading = item.image === '⏳';
-    const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
-    const isCloudinaryImage = item.image.includes('cloudinary.com');
-    const needsBlendMode = isGenerated || (isCdnImage && !isCloudinaryImage);
-    return { isLoading, isEmoji, needsBlendMode };
+    const isEmoji = !item.image.startsWith('http') && !item.image.startsWith('data:') && !isLoading;
+    return { isLoading, isEmoji };
   }, [item.image]);
   
-  const { isLoading, isEmoji, needsBlendMode } = imageProps;
+  const { isLoading, isEmoji } = imageProps;
 
   // Dynamic sizing based on context
   const imageSizeClass = isSpinner 
@@ -70,7 +66,6 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
               loading={isSpinner ? "eager" : "lazy"}
               decoding="async"
               draggable={false}
-              style={needsBlendMode ? { mixBlendMode: 'screen' } : undefined} 
             />
         )}
       </div>
