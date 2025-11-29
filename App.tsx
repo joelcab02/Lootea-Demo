@@ -120,11 +120,28 @@ const App: React.FC = () => {
                   <Icons.Menu />
                 </button>
                 
-                <div className="flex items-center gap-2 cursor-pointer group">
-                    <div className="w-6 h-6 md:w-8 md:h-8 text-[#FFC800] drop-shadow-[0_0_12px_rgba(255,200,0,0.6)] group-hover:scale-110 transition-transform">
-                        <Icons.Logo />
+                <div className="flex items-center gap-2.5 cursor-pointer group">
+                    {/* Logo icon with premium glow */}
+                    <div className="relative">
+                        <div className="absolute inset-0 w-6 h-6 md:w-8 md:h-8 bg-[#FFC800] blur-lg opacity-50 group-hover:opacity-80 transition-opacity"></div>
+                        <div className="relative w-6 h-6 md:w-8 md:h-8 text-[#FFC800] group-hover:scale-110 transition-transform"
+                            style={{
+                                filter: 'drop-shadow(0 0 8px rgba(255,200,0,0.8)) drop-shadow(0 0 20px rgba(255,200,0,0.4))'
+                            }}
+                        >
+                            <Icons.Logo />
+                        </div>
                     </div>
-                    <span className="font-display text-xl md:text-3xl text-white group-hover:text-[#FFC800] transition-colors uppercase">
+                    {/* Logo text with metallic effect */}
+                    <span 
+                        className="font-display text-xl md:text-3xl group-hover:scale-105 transition-all uppercase"
+                        style={{
+                            background: 'linear-gradient(180deg, #FFFFFF 0%, #FFC800 50%, #E6A800 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
+                        }}
+                    >
                         LOOTEA
                     </span>
                 </div>
