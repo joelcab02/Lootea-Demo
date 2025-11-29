@@ -26,14 +26,15 @@ let currentState: AuthState = {
 };
 
 /**
- * Initialize auth and listen for changes
+ * Initialize auth and listen for changes - OPTIMIZED
  */
 export async function initAuth(): Promise<AuthState> {
   // Get initial session
   const { data: { session } } = await supabase.auth.getSession();
   
   if (session?.user) {
-    await loadUserData(session.user);
+    // Pass session to avoid extra call
+    await loadUserData(session.user, session);
   }
   
   currentState.isLoading = false;
@@ -44,7 +45,8 @@ export async function initAuth(): Promise<AuthState> {
     console.log('🔐 Auth event:', event);
     
     if (session?.user) {
-      await loadUserData(session.user);
+      // Pass session directly
+      await loadUserData(session.user, session);
     } else {
       currentState = {
         user: null,
@@ -62,29 +64,20 @@ export async function initAuth(): Promise<AuthState> {
 }
 
 /**
- * Load user profile and wallet
+ * Load user profile and wallet - OPTIMIZED: parallel queries
  */
-async function loadUserData(user: User): Promise<void> {
+async function loadUserData(user: User, session?: Session | null): Promise<void> {
   currentState.user = user;
-  currentState.session = (await supabase.auth.getSession()).data.session;
+  currentState.session = session || currentState.session;
   
-  // Load profile
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+  // Load profile and wallet in PARALLEL (faster)
+  const [profileResult, walletResult] = await Promise.all([
+    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    supabase.from('wallets').select('*').eq('user_id', user.id).single()
+  ]);
   
-  currentState.profile = profile;
-  
-  // Load wallet
-  const { data: wallet } = await supabase
-    .from('wallets')
-    .select('*')
-    .eq('user_id', user.id)
-    .single();
-  
-  currentState.wallet = wallet;
+  currentState.profile = profileResult.data;
+  currentState.wallet = walletResult.data;
 }
 
 /**
