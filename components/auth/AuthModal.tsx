@@ -103,13 +103,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: '100dvh', // Dynamic viewport height for mobile
+      }}
+    >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/90" onClick={onClose} />
       
       {/* Modal */}
       <div 
-        className="relative z-[101] w-full sm:max-w-sm bg-[#0d1019] border-t sm:border border-[#1e2330] rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+        className="relative z-[101] w-full max-w-sm bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto"
         style={{ contain: 'layout paint' }}
       >
         {/* Close button */}
