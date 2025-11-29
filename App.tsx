@@ -97,14 +97,13 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#0d1019] text-white font-sans overflow-hidden selection:bg-[#FFC800] selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-[#0d1019] text-white font-sans selection:bg-[#FFC800] selection:text-black overflow-x-hidden">
       
-      {/* SIDEBAR */}
+      {/* SIDEBAR - Overlay, no afecta el layout */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-
-      {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex flex-col relative overflow-y-auto overflow-x-hidden custom-scrollbar">
+      {/* MAIN CONTENT - Scroll natural del body */}
+      <div className="flex flex-col min-h-screen">
         
         {/* LIVE DROP TICKER */}
         <LiveDrops items={items} />
@@ -405,15 +404,18 @@ const App: React.FC = () => {
             </div>
         </div>
 
-        {/* CONTENT SECTIONS SPACER */}
-        <div className="flex flex-col gap-12 space-y-12 pb-16">
-            <CaseContentGrid items={items} />
-            <HowItWorks />
+        {/* CONTENT SECTIONS */}
+        <div className="flex-1">
+            <div className="flex flex-col gap-12 py-12">
+                <CaseContentGrid items={items} />
+                <HowItWorks />
+            </div>
         </div>
 
+        {/* FOOTER - Siempre al final */}
         <Footer />
+      </div>
     </div>
-  </div>
   );
 };
 
