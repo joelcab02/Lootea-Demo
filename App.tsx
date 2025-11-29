@@ -3,7 +3,7 @@ import Spinner from './components/box/Spinner';
 import Sidebar from './components/layout/Sidebar';
 import CaseContentGrid from './components/box/CaseContentGrid';
 import Footer from './components/layout/Footer';
-import LiveDrops from './components/drops/LiveDrops';
+// import LiveDrops from './components/drops/LiveDrops';
 import HowItWorks from './components/ui/HowItWorks';
 import { LootItem, Rarity } from './types';
 import { RARITY_COLORS } from './constants';
@@ -102,13 +102,10 @@ const App: React.FC = () => {
       {/* SIDEBAR - Overlay, no afecta el layout */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* MAIN CONTENT - Scroll natural del body */}
+      {/* MAIN CONTENT */}
       <div className="flex flex-col min-h-screen">
         
-        {/* LIVE DROP TICKER */}
-        <LiveDrops items={items} />
-        
-        {/* HEADER - Mobile First */}
+        {/* HEADER */}
         <header className="flex items-center justify-between py-3 px-4 md:py-5 md:px-10 bg-[#0d1019]/95 backdrop-blur-md border-b border-[#1e2330]/50 sticky top-0 z-40">
             {/* Left: Menu + Logo */}
             <div className="flex items-center gap-3 md:gap-6">
