@@ -183,29 +183,70 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
   };
 
   return (
-    <div className="relative w-full h-[210px] sm:h-[260px] overflow-hidden bg-[#0a0c10] border-y-2 border-[#1e2330] flex items-center shadow-inner transition-all duration-300">
+    <div 
+      className="relative w-full h-[200px] sm:h-[240px] overflow-hidden flex items-center"
+      style={{
+        background: 'linear-gradient(180deg, #08090c 0%, #0a0c10 50%, #08090c 100%)',
+      }}
+    >
+        {/* Top border - gold gradient */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFC800]/40 to-transparent z-30"></div>
+        
+        {/* Bottom border - gold gradient */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFC800]/40 to-transparent z-30"></div>
         
         {/* Dark overlay when showing result */}
         {showResult && winner && (
-          <div className="absolute inset-0 bg-black/70 z-25 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-black/80 z-25 transition-opacity duration-500" />
         )}
         
-        {/* Center Indicator Line - hide when showing result */}
-        <div className={`absolute left-1/2 top-0 bottom-0 w-1 bg-[#FFC800] z-30 transform -translate-x-1/2 shadow-[0_0_20px_#FFC800] transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-90'}`}></div>
-        
-        {/* Top Triangle Arrow */}
-        <div className={`absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-100'}`}>
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 16L4 4h16z"/></svg>
-        </div>
-        
-        {/* Bottom Triangle Arrow */}
-        <div className={`absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1 text-[#FFC800] z-30 filter drop-shadow-[0_-2px_4px_rgba(0,0,0,0.5)] transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-100'}`}>
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8l8 12H4z"/></svg>
+        {/* Center Indicator - Premium metallic */}
+        <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-100'}`}>
+          {/* Main line with gradient */}
+          <div 
+            className="absolute left-1/2 top-0 bottom-0 w-[3px] -translate-x-1/2"
+            style={{
+              background: 'linear-gradient(180deg, #FFE566 0%, #FFC800 50%, #CC9900 100%)',
+              boxShadow: '0 0 20px rgba(255,200,0,0.6), 0 0 40px rgba(255,200,0,0.3)',
+            }}
+          />
+          
+          {/* Top arrow - metallic */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[2px]">
+            <div 
+              className="w-0 h-0"
+              style={{
+                borderLeft: '10px solid transparent',
+                borderRight: '10px solid transparent',
+                borderTop: '14px solid #FFC800',
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
+              }}
+            />
+          </div>
+          
+          {/* Bottom arrow - metallic */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[2px]">
+            <div 
+              className="w-0 h-0"
+              style={{
+                borderLeft: '10px solid transparent',
+                borderRight: '10px solid transparent',
+                borderBottom: '14px solid #FFC800',
+                filter: 'drop-shadow(0 -2px 4px rgba(0,0,0,0.5))',
+              }}
+            />
+          </div>
         </div>
 
-        {/* Side Gradients for depth - WIDER */}
-        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-64 bg-gradient-to-r from-[#0d1019] via-[#0d1019]/80 to-transparent z-20 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-64 bg-gradient-to-l from-[#0d1019] via-[#0d1019]/80 to-transparent z-20 pointer-events-none"></div>
+        {/* Side Gradients - deeper fade */}
+        <div 
+          className="absolute left-0 top-0 bottom-0 w-20 sm:w-48 z-20 pointer-events-none"
+          style={{ background: 'linear-gradient(90deg, #08090c 0%, #08090c 30%, transparent 100%)' }}
+        />
+        <div 
+          className="absolute right-0 top-0 bottom-0 w-20 sm:w-48 z-20 pointer-events-none"
+          style={{ background: 'linear-gradient(270deg, #08090c 0%, #08090c 30%, transparent 100%)' }}
+        />
 
         <div 
             className="flex items-center h-full will-change-transform"
@@ -222,25 +263,43 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                 return (
                   <div 
                     key={`${item.id}-${index}`} 
-                    className={`relative transition-all duration-500 ${isWinner ? 'z-40 scale-110' : showResult ? 'opacity-20' : ''}`}
+                    className={`relative transition-all duration-500 ${isWinner ? 'z-40 scale-105' : showResult ? 'opacity-10' : ''}`}
                     style={{ marginRight: `${CARD_GAP}px` }}
                   >
                     {/* Winner glow effect */}
                     {isWinner && (
-                      <div className="absolute -inset-4 bg-[#FFC800]/30 rounded-2xl blur-xl animate-pulse" />
+                      <div 
+                        className="absolute -inset-3 rounded-2xl"
+                        style={{
+                          background: 'radial-gradient(circle, rgba(255,200,0,0.3) 0%, transparent 70%)',
+                          animation: 'pulse 2s ease-in-out infinite',
+                        }}
+                      />
                     )}
                     
-                    <div className={`relative ${isWinner ? 'ring-4 ring-[#FFC800] rounded-xl shadow-[0_0_40px_rgba(255,200,0,0.5)]' : ''}`}>
+                    <div 
+                      className={`relative rounded-xl overflow-hidden ${isWinner ? 'ring-2 ring-[#FFC800]' : ''}`}
+                      style={isWinner ? {
+                        boxShadow: '0 0 30px rgba(255,200,0,0.4), 0 0 60px rgba(255,200,0,0.2)',
+                      } : {}}
+                    >
                       <LootCard item={item} width={CARD_WIDTH} isSpinner={true} />
                     </div>
                     
                     {/* Winner info overlay */}
                     {isWinner && (
-                      <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
-                        <p className="font-display text-white text-sm md:text-base drop-shadow-lg uppercase">
+                      <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
+                        <p className="font-display text-white text-xs md:text-sm drop-shadow-lg uppercase tracking-wide">
                           {winner.name}
                         </p>
-                        <p className="font-display text-[#FFC800] text-sm md:text-lg drop-shadow-lg uppercase">
+                        <p 
+                          className="font-display text-sm md:text-base drop-shadow-lg uppercase"
+                          style={{
+                            background: 'linear-gradient(180deg, #FFE566 0%, #FFC800 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                          }}
+                        >
                           ${winner.price.toLocaleString()}
                         </p>
                       </div>
