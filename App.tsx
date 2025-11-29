@@ -195,7 +195,7 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative shrink-0 overflow-hidden">
+        <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative overflow-visible">
             
             {/* Premium ambient glow system */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
