@@ -2,21 +2,92 @@
  * User Menu - Header buttons for auth
  * Shows Sign In / Register when logged out
  * Shows user info + balance when logged in
+ * 
+ * Design: Lootea Gold theme with gamer aesthetic
  */
 
 import React, { useState, useEffect } from 'react';
 import { AuthModal } from './AuthModal';
 import { subscribeAuth, signOut, AuthState, getBalance } from '../../services/authService';
 
+// Icons
+const Icons = {
+  Plus: () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  ),
+  ChevronDown: () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  ),
+  Inventory: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+      <line x1="12" y1="22.08" x2="12" y2="12" />
+    </svg>
+  ),
+  History: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  ),
+  Settings: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  ),
+  Fairness: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <polyline points="9 12 11 14 15 10" />
+    </svg>
+  ),
+  Logout: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  ),
+  Wallet: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M21 18v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1" />
+      <path d="M21 8H10a2 2 0 0 0 0 4h11v6" />
+      <circle cx="16" cy="12" r="1" />
+    </svg>
+  ),
+  Level: () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  ),
+};
+
 export const UserMenu: React.FC = () => {
   const [authState, setAuthState] = useState<AuthState | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<'login' | 'register'>('register');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = subscribeAuth(setAuthState);
     return unsubscribe;
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setDropdownOpen(false);
+    if (dropdownOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [dropdownOpen]);
 
   const openLogin = () => {
     setModalMode('login');
@@ -29,72 +100,129 @@ export const UserMenu: React.FC = () => {
   };
 
   const handleSignOut = async () => {
+    setDropdownOpen(false);
     await signOut();
+  };
+
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDropdownOpen(!dropdownOpen);
   };
 
   // Loading state
   if (!authState || authState.isLoading) {
     return (
       <div className="flex items-center gap-2">
-        <div className="w-20 h-9 bg-[#2a2d36] rounded-lg animate-pulse" />
-        <div className="w-20 h-9 bg-[#2a2d36] rounded-lg animate-pulse" />
+        <div className="w-24 h-9 bg-[#1a1d26] rounded-lg animate-pulse" />
+        <div className="w-10 h-9 bg-[#1a1d26] rounded-lg animate-pulse" />
       </div>
     );
   }
 
-  // Logged in (Lootea style)
+  // Logged in - Premium Lootea style
   if (authState.user) {
     const balance = getBalance();
     const displayName = authState.profile?.display_name || authState.user.email?.split('@')[0] || 'User';
+    const level = authState.profile?.level || 1;
     
     return (
       <div className="flex items-center gap-2 md:gap-3">
-        {/* Balance - Gold wallet style */}
-        <div className="flex items-center bg-[#FFC800] rounded-md md:rounded-lg text-black pl-2 pr-1 py-1 md:pl-2.5 md:pr-1.5 md:py-1.5 gap-1 shadow-[0_0_10px_rgba(255,200,0,0.15)] hover:shadow-[0_0_20px_rgba(255,200,0,0.3)] transition-all cursor-pointer group hover:brightness-110">
-          <span className="font-display text-[10px] md:text-xs uppercase">
-            ${balance.toFixed(0)}
+        
+        {/* Balance Button - Gold with deposit action */}
+        <button className="group flex items-center gap-1.5 bg-gradient-to-r from-[#FFC800] to-[#FFB800] hover:from-[#FFD700] hover:to-[#FFC800] rounded-lg text-black px-2.5 md:px-3 py-1.5 md:py-2 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_25px_rgba(255,200,0,0.4)] transition-all">
+          <Icons.Wallet />
+          <span className="font-mono font-black text-xs md:text-sm tracking-tight">
+            ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </span>
-          <div className="w-4 h-4 md:w-5 md:h-5 bg-black/10 rounded flex items-center justify-center group-hover:bg-black/20 transition-colors">
-            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
+          <div className="w-5 h-5 md:w-6 md:h-6 bg-black/20 rounded-md flex items-center justify-center group-hover:bg-black/30 transition-colors ml-0.5">
+            <Icons.Plus />
           </div>
-        </div>
+        </button>
 
-        {/* User dropdown */}
-        <div className="relative group">
-          <button className="flex items-center gap-2 bg-[#1a1d26] hover:bg-[#252830] border border-[#2a2d36] px-2 md:px-3 py-1.5 md:py-2 rounded-lg transition-all hover:border-[#FFC800]/30">
-            <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gradient-to-br from-[#FFC800] to-[#FF9500] flex items-center justify-center text-black text-[10px] md:text-xs font-display uppercase">
-              {displayName.charAt(0).toUpperCase()}
+        {/* User Profile Button with Dropdown */}
+        <div className="relative">
+          <button 
+            onClick={toggleDropdown}
+            className={`flex items-center gap-2 bg-[#1a1d26] hover:bg-[#252830] border px-2 md:px-3 py-1.5 md:py-2 rounded-lg transition-all ${
+              dropdownOpen ? 'border-[#FFC800]/50 bg-[#252830]' : 'border-[#2a2d36] hover:border-[#FFC800]/30'
+            }`}
+          >
+            {/* Avatar with level indicator */}
+            <div className="relative">
+              <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-to-br from-[#FFC800] to-[#FF9500] flex items-center justify-center text-black text-xs md:text-sm font-display font-black">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+              {/* Level badge */}
+              <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 md:w-4 md:h-4 bg-[#0d1019] rounded-full flex items-center justify-center border border-[#FFC800]">
+                <span className="text-[8px] md:text-[9px] font-bold text-[#FFC800]">{level}</span>
+              </div>
             </div>
-            <span className="text-white text-xs md:text-sm hidden sm:block font-medium">{displayName}</span>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-500">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
+            
+            {/* Name - hidden on mobile */}
+            <span className="text-white text-xs md:text-sm hidden sm:block font-medium max-w-[80px] truncate">
+              {displayName}
+            </span>
+            
+            {/* Chevron */}
+            <div className={`text-slate-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
+              <Icons.ChevronDown />
+            </div>
           </button>
           
-          {/* Dropdown */}
-          <div className="absolute right-0 top-full mt-1 w-48 bg-[#0d1019] border border-[#1e2330] rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-            <div className="p-2">
-              <button className="w-full text-left px-3 py-2 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
-                Mi Inventario
-              </button>
-              <button className="w-full text-left px-3 py-2 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
-                Historial
-              </button>
-              <button className="w-full text-left px-3 py-2 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
-                Configuración
-              </button>
-              <hr className="my-2 border-[#1e2330]" />
-              <button 
-                onClick={handleSignOut}
-                className="w-full text-left px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
-              >
-                Cerrar Sesión
-              </button>
+          {/* Dropdown Menu */}
+          {dropdownOpen && (
+            <div className="absolute right-0 top-full mt-2 w-56 bg-[#0d1019] border border-[#1e2330] rounded-xl shadow-2xl z-50 overflow-hidden">
+              {/* Gold accent line */}
+              <div className="h-0.5 bg-gradient-to-r from-transparent via-[#FFC800] to-transparent" />
+              
+              {/* User info header */}
+              <div className="p-3 border-b border-[#1e2330]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFC800] to-[#FF9500] flex items-center justify-center text-black text-lg font-display font-black">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-medium text-sm truncate">{displayName}</p>
+                    <div className="flex items-center gap-1 text-[#FFC800]">
+                      <Icons.Level />
+                      <span className="text-xs font-medium">Nivel {level}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Menu items */}
+              <div className="p-2">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
+                  <Icons.Inventory />
+                  <span>Mi Inventario</span>
+                </button>
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
+                  <Icons.History />
+                  <span>Historial</span>
+                </button>
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
+                  <Icons.Fairness />
+                  <span>Provably Fair</span>
+                </button>
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
+                  <Icons.Settings />
+                  <span>Configuración</span>
+                </button>
+              </div>
+              
+              {/* Logout */}
+              <div className="p-2 border-t border-[#1e2330]">
+                <button 
+                  onClick={handleSignOut}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
+                >
+                  <Icons.Logout />
+                  <span>Cerrar Sesión</span>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     );
@@ -112,7 +240,7 @@ export const UserMenu: React.FC = () => {
         </button>
         <button
           onClick={openRegister}
-          className="px-3 sm:px-5 py-1.5 sm:py-2.5 text-xs sm:text-sm bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg font-display uppercase transition-all shadow-[0_0_20px_rgba(255,200,0,0.25)]"
+          className="px-3 sm:px-5 py-1.5 sm:py-2.5 text-xs sm:text-sm bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg font-display uppercase transition-all shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:shadow-[0_0_30px_rgba(255,200,0,0.4)]"
         >
           Registro
         </button>
