@@ -715,7 +715,7 @@ const ProductEditSection: React.FC<{
         name: data.name,
         price: String(data.price),
         rarity: data.rarity as Rarity,
-        image: data.image || ''
+        image: data.image_url || data.image || ''
       });
     }
   };
@@ -734,7 +734,7 @@ const ProductEditSection: React.FC<{
         name: form.name,
         price: parseFloat(form.price),
         rarity: form.rarity,
-        image: form.image,
+        image_url: form.image,
         odds: 0
       });
     } else {
@@ -742,7 +742,7 @@ const ProductEditSection: React.FC<{
         name: form.name,
         price: parseFloat(form.price),
         rarity: form.rarity,
-        image: form.image
+        image_url: form.image
       }).eq('id', productId);
     }
     
