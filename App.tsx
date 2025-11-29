@@ -78,21 +78,10 @@ const App: React.FC = () => {
     triggerWinEffects(item);
   };
 
-  const triggerWinEffects = (item: LootItem) => {
+  const triggerWinEffects = (_item: LootItem) => {
     audioService.playWin();
     if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-
-    const colors = item.rarity === Rarity.LEGENDARY 
-        ? ['#FFD700', '#FDB931'] 
-        : ['#FFC800', '#ffffff'];
-
-    window.confetti({
-      particleCount: 120,
-      spread: 80,
-      origin: { y: 0.7 },
-      colors: colors,
-      zIndex: 100,
-    });
+    // Confetti disabled for performance
   };
 
   return (
