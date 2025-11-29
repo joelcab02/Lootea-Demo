@@ -32,7 +32,7 @@ const AdminDashboard: React.FC = () => {
     
     const [boxesRes, productsRes] = await Promise.all([
       getBoxes(),
-      supabase.from('loot_items').select('*').order('price', { ascending: false })
+      supabase.from('items').select('*').order('price', { ascending: false })
     ]);
     
     setBoxes(boxesRes);
@@ -603,7 +603,7 @@ const ProductsSection: React.FC<{
   const handleDelete = async (product: LootItem) => {
     if (!confirm(`¿Eliminar "${product.name}"?`)) return;
     setIsSaving(true);
-    await supabase.from('loot_items').delete().eq('id', product.id);
+    await supabase.from('items').delete().eq('id', product.id);
     onRefresh();
     setIsSaving(false);
   };
@@ -704,7 +704,7 @@ const ProductEditSection: React.FC<{
   }, [productId]);
 
   const loadProduct = async () => {
-    const { data } = await supabase.from('loot_items').select('*').eq('id', productId).single();
+    const { data } = await supabase.from('items').select('*').eq('id', productId).single();
     if (data) {
       setForm({
         name: data.name,
@@ -724,7 +724,7 @@ const ProductEditSection: React.FC<{
     setIsSaving(true);
     
     if (isNew) {
-      await supabase.from('loot_items').insert({
+      await supabase.from('items').insert({
         id: `item_${Date.now()}`,
         name: form.name,
         price: parseFloat(form.price),
@@ -733,7 +733,7 @@ const ProductEditSection: React.FC<{
         odds: 0
       });
     } else {
-      await supabase.from('loot_items').update({
+      await supabase.from('items').update({
         name: form.name,
         price: parseFloat(form.price),
         rarity: form.rarity,
