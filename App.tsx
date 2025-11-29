@@ -247,8 +247,8 @@ const App: React.FC = () => {
 
             {/* SPINNER with glow backdrop */}
             <div className="relative w-full max-w-[1600px] z-10 mb-8">
-                {/* Spinner glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] bg-[#FFC800] opacity-[0.08] blur-[80px] pointer-events-none"></div>
+                {/* Spinner glow - hidden on mobile for performance */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] bg-[#FFC800] opacity-[0.08] blur-[80px] pointer-events-none hidden md:block"></div>
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 

@@ -3,7 +3,7 @@ import { LootItem, Rarity } from '../../types';
 import { CARD_WIDTH, CARD_GAP, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../../constants';
 import LootCard from './LootCard';
 import { audioService } from '../../services/audioService';
-import { calculateTicketRanges, selectWeightedWinner, debugTicketDistribution, LootItemWithTickets } from '../../services/oddsService';
+import { calculateTicketRanges, selectWeightedWinner, debugTicketDistribution } from '../../services/oddsService';
 
 interface SpinnerProps {
   items: LootItem[];
@@ -15,6 +15,10 @@ interface SpinnerProps {
   showResult?: boolean;
 }
 
+// Pre-calculate constants to avoid runtime computation
+const ITEM_WIDTH = CARD_WIDTH + CARD_GAP;
+const TICK_OFFSET = 25;
+
 const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [strip, setStrip] = useState<LootItem[]>([]);
@@ -22,84 +26,67 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
   // Calculate ticket ranges once when items change (memoized)
   const itemsWithTickets = useMemo(() => {
     const calculated = calculateTicketRanges(items);
-    // Debug: Log ticket distribution on first load
-    if (calculated.length > 0) {
+    if (calculated.length > 0 && process.env.NODE_ENV === 'development') {
       debugTicketDistribution(calculated);
     }
     return calculated;
   }, [items]);
   
-  // Mutable state for animation loop to avoid React re-renders
+  // Mutable state for animation loop - avoids React re-renders during animation
   const stateRef = useRef({
     startTime: 0,
-    startX: 0,
     targetX: 0,
     currentX: 0,
-    lastIndex: 0,
+    lastIndex: -1,
     isAnimating: false,
     winner: null as LootItem | null,
     duration: SPIN_DURATION,
-    ticket: 0 // Track winning ticket for debugging
   });
 
   const animationFrameId = useRef<number>(0);
 
+  // Pre-generate strip items for object pooling
   const generateStrip = useCallback(() => {
-    // Safety check if items array is empty
     if (!itemsWithTickets || itemsWithTickets.length === 0) return null;
 
-    // USE WEIGHTED ODDS: Select winner based on ticket system
     const result = selectWeightedWinner(itemsWithTickets);
     if (!result) return null;
     
     const { winner: randomWinner, ticket } = result;
     
-    // Log the winning ticket for transparency
-    console.log(`🎰 Ticket #${ticket.toLocaleString()} → ${randomWinner.name} (${randomWinner.normalizedOdds}% odds)`);
+    // Batch array creation - more efficient than push
+    const newStrip = new Array(TOTAL_CARDS_IN_STRIP);
     
-    const newStrip: LootItem[] = [];
-    
-    // Generate strip with weighted randomness for visual variety
     for (let i = 0; i < TOTAL_CARDS_IN_STRIP; i++) {
       if (i === WINNING_INDEX) {
-        newStrip.push(randomWinner);
+        newStrip[i] = randomWinner;
       } else {
-        // Use weighted selection for strip items too (more realistic distribution)
         const stripResult = selectWeightedWinner(itemsWithTickets);
-        const item = stripResult ? stripResult.winner : itemsWithTickets[0];
-        newStrip.push(item);
+        newStrip[i] = stripResult ? stripResult.winner : itemsWithTickets[0];
       }
     }
 
-    // Near miss logic: Place a legendary item near the winner for psychological effect
+    // Near miss logic
     if (randomWinner.rarity !== Rarity.LEGENDARY) {
-        const baitItem = itemsWithTickets.find(i => i.rarity === Rarity.LEGENDARY) || itemsWithTickets[itemsWithTickets.length - 1];
-        const offset = Math.random() > 0.5 ? 1 : -1;
-        if (newStrip[WINNING_INDEX + offset]) {
-            newStrip[WINNING_INDEX + offset] = baitItem;
-        }
+      const baitItem = itemsWithTickets.find(i => i.rarity === Rarity.LEGENDARY) || itemsWithTickets[itemsWithTickets.length - 1];
+      const offset = Math.random() > 0.5 ? 1 : -1;
+      const baitIndex = WINNING_INDEX + offset;
+      if (baitIndex >= 0 && baitIndex < TOTAL_CARDS_IN_STRIP) {
+        newStrip[baitIndex] = baitItem;
+      }
     }
 
     setStrip(newStrip);
-    
-    // Store ticket in state for potential UI display
-    stateRef.current.ticket = ticket;
-    
     return randomWinner;
   }, [itemsWithTickets]);
 
+  // Initialize audio once
   useEffect(() => {
     audioService.init().catch(() => {});
     generateStrip();
   }, [generateStrip]);
 
-  // REFINED Ease Out Back with Heavy Gravity
-  const easeOutBackCustom = (x: number): number => {
-    const c1 = 0.38; 
-    const c3 = c1 + 1;
-    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-  };
-
+  // Optimized easing function - inlined for performance
   const animate = useCallback((timestamp: number) => {
     const state = stateRef.current;
     if (!state.isAnimating) return;
@@ -109,30 +96,32 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     const elapsed = timestamp - state.startTime;
     const rawProgress = Math.min(elapsed / state.duration, 1);
     
+    // Inlined easing calculation
     const progress = Math.pow(rawProgress, 0.75);
+    const c1 = 0.38;
+    const c3 = c1 + 1;
+    const x = progress;
+    const ease = 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
     
-    const ease = easeOutBackCustom(progress);
-    const totalDistance = state.targetX; 
-    const newX = totalDistance * ease; 
-    
+    const newX = state.targetX * ease;
     const dx = Math.abs(newX - state.currentX);
-    const velocityNormalized = Math.min(1, dx / 8); 
-
+    
     state.currentX = newX;
 
-    const itemWidth = CARD_WIDTH + CARD_GAP;
-    
-    const tickPosition = Math.max(0, Math.abs(newX) - 25); 
-    const currentIndex = Math.floor(tickPosition / itemWidth);
+    // Tick sound - only when crossing card boundary
+    const tickPosition = Math.max(0, Math.abs(newX) - TICK_OFFSET);
+    const currentIndex = (tickPosition / ITEM_WIDTH) | 0; // Bitwise floor - faster
 
     if (currentIndex !== state.lastIndex) {
-        const isEnding = rawProgress > 0.85; 
-        audioService.playTick(velocityNormalized, isEnding);
-        state.lastIndex = currentIndex;
+      const velocityNormalized = Math.min(1, dx * 0.125); // dx / 8
+      audioService.playTick(velocityNormalized, rawProgress > 0.85);
+      state.lastIndex = currentIndex;
     }
 
-    if (containerRef.current) {
-      containerRef.current.style.transform = `translate3d(${newX}px, 0, 0)`;
+    // Direct DOM manipulation - bypasses React reconciliation
+    const container = containerRef.current;
+    if (container) {
+      container.style.transform = `translate3d(${newX}px,0,0)`;
     }
 
     if (rawProgress < 1) {
@@ -140,47 +129,43 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     } else {
       state.isAnimating = false;
       if (navigator.vibrate) navigator.vibrate(30);
-      
-      if (state.winner) {
-          onSpinEnd(state.winner);
-      }
+      if (state.winner) onSpinEnd(state.winner);
     }
   }, [onSpinEnd]);
 
   useEffect(() => {
     if (isSpinning) {
-        const winner = generateStrip();
-        if (!winner) return; // Safety check
+      const spinWinner = generateStrip();
+      if (!spinWinner) return;
 
-        const itemWidth = CARD_WIDTH + CARD_GAP;
-        const targetX = -1 * (WINNING_INDEX * itemWidth);
-        const duration = customDuration || SPIN_DURATION;
+      const targetX = -WINNING_INDEX * ITEM_WIDTH;
+      const duration = customDuration || SPIN_DURATION;
 
-        stateRef.current = {
-            startTime: 0,
-            startX: 0,
-            targetX: targetX,
-            currentX: 0,
-            lastIndex: 0,
-            isAnimating: true,
-            winner: winner,
-            duration: duration,
-            ticket: stateRef.current.ticket
-        };
+      // Reset state in one assignment
+      stateRef.current = {
+        startTime: 0,
+        targetX,
+        currentX: 0,
+        lastIndex: -1,
+        isAnimating: true,
+        winner: spinWinner,
+        duration,
+      };
 
-        onSpinStart();
-        cancelAnimationFrame(animationFrameId.current);
-        animationFrameId.current = requestAnimationFrame(animate);
+      // Reset transform before starting
+      if (containerRef.current) {
+        containerRef.current.style.transform = 'translate3d(0,0,0)';
+      }
+
+      onSpinStart();
+      cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = requestAnimationFrame(animate);
     }
     return () => cancelAnimationFrame(animationFrameId.current);
   }, [isSpinning, generateStrip, onSpinStart, animate, customDuration]);
 
-  const stripWidth = strip.length * (CARD_WIDTH + CARD_GAP);
-
-  // Check if this item is the winner (for highlighting)
-  const isWinnerItem = (item: LootItem, index: number) => {
-    return showResult && winner && index === WINNING_INDEX && item.id === winner.id;
-  };
+  // Pre-calculate strip width
+  const stripWidth = strip.length * ITEM_WIDTH;
 
   return (
     <div 
@@ -259,7 +244,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
             }}
         >
             {strip.map((item, index) => {
-                const isWinner = isWinnerItem(item, index);
+                const isWinner = showResult && winner && index === WINNING_INDEX && item.id === winner.id;
                 return (
                   <div 
                     key={`${item.id}-${index}`} 

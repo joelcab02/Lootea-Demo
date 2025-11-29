@@ -26,8 +26,10 @@
         max-width: 100vw;
         -webkit-tap-highlight-color: transparent;
         overscroll-behavior: none;
-        text-rendering: optimizeLegibility;
+        text-rendering: optimizeSpeed;
         -webkit-font-smoothing: antialiased;
+        /* GPU Layer Promotion */
+        transform: translateZ(0);
       }
       
       #root {
@@ -51,10 +53,29 @@
         font-style: italic;
         letter-spacing: -0.05em;
       }
+      /* GPU Acceleration Classes */
       .gpu-accelerate {
         transform: translateZ(0);
         will-change: transform;
         backface-visibility: hidden;
+      }
+      
+      /* Force GPU compositing for animations */
+      .gpu-layer {
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+      }
+      
+      /* Optimized animations - use transform only */
+      .animate-optimized {
+        will-change: transform, opacity;
+        contain: layout style paint;
+      }
+      
+      /* Reduce paint areas */
+      .contain-paint {
+        contain: paint;
       }
       
       /* Mobile performance optimizations */
@@ -62,8 +83,22 @@
         * {
           -webkit-tap-highlight-color: transparent;
         }
+        /* Disable expensive effects on mobile */
         .mobile-no-blur {
           filter: none !important;
+        }
+        /* Reduce animation complexity */
+        .mobile-simple-transition {
+          transition-duration: 150ms !important;
+        }
+      }
+      
+      /* Reduce motion for users who prefer it */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
         }
       }
       .no-scrollbar::-webkit-scrollbar {
@@ -80,8 +115,8 @@
       }
       
       @keyframes float {
-        0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
-        50% { transform: translateY(-8px) scale(1.2); opacity: 1; }
+        0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.6; }
+        50% { transform: translate3d(0, -8px, 0); opacity: 1; }
       }
       
       @keyframes floatUp {
@@ -92,8 +127,8 @@
       }
       
       @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
+        0% { transform: translate3d(-100%, 0, 0); }
+        100% { transform: translate3d(100%, 0, 0); }
       }
       
       .animate-marquee {
