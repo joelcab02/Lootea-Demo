@@ -17,54 +17,89 @@ const steps = [
 export default function HowItWorks() {
   return (
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
-      {/* Header */}
-      <div className="text-center mb-6 sm:mb-10">
-        <h2 className="font-display text-xl sm:text-2xl md:text-3xl text-white mb-1 sm:mb-2 uppercase">
-          ¿CÓMO FUNCIONA?
+      {/* Header - Premium */}
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 
+          className="font-display text-xl sm:text-2xl md:text-3xl mb-2 uppercase"
+          style={{
+            background: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          ¿Cómo Funciona?
         </h2>
-        <p className="text-slate-500 text-xs sm:text-sm max-w-md mx-auto">
+        <p className="text-slate-600 text-xs sm:text-sm">
           4 simples pasos para ganar productos reales
         </p>
       </div>
 
       {/* Steps */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         {steps.map((step) => (
           <div 
             key={step.num}
-            className={`
-              relative p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl text-center group transition-all duration-300
-              ${step.highlight 
-                ? 'bg-[#FFC800] text-black' 
-                : 'bg-[#13151b] border border-[#1e2330]'}
-            `}
+            className="relative group"
           >
-            {/* Step number */}
-            <div className={`
-              absolute top-2 right-2 sm:top-3 sm:right-3 text-[10px] sm:text-xs font-mono
-              ${step.highlight ? 'text-black/30' : 'text-slate-700'}
-            `}>
-              {step.num}
-            </div>
+            {/* Card */}
+            <div 
+              className={`
+                relative p-4 sm:p-6 rounded-2xl text-center transition-all duration-300 overflow-hidden
+                ${step.highlight ? '' : 'hover:-translate-y-1'}
+              `}
+              style={step.highlight ? {
+                background: 'linear-gradient(135deg, #FFE566 0%, #FFC800 50%, #E6A800 100%)',
+                boxShadow: '0 8px 32px rgba(255,200,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+              } : {
+                background: 'linear-gradient(145deg, #1a1d26 0%, #12141a 100%)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+              }}
+            >
+              {/* Top shine */}
+              <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+              
+              {/* Hover glow for non-highlight */}
+              {!step.highlight && (
+                <div 
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  style={{ boxShadow: 'inset 0 0 0 1px rgba(255,200,0,0.2)' }}
+                />
+              )}
 
-            {/* Icon */}
-            <div className={`
-              w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-4
-              ${step.highlight 
-                ? 'bg-black text-[#FFC800]' 
-                : 'bg-[#0d1019] text-slate-400'}
-              transition-colors
-            `}>
-              {step.icon}
-            </div>
+              {/* Step number */}
+              <div className={`
+                absolute top-3 right-3 text-[10px] sm:text-xs font-display
+                ${step.highlight ? 'text-black/30' : 'text-slate-700'}
+              `}>
+                {step.num}
+              </div>
 
-            {/* Content */}
-            <h3 className={`font-display text-sm sm:text-base mb-0.5 sm:mb-1 uppercase ${step.highlight ? 'text-black' : 'text-white'}`}>
-              {step.title.toUpperCase()}
-            </h3>
-            <p className={`text-[10px] sm:text-xs leading-relaxed ${step.highlight ? 'text-black/70' : 'text-slate-500'}`}>
-              {step.desc}
-            </p>
+              {/* Icon */}
+              <div 
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4"
+                style={step.highlight ? {
+                  background: '#000',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                } : {
+                  background: 'linear-gradient(135deg, rgba(255,200,0,0.1) 0%, rgba(255,200,0,0.02) 100%)',
+                  border: '1px solid rgba(255,200,0,0.15)',
+                }}
+              >
+                <div className={step.highlight ? 'text-[#FFC800]' : 'text-[#FFC800]/70'}>
+                  {step.icon}
+                </div>
+              </div>
+
+              {/* Content */}
+              <h3 
+                className={`font-display text-sm sm:text-base mb-1 uppercase tracking-wide ${step.highlight ? 'text-black' : 'text-white'}`}
+              >
+                {step.title}
+              </h3>
+              <p className={`text-[10px] sm:text-xs leading-relaxed ${step.highlight ? 'text-black/60' : 'text-slate-500'}`}>
+                {step.desc}
+              </p>
+            </div>
           </div>
         ))}
       </div>
