@@ -185,39 +185,51 @@ const App: React.FC = () => {
             {/* CONTROLS - Clean & Simple */}
             <div className="z-20 w-full max-w-[700px] px-4">
                 
-                {/* Main Button with Particle Effects */}
+                {/* Main Button - Premium Metallic Gold */}
                 <button 
                     onClick={handleSpin}
                     disabled={isSpinning}
                     className="
                         group relative w-full h-16 md:h-[72px] mb-4
-                        bg-gradient-to-b from-[#FFD000] to-[#FFC800]
                         text-black font-display uppercase text-2xl md:text-3xl
                         rounded-xl
                         transition-all duration-150
-                        shadow-[0_6px_0_#b38b00,0_8px_20px_rgba(255,200,0,0.3)]
-                        hover:shadow-[0_6px_0_#b38b00,0_8px_30px_rgba(255,200,0,0.5)]
-                        active:shadow-[0_2px_0_#b38b00] active:translate-y-1
+                        shadow-[0_6px_0_#996600,0_8px_25px_rgba(255,200,0,0.4)]
+                        hover:shadow-[0_6px_0_#996600,0_10px_40px_rgba(255,200,0,0.6)]
+                        active:shadow-[0_2px_0_#996600] active:translate-y-1
                         disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
                         flex items-center justify-center gap-4
                         overflow-hidden
                     "
+                    style={{
+                        background: 'linear-gradient(180deg, #FFE566 0%, #FFD700 15%, #FFC800 50%, #E6A800 85%, #CC9900 100%)',
+                    }}
                 >
+                    {/* Metallic shine overlay */}
+                    <div className="absolute inset-0 rounded-xl opacity-60"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.1) 100%)',
+                        }}
+                    ></div>
+                    
+                    {/* Top edge highlight */}
+                    <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/70 to-transparent"></div>
+                    
                     {/* Shimmer effect */}
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
                     
                     {/* Floating particles */}
                     <div className="absolute inset-0 pointer-events-none">
-                        <div className="absolute w-1 h-1 bg-white/60 rounded-full animate-[float_3s_ease-in-out_infinite] left-[10%] top-[20%]"></div>
-                        <div className="absolute w-1.5 h-1.5 bg-white/40 rounded-full animate-[float_4s_ease-in-out_infinite_0.5s] left-[25%] top-[60%]"></div>
-                        <div className="absolute w-1 h-1 bg-white/50 rounded-full animate-[float_3.5s_ease-in-out_infinite_1s] left-[75%] top-[30%]"></div>
-                        <div className="absolute w-0.5 h-0.5 bg-white/70 rounded-full animate-[float_2.5s_ease-in-out_infinite_0.3s] left-[85%] top-[70%]"></div>
-                        <div className="absolute w-1 h-1 bg-white/45 rounded-full animate-[float_4s_ease-in-out_infinite_1.5s] left-[50%] top-[15%]"></div>
-                        <div className="absolute w-0.5 h-0.5 bg-white/55 rounded-full animate-[float_3s_ease-in-out_infinite_2s] left-[60%] top-[75%]"></div>
+                        <div className="absolute w-1 h-1 bg-white/70 rounded-full animate-[float_3s_ease-in-out_infinite] left-[10%] top-[20%]"></div>
+                        <div className="absolute w-1.5 h-1.5 bg-white/50 rounded-full animate-[float_4s_ease-in-out_infinite_0.5s] left-[25%] top-[60%]"></div>
+                        <div className="absolute w-1 h-1 bg-white/60 rounded-full animate-[float_3.5s_ease-in-out_infinite_1s] left-[75%] top-[30%]"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-white/80 rounded-full animate-[float_2.5s_ease-in-out_infinite_0.3s] left-[85%] top-[70%]"></div>
+                        <div className="absolute w-1 h-1 bg-white/55 rounded-full animate-[float_4s_ease-in-out_infinite_1.5s] left-[50%] top-[15%]"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-white/65 rounded-full animate-[float_3s_ease-in-out_infinite_2s] left-[60%] top-[75%]"></div>
                     </div>
                     
                     {/* Glow pulse on hover */}
-                    <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
+                    <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/15 transition-all duration-300"></div>
                     
                     {isSpinning ? (
                         <span className="relative z-10 animate-pulse">ABRIENDO...</span>
