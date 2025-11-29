@@ -167,6 +167,26 @@ const App: React.FC = () => {
                 {/* Accent glow spots */}
                 <div className="absolute top-[15%] left-[20%] w-[200px] h-[200px] bg-[#FFC800] opacity-[0.03] blur-[80px] animate-pulse"></div>
                 <div className="absolute top-[25%] right-[15%] w-[250px] h-[250px] bg-[#FFD700] opacity-[0.025] blur-[100px] animate-pulse" style={{animationDelay: '1s'}}></div>
+                
+                {/* Tech circuit lines - Left side */}
+                <svg className="absolute left-0 top-[10%] w-[150px] h-[400px] opacity-[0.15]" viewBox="0 0 150 400">
+                    <path d="M0 50 L50 50 L50 100 L80 100 L80 150" stroke="#FFC800" strokeWidth="1" fill="none"/>
+                    <path d="M0 120 L30 120 L30 180 L60 180 L60 250 L40 250" stroke="#FFC800" strokeWidth="1" fill="none"/>
+                    <path d="M0 200 L70 200 L70 280 L100 280 L100 350" stroke="#FFC800" strokeWidth="1" fill="none"/>
+                    <circle cx="80" cy="150" r="3" fill="#FFC800"/>
+                    <circle cx="40" cy="250" r="3" fill="#FFC800"/>
+                    <circle cx="100" cy="350" r="3" fill="#FFC800"/>
+                </svg>
+                
+                {/* Tech circuit lines - Right side */}
+                <svg className="absolute right-0 top-[15%] w-[150px] h-[400px] opacity-[0.15]" viewBox="0 0 150 400" style={{transform: 'scaleX(-1)'}}>
+                    <path d="M0 80 L60 80 L60 140 L90 140 L90 200" stroke="#FFC800" strokeWidth="1" fill="none"/>
+                    <path d="M0 160 L40 160 L40 220 L70 220 L70 300" stroke="#FFC800" strokeWidth="1" fill="none"/>
+                    <path d="M0 260 L50 260 L50 320 L80 320" stroke="#FFC800" strokeWidth="1" fill="none"/>
+                    <circle cx="90" cy="200" r="3" fill="#FFC800"/>
+                    <circle cx="70" cy="300" r="3" fill="#FFC800"/>
+                    <circle cx="80" cy="320" r="3" fill="#FFC800"/>
+                </svg>
             </div>
             
             {/* Box Title */}
