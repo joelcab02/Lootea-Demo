@@ -1,20 +1,41 @@
 /**
  * Lootea Admin Dashboard - Shopify-style admin panel
+ * Protected route - only accessible by admin users
  */
 
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Rarity, LootItem } from '../types';
 import { supabase } from '../services/supabaseClient';
 import { Box, getBoxes, getBoxBySlug } from '../services/boxService';
+import type { User } from '@supabase/supabase-js';
 
 // Sections
 type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'assets';
 
+// Auth state type
+interface AdminAuthState {
+  isChecking: boolean;
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  user: User | null;
+  error: string | null;
+}
+
 const AdminDashboard: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const routerNavigate = useNavigate();
   const section = (searchParams.get('section') || 'dashboard') as Section;
   const editId = searchParams.get('id') || '';
+  
+  // Auth state
+  const [authState, setAuthState] = useState<AdminAuthState>({
+    isChecking: true,
+    isAuthenticated: false,
+    isAdmin: false,
+    user: null,
+    error: null,
+  });
   
   const [boxes, setBoxes] = useState<Box[]>([]);
   const [products, setProducts] = useState<LootItem[]>([]);
@@ -22,37 +43,163 @@ const AdminDashboard: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [stats, setStats] = useState({ boxes: 0, products: 0, totalValue: 0 });
 
-  // Load data
+  // Check admin authentication on mount
   useEffect(() => {
-    loadData();
+    checkAdminAuth();
+    
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setAuthState({
+          isChecking: false,
+          isAuthenticated: false,
+          isAdmin: false,
+          user: null,
+          error: 'Sesión expirada',
+        });
+      }
+    });
+    
+    return () => subscription.unsubscribe();
   }, []);
+  
+  // Check if user is authenticated and is admin
+  const checkAdminAuth = async () => {
+    try {
+      // Get current session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        setAuthState({
+          isChecking: false,
+          isAuthenticated: false,
+          isAdmin: false,
+          user: null,
+          error: 'No has iniciado sesión',
+        });
+        return;
+      }
+      
+      // Check if user is admin in profiles table
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (profileError || !profile) {
+        setAuthState({
+          isChecking: false,
+          isAuthenticated: true,
+          isAdmin: false,
+          user: session.user,
+          error: 'No se pudo verificar permisos de admin',
+        });
+        return;
+      }
+      
+      if (!profile.is_admin) {
+        setAuthState({
+          isChecking: false,
+          isAuthenticated: true,
+          isAdmin: false,
+          user: session.user,
+          error: 'No tienes permisos de administrador',
+        });
+        return;
+      }
+      
+      // User is authenticated and is admin
+      setAuthState({
+        isChecking: false,
+        isAuthenticated: true,
+        isAdmin: true,
+        user: session.user,
+        error: null,
+      });
+      
+      // Load admin data
+      loadData();
+      
+    } catch (err) {
+      console.error('Admin auth check failed:', err);
+      setAuthState({
+        isChecking: false,
+        isAuthenticated: false,
+        isAdmin: false,
+        user: null,
+        error: 'Error al verificar autenticación',
+      });
+    }
+  };
+  
+  // Show loading while checking auth
+  if (authState.isChecking) {
+    return (
+      <div className="min-h-screen bg-[#08090c] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-3 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Verificando permisos...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show access denied if not admin
+  if (!authState.isAdmin) {
+    return (
+      <div className="min-h-screen bg-[#08090c] flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-2">Acceso Denegado</h1>
+          <p className="text-slate-400 mb-6">{authState.error}</p>
+          
+          {!authState.isAuthenticated ? (
+            <button
+              onClick={() => routerNavigate('/')}
+              className="px-6 py-3 bg-[#F7C948] text-black font-bold rounded-lg hover:bg-[#E6B800] transition-colors"
+            >
+              Ir a Iniciar Sesión
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-xs text-slate-500">
+                Conectado como: {authState.user?.email}
+              </p>
+              <button
+                onClick={() => routerNavigate('/')}
+                className="px-6 py-3 bg-[#1a1d24] text-white font-medium rounded-lg hover:bg-[#252830] transition-colors"
+              >
+                Volver al Inicio
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const loadData = async () => {
     setIsLoading(true);
     
     try {
-      console.log('📦 Loading admin data...');
-      
-      // Test Supabase connection first
-      console.log('📦 Testing Supabase connection...');
-      const testStart = Date.now();
-      const testRes = await supabase.from('boxes').select('id').limit(1);
-      console.log('📦 Supabase test took:', Date.now() - testStart, 'ms', testRes);
-      
-      // Admin loads ALL boxes (not just active ones)
-      console.log('📦 Loading boxes and items...');
+      // Admin loads ALL boxes and items
       const [boxesRes, productsRes] = await Promise.all([
         supabase.from('boxes').select('*').order('created_at', { ascending: false }),
         supabase.from('items').select('*').order('price', { ascending: false })
       ]);
       
-      console.log('📦 Boxes result:', boxesRes);
-      console.log('📦 Products result:', productsRes);
-      
-      console.log('📦 Boxes loaded:', boxesRes.data?.length, boxesRes.error);
-      console.log('📦 Products loaded:', productsRes.data?.length, productsRes.error);
+      if (boxesRes.error) console.error('Error loading boxes:', boxesRes.error);
+      if (productsRes.error) console.error('Error loading products:', productsRes.error);
       
       setBoxes(boxesRes.data || []);
+      
       // Map image_url to image for compatibility
       const mappedProducts = (productsRes.data || []).map(p => ({
         ...p,
@@ -67,7 +214,7 @@ const AdminDashboard: React.FC = () => {
         totalValue
       });
     } catch (err) {
-      console.error('❌ Error loading admin data:', err);
+      console.error('Error loading admin data:', err);
     }
     
     setIsLoading(false);
@@ -144,8 +291,19 @@ const AdminDashboard: React.FC = () => {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="p-3 border-t border-[#1a1d24] space-y-1">
+        {/* Footer - Admin info */}
+        <div className="p-3 border-t border-[#1a1d24] space-y-2">
+          {/* Admin badge */}
+          <div className="px-3 py-2 bg-[#F7C948]/10 rounded-md border border-[#F7C948]/20">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-[10px] text-[#F7C948] font-medium uppercase tracking-wider">Admin</span>
+            </div>
+            <p className="text-[11px] text-slate-400 truncate" title={authState.user?.email || ''}>
+              {authState.user?.email}
+            </p>
+          </div>
+          
           <Link 
             to="/"
             className="flex items-center gap-2 text-slate-500 hover:text-white text-xs px-3 py-2 rounded-md hover:bg-[#1a1d24] transition-all"
@@ -768,17 +926,12 @@ const ProductEditSection: React.FC<{
         odds: 0
       });
     } else {
-      const updateData = {
+      const { error } = await supabase.from('items').update({
         name: form.name,
         price: parseFloat(form.price),
         rarity: form.rarity,
         image_url: form.image
-      };
-      console.log('Updating product:', productId, updateData);
-      
-      const { data, error } = await supabase.from('items').update(updateData).eq('id', productId).select();
-      
-      console.log('Update result:', { data, error });
+      }).eq('id', productId);
       
       if (error) {
         console.error('Update error:', error);
