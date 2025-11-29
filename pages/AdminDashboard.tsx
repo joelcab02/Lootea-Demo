@@ -33,15 +33,19 @@ const AdminDashboard: React.FC = () => {
     try {
       console.log('📦 Loading admin data...');
       
+      // Admin loads ALL boxes (not just active ones)
       const [boxesRes, productsRes] = await Promise.all([
-        getBoxes(),
+        supabase.from('boxes').select('*').order('created_at', { ascending: false }),
         supabase.from('items').select('*').order('price', { ascending: false })
       ]);
       
-      console.log('📦 Boxes loaded:', boxesRes.length);
+      console.log('📦 Boxes result:', boxesRes);
+      console.log('📦 Products result:', productsRes);
+      
+      console.log('📦 Boxes loaded:', boxesRes.data?.length, boxesRes.error);
       console.log('📦 Products loaded:', productsRes.data?.length, productsRes.error);
       
-      setBoxes(boxesRes);
+      setBoxes(boxesRes.data || []);
       // Map image_url to image for compatibility
       const mappedProducts = (productsRes.data || []).map(p => ({
         ...p,
@@ -51,7 +55,7 @@ const AdminDashboard: React.FC = () => {
       
       const totalValue = (productsRes.data || []).reduce((sum, p) => sum + Number(p.price), 0);
       setStats({
-        boxes: boxesRes.length,
+        boxes: (boxesRes.data || []).length,
         products: (productsRes.data || []).length,
         totalValue
       });
