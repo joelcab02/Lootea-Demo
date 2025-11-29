@@ -27,10 +27,10 @@ function Footer() {
       {/* Top gold line */}
       <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent 0%, #F7C948 50%, transparent 100%)' }} />
       
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 md:px-6 pt-14 pb-8">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 md:px-6 pt-10 md:pt-14 pb-8">
         
         {/* Trust Badges - Premium Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 md:mb-16">
           <TrustCard 
             icon={<Icons.ShieldCheck />}
             title="100% Auténticos"

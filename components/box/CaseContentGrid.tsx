@@ -15,7 +15,7 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
   return (
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
       {/* Header - Premium */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
         <div 
           className="w-1 h-8 rounded-full"
           style={{ background: 'linear-gradient(180deg, #F7C948 0%, #996600 100%)' }}
@@ -31,7 +31,7 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-4">
         {sortedItemsWithOdds.map((item) => (
           <ItemCard key={item.id} item={item as LootItem & { normalizedOdds: number }} />
         ))}

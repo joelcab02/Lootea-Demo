@@ -178,7 +178,7 @@ const App: React.FC = () => {
         </header>
 
         {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative overflow-visible">
+        <div className="flex flex-col items-center pt-8 md:pt-10 pb-8 relative overflow-visible">
             
             {/* Premium ambient glow system - DESKTOP ONLY for performance */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
@@ -236,7 +236,7 @@ const App: React.FC = () => {
             </div>
             
             {/* Box Title */}
-            <div className="z-10 text-center mb-4 md:mb-8 px-4">
+            <div className="z-10 text-center mb-6 md:mb-8 px-4">
                 <h1 className="font-display text-2xl sm:text-4xl md:text-6xl text-white drop-shadow-2xl mb-1 md:mb-2 uppercase">
                     1% iPHONE BOX
                 </h1>
@@ -246,7 +246,7 @@ const App: React.FC = () => {
             </div>
 
             {/* SPINNER with glow backdrop */}
-            <div className="relative w-full max-w-[1600px] z-10 mb-8">
+            <div className="relative w-full max-w-[1600px] z-10 mb-10 md:mb-8">
                 {/* Spinner glow - hidden on mobile for performance */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] bg-[#F7C948] opacity-[0.08] blur-[80px] pointer-events-none hidden md:block"></div>
                 <Spinner 
@@ -268,7 +268,7 @@ const App: React.FC = () => {
                     onClick={handleSpin}
                     disabled={isSpinning}
                     className="
-                        group relative w-full h-16 md:h-[72px] mb-4
+                        group relative w-full h-16 md:h-[72px] mb-5
                         text-black font-display uppercase text-2xl md:text-3xl
                         rounded-xl
                         transition-all duration-150
@@ -379,7 +379,7 @@ const App: React.FC = () => {
 
         {/* CONTENT SECTIONS */}
         <div className="flex-1">
-            <div className="flex flex-col gap-12 py-12">
+            <div className="flex flex-col gap-8 md:gap-12 py-8 md:py-12">
                 <CaseContentGrid items={items} />
             </div>
         </div>
