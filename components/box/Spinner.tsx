@@ -169,9 +169,11 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
 
   return (
     <div 
-      className="relative w-full h-[200px] sm:h-[240px] overflow-hidden flex items-center"
+      className="relative w-full h-[200px] sm:h-[240px] flex items-center"
       style={{
         background: 'linear-gradient(180deg, #08090c 0%, #0a0c10 50%, #08090c 100%)',
+        overflow: 'clip', // Clip horizontally but allow vertical overflow for spotlight
+        overflowY: 'visible',
       }}
     >
         {/* Top border - gold gradient */}
@@ -179,11 +181,6 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
         
         {/* Bottom border - gold gradient */}
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFC800]/40 to-transparent z-30"></div>
-        
-        {/* Dark overlay when showing result */}
-        {showResult && winner && (
-          <div className="absolute inset-0 bg-black/80 z-25 transition-opacity duration-500" />
-        )}
         
         {/* Center Indicator - Premium metallic */}
         <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-100'}`}>
@@ -261,26 +258,13 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                           : undefined,
                     }}
                   >
-                    {/* Spotlight beam from above */}
+                    {/* Radial glow behind winner */}
                     {isWinner && (
                       <div 
-                        className="absolute -top-32 left-1/2 -translate-x-1/2 pointer-events-none"
+                        className="absolute -inset-8 pointer-events-none"
                         style={{
-                          width: '200px',
-                          height: '180px',
-                          background: 'linear-gradient(180deg, rgba(255,200,0,0.4) 0%, rgba(255,200,0,0.1) 40%, transparent 100%)',
-                          clipPath: 'polygon(35% 0%, 65% 0%, 100% 100%, 0% 100%)',
+                          background: 'radial-gradient(ellipse 120% 100% at 50% 50%, rgba(255,200,0,0.35) 0%, rgba(255,200,0,0.15) 40%, transparent 70%)',
                           animation: 'spotlightPulse 2s ease-in-out infinite',
-                        }}
-                      />
-                    )}
-                    
-                    {/* Outer glow ring */}
-                    {isWinner && (
-                      <div 
-                        className="absolute -inset-4 rounded-2xl pointer-events-none"
-                        style={{
-                          background: 'radial-gradient(circle, rgba(255,200,0,0.25) 0%, transparent 70%)',
                         }}
                       />
                     )}
