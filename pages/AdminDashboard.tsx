@@ -30,25 +30,34 @@ const AdminDashboard: React.FC = () => {
   const loadData = async () => {
     setIsLoading(true);
     
-    const [boxesRes, productsRes] = await Promise.all([
-      getBoxes(),
-      supabase.from('items').select('*').order('price', { ascending: false })
-    ]);
-    
-    setBoxes(boxesRes);
-    // Map image_url to image for compatibility
-    const mappedProducts = (productsRes.data || []).map(p => ({
-      ...p,
-      image: p.image_url || p.image || ''
-    }));
-    setProducts(mappedProducts);
-    
-    const totalValue = (productsRes.data || []).reduce((sum, p) => sum + Number(p.price), 0);
-    setStats({
-      boxes: boxesRes.length,
-      products: (productsRes.data || []).length,
-      totalValue
-    });
+    try {
+      console.log('📦 Loading admin data...');
+      
+      const [boxesRes, productsRes] = await Promise.all([
+        getBoxes(),
+        supabase.from('items').select('*').order('price', { ascending: false })
+      ]);
+      
+      console.log('📦 Boxes loaded:', boxesRes.length);
+      console.log('📦 Products loaded:', productsRes.data?.length, productsRes.error);
+      
+      setBoxes(boxesRes);
+      // Map image_url to image for compatibility
+      const mappedProducts = (productsRes.data || []).map(p => ({
+        ...p,
+        image: p.image_url || p.image || ''
+      }));
+      setProducts(mappedProducts);
+      
+      const totalValue = (productsRes.data || []).reduce((sum, p) => sum + Number(p.price), 0);
+      setStats({
+        boxes: boxesRes.length,
+        products: (productsRes.data || []).length,
+        totalValue
+      });
+    } catch (err) {
+      console.error('❌ Error loading admin data:', err);
+    }
     
     setIsLoading(false);
   };
