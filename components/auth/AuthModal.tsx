@@ -28,19 +28,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Reset form when opening
+  // Reset mode when initialMode changes
   useEffect(() => {
-    if (isOpen) {
-      setMode(initialMode);
-      setError('');
-      setEmail('');
-      setPassword('');
-      setAgreed(false);
-    }
+    setMode(initialMode);
+    setError('');
+    setEmail('');
+    setPassword('');
+    setAgreed(false);
   }, [initialMode, isOpen]);
+  
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const isLogin = mode === 'login';
 
@@ -101,14 +105,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/90"
-        onClick={onClose} 
-      />
+      <div className="absolute inset-0 bg-black/90" onClick={onClose} />
       
       {/* Modal */}
       <div 
-        className="relative z-[101] w-full sm:max-w-sm bg-[#0d1019] border-t sm:border border-[#1e2330] rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-[slideUp_200ms_ease-out]"
+        className="relative z-[101] w-full sm:max-w-sm bg-[#0d1019] border-t sm:border border-[#1e2330] rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
         style={{ contain: 'layout paint' }}
       >
         {/* Close button */}
@@ -155,6 +156,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-3 py-2.5 rounded-lg focus:outline-none focus:border-[#FFC800] transition-colors placeholder-slate-600 text-sm"
                 placeholder="tu@email.com"
                 required
+                autoFocus
               />
             </div>
 
