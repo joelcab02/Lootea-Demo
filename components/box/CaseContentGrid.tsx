@@ -18,7 +18,7 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
       <div className="flex items-center gap-4 mb-8">
         <div 
           className="w-1 h-8 rounded-full"
-          style={{ background: 'linear-gradient(180deg, #FFC800 0%, #996600 100%)' }}
+          style={{ background: 'linear-gradient(180deg, #F7C948 0%, #996600 100%)' }}
         />
         <div>
           <h2 className="font-display text-xl md:text-2xl text-white uppercase tracking-wide">
@@ -67,7 +67,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
       <div 
         className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
         style={{ 
-          boxShadow: 'inset 0 0 0 1px rgba(255,200,0,0.3), 0 0 20px rgba(255,200,0,0.1)' 
+          boxShadow: 'inset 0 0 0 1px rgba(247,201,72,0.3), 0 0 20px rgba(247,201,72,0.1)' 
         }}
       />
       
@@ -75,7 +75,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
       <div className="p-4 pb-2">
         <div className="relative w-full aspect-square flex items-center justify-center">
           {isLoading ? (
-            <div className="w-10 h-10 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin" />
           ) : isEmoji ? (
             <span className="text-5xl drop-shadow-lg">{item.image}</span>
           ) : (
@@ -99,12 +99,12 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
         {/* Price bar */}
         <div 
           className="flex items-center justify-between px-2 py-1.5 rounded-lg"
-          style={{ background: 'rgba(255,200,0,0.08)' }}
+          style={{ background: 'rgba(247,201,72,0.08)' }}
         >
           <span 
             className="font-display text-xs"
             style={{
-              background: 'linear-gradient(180deg, #FFE566 0%, #FFC800 50%, #CC9900 100%)',
+              background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 50%, #D4A520 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}

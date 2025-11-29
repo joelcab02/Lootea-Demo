@@ -132,8 +132,8 @@ export const UserMenu: React.FC = () => {
         <button 
           className="group flex items-center gap-1.5 rounded-xl text-black px-3 md:px-4 py-2 md:py-2.5 transition-all relative overflow-hidden"
           style={{
-            background: 'linear-gradient(180deg, #FFE566 0%, #FFD700 20%, #FFC800 50%, #E6A800 80%, #CC9900 100%)',
-            boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(255,200,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+            background: 'linear-gradient(180deg, #FFD966 0%, #FFD700 20%, #F7C948 50%, #E6A800 80%, #D4A520 100%)',
+            boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(247,201,72,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
           }}
         >
           {/* Metallic shine */}
@@ -161,21 +161,21 @@ export const UserMenu: React.FC = () => {
             className="flex items-center gap-2 px-2.5 md:px-3 py-2 md:py-2.5 rounded-xl transition-all relative overflow-hidden group"
             style={{
               background: dropdownOpen 
-                ? 'linear-gradient(135deg, rgba(255,200,0,0.15) 0%, rgba(255,200,0,0.05) 100%)'
+                ? 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)'
                 : 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
-              border: dropdownOpen ? '1px solid rgba(255,200,0,0.4)' : '1px solid rgba(255,255,255,0.1)',
+              border: dropdownOpen ? '1px solid rgba(247,201,72,0.4)' : '1px solid rgba(255,255,255,0.1)',
             }}
           >
             {/* Hover glow */}
-            <div className="absolute inset-0 bg-[#FFC800]/0 group-hover:bg-[#FFC800]/10 transition-colors rounded-xl"></div>
+            <div className="absolute inset-0 bg-[#F7C948]/0 group-hover:bg-[#F7C948]/10 transition-colors rounded-xl"></div>
             
             {/* Avatar with glow */}
             <div className="relative">
-              <div className="absolute inset-0 bg-[#FFC800] blur-md opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <div className="absolute inset-0 bg-[#F7C948] blur-md opacity-30 group-hover:opacity-50 transition-opacity"></div>
               <div className="relative w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-black text-sm md:text-base font-display font-black"
                 style={{
-                  background: 'linear-gradient(135deg, #FFE566 0%, #FFC800 50%, #E6A800 100%)',
-                  boxShadow: '0 2px 8px rgba(255,200,0,0.4)',
+                  background: 'linear-gradient(135deg, #FFD966 0%, #F7C948 50%, #E6A800 100%)',
+                  boxShadow: '0 2px 8px rgba(247,201,72,0.4)',
                 }}
               >
                 {displayName.charAt(0).toUpperCase()}
@@ -184,11 +184,11 @@ export const UserMenu: React.FC = () => {
               <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 md:w-4.5 md:h-4.5 rounded-full flex items-center justify-center"
                 style={{
                   background: 'linear-gradient(135deg, #1a1d26 0%, #0d1019 100%)',
-                  border: '1.5px solid #FFC800',
-                  boxShadow: '0 0 6px rgba(255,200,0,0.5)',
+                  border: '1.5px solid #F7C948',
+                  boxShadow: '0 0 6px rgba(247,201,72,0.5)',
                 }}
               >
-                <span className="text-[9px] font-bold text-[#FFC800]">{level}</span>
+                <span className="text-[9px] font-bold text-[#F7C948]">{level}</span>
               </div>
             </div>
             
@@ -198,7 +198,7 @@ export const UserMenu: React.FC = () => {
             </span>
             
             {/* Chevron */}
-            <div className={`relative text-slate-400 group-hover:text-[#FFC800] transition-all ${dropdownOpen ? 'rotate-180 text-[#FFC800]' : ''}`}>
+            <div className={`relative text-slate-400 group-hover:text-[#F7C948] transition-all ${dropdownOpen ? 'rotate-180 text-[#F7C948]' : ''}`}>
               <Icons.ChevronDown />
             </div>
           </button>
@@ -207,17 +207,17 @@ export const UserMenu: React.FC = () => {
           {dropdownOpen && (
             <div className="absolute right-0 top-full mt-2 w-56 bg-[#0d1019] border border-[#1e2330] rounded-xl shadow-2xl z-50 overflow-hidden">
               {/* Gold accent line */}
-              <div className="h-0.5 bg-gradient-to-r from-transparent via-[#FFC800] to-transparent" />
+              <div className="h-0.5 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent" />
               
               {/* User info header */}
               <div className="p-3 border-b border-[#1e2330]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFC800] to-[#FF9500] flex items-center justify-center text-black text-lg font-display font-black">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F7C948] to-[#FF9500] flex items-center justify-center text-black text-lg font-display font-black">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-medium text-sm truncate">{displayName}</p>
-                    <div className="flex items-center gap-1 text-[#FFC800]">
+                    <div className="flex items-center gap-1 text-[#F7C948]">
                       <Icons.Level />
                       <span className="text-xs font-medium">Nivel {level}</span>
                     </div>
@@ -227,19 +227,19 @@ export const UserMenu: React.FC = () => {
               
               {/* Menu items */}
               <div className="p-2">
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#F7C948] rounded-lg text-sm transition-colors">
                   <Icons.Inventory />
                   <span>Mi Inventario</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#F7C948] rounded-lg text-sm transition-colors">
                   <Icons.History />
                   <span>Historial</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#F7C948] rounded-lg text-sm transition-colors">
                   <Icons.Fairness />
                   <span>Provably Fair</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#FFC800] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#F7C948] rounded-lg text-sm transition-colors">
                   <Icons.Settings />
                   <span>Configuración</span>
                 </button>
@@ -284,8 +284,8 @@ export const UserMenu: React.FC = () => {
           onClick={openRegister}
           className="px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-display uppercase transition-all relative overflow-hidden group rounded-xl"
           style={{
-            background: 'linear-gradient(180deg, #FFE566 0%, #FFD700 20%, #FFC800 50%, #E6A800 80%, #CC9900 100%)',
-            boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(255,200,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+            background: 'linear-gradient(180deg, #FFD966 0%, #FFD700 20%, #F7C948 50%, #E6A800 80%, #D4A520 100%)',
+            boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(247,201,72,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
           }}
         >
           {/* Metallic shine */}

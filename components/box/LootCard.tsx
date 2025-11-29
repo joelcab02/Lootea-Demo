@@ -52,7 +52,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
       <div className={`relative z-10 ${imageSizeClass} mb-1 sm:mb-2 flex items-center justify-center ${!isSpinner ? 'transition-transform duration-300 group-hover:scale-110' : ''}`}>
         {isLoading ? (
             <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#1e2330] to-[#0d1019] animate-pulse flex items-center justify-center">
-              <div className="w-10 h-10 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
             </div>
         ) : isEmoji ? (
              <span className={`${emojiSizeClass} select-none`}>
@@ -80,14 +80,14 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
         <div 
           className="inline-flex items-center justify-center rounded px-2 py-0.5"
           style={{
-            background: 'rgba(255,200,0,0.1)',
-            border: '1px solid rgba(255,200,0,0.2)',
+            background: 'rgba(247,201,72,0.1)',
+            border: '1px solid rgba(247,201,72,0.2)',
           }}
         >
           <span 
             className="font-display text-[10px] sm:text-xs"
             style={{
-              background: 'linear-gradient(180deg, #FFE566 0%, #FFC800 100%)',
+              background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}

@@ -23,7 +23,7 @@ const Icons = {
   Shield: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>,
   ShieldCheck: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 1L3 5.3V11C3 16.5 6.8 21.7 12 23C17.2 21.7 21 16.5 21 11V5.3L12 1ZM10 17L6 13L7.4 11.6L10 14.2L16.6 7.6L18 9L10 17Z"/></svg>,
   Truck: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>,
-  Logo: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#FFC800" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
+  Logo: () => <svg width="100%" height="100%" viewBox="0 0 24 24" fill="#F7C948" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
   ChevronRight: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>,
   Volume2: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>,
   VolumeX: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>,
@@ -84,7 +84,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d1019] text-white font-sans selection:bg-[#FFC800] selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-[#0d1019] text-white font-sans selection:bg-[#F7C948] selection:text-black overflow-x-hidden">
       
       {/* SIDEBAR - Overlay, no afecta el layout */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -106,10 +106,10 @@ const App: React.FC = () => {
                 <div className="flex items-center gap-2.5 cursor-pointer group">
                     {/* Logo icon with premium glow */}
                     <div className="relative">
-                        <div className="absolute inset-0 w-6 h-6 md:w-8 md:h-8 bg-[#FFC800] blur-lg opacity-50 group-hover:opacity-80 transition-opacity"></div>
-                        <div className="relative w-6 h-6 md:w-8 md:h-8 text-[#FFC800] group-hover:scale-110 transition-transform"
+                        <div className="absolute inset-0 w-6 h-6 md:w-8 md:h-8 bg-[#F7C948] blur-lg opacity-50 group-hover:opacity-80 transition-opacity"></div>
+                        <div className="relative w-6 h-6 md:w-8 md:h-8 text-[#F7C948] group-hover:scale-110 transition-transform"
                             style={{
-                                filter: 'drop-shadow(0 0 8px rgba(255,200,0,0.8)) drop-shadow(0 0 20px rgba(255,200,0,0.4))'
+                                filter: 'drop-shadow(0 0 6px rgba(247,201,72,0.5)) drop-shadow(0 0 15px rgba(247,201,72,0.25))'
                             }}
                         >
                             <Icons.Logo />
@@ -119,7 +119,7 @@ const App: React.FC = () => {
                     <span 
                         className="font-display text-xl md:text-3xl group-hover:scale-105 transition-all uppercase"
                         style={{
-                            background: 'linear-gradient(180deg, #FFFFFF 0%, #FFC800 50%, #E6A800 100%)',
+                            background: 'linear-gradient(180deg, #FFFFFF 0%, #F7C948 50%, #E6A800 100%)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
@@ -166,9 +166,9 @@ const App: React.FC = () => {
                     }}
                     title={isMuted ? "Activar sonido" : "Silenciar"}
                 >
-                    <div className="absolute inset-0 bg-[#FFC800]/0 group-hover:bg-[#FFC800]/10 transition-colors"></div>
-                    <div className={`relative transition-colors ${isMuted ? 'text-slate-600' : 'text-slate-400 group-hover:text-[#FFC800]'}`}
-                        style={{ filter: isMuted ? 'none' : 'drop-shadow(0 0 4px rgba(255,200,0,0.3))' }}
+                    <div className="absolute inset-0 bg-[#F7C948]/0 group-hover:bg-[#F7C948]/10 transition-colors"></div>
+                    <div className={`relative transition-colors ${isMuted ? 'text-slate-600' : 'text-slate-400 group-hover:text-[#F7C948]'}`}
+                        style={{ filter: isMuted ? 'none' : 'drop-shadow(0 0 3px rgba(247,201,72,0.2))' }}
                     >
                         {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
                     </div>
@@ -184,13 +184,13 @@ const App: React.FC = () => {
             <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
                 
                 {/* Floating particles - Desktop only */}
-                <div className="absolute w-1 h-1 bg-[#FFC800]/40 rounded-full animate-[floatUp_8s_ease-in-out_infinite] left-[10%] top-[80%]"></div>
-                <div className="absolute w-1.5 h-1.5 bg-[#FFC800]/30 rounded-full animate-[floatUp_12s_ease-in-out_infinite_1s] left-[20%] top-[90%]"></div>
-                <div className="absolute w-1 h-1 bg-[#FFC800]/35 rounded-full animate-[floatUp_14s_ease-in-out_infinite_0.5s] left-[50%] top-[95%]"></div>
-                <div className="absolute w-1.5 h-1.5 bg-[#FFC800]/25 rounded-full animate-[floatUp_11s_ease-in-out_infinite_1.5s] left-[80%] top-[92%]"></div>
+                <div className="absolute w-1 h-1 bg-[#F7C948]/40 rounded-full animate-[floatUp_8s_ease-in-out_infinite] left-[10%] top-[80%]"></div>
+                <div className="absolute w-1.5 h-1.5 bg-[#F7C948]/30 rounded-full animate-[floatUp_12s_ease-in-out_infinite_1s] left-[20%] top-[90%]"></div>
+                <div className="absolute w-1 h-1 bg-[#F7C948]/35 rounded-full animate-[floatUp_14s_ease-in-out_infinite_0.5s] left-[50%] top-[95%]"></div>
+                <div className="absolute w-1.5 h-1.5 bg-[#F7C948]/25 rounded-full animate-[floatUp_11s_ease-in-out_infinite_1.5s] left-[80%] top-[92%]"></div>
                 
                 {/* Main center glow */}
-                <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#FFC800] opacity-[0.06] blur-[120px]"></div>
+                <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#F7C948] opacity-[0.06] blur-[120px]"></div>
                 
                 {/* Secondary glow */}
                 <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-[#FFB800] opacity-[0.04] blur-[150px]"></div>
@@ -200,14 +200,14 @@ const App: React.FC = () => {
                     <path d="M0 50 L60 50 L60 120 L100 120 L100 180" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
                     <path d="M0 150 L40 150 L40 220 L80 220 L80 300 L50 300" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
                     <path d="M0 280 L90 280 L90 380 L130 380 L130 450" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
-                    <circle cx="100" cy="180" r="4" fill="#FFC800"/>
-                    <circle cx="50" cy="300" r="4" fill="#FFC800"/>
-                    <circle cx="130" cy="450" r="4" fill="#FFC800"/>
+                    <circle cx="100" cy="180" r="4" fill="#F7C948"/>
+                    <circle cx="50" cy="300" r="4" fill="#F7C948"/>
+                    <circle cx="130" cy="450" r="4" fill="#F7C948"/>
                     <defs>
                         <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#FFC800" stopOpacity="0.3"/>
+                            <stop offset="0%" stopColor="#F7C948" stopOpacity="0.3"/>
                             <stop offset="50%" stopColor="#FFD700" stopOpacity="0.6"/>
-                            <stop offset="100%" stopColor="#FFC800" stopOpacity="0.3"/>
+                            <stop offset="100%" stopColor="#F7C948" stopOpacity="0.3"/>
                         </linearGradient>
                     </defs>
                 </svg>
@@ -217,14 +217,14 @@ const App: React.FC = () => {
                     <path d="M0 80 L70 80 L70 160 L110 160 L110 240" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
                     <path d="M0 200 L50 200 L50 280 L90 280 L90 380" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
                     <path d="M0 340 L60 340 L60 420 L100 420" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
-                    <circle cx="110" cy="240" r="4" fill="#FFC800"/>
-                    <circle cx="90" cy="380" r="4" fill="#FFC800"/>
-                    <circle cx="100" cy="420" r="4" fill="#FFC800"/>
+                    <circle cx="110" cy="240" r="4" fill="#F7C948"/>
+                    <circle cx="90" cy="380" r="4" fill="#F7C948"/>
+                    <circle cx="100" cy="420" r="4" fill="#F7C948"/>
                     <defs>
                         <linearGradient id="goldGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#FFC800" stopOpacity="0.3"/>
+                            <stop offset="0%" stopColor="#F7C948" stopOpacity="0.3"/>
                             <stop offset="50%" stopColor="#FFD700" stopOpacity="0.6"/>
-                            <stop offset="100%" stopColor="#FFC800" stopOpacity="0.3"/>
+                            <stop offset="100%" stopColor="#F7C948" stopOpacity="0.3"/>
                         </linearGradient>
                     </defs>
                 </svg>
@@ -232,7 +232,7 @@ const App: React.FC = () => {
             
             {/* Mobile: Simple glow only */}
             <div className="absolute inset-0 pointer-events-none md:hidden">
-                <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[300px] h-[200px] bg-[#FFC800] opacity-[0.08] blur-[60px]"></div>
+                <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[300px] h-[200px] bg-[#F7C948] opacity-[0.08] blur-[60px]"></div>
             </div>
             
             {/* Box Title */}
@@ -248,7 +248,7 @@ const App: React.FC = () => {
             {/* SPINNER with glow backdrop */}
             <div className="relative w-full max-w-[1600px] z-10 mb-8">
                 {/* Spinner glow - hidden on mobile for performance */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] bg-[#FFC800] opacity-[0.08] blur-[80px] pointer-events-none hidden md:block"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] bg-[#F7C948] opacity-[0.08] blur-[80px] pointer-events-none hidden md:block"></div>
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 
@@ -272,15 +272,15 @@ const App: React.FC = () => {
                         text-black font-display uppercase text-2xl md:text-3xl
                         rounded-xl
                         transition-all duration-150
-                        shadow-[0_6px_0_#996600,0_8px_25px_rgba(255,200,0,0.4)]
-                        hover:shadow-[0_6px_0_#996600,0_10px_40px_rgba(255,200,0,0.6)]
+                        shadow-[0_4px_0_#B8860B,0_6px_20px_rgba(247,201,72,0.25)]
+                        hover:shadow-[0_4px_0_#B8860B,0_8px_30px_rgba(247,201,72,0.35)]
                         active:shadow-[0_2px_0_#996600] active:translate-y-1
                         disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
                         flex items-center justify-center gap-4
                         overflow-hidden
                     "
                     style={{
-                        background: 'linear-gradient(180deg, #FFE566 0%, #FFD700 15%, #FFC800 50%, #E6A800 85%, #CC9900 100%)',
+                        background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 30%, #E8B923 70%, #D4A520 100%)',
                     }}
                 >
                     {/* Metallic shine overlay */}
@@ -327,7 +327,7 @@ const App: React.FC = () => {
                                 className={`
                                     w-8 h-8 sm:w-9 sm:h-9 rounded-md font-display text-xs sm:text-sm transition-all uppercase
                                     ${quantity === num 
-                                        ? 'bg-[#FFC800] text-black' 
+                                        ? 'bg-[#F7C948] text-black' 
                                         : 'text-slate-500 hover:text-white hover:bg-[#1e2330]'}
                                 `}
                             >
@@ -343,7 +343,7 @@ const App: React.FC = () => {
                             className={`
                                 h-8 sm:h-9 w-8 sm:w-auto sm:px-3 rounded-lg flex items-center justify-center gap-2 border transition-all text-sm
                                 ${fastMode 
-                                    ? 'bg-[#FFC800]/10 border-[#FFC800]/50 text-[#FFC800]' 
+                                    ? 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]' 
                                     : 'bg-[#0d1019] border-[#1e2330] text-slate-500'}
                             `}
                         >
@@ -357,7 +357,7 @@ const App: React.FC = () => {
                                 h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1.5 border transition-all text-xs sm:text-sm
                                 ${demoMode 
                                     ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' 
-                                    : 'bg-[#FFC800]/10 border-[#FFC800]/50 text-[#FFC800]'}
+                                    : 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]'}
                             `}
                         >
                             {demoMode ? (

@@ -42,7 +42,7 @@ const VIEW_ANGLES: { value: ViewAngle; label: string }[] = [
 ];
 
 const LIGHTING_STYLES: { value: LightingStyle; label: string; color: string }[] = [
-  { value: 'studio', label: 'Studio', color: '#FFC800' },
+  { value: 'studio', label: 'Studio', color: '#F7C948' },
   { value: 'golden', label: 'Golden Hour', color: '#FFB347' },
   { value: 'neon', label: 'Neon Glow', color: '#00FFFF' },
   { value: 'dramatic', label: 'Dramático', color: '#FF4500' },
@@ -136,7 +136,7 @@ const AssetFactoryPage: React.FC = () => {
         // Lighting style descriptions
         const lightingDescriptions: Record<LightingStyle, { rim: string; style: string }> = {
           'studio': { 
-            rim: 'GOLDEN/YELLOW RIM LIGHT (#FFC800)', 
+            rim: 'GOLDEN/YELLOW RIM LIGHT (#F7C948)', 
             style: 'Clean studio lighting with soft shadows' 
           },
           'golden': { 
@@ -323,7 +323,7 @@ const AssetFactoryPage: React.FC = () => {
           <div className="w-px h-6 bg-[#1e2330]"></div>
           <h1 className="text-xl font-black italic uppercase tracking-tighter flex items-center gap-2">
             <span>🎨</span>
-            <span>Asset <span className="text-[#FFC800]">Factory</span></span>
+            <span>Asset <span className="text-[#F7C948]">Factory</span></span>
           </h1>
         </div>
       </header>
@@ -348,7 +348,7 @@ const AssetFactoryPage: React.FC = () => {
               onChange={(e) => setProductName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleGenerate()}
               placeholder="Ej: iPhone 16 Pro Max"
-              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-3 text-sm focus:border-[#FFC800] outline-none placeholder:text-slate-600"
+              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-3 text-sm focus:border-[#F7C948] outline-none placeholder:text-slate-600"
             />
             
             {/* Quick Suggestions */}
@@ -357,7 +357,7 @@ const AssetFactoryPage: React.FC = () => {
                 <button
                   key={suggestion}
                   onClick={() => setProductName(suggestion)}
-                  className="px-2 py-1 text-[10px] bg-[#1e2330] hover:bg-[#2a3040] border border-[#2a3040] hover:border-[#FFC800] rounded text-slate-400 hover:text-white transition-all"
+                  className="px-2 py-1 text-[10px] bg-[#1e2330] hover:bg-[#2a3040] border border-[#2a3040] hover:border-[#F7C948] rounded text-slate-400 hover:text-white transition-all"
                 >
                   {suggestion}
                 </button>
@@ -399,9 +399,9 @@ const AssetFactoryPage: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center w-full h-20 bg-[#0d1019] border-2 border-dashed border-[#2a3040] hover:border-[#FFC800] rounded-lg cursor-pointer transition-colors group">
+              <label className="flex flex-col items-center justify-center w-full h-20 bg-[#0d1019] border-2 border-dashed border-[#2a3040] hover:border-[#F7C948] rounded-lg cursor-pointer transition-colors group">
                 <div className="flex flex-col items-center justify-center">
-                  <svg className="w-5 h-5 mb-1 text-slate-500 group-hover:text-[#FFC800] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 mb-1 text-slate-500 group-hover:text-[#F7C948] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                   </svg>
                   <p className="text-[10px] text-slate-500 group-hover:text-slate-300">
@@ -428,7 +428,7 @@ const AssetFactoryPage: React.FC = () => {
                   onClick={() => { setProductColor(color.value); setCustomColor(''); }}
                   className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all ${
                     productColor === color.value && !customColor
-                      ? 'bg-[#FFC800]/20 border-[#FFC800] text-[#FFC800]' 
+                      ? 'bg-[#F7C948]/20 border-[#F7C948] text-[#F7C948]' 
                       : 'bg-[#0d1019] border-[#2a3040] text-slate-400 hover:border-slate-500'
                   }`}
                 >
@@ -441,7 +441,7 @@ const AssetFactoryPage: React.FC = () => {
               value={customColor}
               onChange={(e) => { setCustomColor(e.target.value); setProductColor(''); }}
               placeholder="O escribe un color personalizado..."
-              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-2 text-xs focus:border-[#FFC800] outline-none placeholder:text-slate-600"
+              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-2 text-xs focus:border-[#F7C948] outline-none placeholder:text-slate-600"
             />
           </div>
 
@@ -453,7 +453,7 @@ const AssetFactoryPage: React.FC = () => {
               value={productVariant}
               onChange={(e) => setProductVariant(e.target.value)}
               placeholder="Ej: Limited Edition, Pro Max, 512GB..."
-              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-2 text-xs focus:border-[#FFC800] outline-none placeholder:text-slate-600"
+              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-2 text-xs focus:border-[#F7C948] outline-none placeholder:text-slate-600"
             />
           </div>
 
@@ -479,7 +479,7 @@ const AssetFactoryPage: React.FC = () => {
                       onClick={() => setViewAngle(angle.value)}
                       className={`p-2 rounded border text-[10px] font-bold transition-all ${
                         viewAngle === angle.value
-                          ? 'bg-[#FFC800]/20 border-[#FFC800] text-[#FFC800]'
+                          ? 'bg-[#F7C948]/20 border-[#F7C948] text-[#F7C948]'
                           : 'bg-[#1e2330] border-[#2a3040] text-slate-400 hover:border-slate-500'
                       }`}
                     >
@@ -499,7 +499,7 @@ const AssetFactoryPage: React.FC = () => {
                       onClick={() => setLightingStyle(style.value)}
                       className={`p-2 rounded border text-xs font-bold transition-all flex items-center gap-2 ${
                         lightingStyle === style.value
-                          ? 'border-[#FFC800]'
+                          ? 'border-[#F7C948]'
                           : 'bg-[#1e2330] border-[#2a3040] text-slate-400 hover:border-slate-500'
                       }`}
                       style={{ 
@@ -520,7 +520,7 @@ const AssetFactoryPage: React.FC = () => {
                 <div className="grid grid-cols-3 gap-2">
                   <button 
                     onClick={() => setBgMode('site')}
-                    className={`p-2 rounded border text-[10px] font-black uppercase transition-all ${bgMode === 'site' ? 'bg-black border-[#FFC800] text-[#FFC800]' : 'bg-[#1e2330] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
+                    className={`p-2 rounded border text-[10px] font-black uppercase transition-all ${bgMode === 'site' ? 'bg-black border-[#F7C948] text-[#F7C948]' : 'bg-[#1e2330] border-[#2a3040] text-slate-500 hover:border-slate-500'}`}
                   >
                     Auto Blend
                   </button>
@@ -546,7 +546,7 @@ const AssetFactoryPage: React.FC = () => {
             disabled={isLoading}
             className={`
               w-full py-4 rounded-lg font-black uppercase italic tracking-tighter text-black transition-all text-lg
-              ${isLoading ? 'bg-slate-600 cursor-not-allowed' : 'bg-[#FFC800] hover:bg-[#EAB308] hover:shadow-[0_0_20px_#FFC800]'}
+              ${isLoading ? 'bg-slate-600 cursor-not-allowed' : 'bg-[#F7C948] hover:bg-[#EAB308] hover:shadow-[0_0_20px_#F7C948]'}
             `}
           >
             {isLoading ? 'Generando (~10s)...' : 'GENERAR ASSET 3D'}
@@ -647,7 +647,7 @@ const AssetFactoryPage: React.FC = () => {
                       setGeneratedImage(item.image);
                       setProductName(item.name);
                     }}
-                    className="relative group aspect-square bg-[#1e2330] rounded-lg overflow-hidden border border-[#2a3040] hover:border-[#FFC800] transition-all"
+                    className="relative group aspect-square bg-[#1e2330] rounded-lg overflow-hidden border border-[#2a3040] hover:border-[#F7C948] transition-all"
                     title={item.name}
                   >
                     <img 

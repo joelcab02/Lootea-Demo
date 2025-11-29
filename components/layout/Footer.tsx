@@ -5,7 +5,7 @@ const Icons = {
     RefreshCW: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
     Truck: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>,
     Card: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>,
-    Logo: () => <svg width="36" height="36" viewBox="0 0 24 24" fill="#FFC800" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
+    Logo: () => <svg width="36" height="36" viewBox="0 0 24 24" fill="#F7C948" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
     Social: {
         X: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
         Insta: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>,
@@ -25,7 +25,7 @@ function Footer() {
       />
       
       {/* Top gold line */}
-      <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent 0%, #FFC800 50%, transparent 100%)' }} />
+      <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent 0%, #F7C948 50%, transparent 100%)' }} />
       
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 md:px-6 pt-14 pb-8">
         
@@ -55,13 +55,13 @@ function Footer() {
           <div className="col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="relative">
-                <div className="absolute inset-0 bg-[#FFC800] blur-xl opacity-30" />
+                <div className="absolute inset-0 bg-[#F7C948] blur-xl opacity-30" />
                 <Icons.Logo />
               </div>
               <span 
                 className="font-display text-2xl uppercase"
                 style={{
-                  background: 'linear-gradient(180deg, #FFFFFF 0%, #FFC800 100%)',
+                  background: 'linear-gradient(180deg, #FFFFFF 0%, #F7C948 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -150,17 +150,17 @@ function TrustCard({ icon, title, desc }: { icon: React.ReactNode, title: string
       <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       
       {/* Hover glow */}
-      <div className="absolute top-0 right-0 w-24 h-24 bg-[#FFC800] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
+      <div className="absolute top-0 right-0 w-24 h-24 bg-[#F7C948] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
       
       <div className="flex items-start gap-4">
         <div 
           className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{
-            background: 'linear-gradient(135deg, rgba(255,200,0,0.15) 0%, rgba(255,200,0,0.05) 100%)',
-            border: '1px solid rgba(255,200,0,0.2)',
+            background: 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)',
+            border: '1px solid rgba(247,201,72,0.2)',
           }}
         >
-          <div className="text-[#FFC800]">{icon}</div>
+          <div className="text-[#F7C948]">{icon}</div>
         </div>
         <div>
           <h3 className="font-display text-white text-sm uppercase mb-1">{title}</h3>
@@ -176,9 +176,9 @@ function PaymentBadge({ children, highlight = false }: { children: React.ReactNo
     <span 
       className="px-2.5 py-1 rounded-md text-[10px] font-display uppercase"
       style={highlight ? {
-        background: 'linear-gradient(135deg, rgba(255,200,0,0.15) 0%, rgba(255,200,0,0.05) 100%)',
-        border: '1px solid rgba(255,200,0,0.25)',
-        color: '#FFC800',
+        background: 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)',
+        border: '1px solid rgba(247,201,72,0.25)',
+        color: '#F7C948',
       } : {
         background: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.06)',
@@ -192,7 +192,7 @@ function PaymentBadge({ children, highlight = false }: { children: React.ReactNo
 
 function FooterLink({ children }: { children?: React.ReactNode }) {
   return (
-    <a href="#" className="text-slate-500 hover:text-[#FFC800] text-sm transition-colors">
+    <a href="#" className="text-slate-500 hover:text-[#F7C948] text-sm transition-colors">
       {children}
     </a>
   )
@@ -202,13 +202,13 @@ function SocialButton({ icon }: { icon: React.ReactNode }) {
   return (
     <a 
       href="#" 
-      className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-[#FFC800] transition-all relative overflow-hidden group"
+      className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-[#F7C948] transition-all relative overflow-hidden group"
       style={{
         background: 'linear-gradient(145deg, #14161c 0%, #0c0e12 100%)',
         border: '1px solid rgba(255,255,255,0.05)',
       }}
     >
-      <div className="absolute inset-0 bg-[#FFC800] opacity-0 group-hover:opacity-10 transition-opacity" />
+      <div className="absolute inset-0 bg-[#F7C948] opacity-0 group-hover:opacity-10 transition-opacity" />
       <div className="relative z-10">{icon}</div>
     </a>
   )

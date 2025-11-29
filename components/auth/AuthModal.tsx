@@ -1,6 +1,6 @@
 /**
  * Auth Modal - Lootea Brand Style
- * Gold (#FFC800) accents, dark theme, gamer aesthetic
+ * Gold (#F7C948) accents, dark theme, gamer aesthetic
  * Uses Portal to render outside parent container hierarchy
  * 
  * LOGIN: Simple email/password, no terms required
@@ -130,12 +130,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </button>
 
         {/* Gold accent line */}
-        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent ${isLogin ? 'via-blue-500' : 'via-[#FFC800]'} to-transparent`} />
+        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent ${isLogin ? 'via-blue-500' : 'via-[#F7C948]'} to-transparent`} />
         
         <div className="p-6">
           {/* Logo */}
           <div className="flex items-center justify-center gap-2 mb-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFC800" stroke="none" className="filter drop-shadow-[0_0_10px_rgba(255,200,0,0.5)]">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#F7C948" stroke="none" className="filter drop-shadow-[0_0_10px_rgba(247,201,72,0.5)]">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
             <span className="font-display font-black text-2xl text-white drop-shadow-lg">LOOTEA</span>
@@ -159,7 +159,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-3 py-2.5 rounded-lg focus:outline-none focus:border-[#FFC800] transition-colors placeholder-slate-600 text-sm"
+                className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-3 py-2.5 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 text-sm"
                 placeholder="tu@email.com"
                 required
                 autoFocus
@@ -170,7 +170,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="flex justify-between items-center mb-1.5">
                 <label className="block text-slate-400 text-[10px] font-medium uppercase tracking-wider">Contraseña</label>
                 {isLogin && (
-                  <button type="button" className="text-[10px] text-[#FFC800] hover:underline">
+                  <button type="button" className="text-[10px] text-[#F7C948] hover:underline">
                     ¿Olvidaste tu contraseña?
                   </button>
                 )}
@@ -179,7 +179,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-3 py-2.5 rounded-lg focus:outline-none focus:border-[#FFC800] transition-colors placeholder-slate-600 text-sm"
+                className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-3 py-2.5 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 text-sm"
                 placeholder={isLogin ? '••••••••' : 'Mínimo 6 caracteres'}
                 required
                 minLength={6}
@@ -193,11 +193,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   type="checkbox"
                   checked={agreed}
                   onChange={(e) => setAgreed(e.target.checked)}
-                  className="mt-0.5 w-3.5 h-3.5 rounded border-[#2a2d36] bg-[#1a1d26] text-[#FFC800] focus:ring-[#FFC800] focus:ring-offset-0 accent-[#FFC800]"
+                  className="mt-0.5 w-3.5 h-3.5 rounded border-[#2a2d36] bg-[#1a1d26] text-[#F7C948] focus:ring-[#F7C948] focus:ring-offset-0 accent-[#F7C948]"
                 />
                 <span className="group-hover:text-slate-400 transition-colors leading-tight">
                   Confirmo que tengo <strong>18+ años</strong> y acepto los{' '}
-                  <a href="#" className="text-[#FFC800] hover:underline">Términos de Servicio</a>.
+                  <a href="#" className="text-[#F7C948] hover:underline">Términos de Servicio</a>.
                 </span>
               </label>
             )}
@@ -219,8 +219,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 boxShadow: '0 4px 0 #999, 0 6px 15px rgba(0,0,0,0.2)',
                 color: 'black',
               } : {
-                background: 'linear-gradient(180deg, #FFE566 0%, #FFD700 20%, #FFC800 50%, #E6A800 80%, #CC9900 100%)',
-                boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(255,200,0,0.3)',
+                background: 'linear-gradient(180deg, #FFD966 0%, #FFD700 20%, #F7C948 50%, #E6A800 80%, #D4A520 100%)',
+                boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(247,201,72,0.3)',
                 color: 'black',
               }}
             >
@@ -264,7 +264,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             {isLogin ? '¿No tienes cuenta? ' : '¿Ya tienes cuenta? '}
             <button
               onClick={switchMode}
-              className="text-[#FFC800] hover:underline font-medium"
+              className="text-[#F7C948] hover:underline font-medium"
             >
               {isLogin ? 'Regístrate' : 'Inicia Sesión'}
             </button>

@@ -81,7 +81,7 @@ const AdminDashboard: React.FC = () => {
         {/* Logo */}
         <div className="h-14 flex items-center px-5 border-b border-[#1a1d24]">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-[#FFC800] rounded flex items-center justify-center">
+            <div className="w-7 h-7 bg-[#F7C948] rounded flex items-center justify-center">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
             </div>
             <span className="font-semibold text-white text-sm tracking-tight">
@@ -185,7 +185,7 @@ const AdminDashboard: React.FC = () => {
 // === LOADING STATE ===
 const LoadingState = () => (
   <div className="flex items-center justify-center h-64">
-    <div className="w-8 h-8 border-2 border-[#FFC800]/20 border-t-[#FFC800] rounded-full animate-spin"></div>
+    <div className="w-8 h-8 border-2 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin"></div>
   </div>
 );
 
@@ -207,7 +207,7 @@ const DashboardSection: React.FC<{
         <div className="text-xs text-slate-500 mt-1">Productos en catálogo</div>
       </div>
       <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-        <div className="text-2xl font-semibold text-[#FFC800]">${stats.totalValue.toLocaleString()}</div>
+        <div className="text-2xl font-semibold text-[#F7C948]">${stats.totalValue.toLocaleString()}</div>
         <div className="text-xs text-slate-500 mt-1">Valor total del inventario</div>
       </div>
     </div>
@@ -218,7 +218,7 @@ const DashboardSection: React.FC<{
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => navigate('box-edit')}
-          className="px-3 py-1.5 bg-[#FFC800] text-black text-xs font-medium rounded hover:bg-[#EAB308] transition-colors"
+          className="px-3 py-1.5 bg-[#F7C948] text-black text-xs font-medium rounded hover:bg-[#EAB308] transition-colors"
         >
           Nueva Caja
         </button>
@@ -250,11 +250,11 @@ const DashboardSection: React.FC<{
           <div 
             key={box.id}
             onClick={() => navigate('box-edit', box.id)}
-            className="bg-[#08090c] border border-[#1a1d24] rounded-md p-3 hover:border-[#FFC800]/50 cursor-pointer transition-all"
+            className="bg-[#08090c] border border-[#1a1d24] rounded-md p-3 hover:border-[#F7C948]/50 cursor-pointer transition-all"
           >
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-white">{box.name}</span>
-              <span className="text-[#FFC800] text-sm font-medium">${box.price}</span>
+              <span className="text-[#F7C948] text-sm font-medium">${box.price}</span>
             </div>
             <div className="text-[11px] text-slate-500 mt-1">/box/{box.slug}</div>
           </div>
@@ -285,7 +285,7 @@ const BoxesSection: React.FC<{
         <p className="text-xs text-slate-500">{boxes.length} cajas</p>
         <button
           onClick={() => navigate('box-edit')}
-          className="px-3 py-1.5 bg-[#FFC800] text-black text-xs font-medium rounded hover:bg-[#EAB308] transition-colors"
+          className="px-3 py-1.5 bg-[#F7C948] text-black text-xs font-medium rounded hover:bg-[#EAB308] transition-colors"
         >
           Nueva Caja
         </button>
@@ -316,7 +316,7 @@ const BoxesSection: React.FC<{
                   </span>
                 </td>
                 <td className="py-3 px-4 text-right">
-                  <span className="text-[#FFC800] text-sm font-medium">${box.price}</span>
+                  <span className="text-[#F7C948] text-sm font-medium">${box.price}</span>
                 </td>
                 <td className="py-3 px-4 text-right">
                   <div className="flex justify-end gap-1.5">
@@ -471,7 +471,7 @@ const BoxEditSection: React.FC<{
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value, slug: isNew ? e.target.value.toLowerCase().replace(/\s+/g, '-') : form.slug })}
               placeholder="Apple Collection"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#FFC800] outline-none"
+              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
             />
           </div>
           <div>
@@ -481,7 +481,7 @@ const BoxEditSection: React.FC<{
               value={form.slug}
               onChange={(e) => setForm({ ...form, slug: e.target.value })}
               placeholder="apple-collection"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#FFC800] outline-none"
+              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
             />
           </div>
           <div>
@@ -491,7 +491,7 @@ const BoxEditSection: React.FC<{
               value={form.price}
               onChange={(e) => setForm({ ...form, price: e.target.value })}
               placeholder="299"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#FFC800] outline-none"
+              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
             />
           </div>
           <div>
@@ -501,14 +501,14 @@ const BoxEditSection: React.FC<{
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
               placeholder="tech"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#FFC800] outline-none"
+              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
             />
           </div>
         </div>
         <div className="mt-4">
           <button
             onClick={handleSave}
-            className="px-6 py-2 bg-[#FFC800] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
+            className="px-6 py-2 bg-[#F7C948] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
           >
             {isNew ? 'Crear Caja' : 'Guardar Cambios'}
           </button>
@@ -543,7 +543,7 @@ const BoxEditSection: React.FC<{
                     className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                       inBox 
                         ? 'bg-green-500 border-green-500 text-white' 
-                        : 'border-slate-600 hover:border-[#FFC800]'
+                        : 'border-slate-600 hover:border-[#F7C948]'
                     }`}
                   >
                     {inBox && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
@@ -565,7 +565,7 @@ const BoxEditSection: React.FC<{
                   </div>
                   
                   {/* Price */}
-                  <div className="text-[#FFC800] font-bold text-sm">
+                  <div className="text-[#F7C948] font-bold text-sm">
                     ${product.price.toLocaleString()}
                   </div>
                   
@@ -578,7 +578,7 @@ const BoxEditSection: React.FC<{
                         onChange={(e) => updateOdds(product.id, parseFloat(e.target.value) || 0)}
                         step="0.01"
                         min="0"
-                        className="w-20 px-2 py-1 bg-[#0d1019] border border-[#2a3040] rounded text-white text-sm text-right font-mono focus:border-[#FFC800] outline-none"
+                        className="w-20 px-2 py-1 bg-[#0d1019] border border-[#2a3040] rounded text-white text-sm text-right font-mono focus:border-[#F7C948] outline-none"
                       />
                       <span className="text-xs text-slate-500">%</span>
                     </div>
@@ -623,7 +623,7 @@ const ProductsSection: React.FC<{
         <p className="text-slate-500">{products.length} productos</p>
         <button
           onClick={() => navigate('product-edit')}
-          className="px-4 py-2 bg-[#FFC800] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
+          className="px-4 py-2 bg-[#F7C948] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
         >
           + Nuevo Producto
         </button>
@@ -660,13 +660,13 @@ const ProductsSection: React.FC<{
                   </span>
                 </td>
                 <td className="py-4 px-6 text-right">
-                  <span className="text-[#FFC800] font-bold">${product.price.toLocaleString()}</span>
+                  <span className="text-[#F7C948] font-bold">${product.price.toLocaleString()}</span>
                 </td>
                 <td className="py-4 px-6 text-right">
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => navigate('product-edit', product.id)}
-                      className="px-3 py-1.5 bg-[#FFC800]/10 text-[#FFC800] text-xs font-bold rounded hover:bg-[#FFC800]/20"
+                      className="px-3 py-1.5 bg-[#F7C948]/10 text-[#F7C948] text-xs font-bold rounded hover:bg-[#F7C948]/20"
                     >
                       Editar
                     </button>
@@ -765,7 +765,7 @@ const ProductEditSection: React.FC<{
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="iPhone 16 Pro Max"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#FFC800] outline-none"
+              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
             />
           </div>
           
@@ -777,7 +777,7 @@ const ProductEditSection: React.FC<{
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
                 placeholder="1299"
-                className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#FFC800] outline-none"
+                className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
               />
             </div>
             <div>
@@ -785,7 +785,7 @@ const ProductEditSection: React.FC<{
               <select
                 value={form.rarity}
                 onChange={(e) => setForm({ ...form, rarity: e.target.value as Rarity })}
-                className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#FFC800] outline-none"
+                className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
               >
                 <option value={Rarity.COMMON}>Common</option>
                 <option value={Rarity.RARE}>Rare</option>
@@ -802,7 +802,7 @@ const ProductEditSection: React.FC<{
               value={form.image}
               onChange={(e) => setForm({ ...form, image: e.target.value })}
               placeholder="📱 o https://..."
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#FFC800] outline-none"
+              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
             />
             {/* Preview */}
             <div className="mt-2 flex items-center gap-3">
@@ -820,7 +820,7 @@ const ProductEditSection: React.FC<{
           <div className="pt-4">
             <button
               onClick={handleSave}
-              className="px-6 py-2 bg-[#FFC800] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
+              className="px-6 py-2 bg-[#F7C948] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
             >
               {isNew ? 'Crear Producto' : 'Guardar Cambios'}
             </button>

@@ -17,7 +17,7 @@ const Icons = {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
   ),
   Logo: () => (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="#FFC800" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#F7C948" stroke="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
   ),
   Close: () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -51,33 +51,33 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
       `}
         style={{
           background: 'linear-gradient(180deg, #0d1019 0%, #0a0d14 100%)',
-          borderRight: '1px solid rgba(255,200,0,0.1)',
-          boxShadow: '4px 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(255,200,0,0.05)',
+          borderRight: '1px solid rgba(247,201,72,0.1)',
+          boxShadow: '4px 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(247,201,72,0.05)',
           contain: 'layout style paint',
           willChange: isOpen ? 'transform' : 'auto',
         }}
       >
         {/* Decorative circuit line */}
         <div className="absolute top-0 right-0 w-[1px] h-full opacity-20"
-          style={{ background: 'linear-gradient(180deg, transparent 0%, #FFC800 20%, #FFC800 80%, transparent 100%)' }}
+          style={{ background: 'linear-gradient(180deg, transparent 0%, #F7C948 20%, #F7C948 80%, transparent 100%)' }}
         ></div>
         
         {/* Logo Area - Premium */}
         <div className="h-20 flex items-center justify-between px-6 border-b border-[#1e2330]/50 relative">
           {/* Gold accent */}
-          <div className="absolute bottom-0 left-6 right-6 h-[1px] bg-gradient-to-r from-[#FFC800]/50 via-[#FFC800]/20 to-transparent"></div>
+          <div className="absolute bottom-0 left-6 right-6 h-[1px] bg-gradient-to-r from-[#F7C948]/50 via-[#F7C948]/20 to-transparent"></div>
           
           <div className="flex items-center gap-3 group cursor-pointer">
             <div className="relative">
-              <div className="absolute inset-0 bg-[#FFC800] blur-lg opacity-40"></div>
-              <div className="relative" style={{ filter: 'drop-shadow(0 0 8px rgba(255,200,0,0.6))' }}>
+              <div className="absolute inset-0 bg-[#F7C948] blur-lg opacity-40"></div>
+              <div className="relative" style={{ filter: 'drop-shadow(0 0 8px rgba(247,201,72,0.6))' }}>
                 <Icons.Logo />
               </div>
             </div>
             <span 
               className="font-display text-2xl uppercase"
               style={{
-                background: 'linear-gradient(180deg, #FFFFFF 0%, #FFC800 60%, #E6A800 100%)',
+                background: 'linear-gradient(180deg, #FFFFFF 0%, #F7C948 60%, #E6A800 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
@@ -114,29 +114,29 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div 
             className="p-5 rounded-2xl group cursor-pointer relative overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, rgba(255,200,0,0.1) 0%, rgba(255,200,0,0.02) 100%)',
-              border: '1px solid rgba(255,200,0,0.2)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,200,0,0.1)',
+              background: 'linear-gradient(135deg, rgba(247,201,72,0.1) 0%, rgba(247,201,72,0.02) 100%)',
+              border: '1px solid rgba(247,201,72,0.2)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(247,201,72,0.1)',
             }}
           >
             {/* Animated glow */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFC800] opacity-10 blur-3xl group-hover:opacity-20 transition-opacity"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#F7C948] opacity-10 blur-3xl group-hover:opacity-20 transition-opacity"></div>
             
             {/* Trophy icon */}
-            <div className="absolute top-3 right-3 text-[#FFC800]/20 group-hover:text-[#FFC800]/40 transition-colors">
+            <div className="absolute top-3 right-3 text-[#F7C948]/20 group-hover:text-[#F7C948]/40 transition-colors">
               <Icons.Trophy />
             </div>
             
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-2">
-                <p className="font-display text-xs uppercase text-[#FFC800]/70">Carrera Diaria</p>
-                <div className="w-2 h-2 rounded-full bg-[#FFC800] animate-pulse" style={{ boxShadow: '0 0 10px #FFC800, 0 0 20px #FFC800' }}></div>
+                <p className="font-display text-xs uppercase text-[#F7C948]/70">Carrera Diaria</p>
+                <div className="w-2 h-2 rounded-full bg-[#F7C948] animate-pulse" style={{ boxShadow: '0 0 10px #F7C948, 0 0 20px #F7C948' }}></div>
               </div>
               
               <div 
                 className="font-display text-3xl mb-4 uppercase"
                 style={{
-                  background: 'linear-gradient(180deg, #FFFFFF 0%, #FFC800 50%, #E6A800 100%)',
+                  background: 'linear-gradient(180deg, #FFFFFF 0%, #F7C948 50%, #E6A800 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
@@ -149,8 +149,8 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
               <button 
                 className="w-full py-3.5 text-black text-sm font-display rounded-xl uppercase transition-all relative overflow-hidden group/btn"
                 style={{
-                  background: 'linear-gradient(180deg, #FFE566 0%, #FFD700 20%, #FFC800 50%, #E6A800 80%, #CC9900 100%)',
-                  boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(255,200,0,0.3)',
+                  background: 'linear-gradient(180deg, #FFD966 0%, #FFD700 20%, #F7C948 50%, #E6A800 80%, #D4A520 100%)',
+                  boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(247,201,72,0.3)',
                 }}
               >
                 <div className="absolute inset-0 opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%)' }}></div>
@@ -171,9 +171,9 @@ function SidebarItem({ icon, label, active = false, badge }: { icon: React.React
       className={`flex items-center gap-4 w-full px-4 py-4 rounded-xl font-display uppercase transition-all duration-200 group relative overflow-hidden`}
       style={{
         background: active 
-          ? 'linear-gradient(135deg, rgba(255,200,0,0.15) 0%, rgba(255,200,0,0.05) 100%)'
+          ? 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)'
           : 'transparent',
-        border: active ? '1px solid rgba(255,200,0,0.3)' : '1px solid transparent',
+        border: active ? '1px solid rgba(247,201,72,0.3)' : '1px solid transparent',
       }}
     >
       {/* Hover effect */}
@@ -181,15 +181,15 @@ function SidebarItem({ icon, label, active = false, badge }: { icon: React.React
       
       {/* Active indicator */}
       {active && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-[#FFC800]" 
-          style={{ boxShadow: '0 0 10px #FFC800, 0 0 20px #FFC800' }}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-[#F7C948]" 
+          style={{ boxShadow: '0 0 10px #F7C948, 0 0 20px #F7C948' }}
         ></div>
       )}
       
       {/* Icon with glow when active */}
       <span 
-        className={`relative transition-colors ${active ? 'text-[#FFC800]' : 'text-slate-600 group-hover:text-slate-300'}`}
-        style={active ? { filter: 'drop-shadow(0 0 6px rgba(255,200,0,0.6))' } : {}}
+        className={`relative transition-colors ${active ? 'text-[#F7C948]' : 'text-slate-600 group-hover:text-slate-300'}`}
+        style={active ? { filter: 'drop-shadow(0 0 6px rgba(247,201,72,0.6))' } : {}}
       >
         {icon}
       </span>

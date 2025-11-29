@@ -48,8 +48,8 @@ export default function HowItWorks() {
                 ${step.highlight ? '' : 'hover:-translate-y-1'}
               `}
               style={step.highlight ? {
-                background: 'linear-gradient(135deg, #FFE566 0%, #FFC800 50%, #E6A800 100%)',
-                boxShadow: '0 8px 32px rgba(255,200,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+                background: 'linear-gradient(135deg, #FFD966 0%, #F7C948 50%, #E6A800 100%)',
+                boxShadow: '0 8px 32px rgba(247,201,72,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
               } : {
                 background: 'linear-gradient(145deg, #1a1d26 0%, #12141a 100%)',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
@@ -62,7 +62,7 @@ export default function HowItWorks() {
               {!step.highlight && (
                 <div 
                   className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                  style={{ boxShadow: 'inset 0 0 0 1px rgba(255,200,0,0.2)' }}
+                  style={{ boxShadow: 'inset 0 0 0 1px rgba(247,201,72,0.2)' }}
                 />
               )}
 
@@ -81,11 +81,11 @@ export default function HowItWorks() {
                   background: '#000',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
                 } : {
-                  background: 'linear-gradient(135deg, rgba(255,200,0,0.1) 0%, rgba(255,200,0,0.02) 100%)',
-                  border: '1px solid rgba(255,200,0,0.15)',
+                  background: 'linear-gradient(135deg, rgba(247,201,72,0.1) 0%, rgba(247,201,72,0.02) 100%)',
+                  border: '1px solid rgba(247,201,72,0.15)',
                 }}
               >
-                <div className={step.highlight ? 'text-[#FFC800]' : 'text-[#FFC800]/70'}>
+                <div className={step.highlight ? 'text-[#F7C948]' : 'text-[#F7C948]/70'}>
                   {step.icon}
                 </div>
               </div>

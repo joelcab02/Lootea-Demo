@@ -12,7 +12,7 @@ const AssetFactoryPage = lazy(() => import('./pages/AssetFactoryPage'));
 // Loading spinner para lazy components
 const PageLoader = () => (
   <div className="min-h-screen bg-[#0a0c10] flex items-center justify-center">
-    <div className="w-10 h-10 border-3 border-[#FFC800]/20 border-t-[#FFC800] rounded-full animate-spin"></div>
+    <div className="w-10 h-10 border-3 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin"></div>
   </div>
 );
 

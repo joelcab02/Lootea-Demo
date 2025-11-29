@@ -177,10 +177,10 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
       }}
     >
         {/* Top border - gold gradient */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFC800]/40 to-transparent z-30"></div>
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F7C948]/40 to-transparent z-30"></div>
         
         {/* Bottom border - gold gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFC800]/40 to-transparent z-30"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F7C948]/40 to-transparent z-30"></div>
         
         {/* Center Indicator - Premium metallic */}
         <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-100'}`}>
@@ -188,8 +188,8 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
           <div 
             className="absolute left-1/2 top-0 bottom-0 w-[3px] -translate-x-1/2"
             style={{
-              background: 'linear-gradient(180deg, #FFE566 0%, #FFC800 50%, #CC9900 100%)',
-              boxShadow: '0 0 20px rgba(255,200,0,0.6), 0 0 40px rgba(255,200,0,0.3)',
+              background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 50%, #D4A520 100%)',
+              boxShadow: '0 0 15px rgba(247,201,72,0.4), 0 0 30px rgba(247,201,72,0.15)',
             }}
           />
           
@@ -200,7 +200,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
               style={{
                 borderLeft: '10px solid transparent',
                 borderRight: '10px solid transparent',
-                borderTop: '14px solid #FFC800',
+                borderTop: '14px solid #F7C948',
                 filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
               }}
             />
@@ -213,7 +213,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
               style={{
                 borderLeft: '10px solid transparent',
                 borderRight: '10px solid transparent',
-                borderBottom: '14px solid #FFC800',
+                borderBottom: '14px solid #F7C948',
                 filter: 'drop-shadow(0 -2px 4px rgba(0,0,0,0.5))',
               }}
             />
@@ -263,7 +263,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                       <div 
                         className="absolute -inset-8 pointer-events-none"
                         style={{
-                          background: 'radial-gradient(ellipse 120% 100% at 50% 50%, rgba(255,200,0,0.35) 0%, rgba(255,200,0,0.15) 40%, transparent 70%)',
+                          background: 'radial-gradient(ellipse 120% 100% at 50% 50%, rgba(247,201,72,0.25) 0%, rgba(247,201,72,0.1) 40%, transparent 70%)',
                           animation: 'spotlightPulse 2s ease-in-out infinite',
                         }}
                       />

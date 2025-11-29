@@ -17,7 +17,7 @@ const BoxPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#0a0c10] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-slate-400">Cargando caja...</p>
         </div>
       </div>
@@ -33,7 +33,7 @@ const BoxPage: React.FC = () => {
           <p className="text-slate-400 mb-6">{error}</p>
           <Link 
             to="/" 
-            className="px-6 py-3 bg-[#FFC800] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
+            className="px-6 py-3 bg-[#F7C948] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
           >
             Volver al inicio
           </Link>
@@ -62,7 +62,7 @@ const BoxPage: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-2xl font-black text-[#FFC800]">
+            <span className="text-2xl font-black text-[#F7C948]">
               ${box.price.toLocaleString()}
             </span>
           </div>

@@ -6,12 +6,17 @@
 
 ## 🎨 Colores
 
-### Primarios
+### Primarios (Premium Gold Palette)
 | Nombre | Hex | Uso |
 |--------|-----|-----|
-| **Gold** | `#FFC800` | Botones principales, acentos, wallet, CTAs |
-| **Gold Hover** | `#FFD700` | Hover en botones dorados |
-| **Gold Glow** | `rgba(255,200,0,0.2)` | Sombras y glows dorados |
+| **Gold Primary** | `#F7C948` | Botones principales, acentos, wallet, CTAs |
+| **Gold Light** | `#FFD966` | Highlights, hover states |
+| **Gold Dark** | `#D4A520` | Sombras, bordes |
+| **Gold Shadow** | `#B8860B` | Deep shadows (DarkGoldenrod) |
+| **Gold Glow** | `rgba(247,201,72,0.25)` | Sombras y glows (SUTIL) |
+| **Gold Glow Hover** | `rgba(247,201,72,0.35)` | Hover glow |
+
+> **NOTA**: Los glows deben ser SUTILES (20-35% opacidad). Evitar el estilo "Photoshop 2015".
 
 ### Fondos
 | Nombre | Hex | Uso |
@@ -44,7 +49,7 @@
 | **COMMON** | `#9ca3af` | Ninguno |
 | **RARE** | `#3b82f6` | Azul suave |
 | **EPIC** | `#a855f7` | Púrpura |
-| **LEGENDARY** | `#FFC800` | Dorado intenso |
+| **LEGENDARY** | `#F7C948` | Dorado premium |
 
 ---
 
