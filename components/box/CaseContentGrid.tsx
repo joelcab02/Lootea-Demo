@@ -14,18 +14,24 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
 
   return (
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h2 className="font-display text-xl md:text-2xl text-white uppercase">
-          Contenido de la Caja
-        </h2>
-        <p className="text-slate-600 text-sm">
-          {sortedItemsWithOdds.length} premios disponibles
-        </p>
+      {/* Header - Premium */}
+      <div className="flex items-center gap-4 mb-8">
+        <div 
+          className="w-1 h-8 rounded-full"
+          style={{ background: 'linear-gradient(180deg, #FFC800 0%, #996600 100%)' }}
+        />
+        <div>
+          <h2 className="font-display text-xl md:text-2xl text-white uppercase tracking-wide">
+            Contenido de la Caja
+          </h2>
+          <p className="text-slate-500 text-xs uppercase tracking-wider">
+            {sortedItemsWithOdds.length} premios • Ordenados por valor
+          </p>
+        </div>
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
         {sortedItemsWithOdds.map((item) => (
           <ItemCard key={item.id} item={item as LootItem & { normalizedOdds: number }} />
         ))}
@@ -44,27 +50,35 @@ const ItemCard: React.FC<{ item: LootItem & { normalizedOdds: number } }> = ({ i
 
   return (
     <div 
-      className="group relative rounded-xl overflow-hidden transition-all duration-200 hover:scale-[1.02]"
+      className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        background: 'linear-gradient(145deg, #1a1d26 0%, #12141a 100%)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
       }}
     >
-      {/* Hover glow */}
-      <div className="absolute inset-0 bg-[#FFC800] opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
+      {/* Top shine line */}
+      <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+      
+      {/* Hover border glow */}
+      <div 
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{ 
+          boxShadow: 'inset 0 0 0 1px rgba(255,200,0,0.3), 0 0 20px rgba(255,200,0,0.1)' 
+        }}
+      />
       
       {/* Image */}
-      <div className="p-3 pb-1">
+      <div className="p-4 pb-2">
         <div className="relative w-full aspect-square flex items-center justify-center">
           {isLoading ? (
-            <div className="w-10 h-10 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin" />
           ) : isEmoji ? (
-            <span className="text-4xl">{item.image}</span>
+            <span className="text-5xl drop-shadow-lg">{item.image}</span>
           ) : (
             <img 
               src={item.image} 
               alt={item.name}
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
+              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
               loading="lazy"
               style={needsBlendMode ? { mixBlendMode: 'lighten' } : {}}
             />
@@ -73,16 +87,27 @@ const ItemCard: React.FC<{ item: LootItem & { normalizedOdds: number } }> = ({ i
       </div>
 
       {/* Info */}
-      <div className="p-2 pt-0 text-center">
-        <h3 className="font-display text-[10px] text-slate-400 truncate mb-1.5 uppercase group-hover:text-white transition-colors">
+      <div className="p-3 pt-1">
+        <h3 className="font-display text-[11px] text-white truncate mb-2 uppercase tracking-wide text-center">
           {item.name}
         </h3>
         
-        <div className="flex items-center justify-between text-[10px]">
-          <span className="font-display text-[#FFC800]">
+        {/* Price bar */}
+        <div 
+          className="flex items-center justify-between px-2 py-1.5 rounded-lg"
+          style={{ background: 'rgba(255,200,0,0.08)' }}
+        >
+          <span 
+            className="font-display text-xs"
+            style={{
+              background: 'linear-gradient(180deg, #FFE566 0%, #FFC800 50%, #CC9900 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             ${item.price.toLocaleString()}
           </span>
-          <span className="text-slate-600">
+          <span className="text-slate-500 text-[10px] font-medium">
             {item.normalizedOdds < 1 
               ? `${item.normalizedOdds.toFixed(2)}%` 
               : `${item.normalizedOdds.toFixed(1)}%`}
