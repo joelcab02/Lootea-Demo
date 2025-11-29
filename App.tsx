@@ -147,24 +147,48 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* Center: Trust Badge - Desktop only */}
-            <div className="hidden lg:flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
-                <div className="text-green-500">
-                    <Icons.ShieldCheck />
+            {/* Center: Trust Badge - Premium Tech Style */}
+            <div className="hidden lg:flex items-center gap-2.5 px-5 py-2.5 rounded-full relative overflow-hidden group cursor-pointer"
+                style={{
+                    background: 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(34,197,94,0.05) 100%)',
+                    border: '1px solid rgba(34,197,94,0.3)',
+                }}
+            >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-400/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_ease-out]"></div>
+                
+                {/* Glow behind icon */}
+                <div className="relative">
+                    <div className="absolute inset-0 bg-green-500 blur-md opacity-40"></div>
+                    <div className="relative text-green-400" style={{ filter: 'drop-shadow(0 0 6px rgba(34,197,94,0.8))' }}>
+                        <Icons.ShieldCheck />
+                    </div>
                 </div>
-                <span className="font-display text-green-400 text-xs uppercase">
+                <span className="font-display text-green-400 text-xs uppercase tracking-wide"
+                    style={{ textShadow: '0 0 10px rgba(34,197,94,0.5)' }}
+                >
                     Provably Fair
                 </span>
             </div>
 
-            {/* Right: Auth (sound hidden on mobile) */}
-            <div className="flex items-center gap-2 md:gap-4">
+            {/* Right: Sound + Auth - Premium Style */}
+            <div className="flex items-center gap-2 md:gap-3">
+                {/* Sound button - Premium */}
                 <button 
                     onClick={() => setIsMuted(!isMuted)}
-                    className="hidden sm:flex text-slate-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
-                    title={isMuted ? "Unmute" : "Mute"}
+                    className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl transition-all relative overflow-hidden group"
+                    style={{
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                    title={isMuted ? "Activar sonido" : "Silenciar"}
                 >
-                    {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
+                    <div className="absolute inset-0 bg-[#FFC800]/0 group-hover:bg-[#FFC800]/10 transition-colors"></div>
+                    <div className={`relative transition-colors ${isMuted ? 'text-slate-600' : 'text-slate-400 group-hover:text-[#FFC800]'}`}
+                        style={{ filter: isMuted ? 'none' : 'drop-shadow(0 0 4px rgba(255,200,0,0.3))' }}
+                    >
+                        {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
+                    </div>
                 </button>
                 <UserMenu />
             </div>

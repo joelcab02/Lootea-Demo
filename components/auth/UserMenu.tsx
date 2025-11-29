@@ -119,7 +119,7 @@ export const UserMenu: React.FC = () => {
     );
   }
 
-  // Logged in - Premium Lootea style
+  // Logged in - Premium Tech Style
   if (authState.user) {
     const balance = getBalance();
     const displayName = authState.profile?.display_name || authState.user.email?.split('@')[0] || 'User';
@@ -128,43 +128,77 @@ export const UserMenu: React.FC = () => {
     return (
       <div className="flex items-center gap-2 md:gap-3">
         
-        {/* Balance Button - Gold with deposit action */}
-        <button className="group flex items-center gap-1.5 bg-gradient-to-r from-[#FFC800] to-[#FFB800] hover:from-[#FFD700] hover:to-[#FFC800] rounded-lg text-black px-2.5 md:px-3 py-1.5 md:py-2 shadow-[0_0_15px_rgba(255,200,0,0.2)] hover:shadow-[0_0_25px_rgba(255,200,0,0.4)] transition-all">
-          <Icons.Wallet />
-          <span className="font-mono font-black text-xs md:text-sm tracking-tight">
-            ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-          </span>
-          <div className="w-5 h-5 md:w-6 md:h-6 bg-black/20 rounded-md flex items-center justify-center group-hover:bg-black/30 transition-colors ml-0.5">
-            <Icons.Plus />
+        {/* Balance Button - Premium Metallic Gold */}
+        <button 
+          className="group flex items-center gap-1.5 rounded-xl text-black px-3 md:px-4 py-2 md:py-2.5 transition-all relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(180deg, #FFE566 0%, #FFD700 20%, #FFC800 50%, #E6A800 80%, #CC9900 100%)',
+            boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(255,200,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+          }}
+        >
+          {/* Metallic shine */}
+          <div className="absolute inset-0 opacity-40"
+            style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%)' }}
+          ></div>
+          {/* Shimmer on hover */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_ease-out]"></div>
+          
+          <div className="relative flex items-center gap-1.5">
+            <Icons.Wallet />
+            <span className="font-mono font-black text-sm md:text-base tracking-tight">
+              ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </span>
+            <div className="w-6 h-6 bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-black/30 transition-colors ml-1">
+              <Icons.Plus />
+            </div>
           </div>
         </button>
 
-        {/* User Profile Button with Dropdown */}
+        {/* User Profile Button - Premium Tech */}
         <div className="relative">
           <button 
             onClick={toggleDropdown}
-            className={`flex items-center gap-2 bg-[#1a1d26] hover:bg-[#252830] border px-2 md:px-3 py-1.5 md:py-2 rounded-lg transition-all ${
-              dropdownOpen ? 'border-[#FFC800]/50 bg-[#252830]' : 'border-[#2a2d36] hover:border-[#FFC800]/30'
-            }`}
+            className="flex items-center gap-2 px-2.5 md:px-3 py-2 md:py-2.5 rounded-xl transition-all relative overflow-hidden group"
+            style={{
+              background: dropdownOpen 
+                ? 'linear-gradient(135deg, rgba(255,200,0,0.15) 0%, rgba(255,200,0,0.05) 100%)'
+                : 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+              border: dropdownOpen ? '1px solid rgba(255,200,0,0.4)' : '1px solid rgba(255,255,255,0.1)',
+            }}
           >
-            {/* Avatar with level indicator */}
+            {/* Hover glow */}
+            <div className="absolute inset-0 bg-[#FFC800]/0 group-hover:bg-[#FFC800]/10 transition-colors rounded-xl"></div>
+            
+            {/* Avatar with glow */}
             <div className="relative">
-              <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-gradient-to-br from-[#FFC800] to-[#FF9500] flex items-center justify-center text-black text-xs md:text-sm font-display font-black">
+              <div className="absolute inset-0 bg-[#FFC800] blur-md opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <div className="relative w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-black text-sm md:text-base font-display font-black"
+                style={{
+                  background: 'linear-gradient(135deg, #FFE566 0%, #FFC800 50%, #E6A800 100%)',
+                  boxShadow: '0 2px 8px rgba(255,200,0,0.4)',
+                }}
+              >
                 {displayName.charAt(0).toUpperCase()}
               </div>
               {/* Level badge */}
-              <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 md:w-4 md:h-4 bg-[#0d1019] rounded-full flex items-center justify-center border border-[#FFC800]">
-                <span className="text-[8px] md:text-[9px] font-bold text-[#FFC800]">{level}</span>
+              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 md:w-4.5 md:h-4.5 rounded-full flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(135deg, #1a1d26 0%, #0d1019 100%)',
+                  border: '1.5px solid #FFC800',
+                  boxShadow: '0 0 6px rgba(255,200,0,0.5)',
+                }}
+              >
+                <span className="text-[9px] font-bold text-[#FFC800]">{level}</span>
               </div>
             </div>
             
-            {/* Name - hidden on mobile */}
-            <span className="text-white text-xs md:text-sm hidden sm:block font-medium max-w-[80px] truncate">
+            {/* Name */}
+            <span className="relative text-white text-sm hidden sm:block font-medium max-w-[80px] truncate">
               {displayName}
             </span>
             
             {/* Chevron */}
-            <div className={`text-slate-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
+            <div className={`relative text-slate-400 group-hover:text-[#FFC800] transition-all ${dropdownOpen ? 'rotate-180 text-[#FFC800]' : ''}`}>
               <Icons.ChevronDown />
             </div>
           </button>
