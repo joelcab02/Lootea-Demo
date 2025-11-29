@@ -28,23 +28,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  // Reset mode when initialMode changes
+  // Reset form when opening
   useEffect(() => {
-    setMode(initialMode);
-    setError('');
-    setEmail('');
-    setPassword('');
-    setAgreed(false);
+    if (isOpen) {
+      setMode(initialMode);
+      setError('');
+      setEmail('');
+      setPassword('');
+      setAgreed(false);
+    }
   }, [initialMode, isOpen]);
-  
-  useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
 
-  if (!isOpen || !mounted) return null;
+  if (!isOpen) return null;
 
   const isLogin = mode === 'login';
 
@@ -104,14 +100,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const modalContent = (
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-[fadeIn_150ms_ease-out]"
       style={{ 
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        height: '100dvh', // Dynamic viewport height for mobile
+        height: '100dvh',
       }}
     >
       {/* Backdrop */}
@@ -119,7 +115,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       
       {/* Modal */}
       <div 
-        className="relative z-[101] w-full max-w-sm bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto"
+        className="relative z-[101] w-full max-w-sm bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto animate-[scaleIn_150ms_ease-out]"
         style={{ contain: 'layout paint' }}
       >
         {/* Close button */}
