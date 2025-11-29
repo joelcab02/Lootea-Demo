@@ -185,7 +185,7 @@ const App: React.FC = () => {
             {/* CONTROLS - Clean & Simple */}
             <div className="z-20 w-full max-w-[700px] px-4">
                 
-                {/* Main Button */}
+                {/* Main Button with Particle Effects */}
                 <button 
                     onClick={handleSpin}
                     disabled={isSpinning}
@@ -200,16 +200,31 @@ const App: React.FC = () => {
                         active:shadow-[0_2px_0_#b38b00] active:translate-y-1
                         disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
                         flex items-center justify-center gap-4
+                        overflow-hidden
                     "
                 >
+                    {/* Shimmer effect */}
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
                     
+                    {/* Floating particles */}
+                    <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute w-1 h-1 bg-white/60 rounded-full animate-[float_3s_ease-in-out_infinite] left-[10%] top-[20%]"></div>
+                        <div className="absolute w-1.5 h-1.5 bg-white/40 rounded-full animate-[float_4s_ease-in-out_infinite_0.5s] left-[25%] top-[60%]"></div>
+                        <div className="absolute w-1 h-1 bg-white/50 rounded-full animate-[float_3.5s_ease-in-out_infinite_1s] left-[75%] top-[30%]"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-white/70 rounded-full animate-[float_2.5s_ease-in-out_infinite_0.3s] left-[85%] top-[70%]"></div>
+                        <div className="absolute w-1 h-1 bg-white/45 rounded-full animate-[float_4s_ease-in-out_infinite_1.5s] left-[50%] top-[15%]"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-white/55 rounded-full animate-[float_3s_ease-in-out_infinite_2s] left-[60%] top-[75%]"></div>
+                    </div>
+                    
+                    {/* Glow pulse on hover */}
+                    <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
+                    
                     {isSpinning ? (
-                        <span className="animate-pulse">ABRIENDO...</span>
+                        <span className="relative z-10 animate-pulse">ABRIENDO...</span>
                     ) : (
                         <>
-                            <span>ABRIR</span>
-                            <span className="font-display text-lg md:text-xl bg-black/20 px-3 py-1 rounded-lg uppercase">
+                            <span className="relative z-10">ABRIR</span>
+                            <span className="relative z-10 font-display text-lg md:text-xl bg-black/20 px-3 py-1 rounded-lg uppercase">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </span>
                         </>
@@ -255,13 +270,23 @@ const App: React.FC = () => {
                         <button 
                             onClick={() => setDemoMode(!demoMode)}
                             className={`
-                                h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1 border transition-all text-xs sm:text-sm
+                                h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1.5 border transition-all text-xs sm:text-sm
                                 ${demoMode 
                                     ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' 
-                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500'}
+                                    : 'bg-[#FFC800]/10 border-[#FFC800]/50 text-[#FFC800]'}
                             `}
                         >
-                            <span className="font-medium">{demoMode ? 'Demo' : 'Real'}</span>
+                            {demoMode ? (
+                                <>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                    <span className="font-medium">Demo</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                    <span className="font-medium">Jugar</span>
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>
