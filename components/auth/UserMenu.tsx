@@ -262,21 +262,39 @@ export const UserMenu: React.FC = () => {
     );
   }
 
-  // Logged out - Mobile optimized
+  // Logged out - Premium Tech Style
   return (
     <>
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Entrar Button - Glass Style */}
         <button
           onClick={openLogin}
-          className="px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-400 hover:text-white transition-colors font-medium"
+          className="px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-medium transition-all relative overflow-hidden group rounded-xl"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }}
         >
-          Entrar
+          <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+          <span className="relative text-slate-300 group-hover:text-white transition-colors">Entrar</span>
         </button>
+        
+        {/* Registro Button - Premium Metallic Gold */}
         <button
           onClick={openRegister}
-          className="px-3 sm:px-5 py-1.5 sm:py-2.5 text-xs sm:text-sm bg-[#FFC800] hover:bg-[#FFD700] text-black rounded-lg font-display uppercase transition-all shadow-[0_0_20px_rgba(255,200,0,0.25)] hover:shadow-[0_0_30px_rgba(255,200,0,0.4)]"
+          className="px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-display uppercase transition-all relative overflow-hidden group rounded-xl"
+          style={{
+            background: 'linear-gradient(180deg, #FFE566 0%, #FFD700 20%, #FFC800 50%, #E6A800 80%, #CC9900 100%)',
+            boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(255,200,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+          }}
         >
-          Registro
+          {/* Metallic shine */}
+          <div className="absolute inset-0 opacity-40"
+            style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%)' }}
+          ></div>
+          {/* Shimmer on hover */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_ease-out]"></div>
+          <span className="relative text-black font-bold">Registro</span>
         </button>
       </div>
 
