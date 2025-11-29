@@ -33,7 +33,14 @@ const AdminDashboard: React.FC = () => {
     try {
       console.log('📦 Loading admin data...');
       
+      // Test Supabase connection first
+      console.log('📦 Testing Supabase connection...');
+      const testStart = Date.now();
+      const testRes = await supabase.from('boxes').select('id').limit(1);
+      console.log('📦 Supabase test took:', Date.now() - testStart, 'ms', testRes);
+      
       // Admin loads ALL boxes (not just active ones)
+      console.log('📦 Loading boxes and items...');
       const [boxesRes, productsRes] = await Promise.all([
         supabase.from('boxes').select('*').order('created_at', { ascending: false }),
         supabase.from('items').select('*').order('price', { ascending: false })
