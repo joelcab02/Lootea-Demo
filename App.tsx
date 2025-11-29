@@ -169,23 +169,37 @@ const App: React.FC = () => {
                 <div className="absolute top-[25%] right-[15%] w-[250px] h-[250px] bg-[#FFD700] opacity-[0.025] blur-[100px] animate-pulse" style={{animationDelay: '1s'}}></div>
                 
                 {/* Tech circuit lines - Left side */}
-                <svg className="absolute left-0 top-[10%] w-[150px] h-[400px] opacity-[0.15]" viewBox="0 0 150 400">
-                    <path d="M0 50 L50 50 L50 100 L80 100 L80 150" stroke="#FFC800" strokeWidth="1" fill="none"/>
-                    <path d="M0 120 L30 120 L30 180 L60 180 L60 250 L40 250" stroke="#FFC800" strokeWidth="1" fill="none"/>
-                    <path d="M0 200 L70 200 L70 280 L100 280 L100 350" stroke="#FFC800" strokeWidth="1" fill="none"/>
-                    <circle cx="80" cy="150" r="3" fill="#FFC800"/>
-                    <circle cx="40" cy="250" r="3" fill="#FFC800"/>
-                    <circle cx="100" cy="350" r="3" fill="#FFC800"/>
+                <svg className="absolute left-4 md:left-8 top-[5%] w-[120px] md:w-[200px] h-[500px] opacity-30 hidden sm:block" viewBox="0 0 200 500">
+                    <path d="M0 50 L60 50 L60 120 L100 120 L100 180" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
+                    <path d="M0 150 L40 150 L40 220 L80 220 L80 300 L50 300" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
+                    <path d="M0 280 L90 280 L90 380 L130 380 L130 450" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
+                    <circle cx="100" cy="180" r="4" fill="#FFC800" className="animate-pulse"/>
+                    <circle cx="50" cy="300" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '0.5s'}}/>
+                    <circle cx="130" cy="450" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '1s'}}/>
+                    <defs>
+                        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#FFC800" stopOpacity="0.3"/>
+                            <stop offset="50%" stopColor="#FFD700" stopOpacity="0.6"/>
+                            <stop offset="100%" stopColor="#FFC800" stopOpacity="0.3"/>
+                        </linearGradient>
+                    </defs>
                 </svg>
                 
                 {/* Tech circuit lines - Right side */}
-                <svg className="absolute right-0 top-[15%] w-[150px] h-[400px] opacity-[0.15]" viewBox="0 0 150 400" style={{transform: 'scaleX(-1)'}}>
-                    <path d="M0 80 L60 80 L60 140 L90 140 L90 200" stroke="#FFC800" strokeWidth="1" fill="none"/>
-                    <path d="M0 160 L40 160 L40 220 L70 220 L70 300" stroke="#FFC800" strokeWidth="1" fill="none"/>
-                    <path d="M0 260 L50 260 L50 320 L80 320" stroke="#FFC800" strokeWidth="1" fill="none"/>
-                    <circle cx="90" cy="200" r="3" fill="#FFC800"/>
-                    <circle cx="70" cy="300" r="3" fill="#FFC800"/>
-                    <circle cx="80" cy="320" r="3" fill="#FFC800"/>
+                <svg className="absolute right-4 md:right-8 top-[8%] w-[120px] md:w-[200px] h-[500px] opacity-30 hidden sm:block" viewBox="0 0 200 500" style={{transform: 'scaleX(-1)'}}>
+                    <path d="M0 80 L70 80 L70 160 L110 160 L110 240" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
+                    <path d="M0 200 L50 200 L50 280 L90 280 L90 380" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
+                    <path d="M0 340 L60 340 L60 420 L100 420" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
+                    <circle cx="110" cy="240" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '0.3s'}}/>
+                    <circle cx="90" cy="380" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '0.8s'}}/>
+                    <circle cx="100" cy="420" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '1.3s'}}/>
+                    <defs>
+                        <linearGradient id="goldGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#FFC800" stopOpacity="0.3"/>
+                            <stop offset="50%" stopColor="#FFD700" stopOpacity="0.6"/>
+                            <stop offset="100%" stopColor="#FFC800" stopOpacity="0.3"/>
+                        </linearGradient>
+                    </defs>
                 </svg>
             </div>
             
