@@ -6,18 +6,14 @@ interface CaseContentGridProps {
     items: LootItem[];
 }
 
-const RARITY_COLORS: Record<Rarity, string> = {
-  [Rarity.COMMON]: 'border-slate-600',
-  [Rarity.RARE]: 'border-blue-500',
-  [Rarity.EPIC]: 'border-purple-500',
-  [Rarity.LEGENDARY]: 'border-[#FFC800]',
-};
-
-const RARITY_GLOW: Record<Rarity, string> = {
-  [Rarity.COMMON]: '',
-  [Rarity.RARE]: 'shadow-[0_0_20px_rgba(59,130,246,0.3)]',
-  [Rarity.EPIC]: 'shadow-[0_0_20px_rgba(168,85,247,0.3)]',
-  [Rarity.LEGENDARY]: 'shadow-[0_0_25px_rgba(255,200,0,0.4)]',
+// Premium monochrome with gold accent for high value
+const getRarityOpacity = (rarity: Rarity): number => {
+  switch (rarity) {
+    case Rarity.LEGENDARY: return 1;
+    case Rarity.EPIC: return 0.7;
+    case Rarity.RARE: return 0.5;
+    default: return 0.3;
+  }
 };
 
 const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
@@ -35,36 +31,36 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
 
   return (
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
-      {/* Header */}
+      {/* Header - Premium style */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h2 className="font-display text-2xl md:text-3xl text-white mb-1 uppercase">
             CONTENIDO DE LA CAJA
           </h2>
-          <p className="text-slate-500 text-sm">
+          <p className="text-slate-600 text-sm">
             {sortedItemsWithOdds.length} premios disponibles
           </p>
         </div>
         
-        {/* Rarity Filter - Scrollable on mobile */}
-        <div className="flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
+        {/* Filter - Minimal style */}
+        <div className="flex gap-1 overflow-x-auto no-scrollbar pb-1">
           <FilterButton active={filter === 'ALL'} onClick={() => setFilter('ALL')}>
             Todos
           </FilterButton>
-          <FilterButton active={filter === Rarity.LEGENDARY} onClick={() => setFilter(Rarity.LEGENDARY)} color="text-[#FFC800]">
-            Leg.
+          <FilterButton active={filter === Rarity.LEGENDARY} onClick={() => setFilter(Rarity.LEGENDARY)}>
+            ★ Leg.
           </FilterButton>
-          <FilterButton active={filter === Rarity.EPIC} onClick={() => setFilter(Rarity.EPIC)} color="text-purple-400">
+          <FilterButton active={filter === Rarity.EPIC} onClick={() => setFilter(Rarity.EPIC)}>
             Épico
           </FilterButton>
-          <FilterButton active={filter === Rarity.RARE} onClick={() => setFilter(Rarity.RARE)} color="text-blue-400">
+          <FilterButton active={filter === Rarity.RARE} onClick={() => setFilter(Rarity.RARE)}>
             Raro
           </FilterButton>
         </div>
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-3">
         {filteredItems.map((item) => (
           <ItemCard key={item.id} item={item as LootItem & { normalizedOdds: number }} />
         ))}
@@ -73,20 +69,19 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
   );
 };
 
-function FilterButton({ children, active, onClick, color = 'text-white' }: { 
+function FilterButton({ children, active, onClick }: { 
   children: React.ReactNode; 
   active: boolean; 
   onClick: () => void;
-  color?: string;
 }) {
   return (
     <button
       onClick={onClick}
       className={`
-        px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-all whitespace-nowrap
+        px-3 py-1.5 rounded-lg text-xs font-display uppercase transition-all whitespace-nowrap
         ${active 
-          ? `bg-[#1e2330] ${color}` 
-          : 'text-slate-500 hover:text-white hover:bg-[#1e2330]/50'}
+          ? 'bg-[#FFC800] text-black' 
+          : 'text-slate-500 hover:text-white'}
       `}
     >
       {children}
@@ -101,44 +96,62 @@ const ItemCard: React.FC<{ item: LootItem & { normalizedOdds: number } }> = ({ i
   const isLoading = item.image === '⏳';
   const isEmoji = !item.image.startsWith('http') && !isGenerated && !isLoading;
   const needsBlendMode = isGenerated || (isCdnImage && !isCloudinary);
+  
+  const isLegendary = item.rarity === Rarity.LEGENDARY;
+  const rarityOpacity = getRarityOpacity(item.rarity);
 
   return (
-    <div className={`
-      group relative bg-[#13151b] rounded-xl overflow-hidden
-      border-2 ${RARITY_COLORS[item.rarity]}
-      hover:${RARITY_GLOW[item.rarity]}
-      transition-all duration-300 hover:-translate-y-1
-    `}>
+    <div 
+      className="group relative rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-0.5"
+      style={{
+        background: isLegendary 
+          ? 'linear-gradient(135deg, rgba(255,200,0,0.1) 0%, rgba(255,200,0,0.02) 100%)'
+          : 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+        border: isLegendary 
+          ? '1px solid rgba(255,200,0,0.3)'
+          : '1px solid rgba(255,255,255,0.06)',
+      }}
+    >
+      {/* Legendary glow */}
+      {isLegendary && (
+        <div className="absolute inset-0 bg-[#FFC800] opacity-5 group-hover:opacity-10 transition-opacity"></div>
+      )}
+      
       {/* Image */}
-      <div className="p-4 pb-2">
+      <div className="p-3 pb-1">
         <div className="relative w-full aspect-square flex items-center justify-center">
           {isLoading ? (
-            <div className="w-16 h-16 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin" />
+            <div className="w-12 h-12 border-2 border-[#FFC800]/30 border-t-[#FFC800] rounded-full animate-spin" />
           ) : isEmoji ? (
-            <span className="text-5xl">{item.image}</span>
+            <span className="text-4xl">{item.image}</span>
           ) : (
             <img 
               src={item.image} 
               alt={item.name}
-              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
               loading="lazy"
-              style={needsBlendMode ? { mixBlendMode: 'lighten' } : {}}
+              style={{
+                ...(needsBlendMode ? { mixBlendMode: 'lighten' } : {}),
+                opacity: rarityOpacity,
+              }}
             />
           )}
         </div>
       </div>
 
       {/* Info */}
-      <div className="p-3 pt-0 text-center">
-        <h3 className="font-display text-xs text-white truncate mb-2 group-hover:text-[#FFC800] transition-colors uppercase">
+      <div className="p-2 pt-0 text-center">
+        <h3 className={`font-display text-[10px] truncate mb-1.5 uppercase transition-colors ${
+          isLegendary ? 'text-[#FFC800]' : 'text-slate-400 group-hover:text-white'
+        }`}>
           {item.name}
         </h3>
         
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-display text-[#FFC800] uppercase">
+        <div className="flex items-center justify-between text-[10px]">
+          <span className={`font-display ${isLegendary ? 'text-[#FFC800]' : 'text-slate-300'}`}>
             ${item.price.toLocaleString()}
           </span>
-          <span className="text-slate-500">
+          <span className="text-slate-600">
             {item.normalizedOdds < 1 
               ? `${item.normalizedOdds.toFixed(2)}%` 
               : `${item.normalizedOdds.toFixed(1)}%`}
@@ -146,12 +159,10 @@ const ItemCard: React.FC<{ item: LootItem & { normalizedOdds: number } }> = ({ i
         </div>
       </div>
 
-      {/* Rarity indicator line */}
-      <div className={`absolute bottom-0 left-0 right-0 h-0.5 ${
-        item.rarity === Rarity.LEGENDARY ? 'bg-[#FFC800]' :
-        item.rarity === Rarity.EPIC ? 'bg-purple-500' :
-        item.rarity === Rarity.RARE ? 'bg-blue-500' : 'bg-slate-600'
-      }`} />
+      {/* Bottom accent - only for legendary */}
+      {isLegendary && (
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFC800] to-transparent opacity-60"></div>
+      )}
     </div>
   );
 }
