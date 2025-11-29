@@ -36,7 +36,12 @@ const AdminDashboard: React.FC = () => {
     ]);
     
     setBoxes(boxesRes);
-    setProducts(productsRes.data || []);
+    // Map image_url to image for compatibility
+    const mappedProducts = (productsRes.data || []).map(p => ({
+      ...p,
+      image: p.image_url || p.image || ''
+    }));
+    setProducts(mappedProducts);
     
     const totalValue = (productsRes.data || []).reduce((sum, p) => sum + Number(p.price), 0);
     setStats({
