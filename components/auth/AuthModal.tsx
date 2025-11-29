@@ -29,16 +29,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
-  // Animate in when opening
+  // Handle mount/unmount with animation
   useEffect(() => {
     if (isOpen) {
-      // Small delay to trigger CSS transition
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setVisible(true));
-      });
+      setShouldRender(true);
+      // Trigger animation after mount
+      const timer = setTimeout(() => setVisible(true), 10);
+      return () => clearTimeout(timer);
     } else {
       setVisible(false);
+      // Unmount after animation
+      const timer = setTimeout(() => setShouldRender(false), 200);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -59,7 +63,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setTimeout(onClose, 200);
   }, [onClose]);
 
-  if (!isOpen) return null;
+  if (!shouldRender) return null;
 
   const isLogin = mode === 'login';
 
