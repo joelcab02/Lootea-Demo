@@ -263,10 +263,10 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                     )}
                     
                     <div 
-                      className={`relative rounded-xl overflow-hidden ${isWinner ? 'ring-2 ring-[#FFC800]' : ''}`}
+                      className="relative rounded-xl overflow-hidden"
                       style={isWinner ? {
-                        boxShadow: '0 0 30px rgba(255,200,0,0.4), 0 0 60px rgba(255,200,0,0.2)',
-                      } : {}}
+                        boxShadow: '0 0 0 3px #FFC800, 0 0 30px rgba(255,200,0,0.5), 0 0 60px rgba(255,200,0,0.3)',
+                      } : undefined}
                     >
                       <LootCard item={item} width={CARD_WIDTH} isSpinner={true} />
                     </div>
