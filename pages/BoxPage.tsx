@@ -7,7 +7,6 @@ import { useParams, Link } from 'react-router-dom';
 import { useBox } from '../hooks/useBox';
 import Spinner from '../components/box/Spinner';
 import CaseContentGrid from '../components/box/CaseContentGrid';
-import LiveDrops from '../components/drops/LiveDrops';
 import Footer from '../components/layout/Footer';
 
 const BoxPage: React.FC = () => {
@@ -74,11 +73,6 @@ const BoxPage: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Spinner */}
         <Spinner items={items} />
-
-        {/* Live Drops */}
-        <div className="mt-8">
-          <LiveDrops />
-        </div>
 
         {/* Case Content */}
         <div className="mt-8">
