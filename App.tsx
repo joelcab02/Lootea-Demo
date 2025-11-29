@@ -3,7 +3,6 @@ import Spinner from './components/box/Spinner';
 import Sidebar from './components/layout/Sidebar';
 import CaseContentGrid from './components/box/CaseContentGrid';
 import Footer from './components/layout/Footer';
-import HowItWorks from './components/ui/HowItWorks';
 import { LootItem, Rarity } from './types';
 import { RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';
@@ -382,7 +381,6 @@ const App: React.FC = () => {
         <div className="flex-1">
             <div className="flex flex-col gap-12 py-12">
                 <CaseContentGrid items={items} />
-                <HowItWorks />
             </div>
         </div>
 
