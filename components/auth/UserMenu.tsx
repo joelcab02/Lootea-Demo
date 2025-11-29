@@ -269,7 +269,7 @@ export const UserMenu: React.FC = () => {
         {/* Entrar Button - Glass Style */}
         <button
           onClick={openLogin}
-          className="px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-medium transition-all relative overflow-hidden group rounded-xl"
+          className="px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-display uppercase transition-all relative overflow-hidden group rounded-xl"
           style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
             border: '1px solid rgba(255,255,255,0.1)',
