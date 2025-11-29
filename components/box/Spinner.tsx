@@ -279,35 +279,6 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                       <LootCard item={item} width={CARD_WIDTH} isSpinner={true} />
                     </div>
                     
-                    {/* Winner info with reveal animation */}
-                    {isWinner && (
-                      <div 
-                        className="absolute -bottom-16 left-1/2 text-center whitespace-nowrap"
-                        style={{
-                          animation: 'textReveal 0.5s ease-out 0.3s forwards',
-                          opacity: 0,
-                          zIndex: 60,
-                        }}
-                      >
-                        <p 
-                          className="font-display text-white text-sm md:text-base uppercase tracking-wide"
-                          style={{ textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}
-                        >
-                          {winner.name}
-                        </p>
-                        <p 
-                          className="font-display text-lg md:text-xl uppercase font-bold"
-                          style={{
-                            background: 'linear-gradient(180deg, #FFFFFF 0%, #FFE566 30%, #FFC800 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            textShadow: '0 0 30px rgba(255,200,0,0.5)',
-                          }}
-                        >
-                          ${winner.price.toLocaleString()}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 );
             })}
