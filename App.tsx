@@ -158,6 +158,19 @@ const App: React.FC = () => {
             
             {/* Premium ambient glow system */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                
+                {/* Floating particles */}
+                <div className="absolute w-1 h-1 bg-[#FFC800]/40 rounded-full animate-[floatUp_8s_ease-in-out_infinite] left-[10%] top-[80%]"></div>
+                <div className="absolute w-1.5 h-1.5 bg-[#FFC800]/30 rounded-full animate-[floatUp_12s_ease-in-out_infinite_1s] left-[20%] top-[90%]"></div>
+                <div className="absolute w-0.5 h-0.5 bg-[#FFD700]/50 rounded-full animate-[floatUp_10s_ease-in-out_infinite_2s] left-[35%] top-[85%]"></div>
+                <div className="absolute w-1 h-1 bg-[#FFC800]/35 rounded-full animate-[floatUp_14s_ease-in-out_infinite_0.5s] left-[50%] top-[95%]"></div>
+                <div className="absolute w-0.5 h-0.5 bg-[#FFD700]/45 rounded-full animate-[floatUp_9s_ease-in-out_infinite_3s] left-[65%] top-[88%]"></div>
+                <div className="absolute w-1.5 h-1.5 bg-[#FFC800]/25 rounded-full animate-[floatUp_11s_ease-in-out_infinite_1.5s] left-[80%] top-[92%]"></div>
+                <div className="absolute w-1 h-1 bg-[#FFD700]/40 rounded-full animate-[floatUp_13s_ease-in-out_infinite_4s] left-[90%] top-[82%]"></div>
+                <div className="absolute w-0.5 h-0.5 bg-[#FFC800]/50 rounded-full animate-[floatUp_7s_ease-in-out_infinite_2.5s] left-[5%] top-[75%]"></div>
+                <div className="absolute w-1 h-1 bg-[#FFD700]/35 rounded-full animate-[floatUp_15s_ease-in-out_infinite_5s] left-[45%] top-[70%]"></div>
+                <div className="absolute w-1.5 h-1.5 bg-[#FFC800]/20 rounded-full animate-[floatUp_10s_ease-in-out_infinite_3.5s] left-[75%] top-[78%]"></div>
+                
                 {/* Main center glow */}
                 <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#FFC800] opacity-[0.06] blur-[120px]"></div>
                 
