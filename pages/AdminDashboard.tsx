@@ -63,6 +63,13 @@ const AdminDashboard: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
   
+  // Load data when admin is authenticated
+  useEffect(() => {
+    if (authState.isAdmin) {
+      loadAdminData();
+    }
+  }, [authState.isAdmin]);
+  
   // Check if user is authenticated and is admin
   const checkAdminAuth = async () => {
     try {
@@ -117,9 +124,6 @@ const AdminDashboard: React.FC = () => {
         user: session.user,
         error: null,
       });
-      
-      // Load admin data
-      loadData();
       
     } catch (err) {
       console.error('Admin auth check failed:', err);
@@ -185,7 +189,7 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
-  const loadData = async () => {
+  const loadAdminData = async () => {
     setIsLoading(true);
     
     try {
@@ -356,16 +360,16 @@ const AdminDashboard: React.FC = () => {
                 <DashboardSection stats={stats} boxes={boxes} navigate={navigate} />
               )}
               {section === 'boxes' && (
-                <BoxesSection boxes={boxes} navigate={navigate} onRefresh={loadData} setIsSaving={setIsSaving} />
+                <BoxesSection boxes={boxes} navigate={navigate} onRefresh={loadAdminData} setIsSaving={setIsSaving} />
               )}
               {section === 'box-edit' && (
-                <BoxEditSection boxId={editId} navigate={navigate} onSave={loadData} setIsSaving={setIsSaving} products={products} />
+                <BoxEditSection boxId={editId} navigate={navigate} onSave={loadAdminData} setIsSaving={setIsSaving} products={products} />
               )}
               {section === 'products' && (
-                <ProductsSection products={products} navigate={navigate} onRefresh={loadData} setIsSaving={setIsSaving} />
+                <ProductsSection products={products} navigate={navigate} onRefresh={loadAdminData} setIsSaving={setIsSaving} />
               )}
               {section === 'product-edit' && (
-                <ProductEditSection productId={editId} navigate={navigate} onSave={loadData} setIsSaving={setIsSaving} />
+                <ProductEditSection productId={editId} navigate={navigate} onSave={loadAdminData} setIsSaving={setIsSaving} />
               )}
             </>
           )}
