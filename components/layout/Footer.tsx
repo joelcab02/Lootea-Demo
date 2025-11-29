@@ -143,6 +143,7 @@ function TrustCard({ icon, title, desc }: { icon: React.ReactNode, title: string
       style={{
         background: 'linear-gradient(145deg, #12141a 0%, #0a0c10 100%)',
         boxShadow: '0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)',
+        contain: 'layout paint',
       }}
     >
       {/* Top shine */}

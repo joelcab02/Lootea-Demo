@@ -108,7 +108,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       <div className="absolute inset-0 bg-black/90" onClick={onClose} />
       
       {/* Modal */}
-      <div className="relative z-[101] w-full sm:max-w-sm bg-[#0d1019] border-t sm:border border-[#1e2330] rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div 
+        className="relative z-[101] w-full sm:max-w-sm bg-[#0d1019] border-t sm:border border-[#1e2330] rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+        style={{ contain: 'layout paint' }}
+      >
         {/* Close button */}
         <button 
           onClick={onClose}

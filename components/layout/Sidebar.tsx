@@ -46,13 +46,15 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar Container - Premium Tech */}
       <div className={`
         fixed inset-y-0 left-0 z-50 w-[320px] sm:w-[380px] text-slate-400 shrink-0 flex flex-col
-        transform transition-transform duration-300 ease-in-out
+        transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}
         style={{
           background: 'linear-gradient(180deg, #0d1019 0%, #0a0d14 100%)',
           borderRight: '1px solid rgba(255,200,0,0.1)',
           boxShadow: '4px 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(255,200,0,0.05)',
+          contain: 'layout style paint',
+          willChange: isOpen ? 'transform' : 'auto',
         }}
       >
         {/* Decorative circuit line */}
