@@ -54,6 +54,17 @@
       .gpu-accelerate {
         transform: translateZ(0);
         will-change: transform;
+        backface-visibility: hidden;
+      }
+      
+      /* Mobile performance optimizations */
+      @media (max-width: 768px) {
+        * {
+          -webkit-tap-highlight-color: transparent;
+        }
+        .mobile-no-blur {
+          filter: none !important;
+        }
       }
       .no-scrollbar::-webkit-scrollbar {
         display: none;

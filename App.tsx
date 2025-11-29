@@ -192,39 +192,29 @@ const App: React.FC = () => {
         {/* HERO AREA */}
         <div className="flex flex-col items-center pt-6 md:pt-10 pb-6 relative overflow-visible">
             
-            {/* Premium ambient glow system */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Premium ambient glow system - DESKTOP ONLY for performance */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
                 
-                {/* Floating particles */}
+                {/* Floating particles - Desktop only */}
                 <div className="absolute w-1 h-1 bg-[#FFC800]/40 rounded-full animate-[floatUp_8s_ease-in-out_infinite] left-[10%] top-[80%]"></div>
                 <div className="absolute w-1.5 h-1.5 bg-[#FFC800]/30 rounded-full animate-[floatUp_12s_ease-in-out_infinite_1s] left-[20%] top-[90%]"></div>
-                <div className="absolute w-0.5 h-0.5 bg-[#FFD700]/50 rounded-full animate-[floatUp_10s_ease-in-out_infinite_2s] left-[35%] top-[85%]"></div>
                 <div className="absolute w-1 h-1 bg-[#FFC800]/35 rounded-full animate-[floatUp_14s_ease-in-out_infinite_0.5s] left-[50%] top-[95%]"></div>
-                <div className="absolute w-0.5 h-0.5 bg-[#FFD700]/45 rounded-full animate-[floatUp_9s_ease-in-out_infinite_3s] left-[65%] top-[88%]"></div>
                 <div className="absolute w-1.5 h-1.5 bg-[#FFC800]/25 rounded-full animate-[floatUp_11s_ease-in-out_infinite_1.5s] left-[80%] top-[92%]"></div>
-                <div className="absolute w-1 h-1 bg-[#FFD700]/40 rounded-full animate-[floatUp_13s_ease-in-out_infinite_4s] left-[90%] top-[82%]"></div>
-                <div className="absolute w-0.5 h-0.5 bg-[#FFC800]/50 rounded-full animate-[floatUp_7s_ease-in-out_infinite_2.5s] left-[5%] top-[75%]"></div>
-                <div className="absolute w-1 h-1 bg-[#FFD700]/35 rounded-full animate-[floatUp_15s_ease-in-out_infinite_5s] left-[45%] top-[70%]"></div>
-                <div className="absolute w-1.5 h-1.5 bg-[#FFC800]/20 rounded-full animate-[floatUp_10s_ease-in-out_infinite_3.5s] left-[75%] top-[78%]"></div>
                 
                 {/* Main center glow */}
                 <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#FFC800] opacity-[0.06] blur-[120px]"></div>
                 
-                {/* Secondary glow - lower, wider */}
+                {/* Secondary glow */}
                 <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-[#FFB800] opacity-[0.04] blur-[150px]"></div>
                 
-                {/* Accent glow spots */}
-                <div className="absolute top-[15%] left-[20%] w-[200px] h-[200px] bg-[#FFC800] opacity-[0.03] blur-[80px] animate-pulse"></div>
-                <div className="absolute top-[25%] right-[15%] w-[250px] h-[250px] bg-[#FFD700] opacity-[0.025] blur-[100px] animate-pulse" style={{animationDelay: '1s'}}></div>
-                
                 {/* Tech circuit lines - Left side */}
-                <svg className="absolute left-4 md:left-8 top-[5%] w-[120px] md:w-[200px] h-[500px] opacity-30 hidden sm:block" viewBox="0 0 200 500">
+                <svg className="absolute left-8 top-[5%] w-[200px] h-[500px] opacity-30" viewBox="0 0 200 500">
                     <path d="M0 50 L60 50 L60 120 L100 120 L100 180" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
                     <path d="M0 150 L40 150 L40 220 L80 220 L80 300 L50 300" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
                     <path d="M0 280 L90 280 L90 380 L130 380 L130 450" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
-                    <circle cx="100" cy="180" r="4" fill="#FFC800" className="animate-pulse"/>
-                    <circle cx="50" cy="300" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '0.5s'}}/>
-                    <circle cx="130" cy="450" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '1s'}}/>
+                    <circle cx="100" cy="180" r="4" fill="#FFC800"/>
+                    <circle cx="50" cy="300" r="4" fill="#FFC800"/>
+                    <circle cx="130" cy="450" r="4" fill="#FFC800"/>
                     <defs>
                         <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" stopColor="#FFC800" stopOpacity="0.3"/>
@@ -235,13 +225,13 @@ const App: React.FC = () => {
                 </svg>
                 
                 {/* Tech circuit lines - Right side */}
-                <svg className="absolute right-4 md:right-8 top-[8%] w-[120px] md:w-[200px] h-[500px] opacity-30 hidden sm:block" viewBox="0 0 200 500" style={{transform: 'scaleX(-1)'}}>
+                <svg className="absolute right-8 top-[8%] w-[200px] h-[500px] opacity-30" viewBox="0 0 200 500" style={{transform: 'scaleX(-1)'}}>
                     <path d="M0 80 L70 80 L70 160 L110 160 L110 240" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
                     <path d="M0 200 L50 200 L50 280 L90 280 L90 380" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
                     <path d="M0 340 L60 340 L60 420 L100 420" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
-                    <circle cx="110" cy="240" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '0.3s'}}/>
-                    <circle cx="90" cy="380" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '0.8s'}}/>
-                    <circle cx="100" cy="420" r="4" fill="#FFC800" className="animate-pulse" style={{animationDelay: '1.3s'}}/>
+                    <circle cx="110" cy="240" r="4" fill="#FFC800"/>
+                    <circle cx="90" cy="380" r="4" fill="#FFC800"/>
+                    <circle cx="100" cy="420" r="4" fill="#FFC800"/>
                     <defs>
                         <linearGradient id="goldGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" stopColor="#FFC800" stopOpacity="0.3"/>
@@ -250,6 +240,11 @@ const App: React.FC = () => {
                         </linearGradient>
                     </defs>
                 </svg>
+            </div>
+            
+            {/* Mobile: Simple glow only */}
+            <div className="absolute inset-0 pointer-events-none md:hidden">
+                <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[300px] h-[200px] bg-[#FFC800] opacity-[0.08] blur-[60px]"></div>
             </div>
             
             {/* Box Title */}
@@ -307,24 +302,18 @@ const App: React.FC = () => {
                         }}
                     ></div>
                     
-                    {/* Top edge highlight */}
-                    <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/70 to-transparent"></div>
+                    {/* Top edge highlight - Desktop only */}
+                    <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/70 to-transparent hidden md:block"></div>
                     
-                    {/* Shimmer effect */}
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                    {/* Shimmer effect - Desktop only */}
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] hidden md:block"></div>
                     
-                    {/* Floating particles */}
-                    <div className="absolute inset-0 pointer-events-none">
+                    {/* Floating particles - Desktop only */}
+                    <div className="absolute inset-0 pointer-events-none hidden md:block">
                         <div className="absolute w-1 h-1 bg-white/70 rounded-full animate-[float_3s_ease-in-out_infinite] left-[10%] top-[20%]"></div>
-                        <div className="absolute w-1.5 h-1.5 bg-white/50 rounded-full animate-[float_4s_ease-in-out_infinite_0.5s] left-[25%] top-[60%]"></div>
                         <div className="absolute w-1 h-1 bg-white/60 rounded-full animate-[float_3.5s_ease-in-out_infinite_1s] left-[75%] top-[30%]"></div>
-                        <div className="absolute w-0.5 h-0.5 bg-white/80 rounded-full animate-[float_2.5s_ease-in-out_infinite_0.3s] left-[85%] top-[70%]"></div>
                         <div className="absolute w-1 h-1 bg-white/55 rounded-full animate-[float_4s_ease-in-out_infinite_1.5s] left-[50%] top-[15%]"></div>
-                        <div className="absolute w-0.5 h-0.5 bg-white/65 rounded-full animate-[float_3s_ease-in-out_infinite_2s] left-[60%] top-[75%]"></div>
                     </div>
-                    
-                    {/* Glow pulse on hover */}
-                    <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/15 transition-all duration-300"></div>
                     
                     {isSpinning ? (
                         <span className="relative z-10 animate-pulse">ABRIENDO...</span>
