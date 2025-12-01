@@ -155,9 +155,40 @@ const AssetFactoryPage: React.FC = () => {
 
         const lighting = lightingDescriptions[lightingStyle];
 
-        const prompt = `
+        // Different prompts based on whether we have a reference image
+        const prompt = referenceImage 
+          ? `
+            TASK: Enhance the attached product photo into a premium game asset render.
+            Product: ${productDescription}
+            
+            CRITICAL - DO NOT MODIFY:
+            - Keep the EXACT same composition, angle, and framing as the reference image
+            - Keep the EXACT same product orientation and position
+            - Do NOT combine multiple views or angles
+            - Do NOT add elements that aren't in the reference
+            - Do NOT change the product's proportions or shape
+            
+            ENHANCE ONLY:
+            - Convert to hyper-realistic 3D render style (Unreal Engine 5 quality)
+            - Add premium ${lighting.style} lighting
+            - Add strong ${lighting.rim} rim light on the edges
+            - Make surfaces glossy and premium-looking
+            - Increase detail and sharpness
+            ${finalColor && finalColor !== '' ? `- Change the product color to: ${finalColor}` : '- Keep the original product colors'}
+            
+            BACKGROUND - CRITICAL:
+            - Replace background with PURE BLACK (#000000)
+            - Completely flat, matte black - no gradients, no reflections
+            - The product should appear floating in void
+            - Remove any shadows on floor/surface
+            
+            OUTPUT:
+            - Same composition as input
+            - Premium game asset quality
+            - Ready for transparency extraction
+          `
+          : `
             Create a premium 3D game asset of: ${productDescription}.
-            ${referenceImage ? '\n            REFERENCE IMAGE: Use the attached image as reference for the exact product design, shape, colors and details. Replicate it faithfully in 3D style.' : ''}
             
             COMPOSITION:
             - View: FULL SHOT. The ENTIRE object must be visible. DO NOT CUT OFF ANY EDGES.
@@ -189,7 +220,7 @@ const AssetFactoryPage: React.FC = () => {
             RESTRICTIONS:
             - No text overlays.
             - No podiums, no stands, no tables.
-        `;
+          `;
 
         // Build content parts - include reference image if provided
         const contentParts: any[] = [{ text: prompt }];
