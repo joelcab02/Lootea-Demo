@@ -259,7 +259,14 @@ const App: React.FC = () => {
             {/* CONTROLS */}
             <div className="z-20 w-full max-w-[500px] px-4">
                 
-                {/* Main Button - Simple like PackDraw */}
+                {/* Error Message */}
+                {gameError && (
+                    <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
+                        {gameError}
+                    </div>
+                )}
+                
+                {/* Main Button */}
                 <button 
                     onClick={handleSpin}
                     disabled={isSpinning || isLoading}
@@ -269,6 +276,8 @@ const App: React.FC = () => {
                         'Cargando...'
                     ) : isSpinning ? (
                         'Abriendo...'
+                    ) : gameError ? (
+                        'Reintentar'
                     ) : (
                         `Abrir por $${(BOX_PRICE * quantity).toFixed(2)}`
                     )}
