@@ -345,6 +345,17 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                       <LootCard item={item} width={cardWidth} isSpinner={true} />
                     </div>
                     
+                    {/* Winner Info - Name & Price */}
+                    {isWinner && (
+                      <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
+                        <p className="text-white font-bold text-lg sm:text-xl truncate max-w-[200px]">
+                          {item.name}
+                        </p>
+                        <p className="text-[#F7C948] font-bold text-xl sm:text-2xl">
+                          ${item.price.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 );
             })}
