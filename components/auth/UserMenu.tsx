@@ -148,26 +148,25 @@ export const UserMenu: React.FC = () => {
     
     return (
       <>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           
-          {/* Cart Button */}
+          {/* Cart Button - Icon only with small badge */}
           <button 
             onClick={() => setShowCart(true)}
-            className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#1e2330] hover:border-slate-600 text-slate-300 hover:text-white transition-colors"
+            className="relative p-2 rounded-lg border border-[#1e2330] hover:border-slate-600 text-slate-300 hover:text-white transition-colors"
           >
             <Icons.Cart />
-            <span className="hidden sm:inline text-sm font-medium">Cart</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#F7C948] text-black text-xs font-bold rounded-full flex items-center justify-center">
-                {cartCount > 9 ? '9+' : cartCount}
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#F7C948] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
+                {cartCount > 99 ? '99' : cartCount}
               </span>
             )}
           </button>
           
-          {/* Balance Button - Simple gold badge */}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
+          {/* Balance Button */}
+          <button className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
             <span>${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-            <div className="w-5 h-5 bg-black/20 rounded flex items-center justify-center">
+            <div className="w-4 h-4 bg-black/20 rounded flex items-center justify-center">
               <Icons.Plus />
             </div>
           </button>
@@ -176,20 +175,20 @@ export const UserMenu: React.FC = () => {
           <div className="relative">
             <button 
               onClick={toggleDropdown}
-              className={`flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg transition-colors ${dropdownOpen ? 'bg-[#1a1d26]' : 'hover:bg-[#1a1d26]'}`}
+              className={`flex items-center gap-1 p-1.5 rounded-lg transition-colors ${dropdownOpen ? 'bg-[#1a1d26]' : 'hover:bg-[#1a1d26]'}`}
             >
               {/* Avatar */}
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-black text-sm font-bold bg-[#F7C948]">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-black text-xs font-bold bg-[#F7C948]">
                 {displayName.charAt(0).toUpperCase()}
               </div>
               
               {/* Name - Desktop only */}
-              <span className="hidden sm:block text-white text-sm font-medium max-w-[80px] truncate">
+              <span className="hidden sm:block text-white text-sm font-medium max-w-[60px] truncate">
                 {displayName}
               </span>
               
-              {/* Chevron - Desktop only */}
-              <div className={`hidden sm:block text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
+              {/* Chevron */}
+              <div className={`text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
                 <Icons.ChevronDown />
               </div>
             </button>
