@@ -133,12 +133,14 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     state.currentX = newX;
 
     // Tick sound - only when crossing card boundary
-    const tickPosition = Math.max(0, Math.abs(newX) - TICK_OFFSET);
+    // Use absolute position for consistent tick timing
+    const tickPosition = Math.abs(newX);
     const currentIndex = (tickPosition / ITEM_WIDTH) | 0; // Bitwise floor - faster
 
-    if (currentIndex !== state.lastIndex) {
-      const velocityNormalized = Math.min(1, dx * 0.125); // dx / 8
-      audioService.playTick(velocityNormalized, rawProgress > 0.85);
+    if (currentIndex !== state.lastIndex && currentIndex > state.lastIndex) {
+      // Calculate velocity based on progress, not dx (more consistent)
+      const velocityNormalized = Math.max(0.1, 1 - rawProgress);
+      audioService.playTick(velocityNormalized, rawProgress > 0.9);
       state.lastIndex = currentIndex;
     }
 
