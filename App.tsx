@@ -196,7 +196,7 @@ const App: React.FC = () => {
                 <div className="w-5 h-5 md:w-6 md:h-6 text-[#F7C948]">
                     <Icons.Logo />
                 </div>
-                <span className="font-display text-lg md:text-2xl text-[#F7C948] uppercase">
+                <span className="font-display text-lg md:text-2xl text-white uppercase">
                     LOOTEA
                 </span>
             </div>
@@ -236,7 +236,7 @@ const App: React.FC = () => {
                     <div className="w-4 h-4 text-[#F7C948]">
                         <Icons.Logo />
                     </div>
-                    <span className="font-display text-sm text-[#F7C948] uppercase">LOOTEA</span>
+                    <span className="font-display text-sm text-white uppercase">LOOTEA</span>
                 </div>
             </div>
 
