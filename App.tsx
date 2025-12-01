@@ -231,10 +231,10 @@ const App: React.FC = () => {
 
             {/* Right: Sound + Auth - Premium Style */}
             <div className="flex items-center gap-2 md:gap-3">
-                {/* Sound button - Premium */}
+                {/* Sound button - Premium - Visible on all devices */}
                 <button 
                     onClick={() => setIsMuted(!isMuted)}
-                    className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl transition-all relative overflow-hidden group"
+                    className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl transition-all relative overflow-hidden group"
                     style={{
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
                         border: '1px solid rgba(255,255,255,0.1)',

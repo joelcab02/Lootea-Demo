@@ -27,20 +27,15 @@ class AudioService {
     // Pre-initialize on first user interaction (required for iOS)
     if (typeof window !== 'undefined') {
       const unlockAudio = () => {
-        // Create context immediately on user gesture (iOS requirement)
-        this.getContext();
-        // Resume if suspended
-        if (this.context?.state === 'suspended') {
-          this.context.resume();
+        const ctx = this.getContext();
+        if (ctx.state === 'suspended') {
+          ctx.resume();
         }
-        // Start loading sounds
         this.init();
-        // Remove listeners
         document.removeEventListener('touchstart', unlockAudio, true);
         document.removeEventListener('touchend', unlockAudio, true);
         document.removeEventListener('click', unlockAudio, true);
       };
-      // Use capture phase for earlier execution
       document.addEventListener('touchstart', unlockAudio, { capture: true, once: true });
       document.addEventListener('touchend', unlockAudio, { capture: true, once: true });
       document.addEventListener('click', unlockAudio, { capture: true, once: true });
