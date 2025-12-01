@@ -11,6 +11,7 @@ import { UserMenu } from './components/auth/UserMenu';
 import { initAuth, isLoggedIn, getBalance } from './services/authService';
 import { openBox, canPlay, PlayResult } from './services/gameService';
 import { AuthModal } from './components/auth/AuthModal';
+import { getBoxes, Box } from './services/boxService';
 
 // SVG Icons for App
 const Icons = {
@@ -49,9 +50,10 @@ const App: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [gameError, setGameError] = useState<string | null>(null);
   const [serverWinner, setServerWinner] = useState<LootItem | null>(null);
+  const [currentBox, setCurrentBox] = useState<Box | null>(null);
 
-  const BOX_PRICE = 99.00;
-  const BOX_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479'; // TODO: Get from route/props
+  const BOX_PRICE = currentBox?.price || 99.00;
+  const BOX_ID = currentBox?.id || '';
 
   useEffect(() => {
     audioService.setMute(isMuted);
@@ -61,6 +63,14 @@ const App: React.FC = () => {
   useEffect(() => {
     initializeStore();
     initAuth();
+    
+    // Load first active box
+    getBoxes().then(boxes => {
+      if (boxes.length > 0) {
+        setCurrentBox(boxes[0]);
+        console.log('📦 Loaded box:', boxes[0].name, boxes[0].id);
+      }
+    });
     
     // Subscribe to store updates - this catches when images load in background
     const unsubscribe = subscribe((state) => {
@@ -72,6 +82,10 @@ const App: React.FC = () => {
 
   const handleSpin = async () => {
     if (isSpinning) return;
+    if (!BOX_ID) {
+      setGameError('Caja no cargada. Recarga la página.');
+      return;
+    }
     setGameError(null);
     
     // Demo mode - use client-side logic (no server)
