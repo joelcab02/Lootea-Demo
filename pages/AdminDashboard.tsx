@@ -774,6 +774,132 @@ const BoxEditSection: React.FC<{
     setIsSaving(false);
   };
 
+  // === VALIDATIONS ===
+  interface ValidationItem {
+    type: 'error' | 'warning' | 'success';
+    message: string;
+    action?: () => void;
+    actionLabel?: string;
+  }
+  
+  const getValidations = (): ValidationItem[] => {
+    const validations: ValidationItem[] = [];
+    
+    // Check if box has items
+    if (boxItems.length === 0) {
+      validations.push({
+        type: 'error',
+        message: 'La caja no tiene productos asignados'
+      });
+      return validations; // Return early, other validations don't apply
+    }
+    
+    // Check odds sum to 100
+    if (Math.abs(totalOdds - 100) > 0.1) {
+      validations.push({
+        type: 'warning',
+        message: `Los odds suman ${totalOdds.toFixed(2)}% (deberían ser 100%)`,
+        action: normalizeOdds,
+        actionLabel: 'Normalizar'
+      });
+    }
+    
+    // Check house edge
+    if (houseEdge < 5) {
+      validations.push({
+        type: 'error',
+        message: `House Edge muy bajo (${houseEdge.toFixed(1)}%) - la caja pierde dinero`
+      });
+    } else if (houseEdge < 10) {
+      validations.push({
+        type: 'warning',
+        message: `House Edge bajo (${houseEdge.toFixed(1)}%) - margen de ganancia mínimo`
+      });
+    } else if (houseEdge > 30) {
+      validations.push({
+        type: 'warning',
+        message: `House Edge muy alto (${houseEdge.toFixed(1)}%) - puede afectar retención de usuarios`
+      });
+    }
+    
+    // Check for items without images
+    const itemsWithoutImages = boxItems.filter(bi => {
+      const product = products.find(p => p.id === bi.item_id);
+      return product && (!product.image || product.image === '');
+    });
+    if (itemsWithoutImages.length > 0) {
+      validations.push({
+        type: 'warning',
+        message: `${itemsWithoutImages.length} producto(s) sin imagen`
+      });
+    }
+    
+    // Check for zero odds items
+    const zeroOddsItems = boxItems.filter(bi => bi.odds <= 0);
+    if (zeroOddsItems.length > 0) {
+      validations.push({
+        type: 'error',
+        message: `${zeroOddsItems.length} producto(s) con odds en 0 - nunca saldrán`
+      });
+    }
+    
+    // Check for extremely low odds (< 0.01%)
+    const veryLowOddsItems = boxItems.filter(bi => {
+      const normalizedOdds = totalOdds > 0 ? (bi.odds / totalOdds) * 100 : 0;
+      return normalizedOdds > 0 && normalizedOdds < 0.01;
+    });
+    if (veryLowOddsItems.length > 0) {
+      validations.push({
+        type: 'warning',
+        message: `${veryLowOddsItems.length} producto(s) con probabilidad < 0.01%`
+      });
+    }
+    
+    // Check minimum items per rarity (for good UX)
+    const rarityCounts = { LEGENDARY: 0, EPIC: 0, RARE: 0, COMMON: 0 };
+    boxItems.forEach(bi => {
+      const product = products.find(p => p.id === bi.item_id);
+      if (product) {
+        rarityCounts[product.rarity as keyof typeof rarityCounts]++;
+      }
+    });
+    
+    if (rarityCounts.LEGENDARY === 0 && rarityCounts.EPIC === 0) {
+      validations.push({
+        type: 'warning',
+        message: 'Sin items Legendary o Epic - la caja puede parecer poco atractiva'
+      });
+    }
+    
+    // Check box price vs max item value
+    const maxItemValue = Math.max(...boxItems.map(bi => {
+      const product = products.find(p => p.id === bi.item_id);
+      return product?.price || 0;
+    }));
+    
+    if (maxItemValue < boxPrice) {
+      validations.push({
+        type: 'error',
+        message: `El item más caro ($${maxItemValue}) vale menos que la caja ($${boxPrice})`
+      });
+    }
+    
+    // All good!
+    if (validations.length === 0) {
+      validations.push({
+        type: 'success',
+        message: '¡Caja lista para publicar!'
+      });
+    }
+    
+    return validations;
+  };
+  
+  const validations = getValidations();
+  const hasErrors = validations.some(v => v.type === 'error');
+  const hasWarnings = validations.some(v => v.type === 'warning');
+  const isReady = !hasErrors && !hasWarnings;
+
   // Auto-distribute odds by rarity
   const autoDistributeOdds = async (template: 'balanced' | 'premium' | 'budget') => {
     if (boxItems.length === 0) return;
@@ -912,6 +1038,75 @@ const BoxEditSection: React.FC<{
           </button>
         </div>
       </div>
+
+      {/* Validation Panel - Always show when editing */}
+      {!isNew && (
+        <div className={`border rounded-lg p-4 ${
+          hasErrors 
+            ? 'bg-red-500/5 border-red-500/30' 
+            : hasWarnings 
+              ? 'bg-amber-500/5 border-amber-500/30'
+              : 'bg-emerald-500/5 border-emerald-500/30'
+        }`}>
+          <div className="flex items-center gap-3 mb-3">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              hasErrors 
+                ? 'bg-red-500/20' 
+                : hasWarnings 
+                  ? 'bg-amber-500/20'
+                  : 'bg-emerald-500/20'
+            }`}>
+              {hasErrors && <span className="text-red-400">✕</span>}
+              {!hasErrors && hasWarnings && <span className="text-amber-400">!</span>}
+              {isReady && <span className="text-emerald-400">✓</span>}
+            </div>
+            <div>
+              <h3 className={`text-sm font-medium ${
+                hasErrors ? 'text-red-400' : hasWarnings ? 'text-amber-400' : 'text-emerald-400'
+              }`}>
+                {hasErrors && 'Errores que corregir'}
+                {!hasErrors && hasWarnings && 'Advertencias'}
+                {isReady && 'Caja lista'}
+              </h3>
+              <p className="text-xs text-slate-500">
+                {validations.length} validación{validations.length !== 1 ? 'es' : ''}
+              </p>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            {validations.map((v, i) => (
+              <div 
+                key={i}
+                className={`flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-xs ${
+                  v.type === 'error' 
+                    ? 'bg-red-500/10 text-red-300' 
+                    : v.type === 'warning'
+                      ? 'bg-amber-500/10 text-amber-300'
+                      : 'bg-emerald-500/10 text-emerald-300'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span>
+                    {v.type === 'error' && '❌'}
+                    {v.type === 'warning' && '⚠️'}
+                    {v.type === 'success' && '✅'}
+                  </span>
+                  <span>{v.message}</span>
+                </div>
+                {v.action && (
+                  <button
+                    onClick={v.action}
+                    className="px-2 py-1 bg-white/10 rounded text-[10px] font-medium hover:bg-white/20 transition-colors"
+                  >
+                    {v.actionLabel}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Analytics Panel - Only show if editing existing box */}
       {!isNew && boxItems.length > 0 && (
