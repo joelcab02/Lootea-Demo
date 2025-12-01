@@ -100,17 +100,23 @@ const AssetFactoryPage: React.FC = () => {
     setReferenceImages([]);
   };
 
+  // Reset completo para nueva generación limpia
+  const resetForNewGeneration = () => {
+    setGeneratedImage(null);
+    setCdnUrl(null);
+    setCopySuccess(false);
+    setError(null);
+  };
+
   const handleGenerate = async () => {
     if (!productName.trim()) {
       setError('Por favor escribe el nombre de un producto');
       return;
     }
 
+    // Reset completo antes de generar
     setIsLoading(true);
-    setError(null);
-    setGeneratedImage(null);
-    setCopySuccess(false);
-    setCdnUrl(null);
+    resetForNewGeneration();
 
     const currentProduct = productName.trim();
     const finalColor = customColor || productColor;
@@ -157,9 +163,13 @@ const AssetFactoryPage: React.FC = () => {
 
         const hasReferenceImages = referenceImages.length > 0;
 
+        // Unique request ID to prevent any caching
+        const requestId = `REQ-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
         // Dos modos: Con referencia (replica exacta) o sin referencia (genera desde cero)
         const prompt = hasReferenceImages 
           ? `
+            [${requestId}]
             TASK: REPLICATE this image exactly as a premium render.
             Product: ${productDescription}
             
@@ -197,6 +207,7 @@ const AssetFactoryPage: React.FC = () => {
             - Change the color of any product details (logo, camera rings, buttons)
           `
           : `
+            [${requestId}]
             Create a premium product render for a loot box game.
             
             PRODUCT: ${productDescription}
