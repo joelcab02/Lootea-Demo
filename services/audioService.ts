@@ -24,15 +24,26 @@ class AudioService {
   private WIN_URL = 'https://assets.mixkit.co/active_storage/sfx/269/269-preview.mp3';
 
   constructor() {
-    // Pre-initialize on first user interaction
+    // Pre-initialize on first user interaction (required for iOS)
     if (typeof window !== 'undefined') {
-      const initOnInteraction = () => {
+      const unlockAudio = () => {
+        // Create context immediately on user gesture (iOS requirement)
+        this.getContext();
+        // Resume if suspended
+        if (this.context?.state === 'suspended') {
+          this.context.resume();
+        }
+        // Start loading sounds
         this.init();
-        window.removeEventListener('click', initOnInteraction);
-        window.removeEventListener('touchstart', initOnInteraction);
+        // Remove listeners
+        document.removeEventListener('touchstart', unlockAudio, true);
+        document.removeEventListener('touchend', unlockAudio, true);
+        document.removeEventListener('click', unlockAudio, true);
       };
-      window.addEventListener('click', initOnInteraction, { once: true });
-      window.addEventListener('touchstart', initOnInteraction, { once: true });
+      // Use capture phase for earlier execution
+      document.addEventListener('touchstart', unlockAudio, { capture: true, once: true });
+      document.addEventListener('touchend', unlockAudio, { capture: true, once: true });
+      document.addEventListener('click', unlockAudio, { capture: true, once: true });
     }
   }
 
@@ -41,8 +52,12 @@ class AudioService {
       const AudioCtor = window.AudioContext || (window as any).webkitAudioContext;
       this.context = new AudioCtor({ latencyHint: 'interactive' }); 
       this.masterGain = this.context.createGain();
-      this.updateGain(); // Set initial volume based on mute state
+      this.updateGain();
       this.masterGain.connect(this.context.destination);
+    }
+    // Always try to resume on mobile (iOS can suspend unexpectedly)
+    if (this.context.state === 'suspended') {
+      this.context.resume().catch(() => {});
     }
     return this.context;
   }
