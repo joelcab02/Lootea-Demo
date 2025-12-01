@@ -6,7 +6,6 @@ import { uploadWithBackgroundRemoval, isCloudinaryConfigured } from '../services
 
 type BgMode = 'site' | 'green' | 'black';
 type LightingStyle = 'studio' | 'neon' | 'golden' | 'dramatic';
-type FidelityMode = 'exact' | 'enhanced' | 'creative';
 
 // Colores predefinidos
 const COLOR_PRESETS = [
@@ -34,11 +33,6 @@ const PRODUCT_SUGGESTIONS = [
   "Nintendo Switch",
 ];
 
-const FIDELITY_MODES: { value: FidelityMode; label: string; desc: string }[] = [
-  { value: 'exact', label: 'Exacto', desc: 'Replica fiel, solo mejora iluminación' },
-  { value: 'enhanced', label: 'Mejorado', desc: 'Permite mejoras estéticas sutiles' },
-  { value: 'creative', label: 'Creativo', desc: 'Más libertad artística' },
-];
 
 const LIGHTING_STYLES: { value: LightingStyle; label: string; color: string }[] = [
   { value: 'studio', label: 'Studio', color: '#F7C948' },
@@ -52,7 +46,6 @@ const AssetFactoryPage: React.FC = () => {
   const [productColor, setProductColor] = useState<string>('');
   const [customColor, setCustomColor] = useState<string>('');
   const [productVariant, setProductVariant] = useState<string>('');
-  const [fidelityMode, setFidelityMode] = useState<FidelityMode>('enhanced');
   const [lightingStyle, setLightingStyle] = useState<LightingStyle>('studio');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -128,7 +121,7 @@ const AssetFactoryPage: React.FC = () => {
     if (productVariant) productDescription += `, ${productVariant} edition/variant`;
     
     // Build config string for history
-    const configStr = [finalColor, productVariant, fidelityMode, lightingStyle].filter(Boolean).join(' | ');
+    const configStr = [finalColor, productVariant, lightingStyle].filter(Boolean).join(' | ');
 
     try {
         // API key from environment variable
@@ -160,101 +153,67 @@ const AssetFactoryPage: React.FC = () => {
           }
         };
 
-        // Fidelity mode descriptions for reference images
-        const fidelityDescriptions: Record<FidelityMode, string> = {
-          'exact': `
-            FIDELITY: EXACT REPLICA
-            - Copy the reference image EXACTLY as it appears
-            - Do NOT modify composition, angle, position, or framing AT ALL
-            - Only enhance: lighting quality, surface detail, sharpness
-            - The output should be nearly identical to input, just better lit`,
-          'enhanced': `
-            FIDELITY: ENHANCED
-            - Maintain the same general composition and angle
-            - Allow subtle improvements to proportions and details
-            - Enhance surfaces, reflections, and material quality
-            - Small artistic improvements are acceptable`,
-          'creative': `
-            FIDELITY: CREATIVE INTERPRETATION
-            - Use reference as inspiration for the product design
-            - You may adjust angle slightly for better presentation
-            - Add artistic flair while keeping product recognizable
-            - Focus on making it look premium and desirable`
-        };
-
         const lighting = lightingDescriptions[lightingStyle];
-        const hasReferenceImages = referenceImages.length > 0;
 
-        // NEGATIVE PROMPTS - What to avoid
-        const negativePrompts = `
-            NEGATIVE PROMPTS - ABSOLUTELY AVOID:
-            - NO distorted proportions or warped shapes
-            - NO combining front and back views into one image
-            - NO merging multiple angles into a single distorted render
-            - NO blurry or illegible text/logos
-            - NO extra elements not present in the product
-            - NO floating artifacts or random objects
-            - NO cut-off edges - the ENTIRE product must be visible
-            - NO gradients or reflections in the background
-            - NO shadows on floor/ground
-            - NO podiums, stands, or surfaces
-        `;
+        /* ============================================================
+         * BACKUP - PROMPT ANTERIOR (por si queremos volver)
+         * ============================================================
+         * Este prompt intentaba replicar las imágenes de referencia,
+         * pero Gemini no lograba mantener la composición correcta.
+         * 
+         * const prompt = hasReferenceImages 
+         *   ? `TASK: Transform the attached product photo into a premium game asset...
+         *      ${fidelityDescriptions[fidelityMode]}
+         *      CRITICAL RULES: Generate a SINGLE, CLEAN front-facing render...`
+         *   : `Create a premium 3D game asset of: ${productDescription}...`;
+         * ============================================================ */
 
-        // Different prompts based on whether we have reference images
-        const prompt = hasReferenceImages 
-          ? `
-            TASK: Transform the attached product photo${referenceImages.length > 1 ? 's' : ''} into a premium game asset render.
-            Product: ${productDescription}
-            ${referenceImages.length > 1 ? `\nYou have ${referenceImages.length} reference images. Use the FIRST image as the main composition. Other images are for understanding the product better.` : ''}
+        // NUEVO ENFOQUE: Siempre vista frontal estilo Packdraw/HyperDrop
+        // Las imágenes de referencia solo sirven para entender el color/modelo
+        const prompt = `
+            Create a FRONT VIEW product render for a loot box game.
             
-            ${fidelityDescriptions[fidelityMode]}
+            PRODUCT: ${productDescription}
+            ${referenceImages.length > 0 ? `\nREFERENCE: I've attached ${referenceImages.length} image(s) showing the product. Use them ONLY to understand the color, model, and design details. Do NOT copy the angle or composition from the reference.` : ''}
             
-            CRITICAL RULES:
-            - Generate a SINGLE, CLEAN front-facing render
-            - Do NOT combine or merge multiple views
-            - Do NOT create hybrid/distorted images
-            - Keep the product's real-world proportions
-            
-            ENHANCE:
-            - Convert to hyper-realistic 3D render style (Unreal Engine 5 quality)
-            - Add premium ${lighting.style} lighting
-            - Add strong ${lighting.rim} rim light on the edges
-            - Make surfaces glossy and premium-looking
-            - Increase detail and sharpness
-            ${finalColor && finalColor !== '' ? `- Change the product color to: ${finalColor}` : '- Keep the original product colors'}
-            
-            BACKGROUND:
-            - PURE BLACK (#000000) - completely flat, matte
-            - No gradients, no reflections, no floor shadows
-            - Product floating in void
-            
-            ${negativePrompts}
-          `
-          : `
-            Create a premium 3D game asset of: ${productDescription}.
+            MANDATORY VIEW:
+            - FRONT VIEW ONLY - like official Apple/Samsung product photos
+            - For phones: Show the SCREEN side, NOT the camera/back side
+            - For watches: Show the watch FACE, not the back
+            - For headphones: Show them from the front, ear cups visible
+            - For consoles: Show the front panel
+            - For shoes: Show the side profile (classic sneaker view)
+            - For bags: Show the front with logo/design visible
             
             COMPOSITION:
-            - View: FRONT VIEW, facing the camera directly
-            - Position: Floating in mid-air, centered
-            - Framing: FULL SHOT - entire product visible with safety margin
-            - Fill about 80% of the canvas
-            
-            PRODUCT:
-            ${finalColor ? `- COLOR: ${finalColor}` : '- Use original/default colors'}
-            ${productVariant ? `- VARIANT: ${productVariant} edition` : ''}
+            - Product centered, floating in space
+            - FULL product visible - no cut-off edges
+            - Fill 75-85% of the frame
+            - Slight 3D depth - not completely flat
             
             STYLE:
-            - Hyper-realistic, Unreal Engine 5 render quality
+            - Clean, premium e-commerce photography style
             - ${lighting.style}
-            - Strong ${lighting.rim} on edges
-            - Glossy, premium e-commerce look
+            - Subtle ${lighting.rim} on edges (not too strong)
+            - Realistic materials and reflections on the product
+            - Sharp, high detail
+            ${finalColor && finalColor !== '' ? `\n            COLOR: The product should be ${finalColor}` : ''}
+            ${productVariant ? `\n            VARIANT: ${productVariant}` : ''}
             
             BACKGROUND:
-            - PURE BLACK (#000000) - flat, matte, uniform
-            - No shadows, no reflections, no gradients
+            - SOLID PURE BLACK (#000000)
+            - Completely flat, no gradients
+            - No floor, no shadows, no reflections
+            - Product floating in void
             
-            ${negativePrompts}
-          `;
+            AVOID:
+            - Back/rear views of the product
+            - Multiple angles combined
+            - Distorted proportions
+            - Exaggerated lighting effects
+            - Any text overlays
+            - Podiums or stands
+        `;
 
         // Build content parts - include reference images if provided
         const contentParts: any[] = [{ text: prompt }];
@@ -552,29 +511,6 @@ const AssetFactoryPage: React.FC = () => {
           {/* Advanced Options */}
           {showAdvanced && (
             <div className="space-y-4 p-4 bg-[#0d1019] rounded-lg border border-[#2a3040]">
-              {/* Fidelity Mode - Only show when reference images exist */}
-              {referenceImages.length > 0 && (
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase">Fidelidad a la Referencia</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {FIDELITY_MODES.map((mode) => (
-                      <button
-                        key={mode.value}
-                        onClick={() => setFidelityMode(mode.value)}
-                        className={`p-2 rounded border text-center transition-all ${
-                          fidelityMode === mode.value
-                            ? 'bg-[#F7C948]/20 border-[#F7C948] text-[#F7C948]'
-                            : 'bg-[#1e2330] border-[#2a3040] text-slate-400 hover:border-slate-500'
-                        }`}
-                      >
-                        <div className="text-[10px] font-bold">{mode.label}</div>
-                        <div className="text-[8px] opacity-70 mt-0.5">{mode.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Lighting Style */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-400 uppercase">Estilo de Iluminación</label>
