@@ -19,9 +19,9 @@ class AudioService {
   private poolIndex = 0;
   private readonly POOL_SIZE = 16; // Increased pool size
   
-  // Use shorter, snappier sounds for better sync
-  private CLICK_URL = 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3';
-  private WIN_URL = 'https://assets.mixkit.co/active_storage/sfx/269/269-preview.mp3';
+  // Use reliable CDN for audio files
+  private CLICK_URL = 'https://cdn.freesound.org/previews/256/256116_3263906-lq.mp3'; // Short click
+  private WIN_URL = 'https://cdn.freesound.org/previews/320/320655_5260872-lq.mp3'; // Win sound
 
   constructor() {
     // Pre-initialize on first user interaction
