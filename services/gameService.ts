@@ -61,16 +61,11 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
  * Calls server-side RPC for secure game logic
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
-  console.log('🎲 gameService.openBox called with:', boxId);
-  
   try {
     // Call RPC function
-    console.log('🎲 Calling supabase.rpc...');
     const { data, error } = await supabase.rpc('open_box', {
       p_box_id: boxId
     });
-    
-    console.log('🎲 RPC response - data:', data, 'error:', error);
     
     if (error) {
       console.error('RPC error:', error);
@@ -82,7 +77,6 @@ export async function openBox(boxId: string): Promise<PlayResult> {
     }
     
     const response = data as OpenBoxResponse;
-    console.log('🎲 Parsed response:', response);
     
     if (!response.success) {
       return {

@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION open_box(p_box_id UUID)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER  -- Runs with elevated privileges
-SET search_path = public
+SET search_path = public, extensions
 AS $$
 DECLARE
   v_user_id UUID;

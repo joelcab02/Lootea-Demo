@@ -100,7 +100,6 @@ const App: React.FC = () => {
     
     // Real mode - check auth and balance first
     const check = canPlay(BOX_PRICE * quantity);
-    console.log('🎮 canPlay check:', check, 'BOX_PRICE:', BOX_PRICE, 'quantity:', quantity);
     
     if (!check.canPlay) {
       if (check.reason === 'NOT_AUTHENTICATED') {
@@ -117,9 +116,7 @@ const App: React.FC = () => {
     }
     
     // Call server to open box
-    console.log('🎰 Calling openBox with BOX_ID:', BOX_ID);
     const result = await openBox(BOX_ID);
-    console.log('🎰 openBox result:', result);
     
     if (!result.success) {
       setGameError(result.message || 'Error al abrir la caja');
