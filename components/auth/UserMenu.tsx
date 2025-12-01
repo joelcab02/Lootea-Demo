@@ -152,7 +152,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
     
     return (
       <>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           
           {/* Cart Button */}
           <button 
@@ -168,16 +168,16 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
           </button>
           
           {/* Balance */}
-          <button className="px-2.5 py-1 rounded-md bg-[#F7C948] text-black font-bold text-sm">
+          <button className="px-2 py-1 rounded-md bg-[#F7C948] text-black font-bold text-sm">
             ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </button>
 
           {/* Menu Button */}
           <button 
             onClick={onMenuClick}
-            className="p-1.5 text-slate-400 hover:text-white transition-colors"
+            className="p-1 text-slate-400 hover:text-white transition-colors"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="18" x2="21" y2="18" />
