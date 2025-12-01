@@ -119,86 +119,41 @@ export const UserMenu: React.FC = () => {
     );
   }
 
-  // Logged in - Premium Tech Style
+  // Logged in
   if (authState.user) {
     const balance = getBalance();
     const displayName = authState.profile?.display_name || authState.user.email?.split('@')[0] || 'User';
     const level = authState.profile?.level || 1;
     
     return (
-      <div className="flex items-center gap-2 md:gap-3">
+      <div className="flex items-center gap-2">
         
-        {/* Balance Button - Premium Metallic Gold */}
-        <button 
-          className="group flex items-center gap-1.5 rounded-xl text-black px-3 md:px-4 py-2 md:py-2.5 transition-all relative overflow-hidden"
-          style={{
-            background: 'linear-gradient(180deg, #FFD966 0%, #FFD700 20%, #F7C948 50%, #E6A800 80%, #D4A520 100%)',
-            boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(247,201,72,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
-          }}
-        >
-          {/* Metallic shine */}
-          <div className="absolute inset-0 opacity-40"
-            style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%)' }}
-          ></div>
-          {/* Shimmer on hover */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_ease-out]"></div>
-          
-          <div className="relative flex items-center gap-1.5">
-            <Icons.Wallet />
-            <span className="font-mono font-black text-sm md:text-base tracking-tight">
-              ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-            </span>
-            <div className="w-6 h-6 bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-black/30 transition-colors ml-1">
-              <Icons.Plus />
-            </div>
+        {/* Balance Button - Simple gold badge */}
+        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
+          <span>${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+          <div className="w-5 h-5 bg-black/20 rounded flex items-center justify-center">
+            <Icons.Plus />
           </div>
         </button>
 
-        {/* User Profile Button - Premium Tech */}
+        {/* User Profile Button */}
         <div className="relative">
           <button 
             onClick={toggleDropdown}
-            className="flex items-center gap-2 px-2.5 md:px-3 py-2 md:py-2.5 rounded-xl transition-all relative overflow-hidden group"
-            style={{
-              background: dropdownOpen 
-                ? 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)'
-                : 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
-              border: dropdownOpen ? '1px solid rgba(247,201,72,0.4)' : '1px solid rgba(255,255,255,0.1)',
-            }}
+            className={`flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg transition-colors ${dropdownOpen ? 'bg-[#1a1d26]' : 'hover:bg-[#1a1d26]'}`}
           >
-            {/* Hover glow */}
-            <div className="absolute inset-0 bg-[#F7C948]/0 group-hover:bg-[#F7C948]/10 transition-colors rounded-xl"></div>
-            
-            {/* Avatar with glow */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-[#F7C948] blur-md opacity-30 group-hover:opacity-50 transition-opacity"></div>
-              <div className="relative w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-black text-sm md:text-base font-display font-black"
-                style={{
-                  background: 'linear-gradient(135deg, #FFD966 0%, #F7C948 50%, #E6A800 100%)',
-                  boxShadow: '0 2px 8px rgba(247,201,72,0.4)',
-                }}
-              >
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-              {/* Level badge */}
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 md:w-4.5 md:h-4.5 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'linear-gradient(135deg, #1a1d26 0%, #0d1019 100%)',
-                  border: '1.5px solid #F7C948',
-                  boxShadow: '0 0 6px rgba(247,201,72,0.5)',
-                }}
-              >
-                <span className="text-[9px] font-bold text-[#F7C948]">{level}</span>
-              </div>
+            {/* Avatar */}
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-black text-sm font-bold bg-[#F7C948]">
+              {displayName.charAt(0).toUpperCase()}
             </div>
             
-            {/* Name */}
-            <span className="relative text-white text-sm hidden sm:block font-medium max-w-[80px] truncate">
+            {/* Name - Desktop only */}
+            <span className="hidden sm:block text-white text-sm font-medium max-w-[80px] truncate">
               {displayName}
             </span>
             
-            {/* Chevron */}
-            <div className={`relative text-slate-400 group-hover:text-[#F7C948] transition-all ${dropdownOpen ? 'rotate-180 text-[#F7C948]' : ''}`}>
+            {/* Chevron - Desktop only */}
+            <div className={`hidden sm:block text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
               <Icons.ChevronDown />
             </div>
           </button>
@@ -262,39 +217,34 @@ export const UserMenu: React.FC = () => {
     );
   }
 
-  // Logged out - Premium Tech Style
+  // Logged out
   return (
     <>
-      <div className="flex items-center gap-2 sm:gap-3">
-        {/* Entrar Button - Glass Style */}
+      {/* Mobile: Single user icon button */}
+      <button
+        onClick={openLogin}
+        className="sm:hidden p-2 rounded-lg text-slate-400 hover:text-white transition-colors"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </button>
+      
+      {/* Desktop: Full buttons */}
+      <div className="hidden sm:flex items-center gap-2">
         <button
           onClick={openLogin}
-          className="px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-display uppercase transition-all relative overflow-hidden group rounded-xl"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
-            border: '1px solid rgba(255,255,255,0.1)',
-          }}
+          className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors rounded-lg border border-[#1e2330] hover:border-slate-600"
         >
-          <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
-          <span className="relative text-slate-300 group-hover:text-white transition-colors">Entrar</span>
+          Entrar
         </button>
         
-        {/* Registro Button - Premium Metallic Gold */}
         <button
           onClick={openRegister}
-          className="px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-display uppercase transition-all relative overflow-hidden group rounded-xl"
-          style={{
-            background: 'linear-gradient(180deg, #FFD966 0%, #FFD700 20%, #F7C948 50%, #E6A800 80%, #D4A520 100%)',
-            boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(247,201,72,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
-          }}
+          className="px-4 py-2 text-sm font-bold text-black rounded-lg bg-[#F7C948] hover:bg-[#FFD966] transition-colors"
         >
-          {/* Metallic shine */}
-          <div className="absolute inset-0 opacity-40"
-            style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%)' }}
-          ></div>
-          {/* Shimmer on hover */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_ease-out]"></div>
-          <span className="relative text-black font-bold">Registro</span>
+          Registro
         </button>
       </div>
 

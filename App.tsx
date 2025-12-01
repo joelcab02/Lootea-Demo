@@ -167,65 +167,36 @@ const App: React.FC = () => {
       {/* MAIN CONTENT */}
       <div className="flex flex-col min-h-screen">
         
-        {/* HEADER */}
-        <header className="flex items-center justify-between py-3 px-4 md:py-5 md:px-10 bg-[#0d1019] border-b border-[#1e2330]/50 sticky top-0 z-40">
+        {/* HEADER - Clean & Simple */}
+        <header className="flex items-center justify-between py-3 px-4 md:py-4 md:px-8 bg-[#0d1019] border-b border-[#1e2330]/50 sticky top-0 z-40">
             {/* Left: Menu + Logo */}
-            <div className="flex items-center gap-3 md:gap-6">
+            <div className="flex items-center gap-3">
                 <button 
                   onClick={() => setSidebarOpen(true)}
-                  className="text-slate-500 hover:text-white transition-colors p-1"
+                  className="text-slate-400 hover:text-white transition-colors p-1"
                 >
                   <Icons.Menu />
                 </button>
                 
-                <div className="flex items-center gap-2.5 cursor-pointer group">
-                    {/* Logo icon - simplified */}
-                    <div className="w-6 h-6 md:w-8 md:h-8 text-[#F7C948] group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-2 cursor-pointer">
+                    <div className="w-5 h-5 md:w-6 md:h-6 text-[#F7C948]">
                         <Icons.Logo />
                     </div>
-                    {/* Logo text with metallic effect */}
-                    <span 
-                        className="font-display text-xl md:text-3xl group-hover:scale-105 transition-all uppercase"
-                        style={{
-                            background: 'linear-gradient(180deg, #FFFFFF 0%, #F7C948 50%, #E6A800 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
-                        }}
-                    >
+                    <span className="font-display text-lg md:text-2xl text-[#F7C948] uppercase">
                         LOOTEA
                     </span>
                 </div>
             </div>
 
-            {/* Center: Trust Badge - Simplified */}
-            <div className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
-                <div className="text-green-400">
-                    <Icons.ShieldCheck />
-                </div>
-                <span className="font-display text-green-400 text-xs uppercase tracking-wide">
-                    Provably Fair
-                </span>
-            </div>
-
-            {/* Right: Sound + Auth - Premium Style */}
-            <div className="flex items-center gap-2 md:gap-3">
-                {/* Sound button - Premium - Visible on all devices */}
+            {/* Right: Sound + Auth */}
+            <div className="flex items-center gap-2">
+                {/* Sound button - Small & discrete */}
                 <button 
                     onClick={() => setIsMuted(!isMuted)}
-                    className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl transition-all relative overflow-hidden group"
-                    style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                    }}
+                    className={`p-2 rounded-lg transition-colors ${isMuted ? 'text-slate-600' : 'text-slate-400 hover:text-white'}`}
                     title={isMuted ? "Activar sonido" : "Silenciar"}
                 >
-                    <div className="absolute inset-0 bg-[#F7C948]/0 group-hover:bg-[#F7C948]/10 transition-colors"></div>
-                    <div className={`relative transition-colors ${isMuted ? 'text-slate-600' : 'text-slate-400 group-hover:text-[#F7C948]'}`}
-                        style={{ filter: isMuted ? 'none' : 'drop-shadow(0 0 3px rgba(247,201,72,0.2))' }}
-                    >
-                        {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
-                    </div>
+                    {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
                 </button>
                 <UserMenu />
             </div>
