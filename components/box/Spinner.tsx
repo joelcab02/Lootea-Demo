@@ -18,8 +18,6 @@ interface SpinnerProps {
 // Pre-calculate constants to avoid runtime computation
 const ITEM_WIDTH = CARD_WIDTH + CARD_GAP;
 const TICK_OFFSET = 25;
-const INITIAL_OFFSET = 2; // Show 2 items to the left of center initially
-const INITIAL_X = -INITIAL_OFFSET * ITEM_WIDTH; // Pre-calculated initial offset
 
 const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -124,7 +122,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     // Add initialX offset to maintain correct positioning
     const container = containerRef.current;
     if (container) {
-      container.style.transform = `translate3d(${INITIAL_X + newX}px,0,0)`;
+      container.style.transform = `translate3d(${newX}px,0,0)`;
     }
 
     if (rawProgress < 1) {
@@ -141,8 +139,8 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
       const spinWinner = generateStrip();
       if (!spinWinner) return;
 
-      // Target position for winning item (relative to initial offset)
-      const targetX = -WINNING_INDEX * ITEM_WIDTH - INITIAL_X;
+      // Target position for winning item
+      const targetX = -WINNING_INDEX * ITEM_WIDTH;
       const duration = customDuration || SPIN_DURATION;
 
       // Reset state
@@ -156,9 +154,9 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
         duration,
       };
 
-      // Reset transform to initial position before starting
+      // Reset transform before starting
       if (containerRef.current) {
-        containerRef.current.style.transform = `translate3d(${INITIAL_X}px,0,0)`;
+        containerRef.current.style.transform = 'translate3d(0,0,0)';
       }
 
       onSpinStart();
@@ -239,12 +237,12 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
         />
 
         <div 
-            className="flex items-center h-full will-change-transform"
+            className="flex items-center justify-center h-full will-change-transform"
             ref={containerRef}
             style={{ 
                 width: `${stripWidth}px`,
-                paddingLeft: `calc(50% - ${CARD_WIDTH/2}px)`,
-                transform: `translate3d(${INITIAL_X}px,0,0)`,
+                marginLeft: `calc(50% - ${CARD_WIDTH/2}px)`,
+                transform: 'translate3d(0,0,0)',
                 contain: 'layout paint',
                 backfaceVisibility: 'hidden'
             }}
