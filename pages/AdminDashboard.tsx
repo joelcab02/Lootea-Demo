@@ -1484,14 +1484,19 @@ const ProductEditSection: React.FC<{
     setIsSaving(true);
     
     if (isNew) {
-      await supabase.from('items').insert({
-        id: `item_${Date.now()}`,
+      const { error } = await supabase.from('items').insert({
         name: form.name,
         price: parseFloat(form.price),
         rarity: form.rarity,
-        image_url: form.image,
-        odds: 0
+        image_url: form.image
       });
+      
+      if (error) {
+        console.error('Insert error:', error);
+        alert('Error al crear: ' + error.message);
+        setIsSaving(false);
+        return;
+      }
     } else {
       const { error } = await supabase.from('items').update({
         name: form.name,
