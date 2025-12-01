@@ -78,7 +78,21 @@ const App: React.FC = () => {
       setItems(state.items);
     });
     
-    return unsubscribe;
+    // Refresh session when user returns to tab (prevents stale connection)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // Re-init auth to refresh session
+        initAuth();
+        // Reset loading state in case it got stuck
+        setIsLoading(false);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      unsubscribe();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   // Loading state for server call
