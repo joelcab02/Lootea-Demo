@@ -61,17 +61,28 @@ const AdminDashboard: React.FC = () => {
 
   // Check admin authentication on mount
   useEffect(() => {
-    checkAdminAuth();
-    
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
+    // Listen for auth changes - this fires when session is restored
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Only check auth when we have a definitive state
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+        if (session) {
+          checkAdminAuth();
+        } else {
+          setAuthState({
+            isChecking: false,
+            isAuthenticated: false,
+            isAdmin: false,
+            user: null,
+            error: 'No has iniciado sesión',
+          });
+        }
+      } else if (event === 'SIGNED_OUT') {
         setAuthState({
           isChecking: false,
           isAuthenticated: false,
           isAdmin: false,
           user: null,
-          error: 'Sesión expirada',
+          error: 'Sesión cerrada',
         });
       }
     });
