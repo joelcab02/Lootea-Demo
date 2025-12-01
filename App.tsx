@@ -243,7 +243,7 @@ const App: React.FC = () => {
             </div>
 
             {/* SPINNER */}
-            <div className="relative w-full max-w-[1600px] z-10 mb-10 md:mb-8 pb-16">
+            <div className="relative w-full max-w-[1600px] z-10 mb-6 md:mb-8">
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 

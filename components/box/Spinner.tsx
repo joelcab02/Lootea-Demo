@@ -230,7 +230,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
 
   return (
     <div 
-      className="relative w-full h-[180px] sm:h-[240px] flex items-center"
+      className="relative w-full h-[220px] sm:h-[300px] flex items-center"
       style={{
         background: 'linear-gradient(180deg, #08090c 0%, #0a0c10 50%, #08090c 100%)',
         overflow: 'clip',
@@ -324,34 +324,28 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                           : undefined,
                     }}
                   >
-                    {/* Radial glow behind winner */}
+                    {/* Subtle glow behind winner */}
                     {isWinner && (
                       <div 
-                        className="absolute -inset-8 pointer-events-none"
+                        className="absolute -inset-4 pointer-events-none rounded-full"
                         style={{
-                          background: 'radial-gradient(ellipse 120% 100% at 50% 50%, rgba(247,201,72,0.25) 0%, rgba(247,201,72,0.1) 40%, transparent 70%)',
-                          animation: 'spotlightPulse 2s ease-in-out infinite',
+                          background: 'radial-gradient(circle, rgba(247,201,72,0.3) 0%, transparent 70%)',
                         }}
                       />
                     )}
                     
-                    {/* Card with golden border */}
-                    <div 
-                      className="relative rounded-xl overflow-hidden"
-                      style={isWinner ? {
-                        animation: 'goldenGlow 1.5s ease-in-out infinite',
-                      } : undefined}
-                    >
+                    {/* Card */}
+                    <div className="relative rounded-xl overflow-hidden">
                       <LootCard item={item} width={cardWidth} isSpinner={true} />
                     </div>
                     
-                    {/* Winner Info - Name & Price */}
+                    {/* Winner Info - Name & Price (small, below card) */}
                     {isWinner && (
-                      <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
-                        <p className="text-white font-bold text-lg sm:text-xl truncate max-w-[200px]">
+                      <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
+                        <p className="text-white font-medium text-sm">
                           {item.name}
                         </p>
-                        <p className="text-[#F7C948] font-bold text-xl sm:text-2xl">
+                        <p className="text-slate-400 text-sm">
                           ${item.price.toFixed(2)}
                         </p>
                       </div>
