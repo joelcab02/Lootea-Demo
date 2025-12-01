@@ -12,7 +12,7 @@ import { initAuth, isLoggedIn, getBalance, refreshBalance } from './services/aut
 import { openBox, canPlay, PlayResult } from './services/gameService';
 import { AuthModal } from './components/auth/AuthModal';
 import { getBoxes, Box } from './services/boxService';
-import { addItemLocally, fetchInventory } from './services/inventoryService';
+import { fetchInventory } from './services/inventoryService';
 
 // SVG Icons for App
 const Icons = {
@@ -152,17 +152,11 @@ const App: React.FC = () => {
     setShowResult(true);
     triggerWinEffects(item);
     
-    // In live mode, add item to inventory and refresh balance
+    // In live mode, sync inventory and balance from server
+    // Item was already added to DB in open_box RPC
     if (!demoMode && isLoggedIn()) {
-      addItemLocally({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        rarity: item.rarity,
-        image: item.image,
-      });
-      // Refresh balance from server (it was already deducted)
-      refreshBalance();
+      fetchInventory(); // Refresh cart count from server
+      refreshBalance(); // Refresh balance from server
     }
   };
 
