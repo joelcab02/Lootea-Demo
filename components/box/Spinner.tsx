@@ -18,6 +18,8 @@ interface SpinnerProps {
 // Pre-calculate constants to avoid runtime computation
 const ITEM_WIDTH = CARD_WIDTH + CARD_GAP;
 const TICK_OFFSET = 25;
+const INITIAL_OFFSET = 3; // Show 3 items to the left of center initially
+const INITIAL_X = -INITIAL_OFFSET * ITEM_WIDTH; // Pre-calculated initial offset
 
 const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -119,9 +121,10 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     }
 
     // Direct DOM manipulation - bypasses React reconciliation
+    // Add initialX offset to maintain correct positioning
     const container = containerRef.current;
     if (container) {
-      container.style.transform = `translate3d(${newX}px,0,0)`;
+      container.style.transform = `translate3d(${INITIAL_X + newX}px,0,0)`;
     }
 
     if (rawProgress < 1) {
@@ -138,10 +141,11 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
       const spinWinner = generateStrip();
       if (!spinWinner) return;
 
-      const targetX = -WINNING_INDEX * ITEM_WIDTH;
+      // Target position for winning item (relative to initial offset)
+      const targetX = -WINNING_INDEX * ITEM_WIDTH - INITIAL_X;
       const duration = customDuration || SPIN_DURATION;
 
-      // Reset state in one assignment
+      // Reset state
       stateRef.current = {
         startTime: 0,
         targetX,
@@ -152,9 +156,9 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
         duration,
       };
 
-      // Reset transform before starting
+      // Reset transform to initial position before starting
       if (containerRef.current) {
-        containerRef.current.style.transform = 'translate3d(0,0,0)';
+        containerRef.current.style.transform = `translate3d(${INITIAL_X}px,0,0)`;
       }
 
       onSpinStart();
@@ -220,33 +224,17 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
           </div>
         </div>
 
-        {/* Side Gradients - PackDraw style with gold glow hints */}
+        {/* Side Gradients - Desktop only, subtle fade */}
         <div 
-          className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 z-20 pointer-events-none"
+          className="hidden sm:block absolute left-0 top-0 bottom-0 w-32 z-20 pointer-events-none"
           style={{ 
-            background: 'linear-gradient(90deg, #08090c 0%, #08090c 40%, transparent 100%)',
-          }}
-        />
-        {/* Left gold glow - suggests hidden items */}
-        <div 
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-16 h-16 sm:w-20 sm:h-20 z-10 pointer-events-none rounded-full"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(247,201,72,0.4) 0%, rgba(247,201,72,0.1) 50%, transparent 70%)',
-            filter: 'blur(8px)',
+            background: 'linear-gradient(90deg, #08090c 0%, transparent 100%)',
           }}
         />
         <div 
-          className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 z-20 pointer-events-none"
+          className="hidden sm:block absolute right-0 top-0 bottom-0 w-32 z-20 pointer-events-none"
           style={{ 
-            background: 'linear-gradient(270deg, #08090c 0%, #08090c 40%, transparent 100%)',
-          }}
-        />
-        {/* Right gold glow - suggests hidden items */}
-        <div 
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-16 h-16 sm:w-20 sm:h-20 z-10 pointer-events-none rounded-full"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(247,201,72,0.4) 0%, rgba(247,201,72,0.1) 50%, transparent 70%)',
-            filter: 'blur(8px)',
+            background: 'linear-gradient(270deg, #08090c 0%, transparent 100%)',
           }}
         />
 
@@ -256,6 +244,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
             style={{ 
                 width: `${stripWidth}px`,
                 paddingLeft: `calc(50% - ${CARD_WIDTH/2}px)`,
+                transform: `translate3d(${INITIAL_X}px,0,0)`,
                 contain: 'layout paint',
                 backfaceVisibility: 'hidden'
             }}
