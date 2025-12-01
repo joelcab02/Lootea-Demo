@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { LootItem, Rarity } from '../../types';
-import { CARD_WIDTH, CARD_GAP, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../../constants';
+import { CARD_WIDTH, CARD_WIDTH_DESKTOP, CARD_GAP, CARD_GAP_DESKTOP, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../../constants';
 import LootCard from './LootCard';
 import { audioService } from '../../services/audioService';
 import { calculateTicketRanges, selectWeightedWinner, debugTicketDistribution } from '../../services/oddsService';
@@ -15,14 +15,28 @@ interface SpinnerProps {
   showResult?: boolean;
 }
 
-// Pre-calculate constants to avoid runtime computation
-const ITEM_WIDTH = CARD_WIDTH + CARD_GAP;
+// Constants
 const TICK_OFFSET = 25;
 const INITIAL_POSITION = 10; // Start viewing from position 10 (shows items on both sides)
+const DESKTOP_BREAKPOINT = 640; // sm breakpoint
 
 const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [strip, setStrip] = useState<LootItem[]>([]);
+  const [isDesktop, setIsDesktop] = useState(false);
+  
+  // Detect desktop on mount and resize
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+  
+  // Responsive dimensions
+  const cardWidth = isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH;
+  const cardGap = isDesktop ? CARD_GAP_DESKTOP : CARD_GAP;
+  const ITEM_WIDTH = cardWidth + cardGap;
   
   // Calculate ticket ranges once when items change (memoized)
   const itemsWithTickets = useMemo(() => {
@@ -175,7 +189,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
 
   return (
     <div 
-      className="relative w-full h-[200px] sm:h-[220px] flex items-center"
+      className="relative w-full h-[180px] sm:h-[240px] flex items-center"
       style={{
         background: 'linear-gradient(180deg, #08090c 0%, #0a0c10 50%, #08090c 100%)',
         overflow: 'clip',
@@ -245,7 +259,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
             ref={containerRef}
             style={{ 
                 width: `${stripWidth}px`,
-                marginLeft: `calc(50% - ${CARD_WIDTH/2}px)`,
+                marginLeft: `calc(50% - ${cardWidth/2}px)`,
                 transform: `translate3d(${-INITIAL_POSITION * ITEM_WIDTH}px,0,0)`,
                 contain: 'layout paint',
                 backfaceVisibility: 'hidden'
@@ -260,7 +274,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                     key={`${item.id}-${index}`} 
                     className="relative"
                     style={{ 
-                      marginRight: `${CARD_GAP}px`,
+                      marginRight: `${cardGap}px`,
                       zIndex: isWinner ? 50 : 1,
                       animation: isWinner 
                         ? 'winnerReveal 0.6s ease-out forwards' 
@@ -287,7 +301,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
                         animation: 'goldenGlow 1.5s ease-in-out infinite',
                       } : undefined}
                     >
-                      <LootCard item={item} width={CARD_WIDTH} isSpinner={true} />
+                      <LootCard item={item} width={cardWidth} isSpinner={true} />
                     </div>
                     
                   </div>

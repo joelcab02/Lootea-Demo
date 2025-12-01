@@ -1,8 +1,11 @@
 import { Rarity } from './types';
 
-// Spinner configuration - PackDraw style (3 items visible on mobile ~375px)
-export const CARD_WIDTH = 150; // px - sized for 3 visible items on mobile
-export const CARD_GAP = 16; // px
+// Spinner configuration - responsive sizes set in Spinner.tsx
+// These are base values, actual sizes are responsive
+export const CARD_WIDTH = 150; // px - mobile base
+export const CARD_WIDTH_DESKTOP = 180; // px - desktop
+export const CARD_GAP = 16; // px - mobile
+export const CARD_GAP_DESKTOP = 32; // px - desktop (more spread out)
 export const VISIBLE_CARDS = 7; 
 export const SPIN_DURATION = 8000; // Increased for suspense
 export const TOTAL_CARDS_IN_STRIP = 60; 

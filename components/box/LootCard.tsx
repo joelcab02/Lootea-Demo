@@ -20,7 +20,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
 
   // Dynamic sizing based on context - PackDraw style: large images in spinner
   const imageSizeClass = isSpinner 
-    ? 'w-24 h-24 sm:w-32 sm:h-32' // Sized for 150px card width
+    ? 'w-28 h-28 sm:w-36 sm:h-36' // Larger images for better visibility
     : 'w-32 h-32 sm:w-44 sm:h-44';
 
   const emojiSizeClass = isSpinner
