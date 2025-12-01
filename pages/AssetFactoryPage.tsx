@@ -7,31 +7,6 @@ import { uploadWithBackgroundRemoval, isCloudinaryConfigured } from '../services
 type BgMode = 'site' | 'green' | 'black';
 type LightingStyle = 'studio' | 'neon' | 'golden' | 'dramatic';
 
-// Colores predefinidos
-const COLOR_PRESETS = [
-  { name: 'Original', value: '' },
-  { name: 'Negro', value: 'Matte Black' },
-  { name: 'Blanco', value: 'Pearl White' },
-  { name: 'Oro', value: 'Gold / Champagne Gold' },
-  { name: 'Plata', value: 'Silver / Chrome' },
-  { name: 'Azul', value: 'Deep Blue / Navy' },
-  { name: 'Rojo', value: 'Red / Cherry Red' },
-  { name: 'Rosa', value: 'Pink / Rose Gold' },
-  { name: 'Verde', value: 'Forest Green / Emerald' },
-  { name: 'Morado', value: 'Purple / Violet' },
-];
-
-// Ejemplos de productos para sugerencias
-const PRODUCT_SUGGESTIONS = [
-  "iPhone 16 Pro Max",
-  "MacBook Pro 16",
-  "PlayStation 5",
-  "Nike Air Jordan 1",
-  "Rolex Submariner",
-  "Louis Vuitton Bag",
-  "AirPods Pro",
-  "Nintendo Switch",
-];
 
 
 const LIGHTING_STYLES: { value: LightingStyle; label: string; color: string }[] = [
@@ -43,8 +18,6 @@ const LIGHTING_STYLES: { value: LightingStyle; label: string; color: string }[] 
 
 const AssetFactoryPage: React.FC = () => {
   const [productName, setProductName] = useState<string>('');
-  const [productColor, setProductColor] = useState<string>('');
-  const [customColor, setCustomColor] = useState<string>('');
   const [productVariant, setProductVariant] = useState<string>('');
   const [lightingStyle, setLightingStyle] = useState<LightingStyle>('studio');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -119,15 +92,13 @@ const AssetFactoryPage: React.FC = () => {
     resetForNewGeneration();
 
     const currentProduct = productName.trim();
-    const finalColor = customColor || productColor;
     
     // Build product description
     let productDescription = currentProduct;
-    if (finalColor) productDescription += ` in ${finalColor} color`;
     if (productVariant) productDescription += `, ${productVariant} edition/variant`;
     
     // Build config string for history
-    const configStr = [finalColor, productVariant, lightingStyle].filter(Boolean).join(' | ');
+    const configStr = [productVariant, lightingStyle].filter(Boolean).join(' | ');
 
     try {
         // API key from environment variable
@@ -173,38 +144,37 @@ const AssetFactoryPage: React.FC = () => {
             TASK: REPLICATE this image exactly as a premium render.
             Product: ${productDescription}
             
-            CRITICAL - COPY THE REFERENCE IMAGE:
-            - Replicate the EXACT SAME composition and layout
-            - If the reference shows front AND back of the phone together, show BOTH
-            - If the reference shows multiple angles, show the SAME multiple angles
-            - Keep the EXACT same positioning and arrangement of elements
-            - Match the same proportions and sizes
+            CRITICAL - COPY THE REFERENCE IMAGE EXACTLY:
+            - Replicate the EXACT SAME composition, layout, and arrangement
+            - If reference shows multiple views/angles, show ALL of them in the same positions
+            - Keep the EXACT same proportions, sizes, and positioning
+            - Maintain all product details exactly as shown (logos, badges, text, emblems)
             
             ENHANCE ONLY:
             - Improve lighting quality with ${lighting.style}
             - Add subtle ${lighting.rim} as a GLOW AROUND the product edges (not ON the product)
             - Increase sharpness and detail
-            - Make materials look more premium/glossy
-            ${finalColor && finalColor !== '' ? `- Apply this color: ${finalColor}` : '- Keep the EXACT original colors from the reference'}
+            - Make materials look more premium (metal, glass, leather, paint, etc.)
+            - Keep the EXACT original colors from the reference
             
             BACKGROUND:
             - Replace background with PURE BLACK (#000000)
             - Flat, matte, no gradients or reflections
+            - Product floating in void
             
             COLORS - CRITICAL:
-            - Do NOT add gold, yellow, or any color that is not in the reference image
+            - Do NOT add colors that are not in the reference image
             - The rim light glow should be AROUND the product, not painted ON the product
-            - Keep the Apple logo the SAME color as in the reference (usually same as body)
-            - Camera rings should match the reference colors exactly
-            - Frame/border color must match the reference
+            - All logos, emblems, and badges must keep their original colors
+            - All product details (trim, accents, wheels, straps, etc.) must match reference exactly
             
             DO NOT:
             - Change the composition or layout
             - Remove any elements from the reference
             - Add elements not in the reference
-            - Show only one view if reference shows multiple
-            - Add gold/yellow accents to the product itself
-            - Change the color of any product details (logo, camera rings, buttons)
+            - Show fewer views than the reference shows
+            - Add gold/yellow/any color accents to the product itself
+            - Change the color of any product details
           `
           : `
             [${requestId}]
@@ -222,7 +192,6 @@ const AssetFactoryPage: React.FC = () => {
             - ${lighting.style}
             - ${lighting.rim} on edges
             - Sharp, high detail
-            ${finalColor && finalColor !== '' ? `\n            COLOR: ${finalColor}` : ''}
             ${productVariant ? `\n            VARIANT: ${productVariant}` : ''}
             
             BACKGROUND:
@@ -391,18 +360,6 @@ const AssetFactoryPage: React.FC = () => {
               className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-3 text-sm focus:border-[#F7C948] outline-none placeholder:text-slate-600"
             />
             
-            {/* Quick Suggestions */}
-            <div className="flex flex-wrap gap-2 mt-2">
-              {PRODUCT_SUGGESTIONS.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onClick={() => setProductName(suggestion)}
-                  className="px-2 py-1 text-[10px] bg-[#1e2330] hover:bg-[#2a3040] border border-[#2a3040] hover:border-[#F7C948] rounded text-slate-400 hover:text-white transition-all"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Reference Images Upload */}
@@ -475,36 +432,9 @@ const AssetFactoryPage: React.FC = () => {
             )}
           </div>
 
-          {/* Color Selection */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase">2. Color</label>
-            <div className="flex flex-wrap gap-2">
-              {COLOR_PRESETS.map((color) => (
-                <button
-                  key={color.name}
-                  onClick={() => { setProductColor(color.value); setCustomColor(''); }}
-                  className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all ${
-                    productColor === color.value && !customColor
-                      ? 'bg-[#F7C948]/20 border-[#F7C948] text-[#F7C948]' 
-                      : 'bg-[#0d1019] border-[#2a3040] text-slate-400 hover:border-slate-500'
-                  }`}
-                >
-                  {color.name}
-                </button>
-              ))}
-            </div>
-            <input
-              type="text"
-              value={customColor}
-              onChange={(e) => { setCustomColor(e.target.value); setProductColor(''); }}
-              placeholder="O escribe un color personalizado..."
-              className="w-full bg-[#0d1019] border border-[#2a3040] text-white rounded-lg p-2 text-xs focus:border-[#F7C948] outline-none placeholder:text-slate-600"
-            />
-          </div>
-
           {/* Variant/Edition */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase">3. Variante / Edición (opcional)</label>
+            <label className="text-xs font-bold text-slate-400 uppercase">2. Variante / Edición (opcional)</label>
             <input
               type="text"
               value={productVariant}
