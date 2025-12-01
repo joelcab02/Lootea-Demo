@@ -18,38 +18,85 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
   
   const { isLoading, isEmoji } = imageProps;
 
-  // Dynamic sizing based on context
+  // Dynamic sizing based on context - PackDraw style: large images in spinner
   const imageSizeClass = isSpinner 
-    ? 'w-20 h-20 sm:w-28 sm:h-28' 
+    ? 'w-32 h-32 sm:w-36 sm:h-36' // Much larger for spinner
     : 'w-32 h-32 sm:w-44 sm:h-44';
 
   const emojiSizeClass = isSpinner
-    ? 'text-5xl sm:text-6xl'
+    ? 'text-7xl sm:text-8xl'
     : 'text-7xl sm:text-8xl';
 
+  // PackDraw style: No card background in spinner, just floating image
+  if (isSpinner) {
+    return (
+      <div 
+        className="relative flex-shrink-0 flex flex-col items-center justify-center select-none pointer-events-none"
+        style={{ 
+          width: `${width}px`,
+          height: '100%',
+        }}
+      >
+        {/* Image - Large and floating */}
+        <div className={`relative ${imageSizeClass} mb-3 flex items-center justify-center`}>
+          {isLoading ? (
+            <div className="w-12 h-12 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
+          ) : isEmoji ? (
+            <span className={`${emojiSizeClass} select-none drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)]`}>
+              {item.image}
+            </span>
+          ) : (
+            <img 
+              src={item.image} 
+              alt={item.name}
+              className="w-full h-full object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)]"
+              loading="eager"
+              decoding="async"
+              draggable={false}
+            />
+          )}
+        </div>
+
+        {/* Text Info - Larger, centered, PackDraw style */}
+        <div className="text-center w-full px-2">
+          <h3 className="font-display text-white text-sm sm:text-base leading-tight uppercase truncate w-full mb-1">
+            {item.name}
+          </h3>
+          <span 
+            className="font-display text-base sm:text-lg"
+            style={{
+              background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            ${item.price.toLocaleString('es-MX')}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Non-spinner card (grid view) - keep original style
   return (
     <div 
-      className={`relative flex-shrink-0 flex flex-col items-center justify-center select-none overflow-hidden ${isSpinner ? 'pointer-events-none' : 'group'}`}
+      className="relative flex-shrink-0 flex flex-col items-center justify-center select-none overflow-hidden group"
       style={{ 
         width: `${width}px`,
-        height: isSpinner ? '100%' : 'auto',
+        height: 'auto',
       }}
     >
       {/* Card background - Premium style */}
       <div 
         className="absolute inset-1 rounded-xl"
         style={{
-          background: isSpinner 
-            ? 'linear-gradient(145deg, #14161c 0%, #0c0e12 100%)'
-            : 'linear-gradient(145deg, #1a1d26 0%, #12141a 100%)',
-          boxShadow: isSpinner 
-            ? 'inset 0 1px 0 rgba(255,255,255,0.03)'
-            : '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+          background: 'linear-gradient(145deg, #1a1d26 0%, #12141a 100%)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
         }}
       />
       
       {/* Image Container */}
-      <div className={`relative z-10 ${imageSizeClass} mb-1 sm:mb-2 flex items-center justify-center ${!isSpinner ? 'transition-transform duration-300 group-hover:scale-110' : ''}`}>
+      <div className={`relative z-10 ${imageSizeClass} mb-1 sm:mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
         {isLoading ? (
             <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#1e2330] to-[#0d1019] animate-pulse flex items-center justify-center">
               <div className="w-10 h-10 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
@@ -63,7 +110,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
               src={item.image} 
               alt={item.name}
               className="w-full h-full object-contain"
-              loading={isSpinner ? "eager" : "lazy"}
+              loading="lazy"
               decoding="async"
               draggable={false}
             />

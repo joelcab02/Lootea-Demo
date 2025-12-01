@@ -169,10 +169,10 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
 
   return (
     <div 
-      className="relative w-full h-[200px] sm:h-[240px] flex items-center"
+      className="relative w-full h-[320px] sm:h-[340px] flex items-center"
       style={{
         background: 'linear-gradient(180deg, #08090c 0%, #0a0c10 50%, #08090c 100%)',
-        overflow: 'clip', // Clip horizontally but allow vertical overflow for spotlight
+        overflow: 'clip',
         overflowY: 'visible',
       }}
     >
@@ -220,14 +220,34 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
           </div>
         </div>
 
-        {/* Side Gradients - deeper fade */}
+        {/* Side Gradients - PackDraw style with gold glow hints */}
         <div 
-          className="absolute left-0 top-0 bottom-0 w-20 sm:w-48 z-20 pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, #08090c 0%, #08090c 30%, transparent 100%)' }}
+          className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 z-20 pointer-events-none"
+          style={{ 
+            background: 'linear-gradient(90deg, #08090c 0%, #08090c 40%, transparent 100%)',
+          }}
+        />
+        {/* Left gold glow - suggests hidden items */}
+        <div 
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-16 h-16 sm:w-20 sm:h-20 z-10 pointer-events-none rounded-full"
+          style={{ 
+            background: 'radial-gradient(circle, rgba(247,201,72,0.4) 0%, rgba(247,201,72,0.1) 50%, transparent 70%)',
+            filter: 'blur(8px)',
+          }}
         />
         <div 
-          className="absolute right-0 top-0 bottom-0 w-20 sm:w-48 z-20 pointer-events-none"
-          style={{ background: 'linear-gradient(270deg, #08090c 0%, #08090c 30%, transparent 100%)' }}
+          className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 z-20 pointer-events-none"
+          style={{ 
+            background: 'linear-gradient(270deg, #08090c 0%, #08090c 40%, transparent 100%)',
+          }}
+        />
+        {/* Right gold glow - suggests hidden items */}
+        <div 
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-16 h-16 sm:w-20 sm:h-20 z-10 pointer-events-none rounded-full"
+          style={{ 
+            background: 'radial-gradient(circle, rgba(247,201,72,0.4) 0%, rgba(247,201,72,0.1) 50%, transparent 70%)',
+            filter: 'blur(8px)',
+          }}
         />
 
         <div 
