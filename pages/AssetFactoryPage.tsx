@@ -172,20 +172,29 @@ const AssetFactoryPage: React.FC = () => {
             
             ENHANCE ONLY:
             - Improve lighting quality with ${lighting.style}
-            - Add subtle ${lighting.rim} on edges
+            - Add subtle ${lighting.rim} as a GLOW AROUND the product edges (not ON the product)
             - Increase sharpness and detail
             - Make materials look more premium/glossy
-            ${finalColor && finalColor !== '' ? `- Apply this color: ${finalColor}` : '- Keep the original colors from the reference'}
+            ${finalColor && finalColor !== '' ? `- Apply this color: ${finalColor}` : '- Keep the EXACT original colors from the reference'}
             
             BACKGROUND:
             - Replace background with PURE BLACK (#000000)
             - Flat, matte, no gradients or reflections
+            
+            COLORS - CRITICAL:
+            - Do NOT add gold, yellow, or any color that is not in the reference image
+            - The rim light glow should be AROUND the product, not painted ON the product
+            - Keep the Apple logo the SAME color as in the reference (usually same as body)
+            - Camera rings should match the reference colors exactly
+            - Frame/border color must match the reference
             
             DO NOT:
             - Change the composition or layout
             - Remove any elements from the reference
             - Add elements not in the reference
             - Show only one view if reference shows multiple
+            - Add gold/yellow accents to the product itself
+            - Change the color of any product details (logo, camera rings, buttons)
           `
           : `
             Create a premium product render for a loot box game.
