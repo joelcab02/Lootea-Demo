@@ -59,13 +59,22 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
 /**
  * Open a box - main game function
  * Calls server-side RPC for secure game logic
+ * Includes 10 second timeout to prevent hanging
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
   try {
-    // Call RPC function
-    const { data, error } = await supabase.rpc('open_box', {
-      p_box_id: boxId
-    });
+    // Create timeout promise
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('TIMEOUT')), 10000)
+    );
+    
+    // Race between RPC call and timeout
+    const result = await Promise.race([
+      supabase.rpc('open_box', { p_box_id: boxId }),
+      timeoutPromise
+    ]);
+    
+    const { data, error } = result as { data: OpenBoxResponse | null; error: Error | null };
     
     if (error) {
       console.error('RPC error:', error);
@@ -107,8 +116,18 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       newBalance: response.new_balance
     };
     
-  } catch (err) {
+  } catch (err: any) {
     console.error('openBox error:', err);
+    
+    // Handle timeout specifically
+    if (err?.message === 'TIMEOUT') {
+      return {
+        success: false,
+        error: 'INTERNAL_ERROR',
+        message: 'Tiempo de espera agotado. Intenta de nuevo.'
+      };
+    }
+    
     return {
       success: false,
       error: 'INTERNAL_ERROR',
