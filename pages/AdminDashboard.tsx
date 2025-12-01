@@ -189,11 +189,16 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
+  // Initial load - shows loading spinner
   const loadAdminData = async () => {
     setIsLoading(true);
-    
+    await refreshData();
+    setIsLoading(false);
+  };
+  
+  // Refresh data without showing full loading spinner (for after save operations)
+  const refreshData = async () => {
     try {
-      // Admin loads ALL boxes and items
       const [boxesRes, productsRes] = await Promise.all([
         supabase.from('boxes').select('*').order('created_at', { ascending: false }),
         supabase.from('items').select('*').order('price', { ascending: false })
@@ -220,8 +225,6 @@ const AdminDashboard: React.FC = () => {
     } catch (err) {
       console.error('Error loading admin data:', err);
     }
-    
-    setIsLoading(false);
   };
 
   const navigate = (newSection: Section, id?: string) => {
@@ -360,16 +363,16 @@ const AdminDashboard: React.FC = () => {
                 <DashboardSection stats={stats} boxes={boxes} navigate={navigate} />
               )}
               {section === 'boxes' && (
-                <BoxesSection boxes={boxes} navigate={navigate} onRefresh={loadAdminData} setIsSaving={setIsSaving} />
+                <BoxesSection boxes={boxes} navigate={navigate} onRefresh={refreshData} setIsSaving={setIsSaving} />
               )}
               {section === 'box-edit' && (
-                <BoxEditSection boxId={editId} navigate={navigate} onSave={loadAdminData} setIsSaving={setIsSaving} products={products} />
+                <BoxEditSection boxId={editId} navigate={navigate} onSave={refreshData} setIsSaving={setIsSaving} products={products} />
               )}
               {section === 'products' && (
-                <ProductsSection products={products} navigate={navigate} onRefresh={loadAdminData} setIsSaving={setIsSaving} />
+                <ProductsSection products={products} navigate={navigate} onRefresh={refreshData} setIsSaving={setIsSaving} />
               )}
               {section === 'product-edit' && (
-                <ProductEditSection productId={editId} navigate={navigate} onSave={loadAdminData} setIsSaving={setIsSaving} />
+                <ProductEditSection productId={editId} navigate={navigate} onSave={refreshData} setIsSaving={setIsSaving} />
               )}
             </>
           )}
@@ -599,22 +602,31 @@ const BoxEditSection: React.FC<{
       
       if (error) {
         alert('Error: ' + error.message);
-      } else {
-        onSave();
-        navigate('box-edit', data.id);
+        setIsSaving(false);
+        return;
       }
+      
+      setIsSaving(false);
+      navigate('box-edit', data.id);
+      onSave(); // Refresh in background
     } else {
-      await supabase.from('boxes').update({
+      const { error } = await supabase.from('boxes').update({
         name: form.name,
         slug: form.slug,
         price: parseFloat(form.price),
         image: form.image,
         category: form.category
       }).eq('id', boxId);
-      onSave();
+      
+      if (error) {
+        alert('Error: ' + error.message);
+        setIsSaving(false);
+        return;
+      }
+      
+      setIsSaving(false);
+      onSave(); // Refresh in background
     }
-    
-    setIsSaving(false);
   };
 
   const isItemInBox = (itemId: string) => boxItems.some(bi => bi.item_id === itemId);
@@ -945,9 +957,10 @@ const ProductEditSection: React.FC<{
       }
     }
     
-    onSave();
+    // Navigate immediately, refresh in background
     navigate('products');
     setIsSaving(false);
+    onSave(); // Refresh data in background
   };
 
   return (
