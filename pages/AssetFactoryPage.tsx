@@ -155,65 +155,60 @@ const AssetFactoryPage: React.FC = () => {
 
         const lighting = lightingDescriptions[lightingStyle];
 
-        /* ============================================================
-         * BACKUP - PROMPT ANTERIOR (por si queremos volver)
-         * ============================================================
-         * Este prompt intentaba replicar las imágenes de referencia,
-         * pero Gemini no lograba mantener la composición correcta.
-         * 
-         * const prompt = hasReferenceImages 
-         *   ? `TASK: Transform the attached product photo into a premium game asset...
-         *      ${fidelityDescriptions[fidelityMode]}
-         *      CRITICAL RULES: Generate a SINGLE, CLEAN front-facing render...`
-         *   : `Create a premium 3D game asset of: ${productDescription}...`;
-         * ============================================================ */
+        const hasReferenceImages = referenceImages.length > 0;
 
-        // NUEVO ENFOQUE: Siempre vista frontal estilo Packdraw/HyperDrop
-        // Las imágenes de referencia solo sirven para entender el color/modelo
-        const prompt = `
-            Create a FRONT VIEW product render for a loot box game.
+        // Dos modos: Con referencia (replica exacta) o sin referencia (genera desde cero)
+        const prompt = hasReferenceImages 
+          ? `
+            TASK: REPLICATE this image exactly as a premium render.
+            Product: ${productDescription}
+            
+            CRITICAL - COPY THE REFERENCE IMAGE:
+            - Replicate the EXACT SAME composition and layout
+            - If the reference shows front AND back of the phone together, show BOTH
+            - If the reference shows multiple angles, show the SAME multiple angles
+            - Keep the EXACT same positioning and arrangement of elements
+            - Match the same proportions and sizes
+            
+            ENHANCE ONLY:
+            - Improve lighting quality with ${lighting.style}
+            - Add subtle ${lighting.rim} on edges
+            - Increase sharpness and detail
+            - Make materials look more premium/glossy
+            ${finalColor && finalColor !== '' ? `- Apply this color: ${finalColor}` : '- Keep the original colors from the reference'}
+            
+            BACKGROUND:
+            - Replace background with PURE BLACK (#000000)
+            - Flat, matte, no gradients or reflections
+            
+            DO NOT:
+            - Change the composition or layout
+            - Remove any elements from the reference
+            - Add elements not in the reference
+            - Show only one view if reference shows multiple
+          `
+          : `
+            Create a premium product render for a loot box game.
             
             PRODUCT: ${productDescription}
-            ${referenceImages.length > 0 ? `\nREFERENCE: I've attached ${referenceImages.length} image(s) showing the product. Use them ONLY to understand the color, model, and design details. Do NOT copy the angle or composition from the reference.` : ''}
-            
-            MANDATORY VIEW:
-            - FRONT VIEW ONLY - like official Apple/Samsung product photos
-            - For phones: Show the SCREEN side, NOT the camera/back side
-            - For watches: Show the watch FACE, not the back
-            - For headphones: Show them from the front, ear cups visible
-            - For consoles: Show the front panel
-            - For shoes: Show the side profile (classic sneaker view)
-            - For bags: Show the front with logo/design visible
             
             COMPOSITION:
-            - Product centered, floating in space
+            - Front view, centered, floating in space
             - FULL product visible - no cut-off edges
             - Fill 75-85% of the frame
-            - Slight 3D depth - not completely flat
             
             STYLE:
-            - Clean, premium e-commerce photography style
+            - Premium e-commerce photography style
             - ${lighting.style}
-            - Subtle ${lighting.rim} on edges (not too strong)
-            - Realistic materials and reflections on the product
+            - ${lighting.rim} on edges
             - Sharp, high detail
-            ${finalColor && finalColor !== '' ? `\n            COLOR: The product should be ${finalColor}` : ''}
+            ${finalColor && finalColor !== '' ? `\n            COLOR: ${finalColor}` : ''}
             ${productVariant ? `\n            VARIANT: ${productVariant}` : ''}
             
             BACKGROUND:
             - SOLID PURE BLACK (#000000)
-            - Completely flat, no gradients
-            - No floor, no shadows, no reflections
-            - Product floating in void
-            
-            AVOID:
-            - Back/rear views of the product
-            - Multiple angles combined
-            - Distorted proportions
-            - Exaggerated lighting effects
-            - Any text overlays
-            - Podiums or stands
-        `;
+            - No gradients, no floor, no shadows
+          `;
 
         // Build content parts - include reference images if provided
         const contentParts: any[] = [{ text: prompt }];
