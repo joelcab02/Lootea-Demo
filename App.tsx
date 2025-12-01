@@ -43,7 +43,6 @@ const App: React.FC = () => {
   
   // NEW STATES
   const [fastMode, setFastMode] = useState(false);
-  const [demoMode, setDemoMode] = useState(true); // Start in demo mode
   const [isMuted, setIsMuted] = useState(false);
   
   // Game flow states
@@ -80,7 +79,19 @@ const App: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  const handleSpin = async () => {
+  // DEMO SPIN - No account needed, client-side only
+  const handleDemoSpin = () => {
+    if (isSpinning) return;
+    setGameError(null);
+    setWinner(null);
+    setShowResult(false);
+    setServerWinner(null); // No server winner = client generates random
+    setIsSpinning(true);
+    audioService.init();
+  };
+
+  // LIVE SPIN - Requires account + balance
+  const handleLiveSpin = async () => {
     if (isSpinning) return;
     if (!BOX_ID) {
       setGameError('Caja no cargada. Recarga la página.');
@@ -88,17 +99,7 @@ const App: React.FC = () => {
     }
     setGameError(null);
     
-    // Demo mode - use client-side logic (no server)
-    if (demoMode) {
-      setWinner(null);
-      setShowResult(false);
-      setServerWinner(null);
-      setIsSpinning(true);
-      audioService.init();
-      return;
-    }
-    
-    // Real mode - check auth and balance first
+    // Check auth and balance first
     const check = canPlay(BOX_PRICE * quantity);
     
     if (!check.canPlay) {
@@ -110,7 +111,6 @@ const App: React.FC = () => {
         setGameError(`Fondos insuficientes. Necesitas $${(BOX_PRICE * quantity).toFixed(2)} para jugar.`);
         return;
       }
-      // Handle unknown reason
       setGameError(check.reason || 'Error desconocido');
       return;
     }
@@ -122,15 +122,13 @@ const App: React.FC = () => {
     setIsSpinning(true);
     audioService.init();
     
-    // Call server in background - result will be used when animation needs winner
+    // Call server in background
     openBox(BOX_ID).then(result => {
       if (!result.success) {
-        // If server fails, stop spinning and show error
         setIsSpinning(false);
         setGameError(result.message || 'Error al abrir la caja');
         return;
       }
-      // Store server winner - Spinner will use this
       setServerWinner(result.winner!);
     });
   };
@@ -329,24 +327,24 @@ const App: React.FC = () => {
             {/* CONTROLS - Clean & Simple */}
             <div className="z-20 w-full max-w-[700px] px-4">
                 
-                {/* Main Button - Premium Metallic Gold */}
+                {/* Main Button - LIVE MODE - Opens for real money */}
                 <button 
-                    onClick={handleSpin}
+                    onClick={handleLiveSpin}
                     disabled={isSpinning}
                     className="
-                        group relative w-full h-16 md:h-[72px] mb-5
-                        text-black font-display uppercase text-2xl md:text-3xl
+                        group relative w-full h-16 md:h-[72px] mb-4
+                        text-black font-display uppercase text-xl md:text-2xl
                         rounded-xl
                         transition-all duration-150
-                        shadow-[0_4px_0_#B8860B,0_6px_20px_rgba(247,201,72,0.25)]
-                        hover:shadow-[0_4px_0_#B8860B,0_8px_30px_rgba(247,201,72,0.35)]
-                        active:shadow-[0_2px_0_#996600] active:translate-y-1
+                        shadow-[0_4px_0_#16a34a,0_6px_20px_rgba(34,197,94,0.25)]
+                        hover:shadow-[0_4px_0_#16a34a,0_8px_30px_rgba(34,197,94,0.35)]
+                        active:shadow-[0_2px_0_#15803d] active:translate-y-1
                         disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-                        flex items-center justify-center gap-4
+                        flex items-center justify-center gap-3
                         overflow-hidden
                     "
                     style={{
-                        background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 30%, #E8B923 70%, #D4A520 100%)',
+                        background: 'linear-gradient(180deg, #4ade80 0%, #22c55e 30%, #16a34a 70%, #15803d 100%)',
                     }}
                 >
                     {/* Metallic shine overlay */}
@@ -356,87 +354,72 @@ const App: React.FC = () => {
                         }}
                     ></div>
                     
-                    {/* Top edge highlight - Desktop only */}
-                    <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/70 to-transparent hidden md:block"></div>
-                    
-                    {/* Shimmer effect - Desktop only */}
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] hidden md:block"></div>
-                    
-                    {/* Floating particles - Desktop only */}
-                    <div className="absolute inset-0 pointer-events-none hidden md:block">
-                        <div className="absolute w-1 h-1 bg-white/70 rounded-full animate-[float_3s_ease-in-out_infinite] left-[10%] top-[20%]"></div>
-                        <div className="absolute w-1 h-1 bg-white/60 rounded-full animate-[float_3.5s_ease-in-out_infinite_1s] left-[75%] top-[30%]"></div>
-                        <div className="absolute w-1 h-1 bg-white/55 rounded-full animate-[float_4s_ease-in-out_infinite_1.5s] left-[50%] top-[15%]"></div>
-                    </div>
-                    
                     {isSpinning ? (
-                        <span className="relative z-10 animate-pulse">ABRIENDO...</span>
+                        <span className="relative z-10 animate-pulse text-white">ABRIENDO...</span>
                     ) : (
-                        <>
-                            <span className="relative z-10">ABRIR</span>
-                            <span className="relative z-10 font-display text-lg md:text-xl bg-black/20 px-3 py-1 rounded-lg uppercase">
-                                ${(BOX_PRICE * quantity).toFixed(2)}
-                            </span>
-                        </>
+                        <span className="relative z-10 text-white font-bold">
+                            Abrir por ${(BOX_PRICE * quantity).toFixed(2)}
+                        </span>
                     )}
                 </button>
 
-                {/* Secondary Controls - Mobile optimized */}
-                <div className="flex items-center justify-between gap-2">
+                {/* Secondary Controls - PackDraw Style */}
+                <div className="flex items-center justify-between gap-3">
                     
-                    {/* Quantity Selector - Compact on mobile */}
-                    <div className="flex bg-[#0d1019] rounded-lg p-0.5 border border-[#1e2330]">
-                        {[1, 2, 3, 4, 5].map(num => (
-                            <button 
-                                key={num} 
-                                onClick={() => setQuantity(num)}
-                                className={`
-                                    w-8 h-8 sm:w-9 sm:h-9 rounded-md font-display text-xs sm:text-sm transition-all uppercase
-                                    ${quantity === num 
-                                        ? 'bg-[#F7C948] text-black' 
-                                        : 'text-slate-500 hover:text-white hover:bg-[#1e2330]'}
-                                `}
-                            >
-                                {num}
-                            </button>
-                        ))}
+                    {/* Left: Quantity Selector */}
+                    <div className="flex bg-[#1a1d26] rounded-lg p-1 border border-[#2a2d36]">
+                        <button 
+                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                            disabled={quantity <= 1}
+                            className="w-10 h-10 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#2a2d36] disabled:opacity-30 transition-all"
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <span className="w-10 h-10 flex items-center justify-center font-display text-white text-lg">
+                            {quantity}
+                        </span>
+                        <button 
+                            onClick={() => setQuantity(Math.min(5, quantity + 1))}
+                            disabled={quantity >= 5}
+                            className="w-10 h-10 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#2a2d36] disabled:opacity-30 transition-all"
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
                     </div>
 
-                    {/* Fast Mode + Demo Toggle - Icons only on mobile */}
-                    <div className="flex items-center gap-1.5 sm:gap-2">
+                    {/* Right: Demo Spin + Fast Mode */}
+                    <div className="flex items-center gap-2">
+                        {/* Demo Spin Button */}
+                        <button 
+                            onClick={handleDemoSpin}
+                            disabled={isSpinning}
+                            className="
+                                h-10 px-4 rounded-lg flex items-center gap-2 
+                                bg-[#1a1d26] border border-[#2a2d36] 
+                                text-slate-300 hover:text-white hover:bg-[#2a2d36]
+                                disabled:opacity-50 disabled:cursor-not-allowed
+                                transition-all text-sm font-medium
+                            "
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                                <path d="M21 3v5h-5"/>
+                            </svg>
+                            <span className="hidden sm:inline">Demo Spin</span>
+                        </button>
+
+                        {/* Fast Mode Toggle */}
                         <button 
                             onClick={() => setFastMode(!fastMode)}
                             className={`
-                                h-8 sm:h-9 w-8 sm:w-auto sm:px-3 rounded-lg flex items-center justify-center gap-2 border transition-all text-sm
+                                w-10 h-10 rounded-lg flex items-center justify-center border transition-all
                                 ${fastMode 
-                                    ? 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]' 
-                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500'}
+                                    ? 'bg-[#F7C948]/20 border-[#F7C948]/50 text-[#F7C948]' 
+                                    : 'bg-[#1a1d26] border-[#2a2d36] text-slate-400 hover:text-white hover:bg-[#2a2d36]'}
                             `}
+                            title="Modo Rápido"
                         >
                             <Icons.Lightning />
-                            <span className="hidden sm:block font-medium">Rápido</span>
-                        </button>
-
-                        <button 
-                            onClick={() => setDemoMode(!demoMode)}
-                            className={`
-                                h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1.5 border transition-all text-xs sm:text-sm
-                                ${demoMode 
-                                    ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' 
-                                    : 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]'}
-                            `}
-                        >
-                            {demoMode ? (
-                                <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                    <span className="font-medium">Demo</span>
-                                </>
-                            ) : (
-                                <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                                    <span className="font-medium">Jugar</span>
-                                </>
-                            )}
                         </button>
                     </div>
                 </div>
