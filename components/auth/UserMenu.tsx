@@ -9,6 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthModal } from './AuthModal';
 import { CartModal } from '../inventory/CartModal';
+import { DepositModal } from '../deposit/DepositModal';
 import { subscribeAuth, signOut, AuthState, getBalance } from '../../services/authService';
 import { subscribeInventory, InventoryState, fetchInventory } from '../../services/inventoryService';
 
@@ -87,6 +88,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
   const [inventory, setInventory] = useState<InventoryState | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showCart, setShowCart] = useState(false);
+  const [showDeposit, setShowDeposit] = useState(false);
   const [modalMode, setModalMode] = useState<'login' | 'register'>('register');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -167,8 +169,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
             )}
           </button>
           
-          {/* Balance */}
-          <button className="px-3 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
+          {/* Balance - Click to deposit */}
+          <button 
+            onClick={() => setShowDeposit(true)}
+            className="px-3 py-1.5 rounded-lg bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-sm transition-colors"
+          >
             ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </button>
 
@@ -262,6 +267,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
         
         {/* Cart Modal */}
         <CartModal isOpen={showCart} onClose={() => setShowCart(false)} />
+        
+        {/* Deposit Modal */}
+        <DepositModal isOpen={showDeposit} onClose={() => setShowDeposit(false)} />
       </>
     );
   }
