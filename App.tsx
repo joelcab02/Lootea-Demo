@@ -93,6 +93,8 @@ const App: React.FC = () => {
     
     // Demo mode - use client-side logic (no server)
     if (demoMode) {
+      // Initialize audio on user interaction
+      audioService.init();
       setWinner(null);
       setShowResult(false);
       setServerWinner(null); // null = Spinner generates random winner
@@ -129,6 +131,8 @@ const App: React.FC = () => {
       }
       
       // Server returned winner - now start animation with predetermined winner
+      // Initialize audio on user interaction
+      audioService.init();
       setWinner(null);
       setShowResult(false);
       setServerWinner(result.winner!);
