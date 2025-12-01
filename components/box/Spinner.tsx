@@ -18,6 +18,7 @@ interface SpinnerProps {
 // Pre-calculate constants to avoid runtime computation
 const ITEM_WIDTH = CARD_WIDTH + CARD_GAP;
 const TICK_OFFSET = 25;
+const INITIAL_POSITION = 10; // Start viewing from position 10 (shows items on both sides)
 
 const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -119,10 +120,11 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     }
 
     // Direct DOM manipulation - bypasses React reconciliation
-    // Add initialX offset to maintain correct positioning
+    // newX is relative to startX, so add startX offset
+    const startX = -INITIAL_POSITION * ITEM_WIDTH;
     const container = containerRef.current;
     if (container) {
-      container.style.transform = `translate3d(${newX}px,0,0)`;
+      container.style.transform = `translate3d(${startX + newX}px,0,0)`;
     }
 
     if (rawProgress < 1) {
@@ -139,14 +141,16 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
       const spinWinner = generateStrip();
       if (!spinWinner) return;
 
-      // Target position for winning item
-      const targetX = -WINNING_INDEX * ITEM_WIDTH;
+      // Start from INITIAL_POSITION, end at WINNING_INDEX
+      const startX = -INITIAL_POSITION * ITEM_WIDTH;
+      const endX = -WINNING_INDEX * ITEM_WIDTH;
+      const travelDistance = endX - startX; // Distance to travel (negative = move left)
       const duration = customDuration || SPIN_DURATION;
 
       // Reset state
       stateRef.current = {
         startTime: 0,
-        targetX,
+        targetX: travelDistance,
         currentX: 0,
         lastIndex: -1,
         isAnimating: true,
@@ -154,9 +158,9 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
         duration,
       };
 
-      // Reset transform before starting
+      // Reset transform to initial position before starting
       if (containerRef.current) {
-        containerRef.current.style.transform = 'translate3d(0,0,0)';
+        containerRef.current.style.transform = `translate3d(${startX}px,0,0)`;
       }
 
       onSpinStart();
@@ -242,7 +246,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
             style={{ 
                 width: `${stripWidth}px`,
                 marginLeft: `calc(50% - ${CARD_WIDTH/2}px)`,
-                transform: 'translate3d(0,0,0)',
+                transform: `translate3d(${-INITIAL_POSITION * ITEM_WIDTH}px,0,0)`,
                 contain: 'layout paint',
                 backfaceVisibility: 'hidden'
             }}
