@@ -26,6 +26,11 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
   const [strip, setStrip] = useState<LootItem[]>([]);
   const [isDesktop, setIsDesktop] = useState(false);
   
+  // Track previous isSpinning to detect transition from false -> true
+  const wasSpinningRef = useRef(false);
+  // Lock winner at spin start - ignore prop changes during animation
+  const lockedWinnerRef = useRef<LootItem | null>(null);
+  
   // Detect desktop on mount and resize
   useEffect(() => {
     const checkDesktop = () => setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
@@ -42,9 +47,6 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
   // Calculate ticket ranges once when items change (memoized)
   const itemsWithTickets = useMemo(() => {
     const calculated = calculateTicketRanges(items);
-    if (calculated.length > 0 && process.env.NODE_ENV === 'development') {
-      debugTicketDistribution(calculated);
-    }
     return calculated;
   }, [items]);
   
@@ -61,29 +63,16 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
 
   const animationFrameId = useRef<number>(0);
 
-  // Pre-generate strip items for object pooling
-  const generateStrip = useCallback(() => {
+  // Generate strip with a specific winner - called only at spin start
+  const generateStripWithWinner = useCallback((winnerItem: LootItem) => {
     if (!itemsWithTickets || itemsWithTickets.length === 0) return null;
-
-    // Use predetermined winner from server if available, otherwise generate randomly
-    let finalWinner: LootItem;
-    
-    if (predeterminedWinner) {
-      // Server already determined the winner
-      finalWinner = predeterminedWinner;
-    } else {
-      // Demo mode - generate random winner client-side
-      const result = selectWeightedWinner(itemsWithTickets);
-      if (!result) return null;
-      finalWinner = result.winner;
-    }
     
     // Batch array creation - more efficient than push
     const newStrip = new Array(TOTAL_CARDS_IN_STRIP);
     
     for (let i = 0; i < TOTAL_CARDS_IN_STRIP; i++) {
       if (i === WINNING_INDEX) {
-        newStrip[i] = finalWinner;
+        newStrip[i] = winnerItem;
       } else {
         const stripResult = selectWeightedWinner(itemsWithTickets);
         newStrip[i] = stripResult ? stripResult.winner : itemsWithTickets[0];
@@ -91,7 +80,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     }
 
     // Near miss logic
-    if (finalWinner.rarity !== Rarity.LEGENDARY) {
+    if (winnerItem.rarity !== Rarity.LEGENDARY) {
       const baitItem = itemsWithTickets.find(i => i.rarity === Rarity.LEGENDARY) || itemsWithTickets[itemsWithTickets.length - 1];
       const offset = Math.random() > 0.5 ? 1 : -1;
       const baitIndex = WINNING_INDEX + offset;
@@ -101,14 +90,25 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     }
 
     setStrip(newStrip);
-    return finalWinner;
-  }, [itemsWithTickets, predeterminedWinner]);
+    return winnerItem;
+  }, [itemsWithTickets]);
 
-  // Initialize audio once
+  // Generate random winner for demo mode
+  const generateRandomWinner = useCallback(() => {
+    if (!itemsWithTickets || itemsWithTickets.length === 0) return null;
+    const result = selectWeightedWinner(itemsWithTickets);
+    return result ? result.winner : null;
+  }, [itemsWithTickets]);
+
+  // Initialize strip on mount (for display before first spin)
   useEffect(() => {
-    audioService.init().catch(() => {});
-    generateStrip();
-  }, [generateStrip]);
+    if (itemsWithTickets.length > 0 && strip.length === 0) {
+      const randomWinner = generateRandomWinner();
+      if (randomWinner) {
+        generateStripWithWinner(randomWinner);
+      }
+    }
+  }, [itemsWithTickets, strip.length, generateRandomWinner, generateStripWithWinner]);
 
   // Optimized easing function - inlined for performance
   const animate = useCallback((timestamp: number) => {
@@ -161,18 +161,41 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     }
   }, [onSpinEnd]);
 
+  // Main spin effect - only triggers on isSpinning transition from false -> true
   useEffect(() => {
-    if (isSpinning) {
-      const spinWinner = generateStrip();
+    // Only start animation when transitioning from not spinning to spinning
+    const justStartedSpinning = isSpinning && !wasSpinningRef.current;
+    wasSpinningRef.current = isSpinning;
+    
+    // If already animating, ignore (prevents restart on prop changes)
+    if (stateRef.current.isAnimating) return;
+    
+    if (justStartedSpinning) {
+      // Lock the winner at spin start
+      // Use predeterminedWinner if provided (live mode), otherwise generate random (demo mode)
+      let spinWinner: LootItem | null;
+      
+      if (predeterminedWinner) {
+        spinWinner = predeterminedWinner;
+      } else {
+        spinWinner = generateRandomWinner();
+      }
+      
       if (!spinWinner) return;
+      
+      // Lock it so prop changes don't affect the animation
+      lockedWinnerRef.current = spinWinner;
+      
+      // Generate strip with the locked winner
+      generateStripWithWinner(spinWinner);
 
       // Start from INITIAL_POSITION, end at WINNING_INDEX
       const startX = -INITIAL_POSITION * ITEM_WIDTH;
       const endX = -WINNING_INDEX * ITEM_WIDTH;
-      const travelDistance = endX - startX; // Distance to travel (negative = move left)
+      const travelDistance = endX - startX;
       const duration = customDuration || SPIN_DURATION;
 
-      // Reset state
+      // Reset animation state
       stateRef.current = {
         startTime: 0,
         targetX: travelDistance,
@@ -192,8 +215,9 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
       cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = requestAnimationFrame(animate);
     }
+    
     return () => cancelAnimationFrame(animationFrameId.current);
-  }, [isSpinning, generateStrip, onSpinStart, animate, customDuration]);
+  }, [isSpinning, predeterminedWinner, generateRandomWinner, generateStripWithWinner, onSpinStart, animate, customDuration, ITEM_WIDTH]);
 
   // Pre-calculate strip width
   const stripWidth = strip.length * ITEM_WIDTH;

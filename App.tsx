@@ -80,8 +80,11 @@ const App: React.FC = () => {
     return unsubscribe;
   }, []);
 
+  // Loading state for server call
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSpin = async () => {
-    if (isSpinning) return;
+    if (isSpinning || isLoading) return;
     if (!BOX_ID) {
       setGameError('Caja no cargada. Recarga la página.');
       return;
@@ -92,13 +95,12 @@ const App: React.FC = () => {
     if (demoMode) {
       setWinner(null);
       setShowResult(false);
-      setServerWinner(null);
+      setServerWinner(null); // null = Spinner generates random winner
       setIsSpinning(true);
-      audioService.init();
       return;
     }
     
-    // Real mode - check auth and balance first
+    // Live mode - check auth and balance first
     const check = canPlay(BOX_PRICE * quantity);
     
     if (!check.canPlay) {
@@ -110,29 +112,33 @@ const App: React.FC = () => {
         setGameError(`Fondos insuficientes. Necesitas $${(BOX_PRICE * quantity).toFixed(2)} para jugar.`);
         return;
       }
-      // Handle unknown reason
       setGameError(check.reason || 'Error desconocido');
       return;
     }
     
-    // OPTIMISTIC UI: Start animation immediately, call server in parallel
-    setWinner(null);
-    setShowResult(false);
-    setServerWinner(null);
-    setIsSpinning(true);
-    audioService.init();
+    // Live mode: Wait for server BEFORE starting animation (PackDraw pattern)
+    setIsLoading(true);
     
-    // Call server in background - result will be used when animation needs winner
-    openBox(BOX_ID).then(result => {
+    try {
+      const result = await openBox(BOX_ID);
+      
       if (!result.success) {
-        // If server fails, stop spinning and show error
-        setIsSpinning(false);
         setGameError(result.message || 'Error al abrir la caja');
+        setIsLoading(false);
         return;
       }
-      // Store server winner - Spinner will use this
+      
+      // Server returned winner - now start animation with predetermined winner
+      setWinner(null);
+      setShowResult(false);
       setServerWinner(result.winner!);
-    });
+      setIsLoading(false);
+      setIsSpinning(true);
+      
+    } catch (error) {
+      setGameError('Error de conexión. Intenta de nuevo.');
+      setIsLoading(false);
+    }
   };
 
   const handleSpinEnd = (item: LootItem) => {
@@ -332,7 +338,7 @@ const App: React.FC = () => {
                 {/* Main Button - Premium Metallic Gold */}
                 <button 
                     onClick={handleSpin}
-                    disabled={isSpinning}
+                    disabled={isSpinning || isLoading}
                     className="
                         group relative w-full h-16 md:h-[72px] mb-5
                         text-black font-display uppercase text-2xl md:text-3xl
@@ -369,7 +375,9 @@ const App: React.FC = () => {
                         <div className="absolute w-1 h-1 bg-white/55 rounded-full animate-[float_4s_ease-in-out_infinite_1.5s] left-[50%] top-[15%]"></div>
                     </div>
                     
-                    {isSpinning ? (
+                    {isLoading ? (
+                        <span className="relative z-10 animate-pulse">CARGANDO...</span>
+                    ) : isSpinning ? (
                         <span className="relative z-10 animate-pulse">ABRIENDO...</span>
                     ) : (
                         <>
@@ -382,7 +390,8 @@ const App: React.FC = () => {
                 </button>
 
                 {/* Secondary Controls - Mobile optimized */}
-                <div className="flex items-center justify-between gap-2">
+                {/* Disabled during spin/loading to prevent bugs */}
+                <div className={`flex items-center justify-between gap-2 transition-opacity ${(isSpinning || isLoading) ? 'opacity-50 pointer-events-none' : ''}`}>
                     
                     {/* Quantity Selector - Compact on mobile */}
                     <div className="flex bg-[#0d1019] rounded-lg p-0.5 border border-[#1e2330]">
@@ -390,6 +399,7 @@ const App: React.FC = () => {
                             <button 
                                 key={num} 
                                 onClick={() => setQuantity(num)}
+                                disabled={isSpinning || isLoading}
                                 className={`
                                     w-8 h-8 sm:w-9 sm:h-9 rounded-md font-display text-xs sm:text-sm transition-all uppercase
                                     ${quantity === num 
@@ -406,6 +416,7 @@ const App: React.FC = () => {
                     <div className="flex items-center gap-1.5 sm:gap-2">
                         <button 
                             onClick={() => setFastMode(!fastMode)}
+                            disabled={isSpinning || isLoading}
                             className={`
                                 h-8 sm:h-9 w-8 sm:w-auto sm:px-3 rounded-lg flex items-center justify-center gap-2 border transition-all text-sm
                                 ${fastMode 
@@ -419,6 +430,7 @@ const App: React.FC = () => {
 
                         <button 
                             onClick={() => setDemoMode(!demoMode)}
+                            disabled={isSpinning || isLoading}
                             className={`
                                 h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1.5 border transition-all text-xs sm:text-sm
                                 ${demoMode 
