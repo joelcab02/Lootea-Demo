@@ -18,7 +18,7 @@ interface SpinnerProps {
 // Pre-calculate constants to avoid runtime computation
 const ITEM_WIDTH = CARD_WIDTH + CARD_GAP;
 const TICK_OFFSET = 25;
-const INITIAL_OFFSET = 3; // Show 3 items to the left of center initially
+const INITIAL_OFFSET = 2; // Show 2 items to the left of center initially
 const INITIAL_X = -INITIAL_OFFSET * ITEM_WIDTH; // Pre-calculated initial offset
 
 const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult }) => {
@@ -224,17 +224,17 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
           </div>
         </div>
 
-        {/* Side Gradients - Desktop only, subtle fade */}
+        {/* Side Gradients - Desktop only, wider fade for cleaner edges */}
         <div 
-          className="hidden sm:block absolute left-0 top-0 bottom-0 w-32 z-20 pointer-events-none"
+          className="hidden sm:block absolute left-0 top-0 bottom-0 w-48 z-20 pointer-events-none"
           style={{ 
-            background: 'linear-gradient(90deg, #08090c 0%, transparent 100%)',
+            background: 'linear-gradient(90deg, #08090c 0%, #08090c 30%, transparent 100%)',
           }}
         />
         <div 
-          className="hidden sm:block absolute right-0 top-0 bottom-0 w-32 z-20 pointer-events-none"
+          className="hidden sm:block absolute right-0 top-0 bottom-0 w-48 z-20 pointer-events-none"
           style={{ 
-            background: 'linear-gradient(270deg, #08090c 0%, transparent 100%)',
+            background: 'linear-gradient(270deg, #08090c 0%, #08090c 30%, transparent 100%)',
           }}
         />
 
