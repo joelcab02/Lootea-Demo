@@ -171,6 +171,30 @@ export function getBalance(): number {
 }
 
 /**
+ * Refresh user balance from server
+ */
+export async function refreshBalance(): Promise<number> {
+  if (!currentState.user) return 0;
+  
+  const { data } = await supabase
+    .from('wallets')
+    .select('balance')
+    .eq('user_id', currentState.user.id)
+    .single();
+  
+  if (data) {
+    currentState = {
+      ...currentState,
+      wallet: { ...currentState.wallet!, balance: data.balance }
+    };
+    notifyListeners();
+    return data.balance;
+  }
+  
+  return currentState.wallet?.balance ?? 0;
+}
+
+/**
  * Subscribe to auth state changes
  */
 export function subscribeAuth(listener: AuthListener): () => void {

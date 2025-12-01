@@ -1,14 +1,16 @@
 /**
  * User Menu - Header buttons for auth
  * Shows Sign In / Register when logged out
- * Shows user info + balance when logged in
+ * Shows user info + balance + cart when logged in
  * 
  * Design: Lootea Gold theme with gamer aesthetic
  */
 
 import React, { useState, useEffect } from 'react';
 import { AuthModal } from './AuthModal';
+import { CartModal } from '../inventory/CartModal';
 import { subscribeAuth, signOut, AuthState, getBalance } from '../../services/authService';
+import { subscribeInventory, InventoryState, fetchInventory } from '../../services/inventoryService';
 
 // Icons
 const Icons = {
@@ -67,11 +69,20 @@ const Icons = {
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
   ),
+  Cart: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
+  ),
 };
 
 export const UserMenu: React.FC = () => {
   const [authState, setAuthState] = useState<AuthState | null>(null);
+  const [inventory, setInventory] = useState<InventoryState | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showCart, setShowCart] = useState(false);
   const [modalMode, setModalMode] = useState<'login' | 'register'>('register');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -79,6 +90,15 @@ export const UserMenu: React.FC = () => {
     const unsubscribe = subscribeAuth(setAuthState);
     return unsubscribe;
   }, []);
+  
+  // Subscribe to inventory when logged in
+  useEffect(() => {
+    if (authState?.user) {
+      const unsubscribe = subscribeInventory(setInventory);
+      fetchInventory();
+      return unsubscribe;
+    }
+  }, [authState?.user]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -124,39 +144,55 @@ export const UserMenu: React.FC = () => {
     const balance = getBalance();
     const displayName = authState.profile?.display_name || authState.user.email?.split('@')[0] || 'User';
     const level = authState.profile?.level || 1;
+    const cartCount = inventory?.itemCount || 0;
     
     return (
-      <div className="flex items-center gap-2">
-        
-        {/* Balance Button - Simple gold badge */}
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
-          <span>${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-          <div className="w-5 h-5 bg-black/20 rounded flex items-center justify-center">
-            <Icons.Plus />
-          </div>
-        </button>
-
-        {/* User Profile Button */}
-        <div className="relative">
+      <>
+        <div className="flex items-center gap-2">
+          
+          {/* Cart Button */}
           <button 
-            onClick={toggleDropdown}
-            className={`flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg transition-colors ${dropdownOpen ? 'bg-[#1a1d26]' : 'hover:bg-[#1a1d26]'}`}
+            onClick={() => setShowCart(true)}
+            className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#1e2330] hover:border-slate-600 text-slate-300 hover:text-white transition-colors"
           >
-            {/* Avatar */}
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-black text-sm font-bold bg-[#F7C948]">
-              {displayName.charAt(0).toUpperCase()}
-            </div>
-            
-            {/* Name - Desktop only */}
-            <span className="hidden sm:block text-white text-sm font-medium max-w-[80px] truncate">
-              {displayName}
-            </span>
-            
-            {/* Chevron - Desktop only */}
-            <div className={`hidden sm:block text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
-              <Icons.ChevronDown />
+            <Icons.Cart />
+            <span className="hidden sm:inline text-sm font-medium">Cart</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#F7C948] text-black text-xs font-bold rounded-full flex items-center justify-center">
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
+          </button>
+          
+          {/* Balance Button - Simple gold badge */}
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
+            <span>${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+            <div className="w-5 h-5 bg-black/20 rounded flex items-center justify-center">
+              <Icons.Plus />
             </div>
           </button>
+
+          {/* User Profile Button */}
+          <div className="relative">
+            <button 
+              onClick={toggleDropdown}
+              className={`flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg transition-colors ${dropdownOpen ? 'bg-[#1a1d26]' : 'hover:bg-[#1a1d26]'}`}
+            >
+              {/* Avatar */}
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-black text-sm font-bold bg-[#F7C948]">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+              
+              {/* Name - Desktop only */}
+              <span className="hidden sm:block text-white text-sm font-medium max-w-[80px] truncate">
+                {displayName}
+              </span>
+              
+              {/* Chevron - Desktop only */}
+              <div className={`hidden sm:block text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
+                <Icons.ChevronDown />
+              </div>
+            </button>
           
           {/* Dropdown Menu */}
           {dropdownOpen && (
@@ -212,8 +248,12 @@ export const UserMenu: React.FC = () => {
               </div>
             </div>
           )}
+          </div>
         </div>
-      </div>
+        
+        {/* Cart Modal */}
+        <CartModal isOpen={showCart} onClose={() => setShowCart(false)} />
+      </>
     );
   }
 

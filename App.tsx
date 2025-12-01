@@ -8,10 +8,11 @@ import { RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';
 import { getItems, initializeStore, subscribe } from './services/oddsStore';
 import { UserMenu } from './components/auth/UserMenu';
-import { initAuth, isLoggedIn, getBalance } from './services/authService';
+import { initAuth, isLoggedIn, getBalance, refreshBalance } from './services/authService';
 import { openBox, canPlay, PlayResult } from './services/gameService';
 import { AuthModal } from './components/auth/AuthModal';
 import { getBoxes, Box } from './services/boxService';
+import { addItemLocally, fetchInventory } from './services/inventoryService';
 
 // SVG Icons for App
 const Icons = {
@@ -150,6 +151,19 @@ const App: React.FC = () => {
     setWinner(item);
     setShowResult(true);
     triggerWinEffects(item);
+    
+    // In live mode, add item to inventory and refresh balance
+    if (!demoMode && isLoggedIn()) {
+      addItemLocally({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        rarity: item.rarity,
+        image: item.image,
+      });
+      // Refresh balance from server (it was already deducted)
+      refreshBalance();
+    }
   };
 
   const triggerWinEffects = (_item: LootItem) => {
