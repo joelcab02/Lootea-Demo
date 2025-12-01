@@ -65,7 +65,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     items: [],
     totalValue: 0,
     itemCount: 0,
-    isLoading: true,
+    isLoading: false,
     error: null,
   });
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());

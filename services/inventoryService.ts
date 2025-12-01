@@ -34,7 +34,7 @@ let currentState: InventoryState = {
   items: [],
   totalValue: 0,
   itemCount: 0,
-  isLoading: false,
+  isLoading: false, // Start as false - only true during first fetch with no cache
   error: null,
 };
 
@@ -54,10 +54,15 @@ export function getInventoryState(): InventoryState {
 
 /**
  * Fetch user's inventory from server
+ * Only shows loading if no cached data exists
  */
 export async function fetchInventory(): Promise<InventoryState> {
-  currentState = { ...currentState, isLoading: true, error: null };
-  notifySubscribers();
+  // Only show loading spinner if we have no cached data
+  const showLoading = currentState.items.length === 0;
+  if (showLoading) {
+    currentState = { ...currentState, isLoading: true, error: null };
+    notifySubscribers();
+  }
   
   try {
     const { data, error } = await supabase.rpc('get_user_inventory');
