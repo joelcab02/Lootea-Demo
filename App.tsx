@@ -242,40 +242,21 @@ const App: React.FC = () => {
                 />
             </div>
 
-            {/* CONTROLS - Clean & Simple */}
-            <div className="z-20 w-full max-w-[700px] px-4">
+            {/* CONTROLS */}
+            <div className="z-20 w-full max-w-[500px] px-4">
                 
-                {/* Main Button - Premium Metallic Gold */}
+                {/* Main Button - Simple like PackDraw */}
                 <button 
                     onClick={handleSpin}
                     disabled={isSpinning || isLoading}
-                    className="
-                        group relative w-full h-16 md:h-[72px] mb-5
-                        text-black font-display uppercase text-2xl md:text-3xl
-                        rounded-xl
-                        transition-all duration-150
-                        shadow-[0_4px_0_#B8860B,0_6px_20px_rgba(247,201,72,0.25)]
-                        hover:shadow-[0_4px_0_#B8860B,0_8px_30px_rgba(247,201,72,0.35)]
-                        active:shadow-[0_2px_0_#996600] active:translate-y-1
-                        disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-                        flex items-center justify-center gap-4
-                        overflow-hidden
-                    "
-                    style={{
-                        background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 30%, #E8B923 70%, #D4A520 100%)',
-                    }}
+                    className="w-full py-4 mb-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-lg rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isLoading ? (
-                        <span className="relative z-10 animate-pulse">CARGANDO...</span>
+                        'Cargando...'
                     ) : isSpinning ? (
-                        <span className="relative z-10 animate-pulse">ABRIENDO...</span>
+                        'Abriendo...'
                     ) : (
-                        <>
-                            <span className="relative z-10">ABRIR</span>
-                            <span className="relative z-10 font-display text-lg md:text-xl bg-black/20 px-3 py-1 rounded-lg uppercase">
-                                ${(BOX_PRICE * quantity).toFixed(2)}
-                            </span>
-                        </>
+                        `Abrir por $${(BOX_PRICE * quantity).toFixed(2)}`
                     )}
                 </button>
 
