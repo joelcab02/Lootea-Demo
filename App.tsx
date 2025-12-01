@@ -168,7 +168,7 @@ const App: React.FC = () => {
       <div className="flex flex-col min-h-screen">
         
         {/* HEADER */}
-        <header className="flex items-center justify-between py-3 px-4 md:py-5 md:px-10 bg-[#0d1019]/95 backdrop-blur-md border-b border-[#1e2330]/50 sticky top-0 z-40">
+        <header className="flex items-center justify-between py-3 px-4 md:py-5 md:px-10 bg-[#0d1019] border-b border-[#1e2330]/50 sticky top-0 z-40">
             {/* Left: Menu + Logo */}
             <div className="flex items-center gap-3 md:gap-6">
                 <button 
@@ -179,16 +179,9 @@ const App: React.FC = () => {
                 </button>
                 
                 <div className="flex items-center gap-2.5 cursor-pointer group">
-                    {/* Logo icon with premium glow */}
-                    <div className="relative">
-                        <div className="absolute inset-0 w-6 h-6 md:w-8 md:h-8 bg-[#F7C948] blur-lg opacity-50 group-hover:opacity-80 transition-opacity"></div>
-                        <div className="relative w-6 h-6 md:w-8 md:h-8 text-[#F7C948] group-hover:scale-110 transition-transform"
-                            style={{
-                                filter: 'drop-shadow(0 0 6px rgba(247,201,72,0.5)) drop-shadow(0 0 15px rgba(247,201,72,0.25))'
-                            }}
-                        >
-                            <Icons.Logo />
-                        </div>
+                    {/* Logo icon - simplified */}
+                    <div className="w-6 h-6 md:w-8 md:h-8 text-[#F7C948] group-hover:scale-110 transition-transform">
+                        <Icons.Logo />
                     </div>
                     {/* Logo text with metallic effect */}
                     <span 
@@ -205,26 +198,12 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* Center: Trust Badge - Premium Tech Style */}
-            <div className="hidden lg:flex items-center gap-2.5 px-5 py-2.5 rounded-full relative overflow-hidden group cursor-pointer"
-                style={{
-                    background: 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(34,197,94,0.05) 100%)',
-                    border: '1px solid rgba(34,197,94,0.3)',
-                }}
-            >
-                {/* Shimmer effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-400/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_ease-out]"></div>
-                
-                {/* Glow behind icon */}
-                <div className="relative">
-                    <div className="absolute inset-0 bg-green-500 blur-md opacity-40"></div>
-                    <div className="relative text-green-400" style={{ filter: 'drop-shadow(0 0 6px rgba(34,197,94,0.8))' }}>
-                        <Icons.ShieldCheck />
-                    </div>
+            {/* Center: Trust Badge - Simplified */}
+            <div className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
+                <div className="text-green-400">
+                    <Icons.ShieldCheck />
                 </div>
-                <span className="font-display text-green-400 text-xs uppercase tracking-wide"
-                    style={{ textShadow: '0 0 10px rgba(34,197,94,0.5)' }}
-                >
+                <span className="font-display text-green-400 text-xs uppercase tracking-wide">
                     Provably Fair
                 </span>
             </div>
@@ -255,54 +234,10 @@ const App: React.FC = () => {
         {/* HERO AREA */}
         <div className="flex flex-col items-center pt-8 md:pt-10 pb-8 relative overflow-visible">
             
-            {/* Premium ambient glow system - DESKTOP ONLY for performance */}
+            {/* Simplified ambient glow - DESKTOP ONLY */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
-                
-                {/* Floating particles - Desktop only */}
-                <div className="absolute w-1 h-1 bg-[#F7C948]/40 rounded-full animate-[floatUp_8s_ease-in-out_infinite] left-[10%] top-[80%]"></div>
-                <div className="absolute w-1.5 h-1.5 bg-[#F7C948]/30 rounded-full animate-[floatUp_12s_ease-in-out_infinite_1s] left-[20%] top-[90%]"></div>
-                <div className="absolute w-1 h-1 bg-[#F7C948]/35 rounded-full animate-[floatUp_14s_ease-in-out_infinite_0.5s] left-[50%] top-[95%]"></div>
-                <div className="absolute w-1.5 h-1.5 bg-[#F7C948]/25 rounded-full animate-[floatUp_11s_ease-in-out_infinite_1.5s] left-[80%] top-[92%]"></div>
-                
-                {/* Main center glow */}
-                <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#F7C948] opacity-[0.06] blur-[120px]"></div>
-                
-                {/* Secondary glow */}
-                <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-[#FFB800] opacity-[0.04] blur-[150px]"></div>
-                
-                {/* Tech circuit lines - Left side */}
-                <svg className="absolute left-8 top-[5%] w-[200px] h-[500px] opacity-30" viewBox="0 0 200 500">
-                    <path d="M0 50 L60 50 L60 120 L100 120 L100 180" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
-                    <path d="M0 150 L40 150 L40 220 L80 220 L80 300 L50 300" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
-                    <path d="M0 280 L90 280 L90 380 L130 380 L130 450" stroke="url(#goldGradient)" strokeWidth="1.5" fill="none"/>
-                    <circle cx="100" cy="180" r="4" fill="#F7C948"/>
-                    <circle cx="50" cy="300" r="4" fill="#F7C948"/>
-                    <circle cx="130" cy="450" r="4" fill="#F7C948"/>
-                    <defs>
-                        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#F7C948" stopOpacity="0.3"/>
-                            <stop offset="50%" stopColor="#FFD700" stopOpacity="0.6"/>
-                            <stop offset="100%" stopColor="#F7C948" stopOpacity="0.3"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-                
-                {/* Tech circuit lines - Right side */}
-                <svg className="absolute right-8 top-[8%] w-[200px] h-[500px] opacity-30" viewBox="0 0 200 500" style={{transform: 'scaleX(-1)'}}>
-                    <path d="M0 80 L70 80 L70 160 L110 160 L110 240" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
-                    <path d="M0 200 L50 200 L50 280 L90 280 L90 380" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
-                    <path d="M0 340 L60 340 L60 420 L100 420" stroke="url(#goldGradient2)" strokeWidth="1.5" fill="none"/>
-                    <circle cx="110" cy="240" r="4" fill="#F7C948"/>
-                    <circle cx="90" cy="380" r="4" fill="#F7C948"/>
-                    <circle cx="100" cy="420" r="4" fill="#F7C948"/>
-                    <defs>
-                        <linearGradient id="goldGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#F7C948" stopOpacity="0.3"/>
-                            <stop offset="50%" stopColor="#FFD700" stopOpacity="0.6"/>
-                            <stop offset="100%" stopColor="#F7C948" stopOpacity="0.3"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
+                {/* Single optimized glow - reduced blur */}
+                <div className="absolute top-[25%] left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#F7C948] opacity-[0.05] blur-[80px]"></div>
             </div>
             
             {/* Mobile: Simple glow only */}
@@ -320,10 +255,8 @@ const App: React.FC = () => {
                 </p>
             </div>
 
-            {/* SPINNER with glow backdrop */}
+            {/* SPINNER */}
             <div className="relative w-full max-w-[1600px] z-10 mb-10 md:mb-8">
-                {/* Spinner glow - hidden on mobile for performance */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] bg-[#F7C948] opacity-[0.08] blur-[80px] pointer-events-none hidden md:block"></div>
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 
@@ -359,26 +292,6 @@ const App: React.FC = () => {
                         background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 30%, #E8B923 70%, #D4A520 100%)',
                     }}
                 >
-                    {/* Metallic shine overlay */}
-                    <div className="absolute inset-0 rounded-xl opacity-60"
-                        style={{
-                            background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.1) 100%)',
-                        }}
-                    ></div>
-                    
-                    {/* Top edge highlight - Desktop only */}
-                    <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/70 to-transparent hidden md:block"></div>
-                    
-                    {/* Shimmer effect - Desktop only */}
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] hidden md:block"></div>
-                    
-                    {/* Floating particles - Desktop only */}
-                    <div className="absolute inset-0 pointer-events-none hidden md:block">
-                        <div className="absolute w-1 h-1 bg-white/70 rounded-full animate-[float_3s_ease-in-out_infinite] left-[10%] top-[20%]"></div>
-                        <div className="absolute w-1 h-1 bg-white/60 rounded-full animate-[float_3.5s_ease-in-out_infinite_1s] left-[75%] top-[30%]"></div>
-                        <div className="absolute w-1 h-1 bg-white/55 rounded-full animate-[float_4s_ease-in-out_infinite_1.5s] left-[50%] top-[15%]"></div>
-                    </div>
-                    
                     {isLoading ? (
                         <span className="relative z-10 animate-pulse">CARGANDO...</span>
                     ) : isSpinning ? (
