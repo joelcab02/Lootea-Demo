@@ -62,34 +62,50 @@ const AssetFactoryPage: React.FC = () => {
   const [copySuccess, setCopySuccess] = useState(false);
   const [history, setHistory] = useState<{name: string; image: string; config: string}[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [referenceImage, setReferenceImage] = useState<string | null>(null);
-  const [referenceFileName, setReferenceFileName] = useState<string>('');
+  const [referenceImages, setReferenceImages] = useState<{data: string; name: string}[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [cdnUrl, setCdnUrl] = useState<string | null>(null);
 
   const handleReferenceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setError('Por favor sube una imagen válida');
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    // Check max 4 images
+    if (referenceImages.length + files.length > 4) {
+      setError('Máximo 4 imágenes de referencia');
       return;
     }
-    if (file.size > 4 * 1024 * 1024) {
-      setError('La imagen debe ser menor a 4MB');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setReferenceImage(event.target?.result as string);
-      setReferenceFileName(file.name);
-      setError(null);
-    };
-    reader.readAsDataURL(file);
+    
+    Array.from(files).forEach((file: File) => {
+      if (!file.type.startsWith('image/')) {
+        setError('Por favor sube imágenes válidas');
+        return;
+      }
+      if (file.size > 4 * 1024 * 1024) {
+        setError('Cada imagen debe ser menor a 4MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setReferenceImages(prev => [...prev, {
+          data: event.target?.result as string,
+          name: file.name
+        }]);
+        setError(null);
+      };
+      reader.readAsDataURL(file);
+    });
+    
+    // Reset input
+    e.target.value = '';
   };
 
-  const clearReferenceImage = () => {
-    setReferenceImage(null);
-    setReferenceFileName('');
+  const removeReferenceImage = (index: number) => {
+    setReferenceImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const clearAllReferenceImages = () => {
+    setReferenceImages([]);
   };
 
   const handleGenerate = async () => {
@@ -154,17 +170,19 @@ const AssetFactoryPage: React.FC = () => {
         };
 
         const lighting = lightingDescriptions[lightingStyle];
+        const hasReferenceImages = referenceImages.length > 0;
 
-        // Different prompts based on whether we have a reference image
-        const prompt = referenceImage 
+        // Different prompts based on whether we have reference images
+        const prompt = hasReferenceImages 
           ? `
-            TASK: Enhance the attached product photo into a premium game asset render.
+            TASK: Enhance the attached product photo${referenceImages.length > 1 ? 's' : ''} into a premium game asset render.
             Product: ${productDescription}
+            ${referenceImages.length > 1 ? `\n            You have ${referenceImages.length} reference images showing different angles/views of the same product. Use them to understand the product better, but generate ONE cohesive render.` : ''}
             
             CRITICAL - DO NOT MODIFY:
-            - Keep the EXACT same composition, angle, and framing as the reference image
+            - Keep the EXACT same composition, angle, and framing as the ${referenceImages.length > 1 ? 'first/main' : ''} reference image
             - Keep the EXACT same product orientation and position
-            - Do NOT combine multiple views or angles
+            - Do NOT combine multiple views into one distorted image
             - Do NOT add elements that aren't in the reference
             - Do NOT change the product's proportions or shape
             
@@ -222,11 +240,12 @@ const AssetFactoryPage: React.FC = () => {
             - No podiums, no stands, no tables.
           `;
 
-        // Build content parts - include reference image if provided
+        // Build content parts - include reference images if provided
         const contentParts: any[] = [{ text: prompt }];
         
-        if (referenceImage) {
-            const base64Match = referenceImage.match(/^data:image\/(\w+);base64,(.+)$/);
+        // Add all reference images to the request
+        for (const refImg of referenceImages) {
+            const base64Match = refImg.data.match(/^data:image\/(\w+);base64,(.+)$/);
             if (base64Match) {
                 contentParts.push({
                     inlineData: {
@@ -396,53 +415,70 @@ const AssetFactoryPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Reference Image Upload */}
+          {/* Reference Images Upload */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
-              📷 Imagen de Referencia (opcional)
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
+                📷 Imágenes de Referencia (opcional)
+              </label>
+              {referenceImages.length > 0 && (
+                <button
+                  onClick={clearAllReferenceImages}
+                  className="text-[10px] text-red-400 hover:text-red-300"
+                >
+                  Limpiar todo
+                </button>
+              )}
+            </div>
             <p className="text-[10px] text-slate-500">
-              Si la IA no conoce bien el producto, sube una foto real como referencia.
+              Sube hasta 4 fotos del producto. La primera será la composición principal.
             </p>
             
-            {referenceImage ? (
-              <div className="relative bg-[#0d1019] border border-[#2a3040] rounded-lg p-3">
-                <div className="flex items-center gap-3">
-                  <img 
-                    src={referenceImage} 
-                    alt="Reference" 
-                    className="w-16 h-16 object-contain rounded bg-black"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-white truncate">{referenceFileName}</p>
-                    <p className="text-[10px] text-green-400">✓ Imagen cargada</p>
+            {/* Uploaded images grid */}
+            {referenceImages.length > 0 && (
+              <div className="grid grid-cols-4 gap-2">
+                {referenceImages.map((img, index) => (
+                  <div key={index} className="relative group">
+                    <img 
+                      src={img.data} 
+                      alt={`Ref ${index + 1}`} 
+                      className="w-full aspect-square object-cover rounded-lg bg-black border border-[#2a3040]"
+                    />
+                    {index === 0 && (
+                      <span className="absolute top-1 left-1 text-[8px] bg-[#F7C948] text-black px-1 rounded font-bold">
+                        PRINCIPAL
+                      </span>
+                    )}
+                    <button
+                      onClick={() => removeReferenceImage(index)}
+                      className="absolute top-1 right-1 w-5 h-5 bg-red-500/80 hover:bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
                   </div>
-                  <button
-                    onClick={clearReferenceImage}
-                    className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                    title="Eliminar imagen"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
+                ))}
               </div>
-            ) : (
-              <label className="flex flex-col items-center justify-center w-full h-20 bg-[#0d1019] border-2 border-dashed border-[#2a3040] hover:border-[#F7C948] rounded-lg cursor-pointer transition-colors group">
-                <div className="flex flex-col items-center justify-center">
-                  <svg className="w-5 h-5 mb-1 text-slate-500 group-hover:text-[#F7C948] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            )}
+            
+            {/* Upload button - show if less than 4 images */}
+            {referenceImages.length < 4 && (
+              <label className="flex flex-col items-center justify-center w-full h-16 bg-[#0d1019] border-2 border-dashed border-[#2a3040] hover:border-[#F7C948] rounded-lg cursor-pointer transition-colors group">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-slate-500 group-hover:text-[#F7C948] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
                   </svg>
                   <p className="text-[10px] text-slate-500 group-hover:text-slate-300">
-                    Click para subir imagen
+                    {referenceImages.length === 0 ? 'Subir imágenes' : 'Agregar más'} ({referenceImages.length}/4)
                   </p>
                 </div>
                 <input 
                   type="file" 
                   className="hidden" 
                   accept="image/*"
+                  multiple
                   onChange={handleReferenceUpload}
                 />
               </label>
