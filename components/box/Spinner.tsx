@@ -215,9 +215,15 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
       cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = requestAnimationFrame(animate);
     }
-    
-    return () => cancelAnimationFrame(animationFrameId.current);
+    // NO cleanup here - animation manages itself via isAnimating flag
   }, [isSpinning, predeterminedWinner, generateRandomWinner, generateStripWithWinner, onSpinStart, animate, customDuration, ITEM_WIDTH]);
+  
+  // Cleanup animation on unmount only
+  useEffect(() => {
+    return () => {
+      cancelAnimationFrame(animationFrameId.current);
+    };
+  }, []);
 
   // Pre-calculate strip width
   const stripWidth = strip.length * ITEM_WIDTH;
