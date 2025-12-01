@@ -11,7 +11,22 @@ import { Box, getBoxes, getBoxBySlug } from '../services/boxService';
 import type { User } from '@supabase/supabase-js';
 
 // Sections
-type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'assets';
+type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'assets' | 'users' | 'user-detail';
+
+// User type for CRM
+interface UserData {
+  id: string;
+  email: string;
+  display_name: string | null;
+  level: number;
+  is_admin: boolean;
+  created_at: string;
+  balance: number;
+  total_spent: number;
+  total_won: number;
+  inventory_count: number;
+  inventory_value: number;
+}
 
 // Auth state type
 interface AdminAuthState {
@@ -39,9 +54,10 @@ const AdminDashboard: React.FC = () => {
   
   const [boxes, setBoxes] = useState<Box[]>([]);
   const [products, setProducts] = useState<LootItem[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [stats, setStats] = useState({ boxes: 0, products: 0, totalValue: 0 });
+  const [stats, setStats] = useState({ boxes: 0, products: 0, totalValue: 0, users: 0, totalBalance: 0 });
 
   // Check admin authentication on mount
   useEffect(() => {
@@ -199,13 +215,17 @@ const AdminDashboard: React.FC = () => {
   // Refresh data without showing full loading spinner (for after save operations)
   const refreshData = async () => {
     try {
-      const [boxesRes, productsRes] = await Promise.all([
+      const [boxesRes, productsRes, profilesRes, walletsRes, inventoryRes] = await Promise.all([
         supabase.from('boxes').select('*').order('created_at', { ascending: false }),
-        supabase.from('items').select('*').order('price', { ascending: false })
+        supabase.from('items').select('*').order('price', { ascending: false }),
+        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
+        supabase.from('wallets').select('*'),
+        supabase.from('inventory').select('user_id, item_id, items(price)').eq('status', 'available')
       ]);
       
       if (boxesRes.error) console.error('Error loading boxes:', boxesRes.error);
       if (productsRes.error) console.error('Error loading products:', productsRes.error);
+      if (profilesRes.error) console.error('Error loading profiles:', profilesRes.error);
       
       setBoxes(boxesRes.data || []);
       
@@ -216,11 +236,46 @@ const AdminDashboard: React.FC = () => {
       }));
       setProducts(mappedProducts);
       
+      // Build users data with wallet and inventory info
+      const walletsMap = new Map((walletsRes.data || []).map(w => [w.user_id, w]));
+      const inventoryByUser = new Map<string, { count: number; value: number }>();
+      
+      (inventoryRes.data || []).forEach((inv: any) => {
+        const userId = inv.user_id;
+        const price = inv.items?.price || 0;
+        const current = inventoryByUser.get(userId) || { count: 0, value: 0 };
+        inventoryByUser.set(userId, { count: current.count + 1, value: current.value + price });
+      });
+      
+      const usersData: UserData[] = (profilesRes.data || []).map(profile => {
+        const wallet = walletsMap.get(profile.id);
+        const inventory = inventoryByUser.get(profile.id) || { count: 0, value: 0 };
+        return {
+          id: profile.id,
+          email: profile.email || '',
+          display_name: profile.display_name,
+          level: profile.level || 1,
+          is_admin: profile.is_admin || false,
+          created_at: profile.created_at,
+          balance: wallet?.balance || 0,
+          total_spent: 0, // TODO: Calculate from transactions
+          total_won: 0, // TODO: Calculate from transactions
+          inventory_count: inventory.count,
+          inventory_value: inventory.value,
+        };
+      });
+      
+      setUsers(usersData);
+      
       const totalValue = (productsRes.data || []).reduce((sum, p) => sum + Number(p.price), 0);
+      const totalBalance = usersData.reduce((sum, u) => sum + u.balance, 0);
+      
       setStats({
         boxes: (boxesRes.data || []).length,
         products: (productsRes.data || []).length,
-        totalValue
+        totalValue,
+        users: usersData.length,
+        totalBalance
       });
     } catch (err) {
       console.error('Error loading admin data:', err);
@@ -243,11 +298,13 @@ const AdminDashboard: React.FC = () => {
     plus: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
     trash: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
     check: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>,
+    users: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   };
 
   // Sidebar navigation items
   const navItems = [
     { id: 'dashboard', icon: icons.dashboard, label: 'Dashboard' },
+    { id: 'users', icon: icons.users, label: 'Usuarios' },
     { id: 'boxes', icon: icons.boxes, label: 'Cajas' },
     { id: 'products', icon: icons.products, label: 'Productos' },
     { id: 'assets', icon: icons.assets, label: 'Asset Factory', link: '/assets' },
@@ -337,6 +394,8 @@ const AdminDashboard: React.FC = () => {
         <header className="h-14 bg-[#0c0e14] border-b border-[#1a1d24] flex items-center justify-between px-6 sticky top-0 z-10">
           <h1 className="text-sm font-medium text-white">
             {section === 'dashboard' && 'Dashboard'}
+            {section === 'users' && 'Usuarios'}
+            {section === 'user-detail' && 'Detalle de Usuario'}
             {section === 'boxes' && 'Cajas'}
             {section === 'box-edit' && (editId ? 'Editar Caja' : 'Nueva Caja')}
             {section === 'products' && 'Productos'}
@@ -373,6 +432,12 @@ const AdminDashboard: React.FC = () => {
               )}
               {section === 'product-edit' && (
                 <ProductEditSection productId={editId} navigate={navigate} onSave={refreshData} setIsSaving={setIsSaving} />
+              )}
+              {section === 'users' && (
+                <UsersSection users={users} navigate={navigate} onRefresh={refreshData} setIsSaving={setIsSaving} />
+              )}
+              {section === 'user-detail' && (
+                <UserDetailSection userId={editId} navigate={navigate} onRefresh={refreshData} setIsSaving={setIsSaving} />
               )}
             </>
           )}
@@ -1043,6 +1108,431 @@ const ProductEditSection: React.FC<{
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+// === USERS SECTION (CRM) ===
+const UsersSection: React.FC<{
+  users: UserData[];
+  navigate: (section: Section, id?: string) => void;
+  onRefresh: () => void;
+  setIsSaving: (v: boolean) => void;
+}> = ({ users, navigate, onRefresh, setIsSaving }) => {
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<'all' | 'admin' | 'active'>('all');
+
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = 
+      user.email.toLowerCase().includes(search.toLowerCase()) ||
+      (user.display_name?.toLowerCase() || '').includes(search.toLowerCase());
+    
+    if (filter === 'admin') return matchesSearch && user.is_admin;
+    if (filter === 'active') return matchesSearch && user.balance > 0;
+    return matchesSearch;
+  });
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="text-2xl font-semibold text-white">{users.length}</div>
+          <div className="text-xs text-slate-500">Total usuarios</div>
+        </div>
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="text-2xl font-semibold text-[#F7C948]">
+            ${users.reduce((sum, u) => sum + u.balance, 0).toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">Balance total</div>
+        </div>
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="text-2xl font-semibold text-white">
+            {users.reduce((sum, u) => sum + u.inventory_count, 0)}
+          </div>
+          <div className="text-xs text-slate-500">Items en inventarios</div>
+        </div>
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="text-2xl font-semibold text-emerald-400">
+            ${users.reduce((sum, u) => sum + u.inventory_value, 0).toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">Valor inventarios</div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="text"
+          placeholder="Buscar por email o nombre..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 px-4 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
+        />
+        <div className="flex gap-2">
+          {(['all', 'active', 'admin'] as const).map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                filter === f
+                  ? 'bg-[#F7C948] text-black'
+                  : 'bg-[#0c0e14] text-slate-400 border border-[#1a1d24] hover:text-white'
+              }`}
+            >
+              {f === 'all' ? 'Todos' : f === 'active' ? 'Con balance' : 'Admins'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Users Table */}
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-[#0c0e14] border-b border-[#1a1d24]">
+            <tr className="text-left text-[11px] text-slate-500 uppercase tracking-wide">
+              <th className="py-3 px-4 font-medium">Usuario</th>
+              <th className="py-3 px-4 font-medium">Nivel</th>
+              <th className="py-3 px-4 text-right font-medium">Balance</th>
+              <th className="py-3 px-4 text-right font-medium">Inventario</th>
+              <th className="py-3 px-4 font-medium">Registro</th>
+              <th className="py-3 px-4 text-right font-medium">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredUsers.map(user => (
+              <tr key={user.id} className="border-t border-[#1a1d24] hover:bg-[#0f1116] transition-colors">
+                <td className="py-3 px-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-[#1a1d24] rounded-full flex items-center justify-center text-xs font-bold text-slate-400">
+                      {(user.display_name || user.email)[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-white">
+                          {user.display_name || user.email.split('@')[0]}
+                        </span>
+                        {user.is_admin && (
+                          <span className="px-1.5 py-0.5 bg-[#F7C948]/10 text-[#F7C948] text-[10px] font-bold rounded">
+                            ADMIN
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[11px] text-slate-500">{user.email}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-3 px-4">
+                  <span className="px-2 py-0.5 bg-[#1a1d24] rounded text-[11px] text-slate-400">
+                    Nivel {user.level}
+                  </span>
+                </td>
+                <td className="py-3 px-4 text-right">
+                  <span className={`font-bold text-sm ${user.balance > 0 ? 'text-[#F7C948]' : 'text-slate-500'}`}>
+                    ${user.balance.toLocaleString()}
+                  </span>
+                </td>
+                <td className="py-3 px-4 text-right">
+                  <div className="text-sm text-white">{user.inventory_count} items</div>
+                  <div className="text-[11px] text-slate-500">${user.inventory_value.toLocaleString()}</div>
+                </td>
+                <td className="py-3 px-4">
+                  <span className="text-[11px] text-slate-400">
+                    {formatDate(user.created_at)}
+                  </span>
+                </td>
+                <td className="py-3 px-4 text-right">
+                  <button
+                    onClick={() => navigate('user-detail', user.id)}
+                    className="px-2 py-1 text-slate-400 text-[11px] font-medium rounded hover:text-white hover:bg-[#1a1d24] transition-colors"
+                  >
+                    Ver detalle
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        
+        {filteredUsers.length === 0 && (
+          <div className="py-12 text-center text-slate-500 text-sm">
+            No se encontraron usuarios
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// === USER DETAIL SECTION ===
+const UserDetailSection: React.FC<{
+  userId: string;
+  navigate: (section: Section, id?: string) => void;
+  onRefresh: () => void;
+  setIsSaving: (v: boolean) => void;
+}> = ({ userId, navigate, onRefresh, setIsSaving }) => {
+  const [user, setUser] = useState<any>(null);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [balanceAdjust, setBalanceAdjust] = useState('');
+
+  useEffect(() => {
+    loadUserData();
+  }, [userId]);
+
+  const loadUserData = async () => {
+    setLoading(true);
+    
+    const [profileRes, walletRes, transactionsRes, inventoryRes] = await Promise.all([
+      supabase.from('profiles').select('*').eq('id', userId).single(),
+      supabase.from('wallets').select('*').eq('user_id', userId).single(),
+      supabase.from('transactions').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(20),
+      supabase.from('inventory').select('*, items(*)').eq('user_id', userId).eq('status', 'available')
+    ]);
+
+    if (profileRes.data) {
+      setUser({
+        ...profileRes.data,
+        balance: walletRes.data?.balance || 0
+      });
+    }
+    
+    setTransactions(transactionsRes.data || []);
+    setInventory(inventoryRes.data || []);
+    setLoading(false);
+  };
+
+  const handleAdjustBalance = async (amount: number) => {
+    if (!amount) return;
+    
+    setIsSaving(true);
+    
+    // Get current balance
+    const { data: wallet } = await supabase
+      .from('wallets')
+      .select('balance')
+      .eq('user_id', userId)
+      .single();
+    
+    const currentBalance = wallet?.balance || 0;
+    const newBalance = currentBalance + amount;
+    
+    // Update wallet
+    await supabase
+      .from('wallets')
+      .upsert({ user_id: userId, balance: newBalance, currency: 'MXN' });
+    
+    // Record transaction
+    await supabase.from('transactions').insert({
+      user_id: userId,
+      type: amount > 0 ? 'deposit' : 'withdrawal',
+      amount: Math.abs(amount),
+      balance_before: currentBalance,
+      balance_after: newBalance,
+      status: 'completed',
+      reference_type: 'admin_adjustment'
+    });
+    
+    setBalanceAdjust('');
+    await loadUserData();
+    onRefresh();
+    setIsSaving(false);
+  };
+
+  const handleToggleAdmin = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    
+    await supabase
+      .from('profiles')
+      .update({ is_admin: !user.is_admin })
+      .eq('id', userId);
+    
+    await loadUserData();
+    onRefresh();
+    setIsSaving(false);
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleString('es-MX', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-slate-500">Usuario no encontrado</p>
+        <button onClick={() => navigate('users')} className="mt-4 text-[#F7C948] hover:underline">
+          Volver a usuarios
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Back button */}
+      <button onClick={() => navigate('users')} className="text-slate-400 hover:text-white text-sm">
+        ← Volver a usuarios
+      </button>
+
+      {/* User Header */}
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-6">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-[#1a1d24] rounded-full flex items-center justify-center text-2xl font-bold text-slate-400">
+              {(user.display_name || user.email)[0].toUpperCase()}
+            </div>
+            <div>
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-bold text-white">
+                  {user.display_name || user.email.split('@')[0]}
+                </h2>
+                {user.is_admin && (
+                  <span className="px-2 py-1 bg-[#F7C948]/10 text-[#F7C948] text-xs font-bold rounded">
+                    ADMIN
+                  </span>
+                )}
+              </div>
+              <p className="text-slate-400 text-sm">{user.email}</p>
+              <p className="text-slate-500 text-xs mt-1">ID: {user.id}</p>
+            </div>
+          </div>
+          
+          <button
+            onClick={handleToggleAdmin}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              user.is_admin
+                ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
+            }`}
+          >
+            {user.is_admin ? 'Quitar Admin' : 'Hacer Admin'}
+          </button>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="text-2xl font-semibold text-[#F7C948]">${user.balance.toLocaleString()}</div>
+          <div className="text-xs text-slate-500">Balance actual</div>
+        </div>
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="text-2xl font-semibold text-white">{inventory.length}</div>
+          <div className="text-xs text-slate-500">Items en inventario</div>
+        </div>
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="text-2xl font-semibold text-white">Nivel {user.level}</div>
+          <div className="text-xs text-slate-500">Nivel de usuario</div>
+        </div>
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="text-2xl font-semibold text-white">{transactions.length}</div>
+          <div className="text-xs text-slate-500">Transacciones</div>
+        </div>
+      </div>
+
+      {/* Balance Adjustment */}
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+        <h3 className="text-sm font-medium text-white mb-3">Ajustar Balance</h3>
+        <div className="flex gap-3">
+          <input
+            type="number"
+            value={balanceAdjust}
+            onChange={(e) => setBalanceAdjust(e.target.value)}
+            placeholder="Cantidad (positivo o negativo)"
+            className="flex-1 px-4 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
+          />
+          <button
+            onClick={() => handleAdjustBalance(parseFloat(balanceAdjust))}
+            disabled={!balanceAdjust}
+            className="px-4 py-2 bg-[#F7C948] text-black font-bold text-sm rounded-lg hover:bg-[#EAB308] transition-colors disabled:opacity-50"
+          >
+            Aplicar
+          </button>
+        </div>
+        <p className="text-xs text-slate-500 mt-2">
+          Usa valores negativos para restar balance
+        </p>
+      </div>
+
+      {/* Recent Transactions */}
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+        <h3 className="text-sm font-medium text-white mb-3">Transacciones Recientes</h3>
+        {transactions.length > 0 ? (
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {transactions.map(tx => (
+              <div key={tx.id} className="flex items-center justify-between py-2 border-b border-[#1a1d24] last:border-0">
+                <div>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                    tx.type === 'deposit' || tx.type === 'win' || tx.type === 'sale'
+                      ? 'bg-emerald-500/10 text-emerald-400'
+                      : 'bg-red-500/10 text-red-400'
+                  }`}>
+                    {tx.type.toUpperCase()}
+                  </span>
+                  <span className="text-xs text-slate-500 ml-2">{formatDate(tx.created_at)}</span>
+                </div>
+                <span className={`font-bold text-sm ${
+                  tx.type === 'deposit' || tx.type === 'win' || tx.type === 'sale'
+                    ? 'text-emerald-400'
+                    : 'text-red-400'
+                }`}>
+                  {tx.type === 'deposit' || tx.type === 'win' || tx.type === 'sale' ? '+' : '-'}${tx.amount.toLocaleString()}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-500 text-sm">Sin transacciones</p>
+        )}
+      </div>
+
+      {/* Inventory */}
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+        <h3 className="text-sm font-medium text-white mb-3">Inventario ({inventory.length} items)</h3>
+        {inventory.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-64 overflow-y-auto">
+            {inventory.map(inv => (
+              <div key={inv.id} className="bg-[#08090c] border border-[#1a1d24] rounded-lg p-3 text-center">
+                <div className="w-12 h-12 mx-auto bg-[#1a1d24] rounded flex items-center justify-center mb-2">
+                  {inv.items?.image_url ? (
+                    <img src={inv.items.image_url} alt="" className="w-full h-full object-contain rounded" />
+                  ) : (
+                    <span className="text-slate-500 text-xs">?</span>
+                  )}
+                </div>
+                <p className="text-xs text-white truncate">{inv.items?.name || 'Item'}</p>
+                <p className="text-xs text-[#F7C948] font-bold">${inv.items?.price?.toLocaleString() || 0}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-500 text-sm">Inventario vacío</p>
+        )}
       </div>
     </div>
   );
