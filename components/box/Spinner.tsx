@@ -13,6 +13,7 @@ interface SpinnerProps {
   customDuration?: number;
   winner?: LootItem | null;
   showResult?: boolean;
+  predeterminedWinner?: LootItem | null; // Server-determined winner (for real money mode)
 }
 
 // Constants
@@ -20,7 +21,7 @@ const TICK_OFFSET = 25;
 const INITIAL_POSITION = 10; // Start viewing from position 10 (shows items on both sides)
 const DESKTOP_BREAKPOINT = 640; // sm breakpoint
 
-const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult }) => {
+const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult, predeterminedWinner }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [strip, setStrip] = useState<LootItem[]>([]);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -64,17 +65,25 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
   const generateStrip = useCallback(() => {
     if (!itemsWithTickets || itemsWithTickets.length === 0) return null;
 
-    const result = selectWeightedWinner(itemsWithTickets);
-    if (!result) return null;
+    // Use predetermined winner from server if available, otherwise generate randomly
+    let finalWinner: LootItem;
     
-    const { winner: randomWinner, ticket } = result;
+    if (predeterminedWinner) {
+      // Server already determined the winner
+      finalWinner = predeterminedWinner;
+    } else {
+      // Demo mode - generate random winner client-side
+      const result = selectWeightedWinner(itemsWithTickets);
+      if (!result) return null;
+      finalWinner = result.winner;
+    }
     
     // Batch array creation - more efficient than push
     const newStrip = new Array(TOTAL_CARDS_IN_STRIP);
     
     for (let i = 0; i < TOTAL_CARDS_IN_STRIP; i++) {
       if (i === WINNING_INDEX) {
-        newStrip[i] = randomWinner;
+        newStrip[i] = finalWinner;
       } else {
         const stripResult = selectWeightedWinner(itemsWithTickets);
         newStrip[i] = stripResult ? stripResult.winner : itemsWithTickets[0];
@@ -82,7 +91,7 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     }
 
     // Near miss logic
-    if (randomWinner.rarity !== Rarity.LEGENDARY) {
+    if (finalWinner.rarity !== Rarity.LEGENDARY) {
       const baitItem = itemsWithTickets.find(i => i.rarity === Rarity.LEGENDARY) || itemsWithTickets[itemsWithTickets.length - 1];
       const offset = Math.random() > 0.5 ? 1 : -1;
       const baitIndex = WINNING_INDEX + offset;
@@ -92,8 +101,8 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
     }
 
     setStrip(newStrip);
-    return randomWinner;
-  }, [itemsWithTickets]);
+    return finalWinner;
+  }, [itemsWithTickets, predeterminedWinner]);
 
   // Initialize audio once
   useEffect(() => {

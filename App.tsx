@@ -8,7 +8,9 @@ import { RARITY_COLORS } from './constants';
 import { audioService } from './services/audioService';
 import { getItems, initializeStore, subscribe } from './services/oddsStore';
 import { UserMenu } from './components/auth/UserMenu';
-import { initAuth } from './services/authService';
+import { initAuth, isLoggedIn, getBalance } from './services/authService';
+import { openBox, canPlay, PlayResult } from './services/gameService';
+import { AuthModal } from './components/auth/AuthModal';
 
 // SVG Icons for App
 const Icons = {
@@ -40,10 +42,16 @@ const App: React.FC = () => {
   
   // NEW STATES
   const [fastMode, setFastMode] = useState(false);
-  const [demoMode, setDemoMode] = useState(false);
+  const [demoMode, setDemoMode] = useState(true); // Start in demo mode
   const [isMuted, setIsMuted] = useState(false);
+  
+  // Game flow states
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [gameError, setGameError] = useState<string | null>(null);
+  const [serverWinner, setServerWinner] = useState<LootItem | null>(null);
 
   const BOX_PRICE = 99.00;
+  const BOX_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479'; // TODO: Get from route/props
 
   useEffect(() => {
     audioService.setMute(isMuted);
@@ -62,8 +70,44 @@ const App: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  const handleSpin = () => {
+  const handleSpin = async () => {
     if (isSpinning) return;
+    setGameError(null);
+    
+    // Demo mode - use client-side logic (no server)
+    if (demoMode) {
+      setWinner(null);
+      setShowResult(false);
+      setServerWinner(null);
+      setIsSpinning(true);
+      audioService.init();
+      return;
+    }
+    
+    // Real mode - check auth and balance first
+    const check = canPlay(BOX_PRICE * quantity);
+    
+    if (!check.canPlay) {
+      if (check.reason === 'NOT_AUTHENTICATED') {
+        setShowAuthModal(true);
+        return;
+      }
+      if (check.reason === 'INSUFFICIENT_FUNDS') {
+        setGameError(`Fondos insuficientes. Necesitas $${(BOX_PRICE * quantity).toFixed(2)} para jugar.`);
+        return;
+      }
+    }
+    
+    // Call server to open box
+    const result = await openBox(BOX_ID);
+    
+    if (!result.success) {
+      setGameError(result.message || 'Error al abrir la caja');
+      return;
+    }
+    
+    // Server returned winner - now animate towards it
+    setServerWinner(result.winner!);
     setWinner(null);
     setShowResult(false);
     setIsSpinning(true);
@@ -257,6 +301,7 @@ const App: React.FC = () => {
                     customDuration={fastMode ? 2000 : 5500}
                     winner={winner}
                     showResult={showResult}
+                    predeterminedWinner={serverWinner}
                 />
             </div>
 
@@ -387,6 +432,33 @@ const App: React.FC = () => {
         {/* FOOTER - Siempre al final */}
         <Footer />
       </div>
+
+      {/* Auth Modal - shown when user tries to play without login */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        initialMode="login"
+      />
+
+      {/* Error Toast */}
+      {gameError && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 animate-[slideUp_0.3s_ease-out]">
+          <div className="bg-red-500/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span className="font-medium">{gameError}</span>
+            <button 
+              onClick={() => setGameError(null)}
+              className="ml-2 hover:bg-white/20 rounded-full p-1 transition-colors"
+            >
+              <Icons.Close />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
