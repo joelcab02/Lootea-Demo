@@ -18,13 +18,13 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
   
   const { isLoading, isEmoji } = imageProps;
 
-  // Dynamic sizing based on context - larger images for spinner
+  // Dynamic sizing based on context
   const imageSizeClass = isSpinner 
-    ? 'w-24 h-24 sm:w-28 sm:h-28' 
+    ? 'w-20 h-20 sm:w-28 sm:h-28' 
     : 'w-32 h-32 sm:w-44 sm:h-44';
 
   const emojiSizeClass = isSpinner
-    ? 'text-6xl sm:text-7xl'
+    ? 'text-5xl sm:text-6xl'
     : 'text-7xl sm:text-8xl';
 
   return (

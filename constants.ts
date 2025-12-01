@@ -1,8 +1,8 @@
 import { Rarity } from './types';
 
-// Spinner configuration - sized for 3 visible items on mobile (375px viewport)
-export const CARD_WIDTH = 140; // px - larger cards, 3 visible
-export const CARD_GAP = 8; // px
+// Spinner configuration
+export const CARD_WIDTH = 220; // px
+export const CARD_GAP = 12; // px
 export const VISIBLE_CARDS = 7; 
 export const SPIN_DURATION = 8000; // Increased for suspense
 export const TOTAL_CARDS_IN_STRIP = 60; 
