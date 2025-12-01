@@ -41,15 +41,15 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 px-4 pb-4 overflow-y-auto">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/60"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-[#0d1019] border border-[#1e2330] rounded-2xl overflow-hidden shadow-2xl">
+      <div className="relative w-full max-w-md bg-[#0d1019] border border-[#1e2330] rounded-2xl overflow-hidden shadow-2xl my-auto">
         {/* Gold accent line */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent"></div>
         
