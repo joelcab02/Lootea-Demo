@@ -270,7 +270,7 @@ const App: React.FC = () => {
                 <button 
                     onClick={handleSpin}
                     disabled={isSpinning || isLoading}
-                    className="w-full py-4 mb-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-lg rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 mb-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-sans font-semibold text-xl rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isLoading ? (
                         'Cargando...'
