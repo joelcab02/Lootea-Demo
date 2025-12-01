@@ -20,14 +20,14 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
 
   // Dynamic sizing based on context - PackDraw style: large images in spinner
   const imageSizeClass = isSpinner 
-    ? 'w-32 h-32 sm:w-36 sm:h-36' // Much larger for spinner
+    ? 'w-24 h-24 sm:w-32 sm:h-32' // Sized for 150px card width
     : 'w-32 h-32 sm:w-44 sm:h-44';
 
   const emojiSizeClass = isSpinner
     ? 'text-7xl sm:text-8xl'
     : 'text-7xl sm:text-8xl';
 
-  // PackDraw style: No card background in spinner, just floating image
+  // PackDraw style: No card background in spinner, just floating image (no text)
   if (isSpinner) {
     return (
       <div 
@@ -37,8 +37,8 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
           height: '100%',
         }}
       >
-        {/* Image - Large and floating */}
-        <div className={`relative ${imageSizeClass} mb-3 flex items-center justify-center`}>
+        {/* Image only - no name/price until winner reveal */}
+        <div className={`relative ${imageSizeClass} flex items-center justify-center`}>
           {isLoading ? (
             <div className="w-12 h-12 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
           ) : isEmoji ? (
@@ -55,23 +55,6 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
               draggable={false}
             />
           )}
-        </div>
-
-        {/* Text Info - Larger, centered, PackDraw style */}
-        <div className="text-center w-full px-2">
-          <h3 className="font-display text-white text-sm sm:text-base leading-tight uppercase truncate w-full mb-1">
-            {item.name}
-          </h3>
-          <span 
-            className="font-display text-base sm:text-lg"
-            style={{
-              background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            ${item.price.toLocaleString('es-MX')}
-          </span>
         </div>
       </div>
     );

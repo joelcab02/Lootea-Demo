@@ -1,8 +1,8 @@
 import { Rarity } from './types';
 
-// Spinner configuration - PackDraw style
-export const CARD_WIDTH = 200; // px - large central item
-export const CARD_GAP = 24; // px - more separation between items
+// Spinner configuration - PackDraw style (3 items visible on mobile ~375px)
+export const CARD_WIDTH = 150; // px - sized for 3 visible items on mobile
+export const CARD_GAP = 16; // px
 export const VISIBLE_CARDS = 7; 
 export const SPIN_DURATION = 8000; // Increased for suspense
 export const TOTAL_CARDS_IN_STRIP = 60; 
