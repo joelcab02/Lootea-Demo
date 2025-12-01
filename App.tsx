@@ -115,20 +115,24 @@ const App: React.FC = () => {
       return;
     }
     
-    // Call server to open box
-    const result = await openBox(BOX_ID);
-    
-    if (!result.success) {
-      setGameError(result.message || 'Error al abrir la caja');
-      return;
-    }
-    
-    // Server returned winner - now animate towards it
-    setServerWinner(result.winner!);
+    // OPTIMISTIC UI: Start animation immediately, call server in parallel
     setWinner(null);
     setShowResult(false);
+    setServerWinner(null);
     setIsSpinning(true);
     audioService.init();
+    
+    // Call server in background - result will be used when animation needs winner
+    openBox(BOX_ID).then(result => {
+      if (!result.success) {
+        // If server fails, stop spinning and show error
+        setIsSpinning(false);
+        setGameError(result.message || 'Error al abrir la caja');
+        return;
+      }
+      // Store server winner - Spinner will use this
+      setServerWinner(result.winner!);
+    });
   };
 
   const handleSpinEnd = (item: LootItem) => {
