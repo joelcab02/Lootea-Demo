@@ -187,8 +187,8 @@ const App: React.FC = () => {
                 </span>
             </div>
 
-            {/* Right: Sound | Cart | Balance | Menu */}
-            <div className="flex items-center gap-1">
+            {/* Right: Sound | Cart Balance Menu */}
+            <div className="flex items-center">
                 {/* Sound button */}
                 <button 
                     onClick={() => setIsMuted(!isMuted)}
@@ -198,7 +198,7 @@ const App: React.FC = () => {
                 </button>
                 
                 {/* Separator */}
-                <div className="w-px h-6 bg-slate-700 mx-1" />
+                <div className="w-px h-5 bg-slate-700 mx-2" />
                 
                 <UserMenu onMenuClick={() => setSidebarOpen(true)} />
             </div>
