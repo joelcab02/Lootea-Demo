@@ -218,33 +218,30 @@ const App: React.FC = () => {
             </div>
         </header>
 
-        {/* GAME AREA - PackDraw Style */}
-        <div className="flex flex-col items-center relative overflow-visible">
+        {/* GAME AREA */}
+        <div className="flex flex-col items-center relative">
             
-            {/* Top Bar - Back + Logo */}
-            <div className="w-full flex items-center justify-between px-4 py-3 md:py-4">
-                {/* Back Button */}
-                <button className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {/* Sub Header - Back + Logo */}
+            <div className="w-full flex items-center justify-center px-4 py-2 border-b border-[#1e2330]/50 relative">
+                {/* Back Button - Left */}
+                <button className="absolute left-4 flex items-center gap-1.5 text-slate-500 hover:text-white transition-colors text-xs">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
-                    <span className="hidden sm:inline">Volver a Cajas</span>
+                    <span>Volver a Cajas</span>
                 </button>
                 
                 {/* Center Logo */}
-                <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5">
-                    <div className="w-5 h-5 text-[#F7C948]">
+                <div className="flex items-center gap-1.5">
+                    <div className="w-4 h-4 text-[#F7C948]">
                         <Icons.Logo />
                     </div>
-                    <span className="font-display text-lg text-[#F7C948] uppercase hidden sm:block">LOOTEA</span>
+                    <span className="font-display text-sm text-[#F7C948] uppercase">LOOTEA</span>
                 </div>
-                
-                {/* Empty space for balance */}
-                <div className="w-24"></div>
             </div>
 
             {/* SPINNER */}
-            <div className="relative w-full max-w-[1600px] z-10 mb-6 md:mb-8">
+            <div className="relative w-full max-w-[1600px] z-10 my-4">
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 
@@ -258,11 +255,11 @@ const App: React.FC = () => {
             </div>
 
             {/* CONTROLS */}
-            <div className="z-20 w-full max-w-[500px] px-4">
+            <div className="z-20 w-full max-w-[480px] px-4 pb-6">
                 
                 {/* Error Message */}
                 {gameError && (
-                    <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
+                    <div className="mb-2 p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs text-center">
                         {gameError}
                     </div>
                 )}
@@ -271,7 +268,7 @@ const App: React.FC = () => {
                 <button 
                     onClick={handleSpin}
                     disabled={isSpinning || isLoading}
-                    className="w-full py-4 mb-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-sans font-semibold text-xl rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-3.5 mb-3 bg-[#F7C948] hover:bg-[#FFD966] text-black font-sans font-semibold text-lg rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isLoading ? (
                         'Cargando...'
