@@ -624,6 +624,10 @@ const BoxEditSection: React.FC<{
 }> = ({ boxId, navigate, onSave, setIsSaving, products }) => {
   const [form, setForm] = useState({ name: '', slug: '', price: '', image: '', category: 'general' });
   const [boxItems, setBoxItems] = useState<{item_id: string, odds: number}[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRarity, setFilterRarity] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'name' | 'price' | 'odds' | 'rarity'>('odds');
+  const [showOnlyInBox, setShowOnlyInBox] = useState(false);
   const isNew = !boxId;
 
   useEffect(() => {
@@ -673,7 +677,7 @@ const BoxEditSection: React.FC<{
       
       setIsSaving(false);
       navigate('box-edit', data.id);
-      onSave(); // Refresh in background
+      onSave();
     } else {
       const { error } = await supabase.from('boxes').update({
         name: form.name,
@@ -690,7 +694,7 @@ const BoxEditSection: React.FC<{
       }
       
       setIsSaving(false);
-      onSave(); // Refresh in background
+      onSave();
     }
   };
 
@@ -718,6 +722,95 @@ const BoxEditSection: React.FC<{
     setBoxItems(prev => prev.map(bi => bi.item_id === itemId ? { ...bi, odds } : bi));
   };
 
+  // === CALCULATIONS ===
+  const totalOdds = boxItems.reduce((sum, bi) => sum + bi.odds, 0);
+  
+  // Calculate Expected Value (EV)
+  const calculateEV = () => {
+    if (totalOdds === 0) return 0;
+    return boxItems.reduce((sum, bi) => {
+      const product = products.find(p => p.id === bi.item_id);
+      if (!product) return sum;
+      const normalizedOdds = bi.odds / totalOdds;
+      return sum + (product.price * normalizedOdds);
+    }, 0);
+  };
+  
+  const expectedValue = calculateEV();
+  const boxPrice = parseFloat(form.price) || 0;
+  const houseEdge = boxPrice > 0 ? ((boxPrice - expectedValue) / boxPrice) * 100 : 0;
+  const rtp = 100 - houseEdge;
+
+  // Calculate odds by rarity
+  const oddsByRarity = {
+    LEGENDARY: 0,
+    EPIC: 0,
+    RARE: 0,
+    COMMON: 0
+  };
+  
+  boxItems.forEach(bi => {
+    const product = products.find(p => p.id === bi.item_id);
+    if (product && totalOdds > 0) {
+      const normalizedOdds = (bi.odds / totalOdds) * 100;
+      oddsByRarity[product.rarity as keyof typeof oddsByRarity] += normalizedOdds;
+    }
+  });
+
+  // Normalize odds to 100%
+  const normalizeOdds = async () => {
+    if (totalOdds === 0 || boxItems.length === 0) return;
+    
+    setIsSaving(true);
+    const factor = 100 / totalOdds;
+    
+    for (const bi of boxItems) {
+      const newOdds = Math.round(bi.odds * factor * 100) / 100;
+      await supabase.from('box_items').update({ odds: newOdds }).eq('box_id', boxId).eq('item_id', bi.item_id);
+    }
+    
+    const { data } = await supabase.from('box_items').select('item_id, odds').eq('box_id', boxId);
+    setBoxItems(data || []);
+    setIsSaving(false);
+  };
+
+  // Auto-distribute odds by rarity
+  const autoDistributeOdds = async (template: 'balanced' | 'premium' | 'budget') => {
+    if (boxItems.length === 0) return;
+    
+    const templates = {
+      balanced: { LEGENDARY: 2, EPIC: 8, RARE: 25, COMMON: 65 },
+      premium: { LEGENDARY: 5, EPIC: 15, RARE: 30, COMMON: 50 },
+      budget: { LEGENDARY: 0.5, EPIC: 4.5, RARE: 20, COMMON: 75 }
+    };
+    
+    const targetOdds = templates[template];
+    
+    // Count items by rarity
+    const itemsByRarity: Record<string, string[]> = { LEGENDARY: [], EPIC: [], RARE: [], COMMON: [] };
+    boxItems.forEach(bi => {
+      const product = products.find(p => p.id === bi.item_id);
+      if (product) {
+        itemsByRarity[product.rarity].push(bi.item_id);
+      }
+    });
+    
+    setIsSaving(true);
+    
+    for (const [rarity, itemIds] of Object.entries(itemsByRarity)) {
+      if (itemIds.length === 0) continue;
+      const oddsPerItem = targetOdds[rarity as keyof typeof targetOdds] / itemIds.length;
+      
+      for (const itemId of itemIds) {
+        await supabase.from('box_items').update({ odds: Math.round(oddsPerItem * 100) / 100 }).eq('box_id', boxId).eq('item_id', itemId);
+      }
+    }
+    
+    const { data } = await supabase.from('box_items').select('item_id, odds').eq('box_id', boxId);
+    setBoxItems(data || []);
+    setIsSaving(false);
+  };
+
   const getRarityColor = (rarity: Rarity) => {
     switch (rarity) {
       case Rarity.LEGENDARY: return 'text-yellow-400';
@@ -726,6 +819,37 @@ const BoxEditSection: React.FC<{
       default: return 'text-slate-400';
     }
   };
+  
+  const getRarityBgColor = (rarity: string) => {
+    switch (rarity) {
+      case 'LEGENDARY': return 'bg-yellow-500';
+      case 'EPIC': return 'bg-purple-500';
+      case 'RARE': return 'bg-blue-500';
+      default: return 'bg-slate-500';
+    }
+  };
+
+  // Filter and sort products
+  const filteredProducts = products
+    .filter(p => {
+      if (showOnlyInBox && !isItemInBox(p.id)) return false;
+      if (filterRarity !== 'all' && p.rarity !== filterRarity) return false;
+      if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'odds':
+          return getItemOdds(b.id) - getItemOdds(a.id);
+        case 'price':
+          return b.price - a.price;
+        case 'rarity':
+          const rarityOrder = { LEGENDARY: 0, EPIC: 1, RARE: 2, COMMON: 3 };
+          return rarityOrder[a.rarity as keyof typeof rarityOrder] - rarityOrder[b.rarity as keyof typeof rarityOrder];
+        default:
+          return a.name.localeCompare(b.name);
+      }
+    });
 
   return (
     <div className="space-y-6">
@@ -735,8 +859,8 @@ const BoxEditSection: React.FC<{
       </button>
 
       {/* Box Details */}
-      <div className="bg-[#13151b] border border-[#1e2330] rounded-xl p-6">
-        <h2 className="text-lg font-bold text-white mb-4">Detalles de la caja</h2>
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
+        <h2 className="text-sm font-medium text-white mb-4">Detalles de la caja</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="text-xs text-slate-500 block mb-1">Nombre *</label>
@@ -745,7 +869,7 @@ const BoxEditSection: React.FC<{
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value, slug: isNew ? e.target.value.toLowerCase().replace(/\s+/g, '-') : form.slug })}
               placeholder="Apple Collection"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
+              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
             />
           </div>
           <div>
@@ -755,7 +879,7 @@ const BoxEditSection: React.FC<{
               value={form.slug}
               onChange={(e) => setForm({ ...form, slug: e.target.value })}
               placeholder="apple-collection"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
+              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
             />
           </div>
           <div>
@@ -765,7 +889,7 @@ const BoxEditSection: React.FC<{
               value={form.price}
               onChange={(e) => setForm({ ...form, price: e.target.value })}
               placeholder="299"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
+              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
             />
           </div>
           <div>
@@ -775,71 +899,230 @@ const BoxEditSection: React.FC<{
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
               placeholder="tech"
-              className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
+              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
             />
           </div>
         </div>
         <div className="mt-4">
           <button
             onClick={handleSave}
-            className="px-6 py-2 bg-[#F7C948] text-black font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
+            className="px-4 py-2 bg-[#F7C948] text-black text-sm font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
           >
             {isNew ? 'Crear Caja' : 'Guardar Cambios'}
           </button>
         </div>
       </div>
 
+      {/* Analytics Panel - Only show if editing existing box */}
+      {!isNew && boxItems.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Odds Distribution */}
+          <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-medium text-white">Distribución de Odds</h3>
+              <span className={`text-xs font-mono px-2 py-1 rounded ${
+                Math.abs(totalOdds - 100) < 0.1 
+                  ? 'bg-emerald-500/10 text-emerald-400' 
+                  : 'bg-amber-500/10 text-amber-400'
+              }`}>
+                Total: {totalOdds.toFixed(2)}%
+              </span>
+            </div>
+            
+            <div className="space-y-3">
+              {(['LEGENDARY', 'EPIC', 'RARE', 'COMMON'] as const).map(rarity => (
+                <div key={rarity} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className={getRarityColor(rarity as Rarity)}>{rarity}</span>
+                    <span className="text-slate-400 font-mono">{oddsByRarity[rarity].toFixed(2)}%</span>
+                  </div>
+                  <div className="h-2 bg-[#1a1d24] rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full ${getRarityBgColor(rarity)} transition-all duration-300`}
+                      style={{ width: `${Math.min(oddsByRarity[rarity], 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Normalize button */}
+            {Math.abs(totalOdds - 100) > 0.1 && (
+              <button
+                onClick={normalizeOdds}
+                className="mt-4 w-full px-3 py-2 bg-amber-500/10 text-amber-400 text-xs font-medium rounded-lg hover:bg-amber-500/20 transition-colors"
+              >
+                ⚡ Normalizar a 100%
+              </button>
+            )}
+          </div>
+
+          {/* Profitability Calculator */}
+          <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
+            <h3 className="text-sm font-medium text-white mb-4">Análisis de Rentabilidad</h3>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-2 border-b border-[#1a1d24]">
+                <span className="text-xs text-slate-400">Precio de la caja</span>
+                <span className="text-sm font-bold text-white">${boxPrice.toLocaleString()}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-[#1a1d24]">
+                <span className="text-xs text-slate-400">Valor Esperado (EV)</span>
+                <span className="text-sm font-bold text-[#F7C948]">${expectedValue.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-[#1a1d24]">
+                <span className="text-xs text-slate-400">House Edge</span>
+                <span className={`text-sm font-bold ${
+                  houseEdge >= 10 && houseEdge <= 25 ? 'text-emerald-400' : 
+                  houseEdge < 10 ? 'text-red-400' : 'text-amber-400'
+                }`}>
+                  {houseEdge.toFixed(2)}%
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-xs text-slate-400">RTP (Return to Player)</span>
+                <span className="text-sm font-bold text-white">{rtp.toFixed(2)}%</span>
+              </div>
+            </div>
+            
+            {/* Status indicator */}
+            <div className={`mt-4 p-3 rounded-lg text-xs ${
+              houseEdge >= 10 && houseEdge <= 25 
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                : houseEdge < 10 
+                  ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+            }`}>
+              {houseEdge >= 10 && houseEdge <= 25 && '✅ House Edge óptimo (10-25%)'}
+              {houseEdge < 10 && '⚠️ House Edge muy bajo - la caja no es rentable'}
+              {houseEdge > 25 && '⚠️ House Edge alto - considera mejorar el RTP'}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Auto-distribute templates */}
+      {!isNew && boxItems.length > 0 && (
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <span className="text-xs text-slate-400">Distribución automática:</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => autoDistributeOdds('budget')}
+                className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830] transition-colors"
+              >
+                🎯 Económica
+              </button>
+              <button
+                onClick={() => autoDistributeOdds('balanced')}
+                className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830] transition-colors"
+              >
+                ⚖️ Balanceada
+              </button>
+              <button
+                onClick={() => autoDistributeOdds('premium')}
+                className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830] transition-colors"
+              >
+                💎 Premium
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Box Items - Only show if editing existing box */}
       {!isNew && (
-        <div className="bg-[#13151b] border border-[#1e2330] rounded-xl p-6">
+        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-white">Productos en esta caja</h2>
-            <span className="text-sm text-slate-500">{boxItems.length} productos asignados</span>
+            <h3 className="text-sm font-medium text-white">Productos</h3>
+            <span className="text-xs text-slate-500">{boxItems.length} asignados</span>
           </div>
           
-          <div className="space-y-2 max-h-[400px] overflow-y-auto">
-            {products.map(product => {
+          {/* Filters */}
+          <div className="flex flex-wrap gap-3 mb-4 pb-4 border-b border-[#1a1d24]">
+            <input
+              type="text"
+              placeholder="Buscar producto..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 min-w-[200px] px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+            />
+            <select
+              value={filterRarity}
+              onChange={(e) => setFilterRarity(e.target.value)}
+              className="px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+            >
+              <option value="all">Todas las rarezas</option>
+              <option value="LEGENDARY">Legendary</option>
+              <option value="EPIC">Epic</option>
+              <option value="RARE">Rare</option>
+              <option value="COMMON">Common</option>
+            </select>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+            >
+              <option value="odds">Ordenar por Odds</option>
+              <option value="price">Ordenar por Precio</option>
+              <option value="rarity">Ordenar por Rareza</option>
+              <option value="name">Ordenar por Nombre</option>
+            </select>
+            <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showOnlyInBox}
+                onChange={(e) => setShowOnlyInBox(e.target.checked)}
+                className="rounded border-slate-600"
+              />
+              Solo en caja
+            </label>
+          </div>
+          
+          <div className="space-y-2 max-h-[500px] overflow-y-auto">
+            {filteredProducts.map(product => {
               const inBox = isItemInBox(product.id);
               const odds = getItemOdds(product.id);
+              const normalizedOdds = totalOdds > 0 ? (odds / totalOdds) * 100 : 0;
               
               return (
                 <div 
                   key={product.id}
-                  className={`flex items-center gap-4 p-3 rounded-lg border transition-colors ${
+                  className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                     inBox 
-                      ? 'bg-green-500/5 border-green-500/30' 
-                      : 'bg-[#0d1019] border-[#1e2330] hover:border-[#2a3040]'
+                      ? 'bg-emerald-500/5 border-emerald-500/30' 
+                      : 'bg-[#08090c] border-[#1a1d24] hover:border-[#252830]'
                   }`}
                 >
                   {/* Checkbox */}
                   <button
                     onClick={() => toggleItem(product.id)}
-                    className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                       inBox 
-                        ? 'bg-green-500 border-green-500 text-white' 
+                        ? 'bg-emerald-500 border-emerald-500 text-white' 
                         : 'border-slate-600 hover:border-[#F7C948]'
                     }`}
                   >
-                    {inBox && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                    {inBox && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
                   </button>
                   
                   {/* Image */}
-                  <div className="w-10 h-10 bg-[#1e2330] rounded flex items-center justify-center flex-shrink-0">
-                    {product.image.startsWith('http') || product.image.startsWith('data:') ? (
+                  <div className="w-9 h-9 bg-[#1a1d24] rounded flex items-center justify-center flex-shrink-0">
+                    {product.image && (product.image.startsWith('http') || product.image.startsWith('data:')) ? (
                       <img src={product.image} alt="" className="w-full h-full object-contain rounded" />
                     ) : (
-                      <span className="text-lg">{product.image}</span>
+                      <span className="text-sm">{product.image || '?'}</span>
                     )}
                   </div>
                   
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-white text-sm truncate">{product.name}</div>
-                    <div className={`text-xs ${getRarityColor(product.rarity)}`}>{product.rarity}</div>
+                    <div className="font-medium text-white text-sm truncate">{product.name}</div>
+                    <div className={`text-[10px] ${getRarityColor(product.rarity)}`}>{product.rarity}</div>
                   </div>
                   
                   {/* Price */}
-                  <div className="text-[#F7C948] font-bold text-sm">
+                  <div className="text-[#F7C948] font-bold text-xs">
                     ${product.price.toLocaleString()}
                   </div>
                   
@@ -850,16 +1133,24 @@ const BoxEditSection: React.FC<{
                         type="number"
                         value={odds}
                         onChange={(e) => updateOdds(product.id, parseFloat(e.target.value) || 0)}
-                        step="0.01"
+                        step="0.1"
                         min="0"
-                        className="w-20 px-2 py-1 bg-[#0d1019] border border-[#2a3040] rounded text-white text-sm text-right font-mono focus:border-[#F7C948] outline-none"
+                        className="w-16 px-2 py-1 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs text-right font-mono focus:border-[#F7C948] outline-none"
                       />
-                      <span className="text-xs text-slate-500">%</span>
+                      <span className="text-[10px] text-slate-500 w-14 text-right font-mono">
+                        ({normalizedOdds.toFixed(2)}%)
+                      </span>
                     </div>
                   )}
                 </div>
               );
             })}
+            
+            {filteredProducts.length === 0 && (
+              <div className="py-8 text-center text-slate-500 text-sm">
+                No se encontraron productos
+              </div>
+            )}
           </div>
         </div>
       )}
