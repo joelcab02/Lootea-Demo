@@ -27,8 +27,7 @@
         overscroll-behavior: none;
         text-rendering: optimizeSpeed;
         -webkit-font-smoothing: antialiased;
-        /* GPU Layer Promotion */
-        transform: translateZ(0);
+        /* Removed transform: translateZ(0) - breaks fixed positioning for modals */
       }
       
       #root {

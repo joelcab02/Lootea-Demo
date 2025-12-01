@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Portal } from '../ui/Portal';
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -41,17 +42,16 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Backdrop - lighter like PackDraw */}
-      <div 
-        className="fixed inset-0 bg-black/40"
-        onClick={onClose}
-      />
-      
-      {/* Modal Container - centers the modal */}
-      <div className="min-h-full flex items-center justify-center p-4">
+    <Portal>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        {/* Backdrop */}
+        <div 
+          className="absolute inset-0 bg-black/40"
+          onClick={onClose}
+        />
+        
         {/* Modal */}
-        <div className="relative w-full max-w-md bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl">
+        <div className="relative w-full max-w-md bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl z-10">
         {/* Gold accent line */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent"></div>
         
@@ -294,7 +294,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
         </div>
         </div>
       </div>
-    </div>
+    </Portal>
   );
 };
 

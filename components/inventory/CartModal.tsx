@@ -147,15 +147,15 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-10 sm:pt-20 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-[#0d1019] border border-[#1e2330] rounded-xl shadow-2xl max-h-[85vh] flex flex-col">
+      <div className="relative z-10 w-full max-w-2xl bg-[#0d1019] border border-[#1e2330] rounded-xl shadow-2xl max-h-[85vh] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[#1e2330]">
