@@ -175,38 +175,32 @@ const App: React.FC = () => {
       {/* MAIN CONTENT */}
       <div className="flex flex-col min-h-screen">
         
-        {/* HEADER - Clean & Simple */}
+        {/* HEADER - PackDraw style */}
         <header className="flex items-center justify-between py-3 px-4 md:py-4 md:px-8 bg-[#0d1019] border-b border-[#1e2330]/50 sticky top-0 z-40">
-            {/* Left: Menu + Logo */}
-            <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setSidebarOpen(true)}
-                  className="text-slate-400 hover:text-white transition-colors p-1"
-                >
-                  <Icons.Menu />
-                </button>
-                
-                <div className="flex items-center gap-2 cursor-pointer">
-                    <div className="w-5 h-5 md:w-6 md:h-6 text-[#F7C948]">
-                        <Icons.Logo />
-                    </div>
-                    <span className="font-display text-lg md:text-2xl text-[#F7C948] uppercase">
-                        LOOTEA
-                    </span>
+            {/* Left: Logo only */}
+            <div className="flex items-center gap-2 cursor-pointer">
+                <div className="w-5 h-5 md:w-6 md:h-6 text-[#F7C948]">
+                    <Icons.Logo />
                 </div>
+                <span className="font-display text-lg md:text-2xl text-[#F7C948] uppercase">
+                    LOOTEA
+                </span>
             </div>
 
-            {/* Right: Sound + Auth */}
-            <div className="flex items-center gap-2">
-                {/* Sound button - Small & discrete */}
+            {/* Right: Sound | Cart | Balance | Menu */}
+            <div className="flex items-center gap-1">
+                {/* Sound button */}
                 <button 
                     onClick={() => setIsMuted(!isMuted)}
-                    className={`p-2 rounded-lg transition-colors ${isMuted ? 'text-slate-600' : 'text-slate-400 hover:text-white'}`}
-                    title={isMuted ? "Activar sonido" : "Silenciar"}
+                    className={`p-2 transition-colors ${isMuted ? 'text-slate-600' : 'text-slate-400 hover:text-white'}`}
                 >
                     {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
                 </button>
-                <UserMenu />
+                
+                {/* Separator */}
+                <div className="w-px h-6 bg-slate-700 mx-1" />
+                
+                <UserMenu onMenuClick={() => setSidebarOpen(true)} />
             </div>
         </header>
 

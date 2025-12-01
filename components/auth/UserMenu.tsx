@@ -78,7 +78,11 @@ const Icons = {
   ),
 };
 
-export const UserMenu: React.FC = () => {
+interface UserMenuProps {
+  onMenuClick?: () => void;
+}
+
+export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
   const [authState, setAuthState] = useState<AuthState | null>(null);
   const [inventory, setInventory] = useState<InventoryState | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -148,46 +152,52 @@ export const UserMenu: React.FC = () => {
     
     return (
       <>
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1">
           
-          {/* Cart Button - Icon only with small badge */}
+          {/* Cart Button */}
           <button 
             onClick={() => setShowCart(true)}
-            className="relative p-2 rounded-lg border border-[#1e2330] hover:border-slate-600 text-slate-300 hover:text-white transition-colors"
+            className="relative p-2 text-slate-400 hover:text-white transition-colors"
           >
             <Icons.Cart />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#F7C948] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 bg-[#F7C948] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
                 {cartCount > 99 ? '99' : cartCount}
               </span>
             )}
           </button>
           
-          {/* Balance Button */}
-          <button className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
-            <span>${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-            <div className="w-4 h-4 bg-black/20 rounded flex items-center justify-center">
-              <Icons.Plus />
-            </div>
+          {/* Balance - No plus button */}
+          <button className="px-3 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
+            ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </button>
 
-          {/* User Profile Button */}
+          {/* Menu Button - hamburger */}
+          <button 
+            onClick={onMenuClick}
+            className="p-2 text-slate-400 hover:text-white transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Hidden dropdown trigger for desktop */}
+        <div className="hidden">
           <div className="relative">
             <button 
               onClick={toggleDropdown}
               className={`flex items-center gap-1 p-1.5 rounded-lg transition-colors ${dropdownOpen ? 'bg-[#1a1d26]' : 'hover:bg-[#1a1d26]'}`}
             >
-              {/* Avatar */}
               <div className="w-7 h-7 rounded-full flex items-center justify-center text-black text-xs font-bold bg-[#F7C948]">
                 {displayName.charAt(0).toUpperCase()}
               </div>
-              
-              {/* Name - Desktop only */}
               <span className="hidden sm:block text-white text-sm font-medium max-w-[60px] truncate">
                 {displayName}
               </span>
-              
-              {/* Chevron */}
               <div className={`text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
                 <Icons.ChevronDown />
               </div>
@@ -256,34 +266,28 @@ export const UserMenu: React.FC = () => {
     );
   }
 
-  // Logged out
+  // Logged out - PackDraw style
   return (
     <>
-      {/* Mobile: Single user icon button */}
-      <button
-        onClick={openLogin}
-        className="sm:hidden p-2 rounded-lg text-slate-400 hover:text-white transition-colors"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-      </button>
-      
-      {/* Desktop: Full buttons */}
-      <div className="hidden sm:flex items-center gap-2">
+      <div className="flex items-center gap-1">
+        {/* Login button */}
         <button
-          onClick={openLogin}
-          className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors rounded-lg border border-[#1e2330] hover:border-slate-600"
+          onClick={openRegister}
+          className="px-3 py-1.5 text-sm font-bold text-black rounded-lg bg-[#F7C948] hover:bg-[#FFD966] transition-colors"
         >
           Entrar
         </button>
         
-        <button
-          onClick={openRegister}
-          className="px-4 py-2 text-sm font-bold text-black rounded-lg bg-[#F7C948] hover:bg-[#FFD966] transition-colors"
+        {/* Menu Button */}
+        <button 
+          onClick={onMenuClick}
+          className="p-2 text-slate-400 hover:text-white transition-colors"
         >
-          Registro
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
         </button>
       </div>
 
