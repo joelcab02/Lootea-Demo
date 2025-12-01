@@ -218,32 +218,9 @@ const App: React.FC = () => {
             </div>
         </header>
 
-        {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-8 md:pt-10 pb-8 relative overflow-visible">
-            
-            {/* Simplified ambient glow - DESKTOP ONLY */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
-                {/* Single optimized glow - reduced blur */}
-                <div className="absolute top-[25%] left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#F7C948] opacity-[0.05] blur-[80px]"></div>
-            </div>
-            
-            {/* Mobile: Simple glow only */}
-            <div className="absolute inset-0 pointer-events-none md:hidden">
-                <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[300px] h-[200px] bg-[#F7C948] opacity-[0.08] blur-[60px]"></div>
-            </div>
-            
-            {/* Box Title */}
-            <div className="z-10 text-center mb-6 md:mb-8 px-4">
-                <h1 className="font-display text-2xl sm:text-4xl md:text-6xl text-white drop-shadow-2xl mb-1 md:mb-2 uppercase">
-                    1% iPHONE BOX
-                </h1>
-                <p className="text-slate-500 text-xs sm:text-sm md:text-base">
-                    Probabilidad real de ganar un iPhone 15 Pro Max
-                </p>
-            </div>
-
-            {/* SPINNER */}
-            <div className="relative w-full max-w-[1600px] z-10 mb-10 md:mb-8">
+        {/* SPINNER AREA */}
+        <div className="flex flex-col items-center pt-4 md:pt-8 relative">
+            <div className="relative w-full max-w-[1600px] z-10">
                 <Spinner 
                     items={items}
                     isSpinning={isSpinning} 
@@ -255,50 +232,102 @@ const App: React.FC = () => {
                     predeterminedWinner={serverWinner}
                 />
             </div>
+        </div>
 
-            {/* CONTROLS */}
-            <div className="z-20 w-full max-w-[500px] px-4">
+        {/* BOX INFO PANEL - HypeDrop Style */}
+        <div className="bg-[#0d1019] border-t border-[#1e2330]">
+            <div className="max-w-[600px] mx-auto px-4 py-6">
+                
+                {/* Box Header - Image + Title */}
+                <div className="flex items-start gap-4 mb-4">
+                    {/* Box Image */}
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-[#1a1d26] rounded-lg p-2 flex items-center justify-center">
+                        <img 
+                            src={currentBox?.image_url || '/box-placeholder.png'} 
+                            alt={currentBox?.name || 'Box'}
+                            className="max-w-full max-h-full object-contain"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=📦';
+                            }}
+                        />
+                    </div>
+                    
+                    {/* Box Info */}
+                    <div className="flex-1 min-w-0">
+                        <h2 className="font-display text-xl sm:text-2xl text-white uppercase truncate">
+                            {currentBox?.name || '1% iPHONE BOX'}
+                        </h2>
+                        <p className="text-[#F7C948] font-bold text-lg">
+                            ${BOX_PRICE.toFixed(2)}
+                        </p>
+                    </div>
+                    
+                    {/* Favorite Button */}
+                    <button className="p-2 text-slate-500 hover:text-[#F7C948] transition-colors">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                    </button>
+                </div>
+                
+                {/* Rarity Bar */}
+                <div className="h-1.5 rounded-full overflow-hidden flex mb-4">
+                    <div className="bg-gray-500 flex-[60]"></div>
+                    <div className="bg-green-500 flex-[25]"></div>
+                    <div className="bg-blue-500 flex-[10]"></div>
+                    <div className="bg-purple-500 flex-[4]"></div>
+                    <div className="bg-yellow-500 flex-[1]"></div>
+                </div>
                 
                 {/* Error Message */}
                 {gameError && (
-                    <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
                         {gameError}
                     </div>
                 )}
                 
-                {/* Main Button */}
-                <button 
-                    onClick={handleSpin}
-                    disabled={isSpinning || isLoading}
-                    className="w-full py-4 mb-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-lg rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {isLoading ? (
-                        'Cargando...'
-                    ) : isSpinning ? (
-                        'Abriendo...'
-                    ) : gameError ? (
-                        'Reintentar'
-                    ) : (
-                        `Abrir por $${(BOX_PRICE * quantity).toFixed(2)}`
-                    )}
-                </button>
-
-                {/* Secondary Controls - Mobile optimized */}
-                {/* Disabled during spin/loading to prevent bugs */}
-                <div className={`flex items-center justify-between gap-2 transition-opacity ${(isSpinning || isLoading) ? 'opacity-50 pointer-events-none' : ''}`}>
+                {/* Action Buttons */}
+                <div className="space-y-3 mb-4">
+                    {/* Open Button - Green like HypeDrop */}
+                    <button 
+                        onClick={() => { if (demoMode) setDemoMode(false); handleSpin(); }}
+                        disabled={isSpinning || isLoading || demoMode}
+                        className="w-full py-4 bg-green-500 hover:bg-green-400 text-white font-bold text-lg rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 12V6H4v12h10v2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2v6h-2zm-1 5v-3h-2v3h-3v2h3v3h2v-3h3v-2h-3z"/>
+                        </svg>
+                        {isLoading ? 'Cargando...' : isSpinning ? 'Abriendo...' : `ABRIR POR $${(BOX_PRICE * quantity).toFixed(2)}`}
+                    </button>
                     
-                    {/* Quantity Selector - Compact on mobile */}
-                    <div className="flex bg-[#0d1019] rounded-lg p-0.5 border border-[#1e2330]">
+                    {/* Demo Button */}
+                    <button 
+                        onClick={() => { if (!demoMode) setDemoMode(true); handleSpin(); }}
+                        disabled={isSpinning || isLoading}
+                        className="w-full py-3 bg-[#1a1d26] hover:bg-[#252a36] text-slate-300 font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-[#1e2330]"
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        DEMO GRATIS
+                    </button>
+                </div>
+                
+                {/* Bottom Controls */}
+                <div className={`flex items-center justify-between gap-2 ${(isSpinning || isLoading) ? 'opacity-50 pointer-events-none' : ''}`}>
+                    {/* Quantity Selector */}
+                    <div className="flex bg-[#1a1d26] rounded-lg p-0.5 border border-[#1e2330]">
                         {[1, 2, 3, 4, 5].map(num => (
                             <button 
                                 key={num} 
                                 onClick={() => setQuantity(num)}
                                 disabled={isSpinning || isLoading}
                                 className={`
-                                    w-8 h-8 sm:w-9 sm:h-9 rounded-md font-display text-xs sm:text-sm transition-all uppercase
+                                    w-9 h-9 rounded-md font-bold text-sm transition-all
                                     ${quantity === num 
                                         ? 'bg-[#F7C948] text-black' 
-                                        : 'text-slate-500 hover:text-white hover:bg-[#1e2330]'}
+                                        : 'text-slate-500 hover:text-white hover:bg-[#252a36]'}
                                 `}
                             >
                                 {num}
@@ -306,43 +335,16 @@ const App: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* Fast Mode + Demo Toggle - Icons only on mobile */}
-                    <div className="flex items-center gap-1.5 sm:gap-2">
+                    {/* Speedrun Toggle */}
+                    <div className="flex items-center gap-2">
+                        <span className="text-slate-500 text-sm hidden sm:block">⚡</span>
+                        <span className="text-slate-400 text-sm font-medium">Rápido</span>
                         <button 
                             onClick={() => setFastMode(!fastMode)}
                             disabled={isSpinning || isLoading}
-                            className={`
-                                h-8 sm:h-9 w-8 sm:w-auto sm:px-3 rounded-lg flex items-center justify-center gap-2 border transition-all text-sm
-                                ${fastMode 
-                                    ? 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]' 
-                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500'}
-                            `}
+                            className={`w-11 h-6 rounded-full transition-colors relative ${fastMode ? 'bg-[#F7C948]' : 'bg-[#1e2330]'}`}
                         >
-                            <Icons.Lightning />
-                            <span className="hidden sm:block font-medium">Rápido</span>
-                        </button>
-
-                        <button 
-                            onClick={() => setDemoMode(!demoMode)}
-                            disabled={isSpinning || isLoading}
-                            className={`
-                                h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1.5 border transition-all text-xs sm:text-sm
-                                ${demoMode 
-                                    ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' 
-                                    : 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]'}
-                            `}
-                        >
-                            {demoMode ? (
-                                <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                    <span className="font-medium">Demo</span>
-                                </>
-                            ) : (
-                                <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                                    <span className="font-medium">Jugar</span>
-                                </>
-                            )}
+                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${fastMode ? 'left-6' : 'left-1'}`}></div>
                         </button>
                     </div>
                 </div>
