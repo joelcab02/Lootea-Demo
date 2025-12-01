@@ -169,10 +169,10 @@ const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpi
 
   return (
     <div 
-      className="relative w-full h-[200px] sm:h-[240px] flex items-center"
+      className="relative w-full h-[280px] sm:h-[300px] flex items-center"
       style={{
         background: 'linear-gradient(180deg, #08090c 0%, #0a0c10 50%, #08090c 100%)',
-        overflow: 'clip', // Clip horizontally but allow vertical overflow for spotlight
+        overflow: 'clip',
         overflowY: 'visible',
       }}
     >
