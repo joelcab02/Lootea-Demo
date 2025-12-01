@@ -218,28 +218,29 @@ const App: React.FC = () => {
             </div>
         </header>
 
-        {/* HERO AREA */}
-        <div className="flex flex-col items-center pt-8 md:pt-10 pb-8 relative overflow-visible">
+        {/* GAME AREA - PackDraw Style */}
+        <div className="flex flex-col items-center relative overflow-visible">
             
-            {/* Simplified ambient glow - DESKTOP ONLY */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block">
-                {/* Single optimized glow - reduced blur */}
-                <div className="absolute top-[25%] left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#F7C948] opacity-[0.05] blur-[80px]"></div>
-            </div>
-            
-            {/* Mobile: Simple glow only */}
-            <div className="absolute inset-0 pointer-events-none md:hidden">
-                <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[300px] h-[200px] bg-[#F7C948] opacity-[0.08] blur-[60px]"></div>
-            </div>
-            
-            {/* Box Title */}
-            <div className="z-10 text-center mb-6 md:mb-8 px-4">
-                <h1 className="font-display text-2xl sm:text-4xl md:text-6xl text-white drop-shadow-2xl mb-1 md:mb-2 uppercase">
-                    1% iPHONE BOX
-                </h1>
-                <p className="text-slate-500 text-xs sm:text-sm md:text-base">
-                    Probabilidad real de ganar un iPhone 15 Pro Max
-                </p>
+            {/* Top Bar - Back + Logo */}
+            <div className="w-full flex items-center justify-between px-4 py-3 md:py-4">
+                {/* Back Button */}
+                <button className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span className="hidden sm:inline">Volver a Cajas</span>
+                </button>
+                
+                {/* Center Logo */}
+                <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+                    <div className="w-5 h-5 text-[#F7C948]">
+                        <Icons.Logo />
+                    </div>
+                    <span className="font-display text-lg text-[#F7C948] uppercase hidden sm:block">LOOTEA</span>
+                </div>
+                
+                {/* Empty space for balance */}
+                <div className="w-24"></div>
             </div>
 
             {/* SPINNER */}
