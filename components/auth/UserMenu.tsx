@@ -152,32 +152,32 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
     
     return (
       <>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-3">
           
           {/* Cart Button */}
           <button 
             onClick={() => setShowCart(true)}
-            className="relative p-1.5 text-slate-400 hover:text-white transition-colors"
+            className="relative p-2 text-slate-400 hover:text-white transition-colors"
           >
             <Icons.Cart />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 bg-[#F7C948] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-[#F7C948] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
                 {cartCount > 99 ? '99' : cartCount}
               </span>
             )}
           </button>
           
           {/* Balance */}
-          <button className="px-2 py-1 rounded-md bg-[#F7C948] text-black font-bold text-sm">
+          <button className="px-3 py-1.5 rounded-lg bg-[#F7C948] text-black font-bold text-sm">
             ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </button>
 
           {/* Menu Button */}
           <button 
             onClick={onMenuClick}
-            className="p-1 text-slate-400 hover:text-white transition-colors"
+            className="p-2 text-slate-400 hover:text-white transition-colors"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="18" x2="21" y2="18" />
