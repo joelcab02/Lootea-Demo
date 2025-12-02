@@ -236,19 +236,22 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                     </div>
                   </button>
                   
-                  {/* OXXO - Not selectable, grayed out */}
-                  <div className="flex flex-col items-center gap-2 p-4 bg-[#1a1d26]/50 border border-[#2a2d36]/50 rounded-xl opacity-40">
-                    <div className="w-12 h-12 bg-[#0d1019]/50 rounded-full flex items-center justify-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-600">
+                  {/* OXXO - Selectable */}
+                  <button
+                    onClick={() => handleSelectMethod('oxxo')}
+                    className="flex flex-col items-center gap-2 p-4 bg-[#1a1d26] border border-[#2a2d36] rounded-xl hover:border-[#F7C948] transition-all group"
+                  >
+                    <div className="w-12 h-12 bg-[#0d1019] rounded-full flex items-center justify-center group-hover:bg-[#F7C948]/10 transition-colors">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                       </svg>
                     </div>
                     <div className="text-center">
-                      <p className="font-bold text-slate-600 text-sm">OXXO</p>
-                      <p className="text-[10px] text-slate-700">Próximamente</p>
+                      <p className="font-bold text-white text-sm">OXXO</p>
+                      <p className="text-[10px] text-slate-500">Pago en efectivo</p>
                     </div>
-                  </div>
+                  </button>
                 </div>
                 
                 {/* Minimum Notice */}
@@ -337,6 +340,74 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                   className="w-full py-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-lg rounded-xl transition-all shadow-[0_0_30px_rgba(247,201,72,0.3)] disabled:opacity-50"
                 >
                   {isSubmitting ? 'Procesando...' : 'Ya realicé la transferencia'}
+                </button>
+              </div>
+            )}
+            
+            {/* STEP 2: OXXO Details */}
+            {step === 'details' && selectedMethod === 'oxxo' && (
+              <div className="space-y-4">
+                {/* Amount Summary */}
+                <div className="bg-gradient-to-r from-[#F7C948]/20 to-[#F7C948]/5 border border-[#F7C948]/30 rounded-xl p-4 text-center">
+                  <p className="text-xs text-[#F7C948] uppercase tracking-wider mb-1">Monto a pagar en OXXO</p>
+                  <p className="text-3xl font-black text-white">${numericAmount.toLocaleString('es-MX')}<span className="text-lg">.00</span></p>
+                </div>
+                
+                {/* Reference Code */}
+                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-4">
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Número de referencia</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-[#F7C948] font-mono font-bold text-xl">{reference}</p>
+                    <button 
+                      onClick={() => copyToClipboard(reference, 'ref')}
+                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                        copied === 'ref' 
+                          ? 'bg-green-500/20 text-green-400' 
+                          : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
+                      }`}
+                    >
+                      {copied === 'ref' ? '✓ Copiado' : 'Copiar'}
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Instructions */}
+                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-4">
+                  <p className="text-sm text-white font-medium mb-3">Instrucciones:</p>
+                  <ol className="text-sm text-slate-400 space-y-2">
+                    <li className="flex gap-2">
+                      <span className="text-[#F7C948] font-bold">1.</span>
+                      Acude a cualquier tienda OXXO
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-[#F7C948] font-bold">2.</span>
+                      Indica que harás un pago de servicio "LOOTEA"
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-[#F7C948] font-bold">3.</span>
+                      Proporciona el número de referencia
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-[#F7C948] font-bold">4.</span>
+                      Paga el monto exacto en efectivo
+                    </li>
+                  </ol>
+                </div>
+                
+                {/* Warning */}
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                  <p className="text-sm text-amber-400">
+                    <strong>⚠️ Importante:</strong> Guarda tu ticket. Tu saldo se acreditará en máximo 24 horas.
+                  </p>
+                </div>
+                
+                {/* Confirm Button */}
+                <button
+                  onClick={handleConfirmDeposit}
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-lg rounded-xl transition-all shadow-[0_0_30px_rgba(247,201,72,0.3)] disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Procesando...' : 'Ya realicé el pago'}
                 </button>
               </div>
             )}
