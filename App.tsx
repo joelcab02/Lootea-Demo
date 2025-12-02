@@ -234,20 +234,25 @@ const App: React.FC = () => {
                     </div>
                 )}
                 
-                {/* Main Button */}
+                {/* Main Button - ABRIR con precio en badge */}
                 <button 
                     onClick={handleSpin}
                     disabled={isSpinning || isLoading}
-                    className="w-full py-3.5 mb-3 bg-[#F7C948] hover:bg-[#FFD966] text-black font-sans font-semibold text-lg rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 mb-3 bg-[#F7C948] hover:bg-[#FFD966] text-black rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(247,201,72,0.3)]"
                 >
                     {isLoading ? (
-                        'Cargando...'
+                        <span className="font-display text-xl font-black italic tracking-tight uppercase">Cargando...</span>
                     ) : isSpinning ? (
-                        'Abriendo...'
+                        <span className="font-display text-xl font-black italic tracking-tight uppercase">Abriendo...</span>
                     ) : gameError ? (
-                        'Reintentar'
+                        <span className="font-display text-xl font-black italic tracking-tight uppercase">Reintentar</span>
                     ) : (
-                        `Abrir por $${(BOX_PRICE * quantity).toFixed(2)}`
+                        <>
+                            <span className="font-display text-2xl font-black italic tracking-tight uppercase">ABRIR</span>
+                            <span className="bg-black/20 px-3 py-1 rounded-lg font-display text-lg font-bold">
+                                ${(BOX_PRICE * quantity).toFixed(2)}
+                            </span>
+                        </>
                     )}
                 </button>
 
