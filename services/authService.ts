@@ -25,15 +25,26 @@ let currentState: AuthState = {
   isLoading: true,
 };
 
+// Flag para evitar múltiples inicializaciones
+let isInitialized = false;
+
 /**
- * Initialize auth and listen for changes - OPTIMIZED
+ * Initialize auth and listen for changes - SINGLETON
+ * Solo se ejecuta una vez, llamadas posteriores son no-op
  */
 export async function initAuth(): Promise<AuthState> {
+  // Evitar múltiples inicializaciones
+  if (isInitialized) {
+    return currentState;
+  }
+  isInitialized = true;
+  
+  console.log('🔐 Initializing auth service (singleton)');
+  
   // Get initial session
   const { data: { session } } = await supabase.auth.getSession();
   
   if (session?.user) {
-    // Pass session to avoid extra call
     await loadUserData(session.user, session);
   }
   
@@ -45,7 +56,6 @@ export async function initAuth(): Promise<AuthState> {
     console.log('🔐 Auth event:', event);
     
     if (session?.user) {
-      // Pass session directly
       await loadUserData(session.user, session);
     } else {
       currentState = {
@@ -58,6 +68,19 @@ export async function initAuth(): Promise<AuthState> {
     }
     
     notifyListeners();
+  });
+  
+  // Manejar visibilitychange internamente
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible' && currentState.user) {
+      console.log('🔐 Tab visible - refreshing session');
+      // Refrescar sesión silenciosamente
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await loadUserData(session.user, session);
+        notifyListeners();
+      }
+    }
   });
   
   return currentState;

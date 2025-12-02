@@ -2,8 +2,12 @@ import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './src/index.css';
+import { initAuth } from './services/authService';
 import HomePage from './pages/HomePage';
 import BoxPage from './pages/BoxPage';
+
+// Inicializar auth UNA sola vez al cargar la app
+initAuth();
 
 // Lazy load páginas de admin (no críticas para jugadores)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));

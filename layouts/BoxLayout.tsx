@@ -12,7 +12,7 @@ import Footer from '../components/layout/Footer';
 import { LootItem } from '../types';
 import { audioService } from '../services/audioService';
 import { UserMenu } from '../components/auth/UserMenu';
-import { initAuth, subscribeAuth, isLoggedIn } from '../services/authService';
+import { subscribeAuth, isLoggedIn } from '../services/authService';
 import { AuthModal } from '../components/auth/AuthModal';
 import { useGameStore, selectIsSpinning } from '../stores';
 
@@ -75,10 +75,8 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
     audioService.setMute(isMuted);
   }, [isMuted]);
 
-  // Inicialización: auth + cargar caja
+  // Inicialización: cargar caja + suscribirse a auth
   useEffect(() => {
-    initAuth();
-    
     // Cargar caja por slug o default
     if (slug) {
       loadBox(slug);
@@ -86,21 +84,21 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
       loadDefaultBox();
     }
     
+    // Suscribirse a cambios de auth para sincronizar balance
     const unsubscribeAuth = subscribeAuth(() => {
       syncBalance();
-    });
-    
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        initAuth();
-        setIsLoading(false);
+      setIsLoading(false);
+      
+      // Si el phase quedó en 'spinning' pero regresamos de otra pestaña, resetear
+      const currentPhase = useGameStore.getState().phase;
+      if (currentPhase === 'spinning') {
+        console.log('[BoxLayout] Resetting stuck spinning state');
+        useGameStore.setState({ phase: 'idle', predeterminedWinner: null });
       }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    });
     
     return () => {
       unsubscribeAuth();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);

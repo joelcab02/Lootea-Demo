@@ -7,7 +7,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getBoxes, BoxWithItems } from '../services/boxService';
 import { UserMenu } from '../components/auth/UserMenu';
-import { initAuth } from '../services/authService';
 import Sidebar from '../components/layout/Sidebar';
 import Footer from '../components/layout/Footer';
 
@@ -24,7 +23,6 @@ const HomePage: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    initAuth();
     loadBoxes();
   }, []);
 
