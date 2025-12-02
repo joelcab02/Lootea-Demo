@@ -249,7 +249,7 @@ const App: React.FC = () => {
                     ) : (
                         <>
                             <span className="font-display text-2xl font-black italic tracking-tight uppercase">ABRIR</span>
-                            <span className="bg-black/15 px-3 py-1 rounded-lg font-display text-lg font-bold">
+                            <span className="font-display text-lg font-bold">
                                 ${(BOX_PRICE * quantity).toFixed(2)}
                             </span>
                         </>
