@@ -130,65 +130,66 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
 
   return (
     <Portal>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
         {/* Backdrop */}
         <div 
-          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/40"
           onClick={onClose}
         />
         
         {/* Modal */}
-        <div className="relative w-full max-w-md bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl z-10 overflow-hidden">
+        <div className="relative z-10 w-full max-w-sm bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+          {/* Close button */}
+          <button 
+            onClick={onClose}
+            className="absolute top-3 right-3 z-10 text-slate-500 hover:text-white transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          
+          {/* Back button */}
+          {step !== 'select' && step !== 'pending' && (
+            <button 
+              onClick={handleBack}
+              className="absolute top-3 left-3 z-10 text-slate-500 hover:text-white transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+            </button>
+          )}
+
           {/* Gold accent line */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent" />
           
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-[#1e2330]">
-            <div className="flex items-center gap-3">
-              {step !== 'select' && step !== 'pending' && (
-                <button 
-                  onClick={handleBack}
-                  className="p-1 text-slate-400 hover:text-white transition-colors"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                  </svg>
-                </button>
-              )}
-              <h2 className="font-display font-black italic text-xl text-white">
-                {step === 'pending' ? '¡Solicitud Enviada!' : 'Depositar Fondos'}
-              </h2>
-            </div>
-            <button 
-              onClick={onClose}
-              className="p-2 text-slate-400 hover:text-white transition-colors"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          </div>
-          
-          {/* Content */}
-          <div className="p-5">
+          <div className="p-6">
+            {/* Header */}
+            <h2 className="font-display font-black italic text-xl text-white mb-1">
+              {step === 'pending' ? '¡Solicitud Enviada!' : 'Depositar Fondos'}
+            </h2>
+            {step === 'select' && (
+              <p className="text-slate-500 text-xs mb-5">Selecciona el monto y método de pago</p>
+            )}
             
             {/* STEP 1: Select Amount & Method */}
             {step === 'select' && (
               <>
                 {/* Amount Input */}
-                <div className="mb-5">
-                  <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
+                <div className="mb-4">
+                  <label className="block text-slate-400 text-[10px] font-medium mb-1.5 uppercase tracking-wider">
                     Monto a depositar
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F7C948] text-2xl font-bold">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl font-bold">$</span>
                     <input
                       type="text"
                       inputMode="numeric"
                       value={amount}
                       onChange={(e) => handleAmountChange(e.target.value)}
-                      className="w-full bg-[#1a1d26] border-2 border-[#2a2d36] text-white text-3xl font-bold pl-12 pr-4 py-4 rounded-xl focus:outline-none focus:border-[#F7C948] transition-colors"
+                      className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white text-2xl font-bold pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors"
                       placeholder="0"
                     />
                   </div>
@@ -203,10 +204,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                     <button
                       key={preset}
                       onClick={() => setAmount(preset.toString())}
-                      className={`py-2.5 rounded-xl text-sm font-bold transition-all ${
+                      className={`py-2.5 rounded-lg text-sm font-bold transition-all ${
                         amount === preset.toString()
-                          ? 'bg-[#F7C948] text-black shadow-[0_0_20px_rgba(247,201,72,0.3)]'
-                          : 'bg-[#1a1d26] text-slate-400 hover:text-white border border-[#2a2d36] hover:border-[#F7C948]/50'
+                          ? 'bg-transparent text-[#F7C948] border-2 border-[#F7C948]'
+                          : 'bg-[#1a1d26] text-slate-400 hover:text-white border border-[#2a2d36] hover:border-slate-500'
                       }`}
                     >
                       ${preset.toLocaleString()}
@@ -215,17 +216,17 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 </div>
                 
                 {/* Payment Methods */}
-                <label className="block text-slate-400 text-xs font-medium mb-3 uppercase tracking-wider">
+                <label className="block text-slate-400 text-[10px] font-medium mb-2 uppercase tracking-wider">
                   Método de pago
                 </label>
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                  {/* SPEI */}
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {/* SPEI - Selectable */}
                   <button
                     onClick={() => handleSelectMethod('spei')}
-                    className="flex flex-col items-center gap-2 p-4 bg-[#1a1d26] border-2 border-[#2a2d36] rounded-xl hover:border-[#F7C948] transition-all group"
+                    className="flex flex-col items-center gap-2 p-4 bg-[#1a1d26] border border-[#2a2d36] rounded-xl hover:border-[#F7C948] transition-all group"
                   >
-                    <div className="w-14 h-14 bg-[#0d1019] rounded-xl flex items-center justify-center group-hover:bg-[#F7C948]/10 transition-colors">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
+                    <div className="w-12 h-12 bg-[#0d1019] rounded-full flex items-center justify-center group-hover:bg-[#F7C948]/10 transition-colors">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
                         <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
                       </svg>
                     </div>
@@ -235,27 +236,29 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                     </div>
                   </button>
                   
-                  {/* OXXO - Disabled for MVP */}
-                  <button
-                    disabled
-                    className="flex flex-col items-center gap-2 p-4 bg-[#1a1d26]/50 border-2 border-[#2a2d36]/50 rounded-xl opacity-50 cursor-not-allowed"
-                  >
-                    <div className="w-14 h-14 bg-[#0d1019]/50 rounded-xl flex items-center justify-center">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-500">
+                  {/* OXXO - Not selectable, grayed out */}
+                  <div className="flex flex-col items-center gap-2 p-4 bg-[#1a1d26]/50 border border-[#2a2d36]/50 rounded-xl opacity-40">
+                    <div className="w-12 h-12 bg-[#0d1019]/50 rounded-full flex items-center justify-center">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-600">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                       </svg>
                     </div>
                     <div className="text-center">
-                      <p className="font-bold text-slate-500 text-sm">OXXO</p>
-                      <p className="text-[10px] text-slate-600">Próximamente</p>
+                      <p className="font-bold text-slate-600 text-sm">OXXO</p>
+                      <p className="text-[10px] text-slate-700">Próximamente</p>
                     </div>
-                  </button>
+                  </div>
                 </div>
                 
                 {/* Minimum Notice */}
-                <p className="text-xs text-slate-500 text-center">
+                <p className="text-[10px] text-slate-500 text-center mb-4">
                   Depósito mínimo: $100 MXN • Acreditación: 5-30 min
+                </p>
+                
+                {/* Footer disclaimer */}
+                <p className="text-[10px] text-slate-600 text-center">
+                  Los fondos depositados solo pueden usarse para jugar. No hay reembolsos.
                 </p>
               </>
             )}
@@ -394,15 +397,6 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
               </div>
             )}
           </div>
-          
-          {/* Footer disclaimer */}
-          {step !== 'pending' && (
-            <div className="px-5 pb-4">
-              <p className="text-[10px] text-slate-600 text-center">
-                Los fondos depositados solo pueden usarse para jugar. No hay reembolsos.
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </Portal>
