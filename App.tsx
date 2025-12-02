@@ -239,20 +239,10 @@ const App: React.FC = () => {
                     disabled={isSpinning || isLoading}
                     className="w-full py-4 mb-3 bg-[#F7C948] hover:bg-[#FFD966] text-black rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(247,201,72,0.3)]"
                 >
-                    {isLoading ? (
-                        <span className="font-display text-xl font-black italic tracking-tight uppercase">Cargando...</span>
-                    ) : isSpinning ? (
-                        <span className="font-display text-xl font-black italic tracking-tight uppercase">Abriendo...</span>
-                    ) : gameError ? (
-                        <span className="font-display text-xl font-black italic tracking-tight uppercase">Reintentar</span>
-                    ) : (
-                        <>
-                            <span className="font-display text-2xl font-black italic tracking-tight uppercase">ABRIR</span>
-                            <span className="font-display text-2xl font-black italic tracking-tight">
-                                ${BOX_PRICE.toFixed(2)}
-                            </span>
-                        </>
-                    )}
+                    <span className="font-display text-2xl font-black italic tracking-tight uppercase">ABRIR</span>
+                    <span className="font-display text-2xl font-black italic tracking-tight">
+                        ${BOX_PRICE.toFixed(2)}
+                    </span>
                 </button>
 
                 {/* Secondary Controls - Centered */}
