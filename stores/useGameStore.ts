@@ -208,8 +208,14 @@ export const useGameStore = create<GameStore>()(
           return false;
         }
 
+        // Si estamos en 'result', primero resetear a idle
+        if (phase === 'result') {
+          console.log('[GameStore] Resetting from result to start new spin');
+        }
+
         // Limpiar estado previo
         set({ 
+          phase: 'idle', // Asegurar que estamos en idle
           lastWinner: null, 
           predeterminedWinner: null,
           error: null 
@@ -293,10 +299,18 @@ export const useGameStore = create<GameStore>()(
         // En modo real, refrescar datos en background
         const { mode } = get();
         if (mode === 'real') {
-          // No await - ejecutar en background
           fetchInventory().catch(console.error);
           refreshBalance().catch(console.error);
         }
+        
+        // Auto-reset a idle después de 3 segundos
+        // Permite al usuario ver el resultado y luego jugar de nuevo
+        setTimeout(() => {
+          const currentPhase = get().phase;
+          if (currentPhase === 'result') {
+            set({ phase: 'idle' }, false, 'autoResetToIdle');
+          }
+        }, 3000);
       },
 
       /**
