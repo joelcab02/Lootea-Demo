@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './src/index.css';
-import App from './App';
+import HomePage from './pages/HomePage';
 import BoxPage from './pages/BoxPage';
 
 // Lazy load páginas de admin (no críticas para jugadores)
@@ -27,7 +27,7 @@ root.render(
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/box/:slug" element={<BoxPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/assets" element={<AssetFactoryPage />} />
