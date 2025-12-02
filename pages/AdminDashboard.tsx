@@ -1040,6 +1040,34 @@ const BoxEditSection: React.FC<{
             />
           </div>
         </div>
+        
+        {/* Image URL Field */}
+        <div className="mt-4">
+          <label className="text-xs text-slate-500 block mb-1">Imagen de la caja (URL)</label>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={form.image}
+              onChange={(e) => setForm({ ...form, image: e.target.value })}
+              placeholder="https://i.imgur.com/ejemplo.png"
+              className="flex-1 px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
+            />
+            {form.image && (
+              <div className="w-12 h-12 bg-[#08090c] border border-[#1a1d24] rounded-lg overflow-hidden flex-shrink-0">
+                <img 
+                  src={form.image} 
+                  alt="Preview" 
+                  className="w-full h-full object-contain"
+                  onError={(e) => (e.currentTarget.style.display = 'none')}
+                />
+              </div>
+            )}
+          </div>
+          <p className="text-xs text-slate-600 mt-1">
+            Sube tu imagen a <a href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer" className="text-[#F7C948] hover:underline">Imgur</a> y pega el link aquí
+          </p>
+        </div>
+
         <div className="mt-4">
           <button
             onClick={handleSave}
