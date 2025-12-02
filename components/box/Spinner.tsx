@@ -220,7 +220,31 @@ const Spinner: React.FC<SpinnerProps> = (props) => {
         spinWinner = generateRandomWinner();
       }
       
-      if (!spinWinner) return;
+      // GUARD: Si no hay winner, usar el primer item disponible o abortar limpiamente
+      if (!spinWinner) {
+        console.error('[Spinner] No winner available - items may not be loaded');
+        // Usar primer item como fallback si existe
+        if (items.length > 0) {
+          spinWinner = items[0];
+          console.log('[Spinner] Using fallback winner:', spinWinner.name);
+        } else {
+          // No hay items - llamar onSpinEnd con error para resetear phase
+          console.error('[Spinner] No items available - aborting spin');
+          // Forzar reset del phase después de un tick
+          setTimeout(() => {
+            const fallbackItem: LootItem = {
+              id: 'error',
+              name: 'Error',
+              price: 0,
+              rarity: 'COMMON' as any,
+              image: '',
+              odds: 0
+            };
+            onSpinEnd(fallbackItem);
+          }, 100);
+          return;
+        }
+      }
       
       // Lock it so prop changes don't affect the animation
       lockedWinnerRef.current = spinWinner;

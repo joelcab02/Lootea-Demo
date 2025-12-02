@@ -21,6 +21,7 @@ import { Box, BoxWithItems, getBoxes, getBoxBySlug } from '../services/boxServic
 import { openBox as serverOpenBox, PlayResult } from '../services/gameService';
 import { getBalance, refreshBalance, isLoggedIn, subscribeAuth } from '../services/authService';
 import { fetchInventory } from '../services/inventoryService';
+import { calculateTicketRanges, selectWeightedWinner } from '../services/oddsService';
 
 // ============================================
 // TYPES
@@ -172,8 +173,11 @@ export const useGameStore = create<GameStore>()(
       /**
        * Inicia el spin. Retorna true si puede empezar, false si está bloqueado.
        * 
-       * En modo demo: solo marca spinning, Spinner calcula winner
-       * En modo real: llama al servidor, guarda predeterminedWinner
+       * MODELO PACKDRAW:
+       * - SIEMPRE determina el winner ANTES de iniciar animación
+       * - Demo: calcula winner localmente
+       * - Real: obtiene winner del servidor
+       * - Solo cambia a 'spinning' cuando ya tiene winner
        */
       startSpin: async () => {
         const { phase, mode, currentBox, items, balance } = get();
@@ -190,67 +194,76 @@ export const useGameStore = create<GameStore>()(
           return false;
         }
 
-        // Iniciar spin - limpiar estado previo
+        // Limpiar estado previo
         set({ 
-          phase: 'spinning', 
           lastWinner: null, 
           predeterminedWinner: null,
           error: null 
-        }, false, 'startSpin/begin');
+        }, false, 'startSpin/prepare');
 
-        // 🎮 DEMO MODE
-        // Winner se calcula en Spinner con lógica local
+        let winner: LootItem | null = null;
+
+        // 🎮 DEMO MODE - Calcular winner localmente
         if (mode === 'demo') {
-          return true;
-        }
-
-        // 💰 REAL MODE
-        // Validaciones adicionales
-        if (!isLoggedIn()) {
-          set({ 
-            phase: 'idle', 
-            error: 'Debes iniciar sesión para jugar' 
-          }, false, 'startSpin/notLoggedIn');
-          return false;
-        }
-
-        if (balance < currentBox.price) {
-          set({ 
-            phase: 'idle', 
-            error: `Saldo insuficiente. Necesitas $${currentBox.price}` 
-          }, false, 'startSpin/noFunds');
-          return false;
-        }
-
-        // Llamar al servidor
-        try {
-          const result: PlayResult = await serverOpenBox(currentBox.id);
-
-          if (!result.success || !result.winner) {
-            set({ 
-              phase: 'idle', 
-              error: result.message || 'Error al abrir caja' 
-            }, false, 'startSpin/serverError');
+          const itemsWithTickets = calculateTicketRanges(items);
+          if (itemsWithTickets.length === 0) {
+            set({ error: 'No hay items disponibles' }, false, 'startSpin/noItems');
+            return false;
+          }
+          const result = selectWeightedWinner(itemsWithTickets);
+          winner = result?.winner || items[0];
+          console.log('[GameStore] Demo winner:', winner.name);
+        } 
+        // 💰 REAL MODE - Obtener winner del servidor
+        else {
+          // Validaciones
+          if (!isLoggedIn()) {
+            set({ error: 'Debes iniciar sesión para jugar' }, false, 'startSpin/notLoggedIn');
             return false;
           }
 
-          // ✅ Servidor determinó el winner
-          // Spinner lo usará para animar hacia él
-          set({ 
-            predeterminedWinner: result.winner,
-            balance: result.newBalance ?? balance - currentBox.price,
-          }, false, 'startSpin/serverSuccess');
+          if (balance < currentBox.price) {
+            set({ error: `Saldo insuficiente. Necesitas $${currentBox.price}` }, false, 'startSpin/noFunds');
+            return false;
+          }
 
-          return true;
+          // Llamar al servidor
+          try {
+            const result: PlayResult = await serverOpenBox(currentBox.id);
 
-        } catch (err) {
-          console.error('[GameStore] startSpin server error:', err);
-          set({ 
-            phase: 'idle', 
-            error: 'Error de conexión. Intenta de nuevo.' 
-          }, false, 'startSpin/networkError');
+            if (!result.success || !result.winner) {
+              set({ error: result.message || 'Error al abrir caja' }, false, 'startSpin/serverError');
+              return false;
+            }
+
+            winner = result.winner;
+            
+            // Actualizar balance inmediatamente
+            set({ 
+              balance: result.newBalance ?? balance - currentBox.price 
+            }, false, 'startSpin/balanceUpdate');
+            
+            console.log('[GameStore] Server winner:', winner.name);
+
+          } catch (err) {
+            console.error('[GameStore] startSpin server error:', err);
+            set({ error: 'Error de conexión. Intenta de nuevo.' }, false, 'startSpin/networkError');
+            return false;
+          }
+        }
+
+        // ✅ TENEMOS WINNER - Ahora sí iniciar animación
+        if (!winner) {
+          set({ error: 'No se pudo determinar ganador' }, false, 'startSpin/noWinner');
           return false;
         }
+
+        set({ 
+          phase: 'spinning',
+          predeterminedWinner: winner,
+        }, false, 'startSpin/begin');
+
+        return true;
       },
 
       /**

@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Spinner from '../components/box/Spinner';
+import SpinnerV2 from '../components/box/SpinnerV2';
 import Sidebar from '../components/layout/Sidebar';
 import CaseContentGrid from '../components/box/CaseContentGrid';
 import Footer from '../components/layout/Footer';
@@ -34,11 +34,14 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   // ZUSTAND STORE - Estado centralizado del juego
   // ============================================
   const mode = useGameStore(state => state.mode);
+  const phase = useGameStore(state => state.phase);
   const currentBox = useGameStore(state => state.currentBox);
   const items = useGameStore(state => state.items);
+  const predeterminedWinner = useGameStore(state => state.predeterminedWinner);
   const storeError = useGameStore(state => state.error);
   
   const isSpinning = useGameStore(selectIsSpinning);
+  const showResult = phase === 'result';
   
   const { 
     startSpin, 
@@ -132,12 +135,16 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
     }
   };
 
-  const handleSpinEnd = (item: LootItem) => {
-    onSpinComplete(item);
-    triggerWinEffects(item);
+  // Llamado por SpinnerV2 cuando termina la animación
+  const handleSpinComplete = () => {
+    // El winner ya está en predeterminedWinner, pasarlo a onSpinComplete
+    if (predeterminedWinner) {
+      onSpinComplete(predeterminedWinner);
+      triggerWinEffects();
+    }
   };
 
-  const triggerWinEffects = (_item: LootItem) => {
+  const triggerWinEffects = () => {
     audioService.playWin();
     if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
   };
@@ -201,9 +208,13 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
 
           {/* SPINNER */}
           <div className="relative w-full max-w-[1600px] z-10 my-4">
-            <Spinner 
-              customDuration={fastMode ? 2000 : 5500}
-              onSpinEnd={handleSpinEnd}
+            <SpinnerV2 
+              items={items}
+              winner={predeterminedWinner}
+              isSpinning={isSpinning}
+              showResult={showResult}
+              duration={fastMode ? 2000 : 5500}
+              onComplete={handleSpinComplete}
             />
           </div>
 
