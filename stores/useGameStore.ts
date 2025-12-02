@@ -101,7 +101,21 @@ const initialState: GameState = {
 
 export const useGameStore = create<GameStore>()(
   devtools(
-    (set, get) => ({
+    (set, get) => {
+      // Listener global para resetear estado cuando la pestaña vuelve a ser visible
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            const { phase } = get();
+            if (phase === 'spinning') {
+              console.log('[GameStore] Tab visible - resetting stuck spinning state');
+              set({ phase: 'idle', predeterminedWinner: null, error: null }, false, 'visibilityReset');
+            }
+          }
+        });
+      }
+      
+      return {
       ...initialState,
 
       // ----------------------------------------
@@ -318,7 +332,8 @@ export const useGameStore = create<GameStore>()(
       reset: () => {
         set(initialState, false, 'reset');
       },
-    }),
+    };
+    },
     { 
       name: 'GameStore',
       // Solo en desarrollo

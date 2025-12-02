@@ -108,7 +108,11 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   // ============================================
   
   const handleSpin = async () => {
-    if (isSpinning || isLoading) return;
+    console.log('[BoxLayout] handleSpin called', { isSpinning, isLoading, phase });
+    if (isSpinning || isLoading) {
+      console.log('[BoxLayout] Spin blocked:', { isSpinning, isLoading });
+      return;
+    }
     
     clearError();
     audioService.init();
