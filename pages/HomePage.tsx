@@ -21,17 +21,40 @@ const HomePage: React.FC = () => {
   const [boxes, setBoxes] = useState<BoxWithItems[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadBoxes = async () => {
+    console.log('[HomePage] Loading boxes...');
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await getBoxes();
+      console.log('[HomePage] Loaded', data.length, 'boxes');
+      setBoxes(data);
+    } catch (err) {
+      console.error('[HomePage] Failed to load boxes:', err);
+      setError('Error al cargar cajas');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     loadBoxes();
+    
+    // Recargar cuando la pestaña vuelve a ser visible
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('[HomePage] Tab visible - reloading boxes');
+        loadBoxes();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
-
-  const loadBoxes = async () => {
-    setIsLoading(true);
-    const data = await getBoxes();
-    setBoxes(data);
-    setIsLoading(false);
-  };
 
   return (
     <div className="min-h-screen bg-[#0d1019] text-white font-sans">
@@ -120,8 +143,28 @@ const HomePage: React.FC = () => {
             </div>
           )}
 
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-20">
+              <div className="w-20 h-20 mx-auto mb-4 text-red-500">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">{error}</h2>
+              <button 
+                onClick={loadBoxes}
+                className="mt-4 px-6 py-2 bg-[#F7C948] text-black font-bold rounded-lg hover:bg-[#FFD966] transition-colors"
+              >
+                Reintentar
+              </button>
+            </div>
+          )}
+
           {/* Empty State */}
-          {!isLoading && boxes.length === 0 && (
+          {!isLoading && !error && boxes.length === 0 && (
             <div className="text-center py-20">
               <div className="w-20 h-20 mx-auto mb-4 text-slate-600">
                 <LogoIcon />

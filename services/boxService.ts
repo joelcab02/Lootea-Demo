@@ -23,18 +23,24 @@ export interface BoxWithItems extends Box {
  * Get all active boxes
  */
 export async function getBoxes(): Promise<Box[]> {
-  const { data, error } = await supabase
-    .from('boxes')
-    .select('*')
-    .eq('is_active', true)
-    .order('created_at', { ascending: false });
+  try {
+    const { data, error } = await supabase
+      .from('boxes')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .abortSignal(AbortSignal.timeout(10000)); // Timeout de 10 segundos
 
-  if (error) {
-    console.error('Error loading boxes:', error);
+    if (error) {
+      console.error('Error loading boxes:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (err) {
+    console.error('getBoxes failed:', err);
     return [];
   }
-
-  return data || [];
 }
 
 /**
