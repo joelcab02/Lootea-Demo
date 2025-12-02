@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Spinner from './components/box/Spinner';
 import Sidebar from './components/layout/Sidebar';
 import CaseContentGrid from './components/box/CaseContentGrid';
 import Footer from './components/layout/Footer';
-import { LootItem, Rarity } from './types';
-import { RARITY_COLORS } from './constants';
+import { LootItem } from './types';
 import { audioService } from './services/audioService';
-import { getItems, initializeStore, subscribe } from './services/oddsStore';
 import { UserMenu } from './components/auth/UserMenu';
-import { initAuth, isLoggedIn, getBalance, refreshBalance } from './services/authService';
-import { openBox, canPlay, PlayResult } from './services/gameService';
+import { initAuth, subscribeAuth, isLoggedIn } from './services/authService';
 import { AuthModal } from './components/auth/AuthModal';
-import { getBoxes, Box } from './services/boxService';
-import { fetchInventory } from './services/inventoryService';
+// Zustand Store - Estado centralizado del juego
+import { useGameStore, selectIsSpinning } from './stores';
 
 // SVG Icons for App
 const Icons = {
@@ -35,143 +32,122 @@ const Icons = {
 };
 
 const App: React.FC = () => {
-  const [items, setItems] = useState<LootItem[]>(() => getItems()); // Get items from odds store
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [winner, setWinner] = useState<LootItem | null>(null);
-  const [showResult, setShowResult] = useState(false);
+  // ============================================
+  // ZUSTAND STORE - Estado centralizado del juego
+  // ============================================
+  const mode = useGameStore(state => state.mode);
+  const currentBox = useGameStore(state => state.currentBox);
+  const items = useGameStore(state => state.items);
+  const lastWinner = useGameStore(state => state.lastWinner);
+  const storeError = useGameStore(state => state.error);
+  
+  // Selectores computados
+  const isSpinning = useGameStore(selectIsSpinning);
+  
+  // Acciones del store
+  const { 
+    startSpin, 
+    onSpinComplete, 
+    setMode, 
+    loadDefaultBox, 
+    syncBalance,
+    clearError 
+  } = useGameStore();
+  
+  // ============================================
+  // ESTADOS LOCALES (UI only)
+  // ============================================
   const [quantity, setQuantity] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  // NEW STATES
   const [fastMode, setFastMode] = useState(false);
-  const [demoMode, setDemoMode] = useState(true); // Start in demo mode
   const [isMuted, setIsMuted] = useState(false);
-  
-  // Game flow states
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [gameError, setGameError] = useState<string | null>(null);
-  const [serverWinner, setServerWinner] = useState<LootItem | null>(null);
-  const [currentBox, setCurrentBox] = useState<Box | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Derivados
+  const demoMode = mode === 'demo';
   const BOX_PRICE = currentBox?.price || 99.00;
-  const BOX_ID = currentBox?.id || '';
+  const gameError = storeError;
 
+  // ============================================
+  // EFECTOS
+  // ============================================
+  
+  // Audio mute
   useEffect(() => {
     audioService.setMute(isMuted);
   }, [isMuted]);
 
-  // Initialize odds store and auth on app load
+  // Inicialización: auth + cargar caja
   useEffect(() => {
-    initializeStore();
     initAuth();
+    loadDefaultBox();
     
-    // Load first active box
-    getBoxes().then(boxes => {
-      if (boxes.length > 0) {
-        setCurrentBox(boxes[0]);
-        console.log('📦 Loaded box:', boxes[0].name, boxes[0].id);
-      }
+    // Suscribirse a cambios de auth para sincronizar balance
+    const unsubscribeAuth = subscribeAuth(() => {
+      syncBalance();
     });
     
-    // Subscribe to store updates - this catches when images load in background
-    const unsubscribe = subscribe((state) => {
-      setItems(state.items);
-    });
-    
-    // Refresh session when user returns to tab (prevents stale connection)
+    // Refresh session when user returns to tab
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        // Re-init auth to refresh session
         initAuth();
-        // Reset loading state in case it got stuck
         setIsLoading(false);
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     
     return () => {
-      unsubscribe();
+      unsubscribeAuth();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
+    // Las funciones del store son estables, no causan re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Loading state for server call
-  const [isLoading, setIsLoading] = useState(false);
-
+  // ============================================
+  // HANDLERS
+  // ============================================
+  
   const handleSpin = async () => {
+    // Guard: ya girando o cargando
     if (isSpinning || isLoading) return;
-    if (!BOX_ID) {
-      setGameError('Caja no cargada. Recarga la página.');
-      return;
-    }
-    setGameError(null);
     
-    // Demo mode - use client-side logic (no server)
-    if (demoMode) {
-      // Initialize audio on user interaction
-      audioService.init();
-      setWinner(null);
-      setShowResult(false);
-      setServerWinner(null); // null = Spinner generates random winner
-      setIsSpinning(true);
+    // Limpiar error previo
+    clearError();
+    
+    // Inicializar audio en interacción del usuario
+    audioService.init();
+    
+    // Modo real: verificar auth primero
+    if (!demoMode && !isLoggedIn()) {
+      setShowAuthModal(true);
       return;
     }
     
-    // Live mode - check auth and balance first
-    const check = canPlay(BOX_PRICE * quantity);
+    // Mostrar loading en modo real
+    if (!demoMode) {
+      setIsLoading(true);
+    }
     
-    if (!check.canPlay) {
-      if (check.reason === 'NOT_AUTHENTICATED') {
+    // Iniciar spin (el store maneja toda la lógica)
+    const canStart = await startSpin();
+    
+    setIsLoading(false);
+    
+    if (!canStart && !demoMode) {
+      // Si falló en modo real, mostrar modal de auth si es por login
+      if (storeError?.includes('iniciar sesión')) {
         setShowAuthModal(true);
-        return;
       }
-      if (check.reason === 'INSUFFICIENT_FUNDS') {
-        setGameError(`Fondos insuficientes. Necesitas $${(BOX_PRICE * quantity).toFixed(2)} para jugar.`);
-        return;
-      }
-      setGameError(check.reason || 'Error desconocido');
-      return;
-    }
-    
-    // Live mode: Wait for server BEFORE starting animation (PackDraw pattern)
-    setIsLoading(true);
-    
-    try {
-      const result = await openBox(BOX_ID);
-      
-      if (!result.success) {
-        setGameError(result.message || 'Error al abrir la caja');
-        setIsLoading(false);
-        return;
-      }
-      
-      // Server returned winner - now start animation with predetermined winner
-      // Initialize audio on user interaction
-      audioService.init();
-      setWinner(null);
-      setShowResult(false);
-      setServerWinner(result.winner!);
-      setIsLoading(false);
-      setIsSpinning(true);
-      
-    } catch (error) {
-      setGameError('Error de conexión. Intenta de nuevo.');
-      setIsLoading(false);
     }
   };
 
   const handleSpinEnd = (item: LootItem) => {
-    setIsSpinning(false);
-    setWinner(item);
-    setShowResult(true);
+    // Notificar al store que terminó el spin
+    // El store se encarga de actualizar inventario y balance en modo real
+    onSpinComplete(item);
     triggerWinEffects(item);
-    
-    // In live mode, sync inventory and balance from server
-    // Item was already added to DB in open_box RPC
-    if (!demoMode && isLoggedIn()) {
-      fetchInventory(); // Refresh cart count from server
-      refreshBalance(); // Refresh balance from server
-    }
   };
 
   const triggerWinEffects = (_item: LootItem) => {
@@ -240,17 +216,11 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* SPINNER */}
+            {/* SPINNER - Usa el store directamente, solo pasamos customDuration y callback para efectos */}
             <div className="relative w-full max-w-[1600px] z-10 my-4">
                 <Spinner 
-                    items={items}
-                    isSpinning={isSpinning} 
-                    onSpinStart={() => {}} 
-                    onSpinEnd={handleSpinEnd}
                     customDuration={fastMode ? 2000 : 5500}
-                    winner={winner}
-                    showResult={showResult}
-                    predeterminedWinner={serverWinner}
+                    onSpinEnd={handleSpinEnd}
                 />
             </div>
 
@@ -321,7 +291,7 @@ const App: React.FC = () => {
                         </button>
 
                         <button 
-                            onClick={() => setDemoMode(!demoMode)}
+                            onClick={() => setMode(demoMode ? 'real' : 'demo')}
                             disabled={isSpinning || isLoading}
                             className={`
                                 h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1.5 border transition-all text-xs sm:text-sm
@@ -376,7 +346,7 @@ const App: React.FC = () => {
             </svg>
             <span className="font-medium">{gameError}</span>
             <button 
-              onClick={() => setGameError(null)}
+              onClick={() => clearError()}
               className="ml-2 hover:bg-white/20 rounded-full p-1 transition-colors"
             >
               <Icons.Close />

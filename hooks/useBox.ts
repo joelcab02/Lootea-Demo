@@ -1,10 +1,12 @@
 /**
  * useBox - Custom hook for loading box data
+ * 
+ * Ahora usa el Zustand store (useGameStore) en lugar del legacy oddsStore
  */
 
-import { useState, useEffect } from 'react';
-import { getBoxBySlug, BoxWithItems } from '../services/boxService';
-import { initializeStoreWithBox, getItems, subscribe } from '../services/oddsStore';
+import { useEffect } from 'react';
+import { useGameStore } from '../stores';
+import { BoxWithItems } from '../services/boxService';
 import { LootItem } from '../types';
 
 interface UseBoxResult {
@@ -15,49 +17,26 @@ interface UseBoxResult {
 }
 
 export function useBox(slug: string | undefined): UseBoxResult {
-  const [box, setBox] = useState<BoxWithItems | null>(null);
-  const [items, setItems] = useState<LootItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Usar el store de Zustand
+  const currentBox = useGameStore(state => state.currentBox);
+  const items = useGameStore(state => state.items);
+  const isLoading = useGameStore(state => state.isLoadingBox);
+  const error = useGameStore(state => state.error);
+  const loadBox = useGameStore(state => state.loadBox);
 
   useEffect(() => {
-    if (!slug) {
-      setIsLoading(false);
-      return;
+    if (slug) {
+      loadBox(slug);
     }
-
-    const loadBox = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const boxData = await getBoxBySlug(slug);
-        
-        if (!boxData) {
-          setError(`Caja "${slug}" no encontrada`);
-          setIsLoading(false);
-          return;
-        }
-
-        setBox(boxData);
-        await initializeStoreWithBox(slug);
-        setItems(getItems());
-      } catch (err) {
-        console.error('Error loading box:', err);
-        setError('Error al cargar la caja');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadBox();
-
-    const unsubscribe = subscribe((state) => {
-      setItems(state.items);
-    });
-
-    return unsubscribe;
+    // loadBox es estable (viene de Zustand), no causa re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
+
+  // Convertir currentBox a BoxWithItems format
+  const box: BoxWithItems | null = currentBox ? {
+    ...currentBox,
+    items,
+  } : null;
 
   return { box, items, isLoading, error };
 }

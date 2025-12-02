@@ -3,17 +3,24 @@ import { LootItem, Rarity } from '../../types';
 import { CARD_WIDTH, CARD_WIDTH_DESKTOP, CARD_GAP, CARD_GAP_DESKTOP, TOTAL_CARDS_IN_STRIP, WINNING_INDEX, SPIN_DURATION } from '../../constants';
 import LootCard from './LootCard';
 import { audioService } from '../../services/audioService';
-import { calculateTicketRanges, selectWeightedWinner, debugTicketDistribution } from '../../services/oddsService';
+import { calculateTicketRanges, selectWeightedWinner } from '../../services/oddsService';
+// Zustand Store - puede usarse directamente o recibir props
+import { useGameStore } from '../../stores';
 
 interface SpinnerProps {
-  items: LootItem[];
-  isSpinning: boolean;
-  onSpinStart: () => void;
-  onSpinEnd: (item: LootItem) => void;
+  // Props opcionales - si no se pasan, usa el store
+  items?: LootItem[];
+  isSpinning?: boolean;
+  onSpinStart?: () => void;
+  onSpinEnd?: (item: LootItem) => void;
   customDuration?: number;
   winner?: LootItem | null;
   showResult?: boolean;
-  predeterminedWinner?: LootItem | null; // Server-determined winner (for real money mode)
+  predeterminedWinner?: LootItem | null;
+  
+  // Modo: 'props' usa props tradicionales, 'store' usa Zustand
+  // Por defecto intenta usar store, fallback a props
+  useStore?: boolean;
 }
 
 // Constants
@@ -21,7 +28,39 @@ const TICK_OFFSET = 25;
 const INITIAL_POSITION = 10; // Start viewing from position 10 (shows items on both sides)
 const DESKTOP_BREAKPOINT = 640; // sm breakpoint
 
-const Spinner: React.FC<SpinnerProps> = ({ items, isSpinning, onSpinStart, onSpinEnd, customDuration, winner, showResult, predeterminedWinner }) => {
+const Spinner: React.FC<SpinnerProps> = (props) => {
+  // ============================================
+  // STORE vs PROPS - Híbrido para compatibilidad
+  // ============================================
+  const storePhase = useGameStore(state => state.phase);
+  const storeItems = useGameStore(state => state.items);
+  const storePredeterminedWinner = useGameStore(state => state.predeterminedWinner);
+  const storeLastWinner = useGameStore(state => state.lastWinner);
+  const storeOnSpinComplete = useGameStore(state => state.onSpinComplete);
+  
+  // Determinar si usar store o props
+  const useStore = props.useStore !== false && storeItems.length > 0;
+  
+  // Valores finales (store tiene prioridad si useStore=true)
+  const items = useStore ? storeItems : (props.items || []);
+  const isSpinning = useStore ? storePhase === 'spinning' : (props.isSpinning || false);
+  const showResult = useStore ? storePhase === 'result' : (props.showResult || false);
+  const predeterminedWinner = useStore ? storePredeterminedWinner : props.predeterminedWinner;
+  const winner = useStore ? storeLastWinner : props.winner;
+  const customDuration = props.customDuration;
+  
+  // Callbacks
+  const onSpinStart = props.onSpinStart || (() => {});
+  const onSpinEnd = useStore 
+    ? (item: LootItem) => {
+        storeOnSpinComplete(item);
+        props.onSpinEnd?.(item);
+      }
+    : (props.onSpinEnd || (() => {}));
+  
+  // ============================================
+  // RESTO DEL COMPONENTE (sin cambios)
+  // ============================================
   const containerRef = useRef<HTMLDivElement>(null);
   const [strip, setStrip] = useState<LootItem[]>([]);
   const [isDesktop, setIsDesktop] = useState(false);

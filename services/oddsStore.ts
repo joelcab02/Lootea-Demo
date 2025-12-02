@@ -1,4 +1,15 @@
 /**
+ * @deprecated LEGACY - Este archivo será eliminado
+ * 
+ * Usar en su lugar: stores/useGameStore.ts (Zustand)
+ * 
+ * Este archivo se mantiene temporalmente para:
+ * - AdminDashboard (pendiente de migrar)
+ * - Funciones de admin que modifican odds
+ * 
+ * NO usar en código nuevo.
+ * 
+ * ---
  * Odds Store - Centralized state management for odds configuration
  * 100% Supabase-driven - supports multiple boxes
  */
