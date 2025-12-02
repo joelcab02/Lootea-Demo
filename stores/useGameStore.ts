@@ -30,12 +30,14 @@ import { calculateTicketRanges, selectWeightedWinner } from '../services/oddsSer
 export type GameMode = 'demo' | 'real';
 
 /**
- * Fases del juego:
+ * Fases del juego (simplificado):
  * - idle: esperando acción del usuario
  * - spinning: animación en progreso
- * - result: mostrando resultado
+ * 
+ * Nota: No hay fase 'result'. El resultado se muestra via lastWinner
+ * y el Spinner maneja su propio efecto visual temporal.
  */
-export type GamePhase = 'idle' | 'spinning' | 'result';
+export type GamePhase = 'idle' | 'spinning';
 
 interface GameState {
   // Estado del juego
@@ -208,14 +210,8 @@ export const useGameStore = create<GameStore>()(
           return false;
         }
 
-        // Si estamos en 'result', primero resetear a idle
-        if (phase === 'result') {
-          console.log('[GameStore] Resetting from result to start new spin');
-        }
-
         // Limpiar estado previo
         set({ 
-          phase: 'idle', // Asegurar que estamos en idle
           lastWinner: null, 
           predeterminedWinner: null,
           error: null 
@@ -288,10 +284,11 @@ export const useGameStore = create<GameStore>()(
 
       /**
        * Llamado por Spinner cuando termina la animación
+       * Va directo a idle - el usuario puede jugar de nuevo inmediatamente
        */
       onSpinComplete: (winner) => {
         set({ 
-          phase: 'result',
+          phase: 'idle',  // Directo a idle, listo para jugar
           lastWinner: winner,
           predeterminedWinner: null,
         }, false, 'onSpinComplete');
@@ -302,25 +299,13 @@ export const useGameStore = create<GameStore>()(
           fetchInventory().catch(console.error);
           refreshBalance().catch(console.error);
         }
-        
-        // Auto-reset a idle después de 3 segundos
-        // Permite al usuario ver el resultado y luego jugar de nuevo
-        setTimeout(() => {
-          const currentPhase = get().phase;
-          if (currentPhase === 'result') {
-            set({ phase: 'idle' }, false, 'autoResetToIdle');
-          }
-        }, 3000);
       },
 
       /**
-       * Cierra el modal de resultado y vuelve a idle
+       * Limpia el último ganador (para ocultar efecto visual si es necesario)
        */
-      closeResult: () => {
-        set({ 
-          phase: 'idle', 
-          lastWinner: null 
-        }, false, 'closeResult');
+      clearLastWinner: () => {
+        set({ lastWinner: null }, false, 'clearLastWinner');
       },
 
       // ----------------------------------------
@@ -364,7 +349,7 @@ export const useGameStore = create<GameStore>()(
 
 export const selectIsSpinning = (state: GameStore) => state.phase === 'spinning';
 
-export const selectShowResult = (state: GameStore) => state.phase === 'result';
+export const selectHasWinner = (state: GameStore) => state.lastWinner !== null;
 
 export const selectCanSpin = (state: GameStore) => 
   state.phase === 'idle' && 

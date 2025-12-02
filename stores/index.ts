@@ -10,7 +10,7 @@ export {
   useAuthSync,
   // Selectores
   selectIsSpinning,
-  selectShowResult,
+  selectHasWinner,
   selectCanSpin,
   selectIsDemo,
   selectBoxPrice,

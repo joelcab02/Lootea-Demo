@@ -34,14 +34,13 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   // ZUSTAND STORE - Estado centralizado del juego
   // ============================================
   const mode = useGameStore(state => state.mode);
-  const phase = useGameStore(state => state.phase);
   const currentBox = useGameStore(state => state.currentBox);
   const items = useGameStore(state => state.items);
   const predeterminedWinner = useGameStore(state => state.predeterminedWinner);
   const storeError = useGameStore(state => state.error);
   
   const isSpinning = useGameStore(selectIsSpinning);
-  const showResult = phase === 'result';
+  const lastWinner = useGameStore(state => state.lastWinner);
   
   const { 
     startSpin, 
@@ -88,13 +87,6 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
     const unsubscribeAuth = subscribeAuth(() => {
       syncBalance();
       setIsLoading(false);
-      
-      // Si el phase quedó en 'spinning' pero regresamos de otra pestaña, resetear
-      const currentPhase = useGameStore.getState().phase;
-      if (currentPhase === 'spinning') {
-        console.log('[BoxLayout] Resetting stuck spinning state');
-        useGameStore.setState({ phase: 'idle', predeterminedWinner: null });
-      }
     });
     
     return () => {
@@ -108,7 +100,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   // ============================================
   
   const handleSpin = async () => {
-    console.log('[BoxLayout] handleSpin called', { isSpinning, isLoading, phase });
+    console.log('[BoxLayout] handleSpin called', { isSpinning, isLoading });
     if (isSpinning || isLoading) {
       console.log('[BoxLayout] Spin blocked:', { isSpinning, isLoading });
       return;
@@ -214,7 +206,6 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               items={items}
               winner={predeterminedWinner}
               isSpinning={isSpinning}
-              showResult={showResult}
               duration={fastMode ? 2000 : 5500}
               onComplete={handleSpinComplete}
             />

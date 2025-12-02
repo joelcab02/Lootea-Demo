@@ -29,9 +29,6 @@ interface SpinnerProps {
   /** Trigger de animación */
   isSpinning: boolean;
   
-  /** Mostrar estado de resultado (winner destacado) */
-  showResult: boolean;
-  
   /** Duración de la animación en ms */
   duration?: number;
   
@@ -54,7 +51,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   items,
   winner,
   isSpinning,
-  showResult,
   duration = SPIN_DURATION,
   onComplete,
 }) => {
@@ -67,6 +63,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   const [strip, setStrip] = useState<LootItem[]>([]);
   const [isDesktop, setIsDesktop] = useState(false);
   const [displayWinner, setDisplayWinner] = useState<LootItem | null>(null);
+  const [showWinnerEffect, setShowWinnerEffect] = useState(false);
   
   // Mutable animation state
   const stateRef = useRef({
@@ -187,6 +184,10 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       state.isAnimating = false;
       if (navigator.vibrate) navigator.vibrate(30);
       
+      // Mostrar efecto de winner por 3 segundos
+      setShowWinnerEffect(true);
+      setTimeout(() => setShowWinnerEffect(false), 3000);
+      
       // SIEMPRE llamar onComplete
       onComplete();
     }
@@ -263,7 +264,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F7C948]/40 to-transparent z-30" />
       
       {/* Center Indicator */}
-      <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showResult ? 'opacity-0' : 'opacity-100'}`}>
+      <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showWinnerEffect ? 'opacity-0' : 'opacity-100'}`}>
         <div 
           className="absolute left-1/2 top-0 bottom-0 w-[3px] -translate-x-1/2"
           style={{
@@ -322,8 +323,8 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         }}
       >
         {strip.map((item, index) => {
-          const isWinnerCard = showResult && displayWinner && index === WINNING_INDEX && item.id === displayWinner.id;
-          const isLoser = showResult && !isWinnerCard;
+          const isWinnerCard = showWinnerEffect && displayWinner && index === WINNING_INDEX && item.id === displayWinner.id;
+          const isLoser = showWinnerEffect && !isWinnerCard;
           
           return (
             <div 
