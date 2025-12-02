@@ -177,39 +177,21 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
             ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </button>
 
-          {/* Menu Button */}
-          <button 
-            onClick={onMenuClick}
-            className="p-2 text-slate-400 hover:text-white transition-colors"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Hidden dropdown trigger for desktop */}
-        <div className="hidden">
+          {/* Menu Button - Opens user dropdown */}
           <div className="relative">
             <button 
               onClick={toggleDropdown}
-              className={`flex items-center gap-1 p-1.5 rounded-lg transition-colors ${dropdownOpen ? 'bg-[#1a1d26]' : 'hover:bg-[#1a1d26]'}`}
+              className="p-2 text-slate-400 hover:text-white transition-colors"
             >
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-black text-xs font-bold bg-[#F7C948]">
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-              <span className="hidden sm:block text-white text-sm font-medium max-w-[60px] truncate">
-                {displayName}
-              </span>
-              <div className={`text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}>
-                <Icons.ChevronDown />
-              </div>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
             </button>
           
-          {/* Dropdown Menu */}
-          {dropdownOpen && (
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
             <div className="absolute right-0 top-full mt-2 w-56 bg-[#0d1019] border border-[#1e2330] rounded-xl shadow-2xl z-50 overflow-hidden">
               {/* Gold accent line */}
               <div className="h-0.5 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent" />
@@ -261,7 +243,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
                 </button>
               </div>
             </div>
-          )}
+            )}
           </div>
         </div>
         
