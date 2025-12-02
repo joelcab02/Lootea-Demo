@@ -63,16 +63,39 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
   try {
+    // DEBUG: Verificar sesión antes de llamar
+    const { data: sessionData } = await supabase.auth.getSession();
+    console.log('🔐 Session before RPC:', {
+      hasSession: !!sessionData.session,
+      userId: sessionData.session?.user?.id,
+      expiresAt: sessionData.session?.expires_at,
+      accessToken: sessionData.session?.access_token?.substring(0, 20) + '...'
+    });
+    
+    if (!sessionData.session) {
+      console.error('❌ No session found - user not authenticated');
+      return {
+        success: false,
+        error: 'NOT_AUTHENTICATED',
+        message: 'Sesión expirada. Por favor inicia sesión de nuevo.'
+      };
+    }
+    
     // Create timeout promise (20s to handle Supabase cold starts)
     const timeoutPromise = new Promise<never>((_, reject) =>
       setTimeout(() => reject(new Error('TIMEOUT')), 20000)
     );
+    
+    console.log('📡 Calling open_box RPC with boxId:', boxId);
+    const startTime = Date.now();
     
     // Race between RPC call and timeout
     const result = await Promise.race([
       supabase.rpc('open_box', { p_box_id: boxId }),
       timeoutPromise
     ]);
+    
+    console.log('✅ RPC completed in', Date.now() - startTime, 'ms');
     
     const { data, error } = result as { data: OpenBoxResponse | null; error: Error | null };
     
@@ -117,10 +140,16 @@ export async function openBox(boxId: string): Promise<PlayResult> {
     };
     
   } catch (err: any) {
-    console.error('openBox error:', err);
+    console.error('❌ openBox error:', err);
+    console.error('Error details:', {
+      message: err?.message,
+      name: err?.name,
+      stack: err?.stack?.substring(0, 200)
+    });
     
     // Handle timeout specifically
     if (err?.message === 'TIMEOUT') {
+      console.error('⏱️ TIMEOUT after 20 seconds - RPC did not respond');
       return {
         success: false,
         error: 'INTERNAL_ERROR',
