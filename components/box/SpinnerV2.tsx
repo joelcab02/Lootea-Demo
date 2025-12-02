@@ -206,6 +206,9 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     if (justStartedSpinning && winner) {
       console.log('[SpinnerV2] Starting spin with winner:', winner.name);
       
+      // IMPORTANTE: Resetear efectos visuales del spin anterior
+      setShowWinnerEffect(false);
+      
       // Lock winner for display
       setDisplayWinner(winner);
       
