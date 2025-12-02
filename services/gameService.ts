@@ -59,13 +59,13 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
 /**
  * Open a box - main game function
  * Calls server-side RPC for secure game logic
- * Includes 10 second timeout to prevent hanging
+ * Includes 20 second timeout to prevent hanging (increased for cold starts)
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
   try {
-    // Create timeout promise
+    // Create timeout promise (20s to handle Supabase cold starts)
     const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('TIMEOUT')), 10000)
+      setTimeout(() => reject(new Error('TIMEOUT')), 20000)
     );
     
     // Race between RPC call and timeout
