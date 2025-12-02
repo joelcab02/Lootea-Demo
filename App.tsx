@@ -57,7 +57,6 @@ const App: React.FC = () => {
   // ============================================
   // ESTADOS LOCALES (UI only)
   // ============================================
-  const [quantity, setQuantity] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [fastMode, setFastMode] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -250,74 +249,53 @@ const App: React.FC = () => {
                         <>
                             <span className="font-display text-2xl font-black italic tracking-tight uppercase">ABRIR</span>
                             <span className="font-display text-2xl font-black italic tracking-tight">
-                                ${(BOX_PRICE * quantity).toFixed(2)}
+                                ${BOX_PRICE.toFixed(2)}
                             </span>
                         </>
                     )}
                 </button>
 
-                {/* Secondary Controls - Mobile optimized */}
-                {/* Disabled during spin/loading to prevent bugs */}
-                <div className={`flex items-center justify-between gap-2 transition-opacity ${(isSpinning || isLoading) ? 'opacity-50 pointer-events-none' : ''}`}>
+                {/* Secondary Controls - Centered */}
+                <div className={`flex items-center justify-center gap-3 transition-opacity ${(isSpinning || isLoading) ? 'opacity-50 pointer-events-none' : ''}`}>
                     
-                    {/* Quantity Selector - Compact on mobile */}
-                    <div className="flex bg-[#0d1019] rounded-lg p-0.5 border border-[#1e2330]">
-                        {[1, 2, 3, 4, 5].map(num => (
-                            <button 
-                                key={num} 
-                                onClick={() => setQuantity(num)}
-                                disabled={isSpinning || isLoading}
-                                className={`
-                                    w-8 h-8 sm:w-9 sm:h-9 rounded-md font-display text-xs sm:text-sm transition-all uppercase
-                                    ${quantity === num 
-                                        ? 'bg-[#F7C948] text-black' 
-                                        : 'text-slate-500 hover:text-white hover:bg-[#1e2330]'}
-                                `}
-                            >
-                                {num}
-                            </button>
-                        ))}
-                    </div>
+                    {/* Fast Mode Toggle */}
+                    <button 
+                        onClick={() => setFastMode(!fastMode)}
+                        disabled={isSpinning || isLoading}
+                        className={`
+                            h-9 px-4 rounded-lg flex items-center justify-center gap-2 border transition-all text-sm
+                            ${fastMode 
+                                ? 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]' 
+                                : 'bg-[#0d1019] border-[#1e2330] text-slate-500 hover:text-white'}
+                        `}
+                    >
+                        <Icons.Lightning />
+                        <span className="font-medium">Rápido</span>
+                    </button>
 
-                    {/* Fast Mode + Demo Toggle - Icons only on mobile */}
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                        <button 
-                            onClick={() => setFastMode(!fastMode)}
-                            disabled={isSpinning || isLoading}
-                            className={`
-                                h-8 sm:h-9 w-8 sm:w-auto sm:px-3 rounded-lg flex items-center justify-center gap-2 border transition-all text-sm
-                                ${fastMode 
-                                    ? 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]' 
-                                    : 'bg-[#0d1019] border-[#1e2330] text-slate-500'}
-                            `}
-                        >
-                            <Icons.Lightning />
-                            <span className="hidden sm:block font-medium">Rápido</span>
-                        </button>
-
-                        <button 
-                            onClick={() => setMode(demoMode ? 'real' : 'demo')}
-                            disabled={isSpinning || isLoading}
-                            className={`
-                                h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg flex items-center gap-1.5 border transition-all text-xs sm:text-sm
-                                ${demoMode 
-                                    ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' 
-                                    : 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]'}
-                            `}
-                        >
-                            {demoMode ? (
-                                <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                    <span className="font-medium">Demo</span>
-                                </>
-                            ) : (
-                                <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                                    <span className="font-medium">Jugar</span>
-                                </>
-                            )}
-                        </button>
-                    </div>
+                    {/* Demo Toggle */}
+                    <button 
+                        onClick={() => setMode(demoMode ? 'real' : 'demo')}
+                        disabled={isSpinning || isLoading}
+                        className={`
+                            h-9 px-4 rounded-lg flex items-center gap-2 border transition-all text-sm
+                            ${demoMode 
+                                ? 'bg-blue-500/10 border-blue-500/50 text-blue-400' 
+                                : 'bg-[#F7C948]/10 border-[#F7C948]/50 text-[#F7C948]'}
+                        `}
+                    >
+                        {demoMode ? (
+                            <>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                <span className="font-medium">Demo</span>
+                            </>
+                        ) : (
+                            <>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                <span className="font-medium">Jugar</span>
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
         </div>
