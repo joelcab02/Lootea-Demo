@@ -4,11 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { getBoxes, BoxWithItems } from '../services/boxService';
 import { UserMenu } from '../components/auth/UserMenu';
 import Sidebar from '../components/layout/Sidebar';
 import Footer from '../components/layout/Footer';
+import { BoxCard } from '../components/home/BoxCard';
 import { onTabVisible } from '../services/visibilityService';
 
 // Logo Icon
@@ -53,14 +53,14 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0d1019] text-white font-sans">
+    <div className="min-h-screen bg-[#111111] text-white font-sans">
       
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex flex-col min-h-screen">
         
         {/* HEADER */}
-        <header className="flex items-center justify-between py-3 px-4 md:py-4 md:px-8 bg-[#0d1019] border-b border-[#1e2330]/50 sticky top-0 z-40">
+        <header className="flex items-center justify-between py-3 px-4 md:py-4 md:px-8 bg-[#111111] border-b border-[#222222] sticky top-0 z-40">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 md:w-6 md:h-6 text-[#F7C948]">
               <LogoIcon />
@@ -93,48 +93,11 @@ const HomePage: React.FC = () => {
             </div>
           )}
 
-          {/* Boxes Grid */}
+          {/* Boxes Grid - Estilo Packdraw */}
           {!isLoading && boxes.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 max-w-7xl mx-auto">
               {boxes.map((box) => (
-                <Link
-                  key={box.id}
-                  to={`/box/${box.slug}`}
-                  className="group bg-[#1a1d26] border border-[#2a2d36] rounded-xl overflow-hidden hover:border-[#F7C948]/50 transition-all hover:shadow-[0_0_30px_rgba(247,201,72,0.15)]"
-                >
-                  {/* Box Image */}
-                  <div className="aspect-square bg-[#0d1019] p-4 flex items-center justify-center relative overflow-hidden">
-                    {box.image ? (
-                      <img 
-                        src={box.image} 
-                        alt={box.name}
-                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 text-[#F7C948]/30">
-                        <LogoIcon />
-                      </div>
-                    )}
-                    
-                    {/* Hover Glow */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#F7C948]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  
-                  {/* Box Info */}
-                  <div className="p-3 md:p-4">
-                    <h3 className="font-display text-sm md:text-base font-bold text-white truncate mb-1 group-hover:text-[#F7C948] transition-colors">
-                      {box.name}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#F7C948] font-bold text-lg md:text-xl">
-                        ${box.price.toLocaleString()}
-                      </span>
-                      <span className="text-slate-500 text-xs">
-                        {box.items?.length || 0} items
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+                <BoxCard key={box.id} box={box} />
               ))}
             </div>
           )}

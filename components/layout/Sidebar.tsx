@@ -50,9 +50,9 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}
         style={{
-          background: 'linear-gradient(180deg, #0d1019 0%, #0a0d14 100%)',
-          borderRight: '1px solid rgba(247,201,72,0.1)',
-          boxShadow: '4px 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(247,201,72,0.05)',
+          background: '#111111',
+          borderRight: '1px solid #222222',
+          boxShadow: '4px 0 40px rgba(0,0,0,0.5)',
           contain: 'layout style paint',
           willChange: isOpen ? 'transform' : 'auto',
         }}
@@ -63,7 +63,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
         ></div>
         
         {/* Logo Area - Premium */}
-        <div className="h-20 flex items-center justify-between px-6 border-b border-[#1e2330]/50 relative">
+        <div className="h-20 flex items-center justify-between px-6 border-b border-[#222222] relative">
           {/* Gold accent */}
           <div className="absolute bottom-0 left-6 right-6 h-[1px] bg-gradient-to-r from-[#F7C948]/50 via-[#F7C948]/20 to-transparent"></div>
           
@@ -110,7 +110,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
         
         {/* Bottom Promo - Premium Tech */}
-        <div className="p-4 border-t border-[#1e2330]/50">
+        <div className="p-4 border-t border-[#222222]">
           <div 
             className="p-5 rounded-2xl group cursor-pointer relative overflow-hidden"
             style={{

@@ -20,7 +20,7 @@ function Footer() {
       <div 
         className="absolute inset-0"
         style={{ 
-          background: 'linear-gradient(180deg, #0a0c10 0%, #050607 100%)',
+          background: '#111111',
         }}
       />
       
@@ -141,8 +141,8 @@ function TrustCard({ icon, title, desc }: { icon: React.ReactNode, title: string
     <div 
       className="p-5 rounded-2xl relative overflow-hidden group"
       style={{
-        background: 'linear-gradient(145deg, #12141a 0%, #0a0c10 100%)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)',
+        background: '#1a1a1a',
+        border: '1px solid #222222',
         contain: 'layout paint',
       }}
     >
@@ -204,8 +204,8 @@ function SocialButton({ icon }: { icon: React.ReactNode }) {
       href="#" 
       className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-[#F7C948] transition-all relative overflow-hidden group"
       style={{
-        background: 'linear-gradient(145deg, #14161c 0%, #0c0e12 100%)',
-        border: '1px solid rgba(255,255,255,0.05)',
+        background: '#1a1a1a',
+        border: '1px solid #222222',
       }}
     >
       <div className="absolute inset-0 bg-[#F7C948] opacity-0 group-hover:opacity-10 transition-opacity" />
