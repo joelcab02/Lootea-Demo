@@ -192,17 +192,34 @@ notifyConnectionListeners('connected');
 // Expose supabase globally for debugging (remove in production)
 if (typeof window !== 'undefined') {
   (window as any).supabase = supabase;
+  (window as any).supabaseInstance = supabaseInstance;
   (window as any).testSupabase = async () => {
     console.log('[Test] Starting Supabase test...');
+    console.log('[Test] Client version:', clientVersion);
     const start = Date.now();
+    
+    // Add timeout to detect hanging
+    const timeoutId = setTimeout(() => {
+      console.error('[Test] TIMEOUT - request hanging after 5 seconds');
+    }, 5000);
+    
     try {
       const { data, error } = await supabaseInstance.from('items').select('id').limit(1);
+      clearTimeout(timeoutId);
       console.log('[Test] Result in', Date.now() - start, 'ms:', { data, error });
       return { success: !error, data, error };
     } catch (e) {
+      clearTimeout(timeoutId);
       console.error('[Test] Exception:', e);
       return { success: false, error: e };
     }
+  };
+  
+  // Force recreate client
+  (window as any).resetSupabase = () => {
+    console.log('[Test] Forcing client recreation...');
+    recreateSupabaseClient();
+    console.log('[Test] Client recreated, version:', clientVersion);
   };
 }
 
