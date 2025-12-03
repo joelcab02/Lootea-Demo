@@ -189,6 +189,23 @@ export async function forceReconnect(): Promise<boolean> {
 // El primer request real confirmará el estado
 notifyConnectionListeners('connected');
 
+// Expose supabase globally for debugging (remove in production)
+if (typeof window !== 'undefined') {
+  (window as any).supabase = supabase;
+  (window as any).testSupabase = async () => {
+    console.log('[Test] Starting Supabase test...');
+    const start = Date.now();
+    try {
+      const { data, error } = await supabaseInstance.from('items').select('id').limit(1);
+      console.log('[Test] Result in', Date.now() - start, 'ms:', { data, error });
+      return { success: !error, data, error };
+    } catch (e) {
+      console.error('[Test] Exception:', e);
+      return { success: false, error: e };
+    }
+  };
+}
+
 // ============================================
 // Robust Operation Wrapper
 // ============================================
