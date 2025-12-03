@@ -1589,14 +1589,14 @@ const ProductEditSection: React.FC<{
     try {
       if (isNew) {
         console.log('[ProductEdit] Inserting new product...');
-        const { data, error } = await supabase.from('items').insert({
+        const { error } = await supabase.from('items').insert({
           name: form.name,
           price: parseFloat(form.price),
           rarity: form.rarity,
           image_url: form.image
-        }).select();
+        });
         
-        console.log('[ProductEdit] Insert result:', { data, error });
+        console.log('[ProductEdit] Insert completed, error:', error);
         
         if (error) {
           console.error('Insert error:', error);
@@ -1606,14 +1606,14 @@ const ProductEditSection: React.FC<{
         }
       } else {
         console.log('[ProductEdit] Updating product...');
-        const { data, error } = await supabase.from('items').update({
+        const { error } = await supabase.from('items').update({
           name: form.name,
           price: parseFloat(form.price),
           rarity: form.rarity,
           image_url: form.image
-        }).eq('id', productId).select();
+        }).eq('id', productId);
         
-        console.log('[ProductEdit] Update result:', { data, error });
+        console.log('[ProductEdit] Update completed, error:', error);
         
         if (error) {
           console.error('Update error:', error);
