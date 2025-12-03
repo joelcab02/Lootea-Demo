@@ -1588,24 +1588,19 @@ const ProductEditSection: React.FC<{
     
     try {
       if (isNew) {
-        console.log('[ProductEdit] Inserting new product...');
-        const { error } = await supabase.from('items').insert({
+        const { data, error } = await supabase.from('items').insert({
           name: form.name,
           price: parseFloat(form.price),
           rarity: form.rarity,
           image_url: form.image
-        });
-        
-        console.log('[ProductEdit] Insert completed, error:', error);
+        }).select().single();
         
         if (error) {
-          console.error('Insert error:', error);
           alert('Error al crear: ' + error.message);
           setIsSaving(false);
           return;
         }
       } else {
-        console.log('[ProductEdit] Updating product...');
         const { error } = await supabase.from('items').update({
           name: form.name,
           price: parseFloat(form.price),
@@ -1613,10 +1608,7 @@ const ProductEditSection: React.FC<{
           image_url: form.image
         }).eq('id', productId);
         
-        console.log('[ProductEdit] Update completed, error:', error);
-        
         if (error) {
-          console.error('Update error:', error);
           alert('Error al actualizar: ' + error.message);
           setIsSaving(false);
           return;
