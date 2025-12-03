@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Rarity, LootItem } from '../types';
-import { supabase } from '../services/supabaseClient';
+import { supabase, withRetry } from '../services/supabaseClient';
 import { Box, getBoxes, getBoxBySlug } from '../services/boxService';
 import type { User } from '@supabase/supabase-js';
 
@@ -1585,39 +1585,47 @@ const ProductEditSection: React.FC<{
     
     setIsSaving(true);
     
-    if (isNew) {
-      const { data, error } = await supabase.from('items').insert({
-        name: form.name,
-        price: parseFloat(form.price),
-        rarity: form.rarity,
-        image_url: form.image
-      }).select().single();
-      
-      if (error) {
-        alert('Error: ' + error.message);
+    try {
+      if (isNew) {
+        await withRetry(
+          async () => {
+            const { data, error } = await supabase.from('items').insert({
+              name: form.name,
+              price: parseFloat(form.price),
+              rarity: form.rarity,
+              image_url: form.image
+            }).select().single();
+            
+            if (error) throw new Error(error.message);
+            return data;
+          },
+          { operationName: 'Create Product', retries: 1 }
+        );
+        
         setIsSaving(false);
-        return;
-      }
-      
-      setIsSaving(false);
-      navigate('products');
-      onSave();
-    } else {
-      const { error } = await supabase.from('items').update({
-        name: form.name,
-        price: parseFloat(form.price),
-        rarity: form.rarity,
-        image_url: form.image
-      }).eq('id', productId);
-      
-      if (error) {
-        alert('Error: ' + error.message);
+        navigate('products');
+        onSave();
+      } else {
+        await withRetry(
+          async () => {
+            const { error } = await supabase.from('items').update({
+              name: form.name,
+              price: parseFloat(form.price),
+              rarity: form.rarity,
+              image_url: form.image
+            }).eq('id', productId);
+            
+            if (error) throw new Error(error.message);
+          },
+          { operationName: 'Update Product', retries: 1 }
+        );
+        
         setIsSaving(false);
-        return;
+        onSave();
       }
-      
+    } catch (err: any) {
+      alert('Error: ' + err.message);
       setIsSaving(false);
-      onSave();
     }
   };
 

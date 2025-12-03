@@ -3,7 +3,7 @@
  * Converts base64 images to optimized WebP and uploads to CDN
  */
 
-import { supabase } from './supabaseClient';
+import { supabase, withRetry } from './supabaseClient';
 import { hasTransparency } from './imageNormalizer';
 
 const BUCKET_NAME = 'assets';
@@ -125,36 +125,39 @@ export async function uploadToStorage(
     blobType: blob.type
   });
   
-  try {
-    console.log('[ImageService] Calling supabase.storage.upload...');
-    
-    const { data, error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(filename, blob, {
-        contentType,
-        cacheControl: '31536000', // 1 year cache
-        upsert: false
-      });
-    
-    console.log('[ImageService] Upload response:', { data, error });
-    
-    if (error) {
-      console.error('[ImageService] Upload error:', error);
-      throw new Error(`Upload failed: ${error.message}`);
+  // Use withRetry for robust upload with timeout and automatic retry
+  return withRetry(
+    async () => {
+      console.log('[ImageService] Calling supabase.storage.upload...');
+      
+      const { data, error } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(filename, blob, {
+          contentType,
+          cacheControl: '31536000', // 1 year cache
+          upsert: false
+        });
+      
+      if (error) {
+        console.error('[ImageService] Upload error:', error);
+        throw new Error(`Upload failed: ${error.message}`);
+      }
+      
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(data.path);
+      
+      console.log('[ImageService] Public URL:', urlData.publicUrl);
+      
+      return urlData.publicUrl;
+    },
+    {
+      timeoutMs: 15000, // 15 seconds for uploads (larger files)
+      retries: 1,
+      operationName: 'Storage Upload'
     }
-    
-    // Get public URL
-    const { data: urlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(data.path);
-    
-    console.log('[ImageService] Public URL:', urlData.publicUrl);
-    
-    return urlData.publicUrl;
-  } catch (err: any) {
-    console.error('[ImageService] Exception in uploadToStorage:', err);
-    throw err;
-  }
+  );
 }
 
 /**
