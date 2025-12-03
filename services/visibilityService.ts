@@ -43,9 +43,14 @@ const MIN_BACKGROUND_TIME_MS = 30 * 1000;
 
 /**
  * Inicializa el servicio de visibilidad
- * Solo se ejecuta una vez
+ * DISABLED FOR MVP - causing more issues than it solves
  */
 export function initVisibilityService(): void {
+  console.log('[VisibilityService] DISABLED for MVP stability');
+  return;
+  
+  // Original code disabled:
+  /*
   if (isInitialized) {
     console.log('[VisibilityService] Already initialized');
     return;
@@ -60,6 +65,7 @@ export function initVisibilityService(): void {
   
   document.addEventListener('visibilitychange', handleVisibilityChange);
   console.log('👁️ VisibilityService initialized');
+  */
 }
 
 /**
@@ -156,18 +162,8 @@ export function onTabVisible(
   callback: VisibilityCallback, 
   priority: number = 50
 ): () => void {
-  // Inicializar si no se ha hecho
-  initVisibilityService();
-  
-  // Registrar suscripción
-  subscriptions.set(id, { id, callback, priority });
-  console.log(`👁️ Registered visibility callback: "${id}" (priority: ${priority})`);
-  
-  // Retornar función de cleanup
-  return () => {
-    subscriptions.delete(id);
-    console.log(`👁️ Unregistered visibility callback: "${id}"`);
-  };
+  // DISABLED FOR MVP - return empty cleanup function
+  return () => {};
 }
 
 /**
