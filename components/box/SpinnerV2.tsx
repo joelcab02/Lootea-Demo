@@ -352,7 +352,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
               {isWinnerCard && (
                 <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
                   <p className="text-white font-medium text-sm">{item.name}</p>
-                  <p className="text-slate-400 text-sm">${item.price.toFixed(2)}</p>
+                  <p className="text-slate-400 text-sm">${item.price.toFixed(2)} MXN</p>
                 </div>
               )}
             </div>

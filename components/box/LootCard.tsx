@@ -122,7 +122,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
               WebkitTextFillColor: 'transparent',
             }}
           >
-            ${item.price.toLocaleString('es-MX')}
+            ${item.price.toLocaleString('es-MX')} MXN
           </span>
         </div>
       </div>

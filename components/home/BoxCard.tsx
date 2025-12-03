@@ -40,7 +40,7 @@ export const BoxCard: React.FC<BoxCardProps> = ({ box }) => {
       {/* Price */}
       <div className="mt-2">
         <span className="text-white text-sm md:text-base">
-          ${box.price.toLocaleString()}
+          ${box.price.toLocaleString()} MXN
         </span>
       </div>
     </Link>

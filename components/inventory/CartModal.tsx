@@ -161,7 +161,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between p-4 border-b border-[#1e2330]">
           <div className="flex items-center gap-3">
             <span className="text-white font-bold text-lg">Tu Carrito</span>
-            <span className="text-[#F7C948] font-bold">${inventory.totalValue.toFixed(2)}</span>
+            <span className="text-[#F7C948] font-bold">${inventory.totalValue.toFixed(2)} MXN</span>
           </div>
           <button 
             onClick={onClose}
@@ -175,7 +175,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between p-4 border-b border-[#1e2330] bg-[#0a0c10]">
           <div className="text-slate-400 text-sm">
             {selectedItems.size > 0 ? (
-              <span>{selectedItems.size} seleccionados <span className="text-[#F7C948]">${selectedValue.toFixed(2)}</span></span>
+              <span>{selectedItems.size} seleccionados <span className="text-[#F7C948]">${selectedValue.toFixed(2)} MXN</span></span>
             ) : (
               <span>{inventory.itemCount} items</span>
             )}
@@ -271,7 +271,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                   {/* Info */}
                   <div className="p-2 pt-0">
                     <p className="text-white text-xs font-medium truncate">{item.name}</p>
-                    <p className="text-[#F7C948] text-sm font-bold">${item.price.toFixed(2)}</p>
+                    <p className="text-[#F7C948] text-sm font-bold">${item.price.toFixed(2)} MXN</p>
                   </div>
                   
                   {/* Sell button */}

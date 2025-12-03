@@ -170,7 +170,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
           >
             <span className="font-display text-2xl font-black tracking-tight uppercase">ABRIR</span>
             <span className="font-display text-2xl font-black tracking-tight">
-              ${BOX_PRICE.toFixed(2)}
+              ${BOX_PRICE.toFixed(2)} MXN
             </span>
           </button>
 

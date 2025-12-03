@@ -112,7 +112,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
               WebkitTextFillColor: 'transparent',
             }}
           >
-            ${item.price.toLocaleString()}
+            ${item.price.toLocaleString()} MXN
           </span>
           <span className="text-slate-500 text-[10px] font-medium">
             {item.normalizedOdds < 1 

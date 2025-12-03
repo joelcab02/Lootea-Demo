@@ -195,7 +195,7 @@ const Header: React.FC = () => {
                     }}
                   >
                     <span className="font-mono font-bold text-sm text-black">
-                      ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
                     </span>
                   </button>
 
