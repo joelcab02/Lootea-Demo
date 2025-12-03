@@ -4,9 +4,10 @@
  */
 
 import { supabase } from './supabaseClient';
+import { hasTransparency } from './imageNormalizer';
 
 const BUCKET_NAME = 'assets';
-const MAX_SIZE = 512; // Max width/height in pixels
+const MAX_SIZE = 1024; // Max width/height in pixels
 const WEBP_QUALITY = 0.85; // 0-1, higher = better quality but larger file
 
 /**
@@ -105,8 +106,8 @@ function generateFilename(productName: string): string {
 }
 
 /**
- * Upload a compressed image to Supabase Storage
- * @param blob - WebP blob to upload
+ * Upload an image to Supabase Storage
+ * @param blob - Image blob to upload (WebP or PNG)
  * @param filename - Filename for the asset
  * @returns Public URL of the uploaded image
  */
@@ -114,10 +115,13 @@ export async function uploadToStorage(
   blob: Blob,
   filename: string
 ): Promise<string> {
+  // Determine content type from filename
+  const contentType = filename.endsWith('.png') ? 'image/png' : 'image/webp';
+  
   const { data, error } = await supabase.storage
     .from(BUCKET_NAME)
     .upload(filename, blob, {
-      contentType: 'image/webp',
+      contentType,
       cacheControl: '31536000', // 1 year cache
       upsert: false
     });
@@ -135,7 +139,17 @@ export async function uploadToStorage(
 }
 
 /**
+ * Convert base64 to PNG blob (preserves transparency)
+ */
+async function base64ToPngBlob(base64Data: string): Promise<Blob> {
+  const response = await fetch(base64Data);
+  return response.blob();
+}
+
+/**
  * Full pipeline: Compress base64 image and upload to Storage
+ * - If image has transparency: upload as PNG (preserves alpha)
+ * - If no transparency: compress to WebP
  * @param base64Data - Base64 image from Gemini
  * @param productName - Product name for filename
  * @returns Public CDN URL
@@ -144,18 +158,30 @@ export async function processAndUploadImage(
   base64Data: string,
   productName: string
 ): Promise<string> {
-  console.log('🖼️ Compressing image to WebP...');
-  const blob = await compressToWebP(base64Data);
+  const isTransparent = await hasTransparency(base64Data);
   
-  const originalSize = Math.round(base64Data.length * 0.75 / 1024); // Approximate KB
+  let blob: Blob;
+  let filename: string;
+  
+  if (isTransparent) {
+    // Preserve transparency - use PNG
+    console.log('[ImageService] Image has transparency, using PNG...');
+    blob = await base64ToPngBlob(base64Data);
+    filename = generateFilename(productName).replace('.webp', '.png');
+  } else {
+    // No transparency - compress to WebP
+    console.log('[ImageService] Compressing to WebP...');
+    blob = await compressToWebP(base64Data);
+    filename = generateFilename(productName);
+  }
+  
+  const originalSize = Math.round(base64Data.length * 0.75 / 1024);
   const compressedSize = Math.round(blob.size / 1024);
-  console.log(`📦 Compressed: ${originalSize}KB → ${compressedSize}KB (${Math.round((1 - compressedSize/originalSize) * 100)}% reduction)`);
+  console.log(`[ImageService] Size: ${originalSize}KB -> ${compressedSize}KB`);
   
-  const filename = generateFilename(productName);
-  console.log('☁️ Uploading to Storage...');
-  
+  console.log('[ImageService] Uploading to Storage...');
   const url = await uploadToStorage(blob, filename);
-  console.log('✅ Uploaded:', url);
+  console.log('[ImageService] Uploaded:', url);
   
   return url;
 }

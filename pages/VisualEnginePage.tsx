@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
 import { processAndUploadImage } from '../services/imageService';
 import { removeBackground, isRemoveBgConfigured } from '../services/removeBgService';
+import { normalizeProductImage } from '../services/imageNormalizer';
 import {
   type AssetType,
   type EngineMode,
@@ -251,8 +252,13 @@ const VisualEnginePage: React.FC = () => {
     setError(null);
     
     try {
-      const result = await removeBackground(generatedImage);
-      setGeneratedImage(result);
+      // Step 1: Remove background
+      const noBgImage = await removeBackground(generatedImage);
+      
+      // Step 2: Normalize (crop, scale 75%, center in 1024x1024)
+      const normalizedImage = await normalizeProductImage(noBgImage);
+      
+      setGeneratedImage(normalizedImage);
       setCdnUrl(null); // Reset CDN URL since image changed
     } catch (err: any) {
       console.error('Background removal failed:', err);
