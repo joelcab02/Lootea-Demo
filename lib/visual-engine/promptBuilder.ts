@@ -179,7 +179,8 @@ export function getGeminiAspectRatio(ratio: AspectRatio): string {
     '16:9': '16:9',
     '9:16': '9:16',
     '4:3': '4:3',
-    '3:4': '3:4'
+    '3:4': '3:4',
+    '4:5': '4:5'
   };
   return mapping[ratio] || '1:1';
 }

@@ -5,6 +5,7 @@ import { processAndUploadImage } from '../services/imageService';
 import {
   type AssetType,
   type EngineMode,
+  type AspectRatio,
   type GenerationInput,
   type GenerationResult,
   buildPrompt,
@@ -18,6 +19,7 @@ const VisualEnginePage: React.FC = () => {
   // Mode & Type
   const [mode, setMode] = useState<EngineMode>('create');
   const [assetType, setAssetType] = useState<AssetType>('producto');
+  const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
   
   // Input
   const [description, setDescription] = useState('');
@@ -125,13 +127,14 @@ const VisualEnginePage: React.FC = () => {
         type: assetType,
         description: description.trim(),
         referenceImages: referenceImages.map(r => r.data),
+        aspectRatio: aspectRatio,
         lighting: 'golden',
         includeBox: assetType === 'caja',
       };
 
       // Build prompt using our DNA system
       const prompt = buildPrompt(input);
-      const aspectRatio = getGeminiAspectRatio(getAspectRatio(input));
+      const selectedAspectRatio = getGeminiAspectRatio(aspectRatio);
 
       console.log('[Visual Engine] Generating with DNA...');
       console.log('[Visual Engine] Aspect Ratio:', aspectRatio);
@@ -160,7 +163,7 @@ const VisualEnginePage: React.FC = () => {
         },
         config: {
           imageConfig: {
-            aspectRatio: aspectRatio as any,
+            aspectRatio: selectedAspectRatio as any,
             imageSize: "1K"
           }
         }
@@ -318,6 +321,26 @@ const VisualEnginePage: React.FC = () => {
             </p>
           </div>
 
+          {/* Aspect Ratio Selector */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-400 uppercase">Proporcion</label>
+            <div className="flex gap-2">
+              {(['1:1', '4:5', '16:9', '9:16'] as AspectRatio[]).map((ratio) => (
+                <button
+                  key={ratio}
+                  onClick={() => setAspectRatio(ratio)}
+                  className={`px-3 py-2 rounded-lg border text-xs font-bold transition-all ${
+                    aspectRatio === ratio
+                      ? 'bg-[#d4af37]/10 border-[#d4af37] text-[#d4af37]'
+                      : 'bg-[#1e2330] border-[#2a3040] text-slate-400 hover:border-slate-500'
+                  }`}
+                >
+                  {ratio}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Description Input (for create mode) */}
           {mode === 'create' && (
             <div className="space-y-2">
@@ -336,7 +359,7 @@ const VisualEnginePage: React.FC = () => {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
-                {mode === 'recreate' ? '📷 Imagen a Transformar' : '📷 Referencias (opcional)'}
+                {mode === 'recreate' ? 'Imagen a Transformar' : 'Referencias (opcional)'}
               </label>
               {referenceImages.length > 0 && (
                 <button
@@ -507,10 +530,6 @@ const VisualEnginePage: React.FC = () => {
               </div>
             </div>
           )}
-
-          <div className="mt-auto pt-4 text-xs text-slate-600">
-            *Usa Gemini 3 Pro Image Preview con DNA Lootea.
-          </div>
         </div>
 
         {/* Preview Side */}

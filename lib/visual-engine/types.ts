@@ -18,7 +18,7 @@ export type EngineMode =
   | 'recreate';   // Transformar imagen existente
 
 // Aspect ratios soportados
-export type AspectRatio = '1:1' | '16:9' | '9:16' | '4:3' | '3:4';
+export type AspectRatio = '1:1' | '16:9' | '9:16' | '4:3' | '3:4' | '4:5';
 
 // Estilos de iluminación
 export type LightingStyle = 
