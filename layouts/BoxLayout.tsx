@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import SpinnerV2 from '../components/box/SpinnerV2';
 import { Layout } from '../components/layout/Layout';
 import CaseContentGrid from '../components/box/CaseContentGrid';
@@ -142,35 +141,6 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
 
   return (
     <Layout>
-      {/* Sub Header - Back + Box Name + Volume */}
-      <div className="w-full flex items-center justify-between px-4 py-2 border-b border-[#222222]">
-        <Link 
-          to="/" 
-          className="flex items-center gap-1.5 text-slate-500 hover:text-white transition-colors text-xs"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          <span>Volver</span>
-        </Link>
-        
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 text-[#F7C948]">
-            <Icons.Logo />
-          </div>
-          <span className="font-display text-sm text-white uppercase">
-            {currentBox?.name || 'LOOTEA'}
-          </span>
-        </div>
-
-        <button 
-          onClick={() => setIsMuted(!isMuted)}
-          className={`p-2 transition-colors ${isMuted ? 'text-slate-600' : 'text-slate-400 hover:text-white'}`}
-        >
-          {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
-        </button>
-      </div>
-
       {/* GAME AREA */}
       <div className="flex flex-col items-center relative">
         {/* SPINNER */}
@@ -242,6 +212,18 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
                 </>
               )}
             </button>
+
+            <button 
+              onClick={() => setIsMuted(!isMuted)}
+              className={`
+                h-9 w-9 rounded-lg flex items-center justify-center border transition-all
+                ${isMuted 
+                  ? 'bg-[#111111] border-[#222222] text-slate-600' 
+                  : 'bg-[#111111] border-[#222222] text-slate-400 hover:text-white'}
+              `}
+            >
+              {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
+            </button>
           </div>
         </div>
       </div>
@@ -249,7 +231,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
       {/* CONTENT */}
       <div className="flex-1">
         <div className="flex flex-col gap-8 md:gap-12 py-8 md:py-12">
-          <CaseContentGrid items={items} />
+          <CaseContentGrid items={items} boxName={currentBox?.name} />
         </div>
       </div>
 

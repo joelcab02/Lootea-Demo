@@ -4,9 +4,10 @@ import { calculateTicketRanges } from '../../services/oddsService';
 
 interface CaseContentGridProps {
     items: LootItem[];
+    boxName?: string;
 }
 
-const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
+const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items, boxName }) => {
   const sortedItemsWithOdds = useMemo(() => {
     const withTickets = calculateTicketRanges(items);
     return [...withTickets].sort((a, b) => b.price - a.price);
@@ -14,16 +15,18 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items }) => {
 
   return (
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
-      {/* Header - Premium */}
+      {/* Header - Box Name + Content Info */}
       <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
         <div 
-          className="w-1 h-8 rounded-full"
+          className="w-1 h-12 rounded-full"
           style={{ background: 'linear-gradient(180deg, #F7C948 0%, #996600 100%)' }}
         />
         <div>
-          <h2 className="font-display text-xl md:text-2xl text-white uppercase tracking-wide">
-            Contenido de la Caja
-          </h2>
+          {boxName && (
+            <h1 className="font-display text-2xl md:text-3xl text-white uppercase tracking-wide mb-1">
+              {boxName}
+            </h1>
+          )}
           <p className="text-slate-500 text-xs uppercase tracking-wider">
             {sortedItemsWithOdds.length} premios • Ordenados por valor
           </p>
