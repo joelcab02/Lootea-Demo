@@ -31,25 +31,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    // Refrescar token 60 segundos antes de expirar
     flowType: 'pkce',
   },
   global: {
     headers: {
       'x-client-info': 'lootea-web',
     },
-    // Timeout global para fetch requests (15 segundos)
-    fetch: (url, options = {}) => {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      
-      return fetch(url, {
-        ...options,
-        signal: controller.signal,
-      }).finally(() => clearTimeout(timeoutId));
-    },
   },
-  // Configuración robusta para realtime y reconexión
   realtime: {
     params: {
       eventsPerSecond: 10,
