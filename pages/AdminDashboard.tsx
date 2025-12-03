@@ -1402,16 +1402,22 @@ const ProductsSection: React.FC<{
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'LEGENDARY' | 'EPIC' | 'RARE' | 'COMMON'>('all');
   
-  const handleDelete = async (product: LootItem) => {
-    console.log('[Delete] Clicked:', product.id, product.name);
-    if (!confirm(`¿Eliminar "${product.name}"?`)) {
-      console.log('[Delete] Cancelled by user');
+  const handleDeactivate = async (product: LootItem) => {
+    if (!confirm(`¿Desactivar "${product.name}"? El item no aparecerá en cajas pero se mantendrá en inventarios de usuarios.`)) {
       return;
     }
-    console.log('[Delete] Confirmed, deleting...');
     setIsSaving(true);
-    const { error } = await supabase.from('items').delete().eq('id', product.id);
-    console.log('[Delete] Result:', error ? error.message : 'Success');
+    const { error } = await supabase.from('items').update({ is_active: false }).eq('id', product.id);
+    if (error) {
+      alert('Error: ' + error.message);
+    }
+    onRefresh();
+    setIsSaving(false);
+  };
+  
+  const handleReactivate = async (product: LootItem) => {
+    setIsSaving(true);
+    await supabase.from('items').update({ is_active: true }).eq('id', product.id);
     onRefresh();
     setIsSaving(false);
   };
@@ -1498,7 +1504,7 @@ const ProductsSection: React.FC<{
           </thead>
           <tbody>
             {filteredProducts.map(product => (
-              <tr key={product.id} className="border-t border-[#1a1d24] hover:bg-[#0f1116]">
+              <tr key={product.id} className={`border-t border-[#1a1d24] hover:bg-[#0f1116] ${(product as any).is_active === false ? 'opacity-50' : ''}`}>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-[#1a1d24] rounded flex items-center justify-center flex-shrink-0">
@@ -1508,7 +1514,14 @@ const ProductsSection: React.FC<{
                         <span className="text-sm">{product.image || '?'}</span>
                       )}
                     </div>
-                    <span className="text-sm font-medium text-white">{product.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-white">{product.name}</span>
+                      {(product as any).is_active === false && (
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-red-500/20 text-red-400">
+                          INACTIVO
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </td>
                 <td className="py-3 px-4">
@@ -1532,12 +1545,21 @@ const ProductsSection: React.FC<{
                     >
                       Editar
                     </button>
-                    <button
-                      onClick={() => handleDelete(product)}
-                      className="text-xs text-slate-400 hover:text-red-400 transition-colors"
-                    >
-                      Eliminar
-                    </button>
+                    {(product as any).is_active !== false ? (
+                      <button
+                        onClick={() => handleDeactivate(product)}
+                        className="text-xs text-slate-400 hover:text-red-400 transition-colors"
+                      >
+                        Desactivar
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleReactivate(product)}
+                        className="text-xs text-slate-400 hover:text-emerald-400 transition-colors"
+                      >
+                        Reactivar
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
