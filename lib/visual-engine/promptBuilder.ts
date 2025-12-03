@@ -98,62 +98,36 @@ export function buildRecreatePrompt(input: GenerationInput): string {
 ` 
     : '';
 
+  // Prompt minimalista para máxima fidelidad
   return `
 [${requestId}]
 
-=== LOOTEA VISUAL ENGINE - RECREATE MODE ===
+Take this EXACT image and enhance it. DO NOT change the composition.
 
-TASK: Transform this reference image into a premium Lootea-style ${template.label} render.
+KEEP IDENTICAL:
+- Exact position of every element
+- Exact angles and orientations  
+- Exact spacing and overlap between items
+- Exact colors of all products
+- Number of items and their arrangement
 
-=== CRITICAL - MAXIMUM FIDELITY TO REFERENCE ===
-You MUST replicate the reference image with PIXEL-PERFECT positioning:
+ONLY CHANGE:
+- Background: replace with pure black (#000000)
+- Lighting: add subtle golden rim light around edges
+- Quality: enhance to premium 3D render quality
+- Materials: make metal/glass/plastic look more realistic
 
-POSITION & LAYOUT (HIGHEST PRIORITY):
-- EXACT same position of each product - do not move, rotate, or reposition
-- EXACT same spacing between products - maintain relative distances
-- EXACT same angles and orientations - if vertical, keep vertical
-- EXACT same overlap/layering - if products touch or overlap, keep it
-- Products must be in the SAME location in the frame as the reference
-- Do NOT float, tilt, or separate products that are together in reference
-- Do NOT add artistic interpretation to the layout
-
-QUANTITY & IDENTITY:
-- EXACT same number of products - count them and match exactly
-- EXACT same product types and models
-- EXACT same colors - do not change or tint any colors
-- If reference shows front view, show front view. If shows back, show back.
-
-=== WHAT TO ENHANCE (Lootea DNA) - WITHOUT CHANGING POSITION ===
-- Upgrade to premium 3D render quality
-- Add subtle golden rim light AROUND product edges (ambient lighting only)
-- Replace background with pure black or dark textured surface
-- Enhance material definition (metal, glass, plastic look more realistic)
-- Add depth, dimension, and cinematic shadows
-- Sharp focus on all products
-- Keep products in their ORIGINAL positions from reference
-
-=== WHAT TO NEVER CHANGE ===
-- Product positions, angles, and arrangement from reference
-- Product colors must remain EXACTLY as in reference
-- Product design, logos, and details must be identical
-- Do NOT add gold/yellow tint to products themselves
-- Do NOT add elements not present in reference
-- Do NOT reinterpret or "improve" the composition
+DO NOT:
+- Move, rotate, or reposition anything
+- Add or remove any elements
+- Tint products with gold/yellow
+- Reinterpret or reimagine the layout
+- Float or separate items that are together
 ${productAuthenticitySection}
-=== ASSET TYPE: ${template.label.toUpperCase()} ===
-${template.basePrompt}
-
-=== LIGHTING ===
-${lighting.prompt}
 ${boxSection}
-${backgroundPrompt}
+${input.description ? `\nADDITIONAL: ${input.description}` : ''}
 
-${input.description ? `ADDITIONAL INSTRUCTIONS: ${input.description}` : ''}
-
-=== OUTPUT ===
-- Faithful recreation of reference with Lootea premium aesthetic
-- Same composition, enhanced quality
-- Ready for marketing use
+OUTPUT: Same composition as reference, only with black background and golden rim lighting.
 `;
 }
 
