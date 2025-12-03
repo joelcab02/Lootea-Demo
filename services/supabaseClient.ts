@@ -149,64 +149,29 @@ export async function testConnection(): Promise<boolean> {
 
 /**
  * Forzar reconexión - útil cuando se detecta que la conexión está muerta
- * Ahora recrea el cliente si la reconexión normal falla
+ * Estrategia: recrear cliente inmediatamente, no intentar operaciones que pueden colgarse
  */
 export async function forceReconnect(): Promise<boolean> {
-  console.log('[Supabase] Forcing reconnection...');
+  console.log('[Supabase] Forcing reconnection - recreating client...');
   notifyConnectionListeners('connecting');
   
-  try {
-    // 1. Intentar refrescar sesión con cliente actual
-    const { data: { session }, error: authError } = await supabaseInstance.auth.getSession();
-    
-    if (authError) {
-      console.warn('[Supabase] Auth failed, recreating client...');
-      recreateSupabaseClient();
-      return await testConnection();
-    }
-    
-    // 2. Si hay sesión, refrescar el token
-    if (session) {
-      const { error: refreshError } = await supabaseInstance.auth.refreshSession();
-      if (refreshError) {
-        console.warn('[Supabase] Token refresh failed:', refreshError.message);
-      }
-    }
-    
-    // 3. Verificar que la conexión a la DB funciona
-    let isConnected = await testConnection();
-    
-    if (isConnected) {
-      console.log('[Supabase] Reconnection successful');
-      return true;
-    }
-    
-    // 4. Si testConnection falla, recrear cliente y reintentar
-    console.warn('[Supabase] Connection test failed, recreating client...');
-    recreateSupabaseClient();
-    
-    // Esperar un momento para que el nuevo cliente se estabilice
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    isConnected = await testConnection();
-    
-    if (isConnected) {
-      console.log('[Supabase] Reconnection successful after client recreation');
-      return true;
-    }
-    
-    console.error('[Supabase] Reconnection failed even after client recreation');
-    return false;
-  } catch (err: any) {
-    console.error('[Supabase] Reconnection error:', err.message);
-    
-    // Último intento: recrear cliente
-    console.warn('[Supabase] Exception caught, recreating client as last resort...');
-    recreateSupabaseClient();
-    
-    notifyConnectionListeners('error');
-    return false;
+  // Recrear cliente inmediatamente - no intentar operaciones con cliente potencialmente muerto
+  recreateSupabaseClient();
+  
+  // Pequeña pausa para estabilizar
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // Verificar que funciona
+  const isConnected = await testConnection();
+  
+  if (isConnected) {
+    console.log('[Supabase] Reconnection successful');
+    return true;
   }
+  
+  console.error('[Supabase] Reconnection failed');
+  notifyConnectionListeners('error');
+  return false;
 }
 
 // Marcar como conectado inicialmente (optimista)
