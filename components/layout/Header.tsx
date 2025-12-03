@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { AuthModal } from '../auth/AuthModal';
 import { CartModal } from '../inventory/CartModal';
 import { DepositModal } from '../deposit/DepositModal';
+import { Logo } from '../shared/Logo';
 import { subscribeAuth, signOut, AuthState, getBalance } from '../../services/authService';
 import { subscribeInventory, InventoryState, fetchInventory } from '../../services/inventoryService';
 
@@ -20,12 +21,6 @@ import { subscribeInventory, InventoryState, fetchInventory } from '../../servic
 // ICONS
 // ============================================
 const Icons = {
-  Logo: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
-      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-      <path d="m3.3 7 8.7 5 8.7-5M12 22V12" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-    </svg>
-  ),
   Cart: () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
       <circle cx="9" cy="21" r="1" />
@@ -140,28 +135,16 @@ const Header: React.FC = () => {
   return (
     <>
       <header 
-        className="sticky top-0 z-50 w-full"
-        style={{
-          background: 'rgba(9, 11, 17, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-        }}
+        className="sticky top-0 z-50 w-full bg-[#111111] border-b border-[#222222]"
       >
-        {/* Bottom border - golden rim light */}
-        <div 
-          className="absolute bottom-0 left-0 right-0 h-px"
-          style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(247,201,72,0.3) 50%, transparent 100%)',
-          }}
-        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16">
             
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="text-[#F7C948] transition-transform duration-300 group-hover:scale-110">
-                <Icons.Logo />
+              <div className="transition-transform duration-300 group-hover:scale-110">
+                <Logo size={28} />
               </div>
               <span className="font-display text-xl tracking-tight text-white">
                 LOOTEA
@@ -316,12 +299,6 @@ const Header: React.FC = () => {
                     ENTRAR
                   </button>
 
-                  {/* Menu Button */}
-                  <button 
-                    className="p-2.5 text-white/40 hover:text-white transition-colors rounded-lg hover:bg-white/5"
-                  >
-                    <Icons.Menu />
-                  </button>
                 </>
               )}
 

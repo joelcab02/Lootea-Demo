@@ -55,8 +55,8 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
     <div 
       className="group relative rounded-2xl overflow-hidden transition-transform duration-300 hover:-translate-y-1"
       style={{
-        background: 'linear-gradient(145deg, #1a1d26 0%, #12141a 100%)',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+        background: '#1a1a1a',
+        border: '1px solid #222222',
         contain: 'layout style paint',
       }}
     >
