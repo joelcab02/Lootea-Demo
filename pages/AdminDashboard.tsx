@@ -1588,36 +1588,65 @@ const ProductEditSection: React.FC<{
     
     try {
       if (isNew) {
-        console.log('[ProductEdit] Inserting new product...');
-        const { error } = await supabase.from('items').insert({
-          name: form.name,
-          price: parseFloat(form.price),
-          rarity: form.rarity,
-          image_url: form.image
-        });
+        console.log('[ProductEdit] Inserting new product via direct fetch...');
         
-        console.log('[ProductEdit] Insert completed, error:', error);
+        const response = await fetch(
+          'https://tmikqlakdnkjhdbhkjru.supabase.co/rest/v1/items',
+          {
+            method: 'POST',
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtaWtxbGFrZG5ramhkYmhranJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTY0MTksImV4cCI6MjA3OTc5MjQxOX0.85jSOApVvw_GPd1lNMGtkJCqF2ZNTV13gFW928o20KI',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtaWtxbGFrZG5ramhkYmhranJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTY0MTksImV4cCI6MjA3OTc5MjQxOX0.85jSOApVvw_GPd1lNMGtkJCqF2ZNTV13gFW928o20KI',
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+              name: form.name,
+              price: parseFloat(form.price),
+              rarity: form.rarity,
+              image_url: form.image
+            })
+          }
+        );
         
-        if (error) {
-          console.error('Insert error:', error);
-          alert('Error al crear: ' + error.message);
+        console.log('[ProductEdit] Insert response status:', response.status);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Insert error:', errorText);
+          alert('Error al crear: ' + errorText);
           setIsSaving(false);
           return;
         }
       } else {
-        console.log('[ProductEdit] Updating product...');
-        const { error } = await supabase.from('items').update({
-          name: form.name,
-          price: parseFloat(form.price),
-          rarity: form.rarity,
-          image_url: form.image
-        }).eq('id', productId);
+        console.log('[ProductEdit] Updating product via direct fetch...');
         
-        console.log('[ProductEdit] Update completed, error:', error);
+        // Usar fetch directo para evitar problemas con el cliente Supabase
+        const response = await fetch(
+          `https://tmikqlakdnkjhdbhkjru.supabase.co/rest/v1/items?id=eq.${productId}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtaWtxbGFrZG5ramhkYmhranJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTY0MTksImV4cCI6MjA3OTc5MjQxOX0.85jSOApVvw_GPd1lNMGtkJCqF2ZNTV13gFW928o20KI',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtaWtxbGFrZG5ramhkYmhranJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTY0MTksImV4cCI6MjA3OTc5MjQxOX0.85jSOApVvw_GPd1lNMGtkJCqF2ZNTV13gFW928o20KI',
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+              name: form.name,
+              price: parseFloat(form.price),
+              rarity: form.rarity,
+              image_url: form.image
+            })
+          }
+        );
         
-        if (error) {
-          console.error('Update error:', error);
-          alert('Error al actualizar: ' + error.message);
+        console.log('[ProductEdit] Update response status:', response.status);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Update error:', errorText);
+          alert('Error al actualizar: ' + errorText);
           setIsSaving(false);
           return;
         }
