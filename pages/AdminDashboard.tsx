@@ -1403,9 +1403,15 @@ const ProductsSection: React.FC<{
   const [filter, setFilter] = useState<'all' | 'LEGENDARY' | 'EPIC' | 'RARE' | 'COMMON'>('all');
   
   const handleDelete = async (product: LootItem) => {
-    if (!confirm(`¿Eliminar "${product.name}"?`)) return;
+    console.log('[Delete] Clicked:', product.id, product.name);
+    if (!confirm(`¿Eliminar "${product.name}"?`)) {
+      console.log('[Delete] Cancelled by user');
+      return;
+    }
+    console.log('[Delete] Confirmed, deleting...');
     setIsSaving(true);
-    await supabase.from('items').delete().eq('id', product.id);
+    const { error } = await supabase.from('items').delete().eq('id', product.id);
+    console.log('[Delete] Result:', error ? error.message : 'Success');
     onRefresh();
     setIsSaving(false);
   };
