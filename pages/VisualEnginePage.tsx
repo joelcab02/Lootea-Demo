@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
 import { processAndUploadImage } from '../services/imageService';
+import { removeBackground, isRemoveBgConfigured } from '../services/removeBgService';
 import {
   type AssetType,
   type EngineMode,
@@ -33,6 +34,9 @@ const VisualEnginePage: React.FC = () => {
   // CDN
   const [isUploading, setIsUploading] = useState(false);
   const [cdnUrl, setCdnUrl] = useState<string | null>(null);
+  
+  // Background removal
+  const [isRemovingBg, setIsRemovingBg] = useState(false);
   
   // History
   const [history, setHistory] = useState<GenerationResult[]>([]);
@@ -238,6 +242,24 @@ const VisualEnginePage: React.FC = () => {
     link.href = generatedImage;
     link.download = `lootea-${assetType}-${Date.now()}.png`;
     link.click();
+  };
+
+  const handleRemoveBackground = async () => {
+    if (!generatedImage || isRemovingBg) return;
+    
+    setIsRemovingBg(true);
+    setError(null);
+    
+    try {
+      const result = await removeBackground(generatedImage);
+      setGeneratedImage(result);
+      setCdnUrl(null); // Reset CDN URL since image changed
+    } catch (err: any) {
+      console.error('Background removal failed:', err);
+      setError(err.message || 'Error al quitar fondo');
+    } finally {
+      setIsRemovingBg(false);
+    }
   };
 
   return (
@@ -470,6 +492,21 @@ const VisualEnginePage: React.FC = () => {
           {/* Actions after generation */}
           {generatedImage && (
             <div className="p-4 bg-[#1e2330] rounded-lg border border-[#2a3040] space-y-3">
+              {/* Remove Background Button - Only for products */}
+              {assetType === 'producto' && isRemoveBgConfigured() && (
+                <button 
+                  onClick={handleRemoveBackground}
+                  disabled={isRemovingBg}
+                  className={`w-full py-2.5 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${
+                    isRemovingBg 
+                      ? 'bg-purple-600/50 text-purple-300 cursor-wait'
+                      : 'bg-purple-600 hover:bg-purple-500 text-white'
+                  }`}
+                >
+                  {isRemovingBg ? 'Quitando fondo...' : 'Quitar Fondo'}
+                </button>
+              )}
+
               <div className="grid grid-cols-2 gap-3">
                 <button 
                   onClick={handleDownload}
