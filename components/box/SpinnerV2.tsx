@@ -303,16 +303,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         </div>
       </div>
 
-      {/* Side Gradients - Desktop */}
-      <div 
-        className="hidden sm:block absolute left-0 top-0 bottom-0 w-48 z-20 pointer-events-none"
-        style={{ background: 'linear-gradient(90deg, #111111 0%, #111111 30%, transparent 100%)' }}
-      />
-      <div 
-        className="hidden sm:block absolute right-0 top-0 bottom-0 w-48 z-20 pointer-events-none"
-        style={{ background: 'linear-gradient(270deg, #111111 0%, #111111 30%, transparent 100%)' }}
-      />
-
       {/* Strip Container */}
       <div 
         className="flex items-center justify-center h-full will-change-transform"
