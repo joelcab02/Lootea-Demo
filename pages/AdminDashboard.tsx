@@ -1606,7 +1606,7 @@ const ProductEditSection: React.FC<{
           price: parseFloat(form.price),
           rarity: form.rarity,
           image_url: form.image
-        }).eq('id', productId);
+        }).eq('id', productId).select().single();
         
         if (error) {
           alert('Error al actualizar: ' + error.message);
