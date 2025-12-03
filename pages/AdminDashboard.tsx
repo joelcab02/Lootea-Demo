@@ -1583,42 +1583,55 @@ const ProductEditSection: React.FC<{
       return;
     }
     
+    console.log('[ProductEdit] Starting save...', { isNew, form });
     setIsSaving(true);
     
-    if (isNew) {
-      const { error } = await supabase.from('items').insert({
-        name: form.name,
-        price: parseFloat(form.price),
-        rarity: form.rarity,
-        image_url: form.image
-      });
-      
-      if (error) {
-        console.error('Insert error:', error);
-        alert('Error al crear: ' + error.message);
-        setIsSaving(false);
-        return;
+    try {
+      if (isNew) {
+        console.log('[ProductEdit] Inserting new product...');
+        const { data, error } = await supabase.from('items').insert({
+          name: form.name,
+          price: parseFloat(form.price),
+          rarity: form.rarity,
+          image_url: form.image
+        }).select();
+        
+        console.log('[ProductEdit] Insert result:', { data, error });
+        
+        if (error) {
+          console.error('Insert error:', error);
+          alert('Error al crear: ' + error.message);
+          setIsSaving(false);
+          return;
+        }
+      } else {
+        console.log('[ProductEdit] Updating product...');
+        const { data, error } = await supabase.from('items').update({
+          name: form.name,
+          price: parseFloat(form.price),
+          rarity: form.rarity,
+          image_url: form.image
+        }).eq('id', productId).select();
+        
+        console.log('[ProductEdit] Update result:', { data, error });
+        
+        if (error) {
+          console.error('Update error:', error);
+          alert('Error al actualizar: ' + error.message);
+          setIsSaving(false);
+          return;
+        }
       }
-    } else {
-      const { error } = await supabase.from('items').update({
-        name: form.name,
-        price: parseFloat(form.price),
-        rarity: form.rarity,
-        image_url: form.image
-      }).eq('id', productId);
       
-      if (error) {
-        console.error('Update error:', error);
-        alert('Error al actualizar: ' + error.message);
-        setIsSaving(false);
-        return;
-      }
+      console.log('[ProductEdit] Save successful, navigating...');
+      navigate('products');
+      setIsSaving(false);
+      onSave();
+    } catch (err) {
+      console.error('[ProductEdit] Unexpected error:', err);
+      alert('Error inesperado: ' + (err as Error).message);
+      setIsSaving(false);
     }
-    
-    // Navigate immediately, refresh in background
-    navigate('products');
-    setIsSaving(false);
-    onSave(); // Refresh data in background
   };
 
   return (
