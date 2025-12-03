@@ -13,7 +13,7 @@ initAuth();              // Segundo: autenticación
 
 // Lazy load páginas de admin (no críticas para jugadores)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const AssetFactoryPage = lazy(() => import('./pages/AssetFactoryPage'));
+const VisualEnginePage = lazy(() => import('./pages/VisualEnginePage'));
 const StyleGuidePage = lazy(() => import('./pages/StyleGuidePage'));
 const StyleGuideV2 = lazy(() => import('./pages/StyleGuideV2'));
 
@@ -38,7 +38,7 @@ root.render(
           <Route path="/" element={<HomePage />} />
           <Route path="/box/:slug" element={<BoxPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/assets" element={<AssetFactoryPage />} />
+          <Route path="/visual-engine" element={<VisualEnginePage />} />
           <Route path="/style-guide" element={<StyleGuidePage />} />
           <Route path="/style-guide-v2" element={<StyleGuideV2 />} />
         </Routes>
