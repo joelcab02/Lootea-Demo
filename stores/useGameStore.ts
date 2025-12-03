@@ -16,28 +16,21 @@
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { LootItem } from '../types';
-import { Box, BoxWithItems, getBoxes, getBoxBySlug } from '../services/boxService';
-import { openBox as serverOpenBox, PlayResult } from '../services/gameService';
+import type { LootItem, Box, BoxWithItems, GameMode, GamePhase } from '../core/types/game.types';
+import type { PlayResult } from '../core/types/api.types';
+import { getBoxes, getBoxBySlug } from '../services/boxService';
+import { openBox as serverOpenBox } from '../services/gameService';
 import { getBalance, refreshBalance, isLoggedIn, subscribeAuth } from '../services/authService';
 import { fetchInventory } from '../services/inventoryService';
 import { calculateTicketRanges, selectWeightedWinner } from '../services/oddsService';
+import { onTabVisible } from '../services/visibilityService';
+
+// Re-export types for compatibility
+export type { GameMode, GamePhase } from '../core/types/game.types';
 
 // ============================================
 // TYPES
 // ============================================
-
-export type GameMode = 'demo' | 'real';
-
-/**
- * Fases del juego (simplificado):
- * - idle: esperando acción del usuario
- * - spinning: animación en progreso
- * 
- * Nota: No hay fase 'result'. El resultado se muestra via lastWinner
- * y el Spinner maneja su propio efecto visual temporal.
- */
-export type GamePhase = 'idle' | 'spinning';
 
 interface GameState {
   // Estado del juego
@@ -104,18 +97,18 @@ const initialState: GameState = {
 export const useGameStore = create<GameStore>()(
   devtools(
     (set, get) => {
-      // Listener global para resetear estado cuando la pestaña vuelve a ser visible
-      if (typeof document !== 'undefined') {
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible') {
-            const { phase } = get();
-            if (phase === 'spinning') {
-              console.log('[GameStore] Tab visible - resetting stuck spinning state');
-              set({ phase: 'idle', predeterminedWinner: null, error: null }, false, 'visibilityReset');
-            }
-          }
-        });
-      }
+      // Registrar callback de visibilidad (prioridad 20 = después de auth, antes de data)
+      // Nota: Este callback se registra una vez cuando el store se crea
+      onTabVisible('gamestore-reset', () => {
+        const { phase } = get();
+        if (phase === 'spinning') {
+          console.log('[GameStore] Tab visible - resetting stuck spinning state');
+          set({ phase: 'idle', predeterminedWinner: null, error: null }, false, 'visibilityReset');
+        }
+        // Sincronizar balance después de volver
+        const balance = getBalance();
+        set({ balance }, false, 'visibilityBalanceSync');
+      }, 20);
       
       return {
       ...initialState,

@@ -3,40 +3,14 @@
  * Calls Supabase RPC function for secure server-side game logic
  */
 
-import { supabase } from './supabaseClient';
+import { supabase, testConnection, forceReconnect } from './supabaseClient';
 import { refreshWallet, isLoggedIn, getAuthState } from './authService';
-import { LootItem, Rarity } from '../types';
+import type { LootItem } from '../core/types/game.types';
+import { Rarity } from '../core/types/game.types';
+import type { PlayResult, OpenBoxResponse } from '../core/types/api.types';
 
-// Response from open_box RPC
-interface OpenBoxResponse {
-  success: boolean;
-  winner?: {
-    id: string;
-    name: string;
-    price: number;
-    rarity: string;
-    image: string;
-  };
-  spin_id?: string;
-  ticket?: number;
-  new_balance?: number;
-  cost?: number;
-  error?: string;
-  message?: string;
-  required?: number;
-  current?: number;
-}
-
-// Result returned to UI
-export interface PlayResult {
-  success: boolean;
-  winner?: LootItem;
-  spinId?: string;
-  ticket?: number;
-  newBalance?: number;
-  error?: 'NOT_AUTHENTICATED' | 'INSUFFICIENT_FUNDS' | 'BOX_NOT_FOUND' | 'BOX_EMPTY' | 'INTERNAL_ERROR';
-  message?: string;
-}
+// Re-export for compatibility
+export type { PlayResult } from '../core/types/api.types';
 
 /**
  * Check if user can play (logged in + has balance)
@@ -59,48 +33,69 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
 /**
  * Open a box - main game function
  * Calls server-side RPC for secure game logic
- * Includes 20 second timeout to prevent hanging (increased for cold starts)
+ * Includes connection verification and auto-reconnect
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
   try {
-    // DEBUG: Verificar sesión antes de llamar
-    const { data: sessionData } = await supabase.auth.getSession();
-    console.log('🔐 Session before RPC:', {
-      hasSession: !!sessionData.session,
-      userId: sessionData.session?.user?.id,
-      expiresAt: sessionData.session?.expires_at,
-      accessToken: sessionData.session?.access_token?.substring(0, 20) + '...'
-    });
+    // 1. Verificar sesión antes de llamar
+    let { data: sessionData } = await supabase.auth.getSession();
     
+    // Si no hay sesión, intentar reconectar
     if (!sessionData.session) {
-      console.error('❌ No session found - user not authenticated');
-      return {
-        success: false,
-        error: 'NOT_AUTHENTICATED',
-        message: 'Sesión expirada. Por favor inicia sesión de nuevo.'
-      };
+      console.warn('🔐 No session - attempting reconnect...');
+      const reconnected = await forceReconnect();
+      
+      if (reconnected) {
+        // Reintentar obtener sesión
+        const refreshed = await supabase.auth.getSession();
+        sessionData = refreshed.data;
+      }
+      
+      if (!sessionData.session) {
+        console.error('❌ No session after reconnect - user not authenticated');
+        return {
+          success: false,
+          error: 'NOT_AUTHENTICATED',
+          message: 'Sesión expirada. Por favor inicia sesión de nuevo.'
+        };
+      }
     }
     
-    // Create timeout promise (20s to handle Supabase cold starts)
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('TIMEOUT')), 20000)
-    );
+    console.log('🔐 Session verified:', {
+      userId: sessionData.session?.user?.id,
+      expiresAt: sessionData.session?.expires_at,
+    });
     
+    // 2. Verificar conexión antes de la operación crítica
+    const isConnected = await testConnection();
+    if (!isConnected) {
+      console.warn('🔌 Connection test failed - attempting reconnect...');
+      const reconnected = await forceReconnect();
+      if (!reconnected) {
+        return {
+          success: false,
+          error: 'INTERNAL_ERROR',
+          message: 'Error de conexión. Intenta de nuevo.'
+        };
+      }
+    }
+    
+    // 3. Ejecutar RPC con timeout (el timeout global de 15s aplica)
     console.log('📡 Calling open_box RPC with boxId:', boxId);
     const startTime = Date.now();
     
-    // Race between RPC call and timeout
-    const result = await Promise.race([
-      supabase.rpc('open_box', { p_box_id: boxId }),
-      timeoutPromise
-    ]);
+    const { data, error } = await supabase.rpc('open_box', { p_box_id: boxId });
     
     console.log('✅ RPC completed in', Date.now() - startTime, 'ms');
     
-    const { data, error } = result as { data: OpenBoxResponse | null; error: Error | null };
-    
     if (error) {
       console.error('RPC error:', error);
+      
+      // Si es error de auth, intentar reconectar
+      if (error.message?.includes('JWT') || error.message?.includes('auth')) {
+        await forceReconnect();
+      }
+      
       return {
         success: false,
         error: 'INTERNAL_ERROR',
@@ -141,97 +136,102 @@ export async function openBox(boxId: string): Promise<PlayResult> {
     
   } catch (err: any) {
     console.error('❌ openBox error:', err);
-    console.error('Error details:', {
-      message: err?.message,
-      name: err?.name,
-      stack: err?.stack?.substring(0, 200)
-    });
     
-    // Handle timeout specifically
-    if (err?.message === 'TIMEOUT') {
-      console.error('⏱️ TIMEOUT after 20 seconds - RPC did not respond');
-      return {
-        success: false,
-        error: 'INTERNAL_ERROR',
-        message: 'Tiempo de espera agotado. Intenta de nuevo.'
-      };
+    // Si es error de conexión/timeout, intentar reconectar para la próxima
+    if (err?.name === 'AbortError' || err?.message?.includes('fetch')) {
+      console.warn('🔌 Network error detected - scheduling reconnect');
+      forceReconnect().catch(() => {}); // Fire and forget
     }
     
     return {
       success: false,
       error: 'INTERNAL_ERROR',
-      message: 'Error de conexión'
+      message: err?.name === 'AbortError' 
+        ? 'Tiempo de espera agotado. Intenta de nuevo.'
+        : 'Error de conexión'
     };
   }
 }
 
 /**
  * Get user's inventory
+ * Includes timeout via global fetch config
  */
 export async function getInventory(): Promise<LootItem[]> {
-  const { data, error } = await supabase
-    .from('inventory')
-    .select(`
-      id,
-      acquired_value,
-      status,
-      created_at,
-      item:item_id (
+  try {
+    const { data, error } = await supabase
+      .from('inventory')
+      .select(`
         id,
-        name,
-        price,
-        rarity,
-        image_url
-      )
-    `)
-    .eq('status', 'available')
-    .order('created_at', { ascending: false });
-  
-  if (error || !data) {
-    console.error('getInventory error:', error);
+        acquired_value,
+        status,
+        created_at,
+        item:item_id (
+          id,
+          name,
+          price,
+          rarity,
+          image_url
+        )
+      `)
+      .eq('status', 'available')
+      .order('created_at', { ascending: false });
+    
+    if (error || !data) {
+      console.error('getInventory error:', error);
+      return [];
+    }
+    
+    return data.map((inv: any) => ({
+      id: inv.item.id,
+      name: inv.item.name,
+      price: inv.acquired_value,
+      rarity: inv.item.rarity as Rarity,
+      image: inv.item.image_url,
+      odds: 0,
+      inventoryId: inv.id,
+      acquiredAt: inv.created_at
+    }));
+  } catch (err: any) {
+    console.error('getInventory exception:', err?.message);
     return [];
   }
-  
-  return data.map((inv: any) => ({
-    id: inv.item.id,
-    name: inv.item.name,
-    price: inv.acquired_value,
-    rarity: inv.item.rarity as Rarity,
-    image: inv.item.image_url,
-    odds: 0,
-    inventoryId: inv.id,
-    acquiredAt: inv.created_at
-  }));
 }
 
 /**
  * Get user's spin history
+ * Includes timeout via global fetch config
  */
 export async function getSpinHistory(limit: number = 20): Promise<any[]> {
-  const { data, error } = await supabase
-    .from('spins')
-    .select(`
-      id,
-      ticket_number,
-      cost,
-      item_value,
-      created_at,
-      item:item_id (
-        name,
-        rarity,
-        image_url
-      ),
-      box:box_id (
-        name
-      )
-    `)
-    .order('created_at', { ascending: false })
-    .limit(limit);
-  
-  if (error || !data) {
-    console.error('getSpinHistory error:', error);
+  try {
+    const { data, error } = await supabase
+      .from('spins')
+      .select(`
+        id,
+        ticket_number,
+        cost,
+        item_value,
+        created_at,
+        item:item_id (
+          name,
+          rarity,
+          image_url
+        ),
+        box:box_id (
+          name
+        )
+      `)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    
+    if (error || !data) {
+      console.error('getSpinHistory error:', error);
+      return [];
+    }
+    
+    return data;
+  } catch (err: any) {
+    console.error('getSpinHistory exception:', err?.message);
     return [];
   }
-  
-  return data;
 }

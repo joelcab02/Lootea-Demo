@@ -4,15 +4,12 @@
  * Ensures configured odds are actually respected in winner selection
  */
 
-import { LootItem } from '../types';
+import type { LootItem, LootItemWithTickets } from '../core/types/game.types';
+
+// Re-export for compatibility
+export type { LootItemWithTickets } from '../core/types/game.types';
 
 const TOTAL_TICKETS = 1_000_000;
-
-export interface LootItemWithTickets extends LootItem {
-  ticketStart: number;
-  ticketEnd: number;
-  normalizedOdds: number; // Odds after normalization to 100%
-}
 
 /**
  * Normalizes odds to sum to exactly 100% and calculates ticket ranges

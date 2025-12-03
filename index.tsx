@@ -3,15 +3,19 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './src/index.css';
 import { initAuth } from './services/authService';
+import { initVisibilityService } from './services/visibilityService';
 import HomePage from './pages/HomePage';
 import BoxPage from './pages/BoxPage';
 
-// Inicializar auth UNA sola vez al cargar la app
-initAuth();
+// Inicializar servicios UNA sola vez al cargar la app
+initVisibilityService(); // Primero: manejo de cambio de pestaña
+initAuth();              // Segundo: autenticación
 
 // Lazy load páginas de admin (no críticas para jugadores)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const AssetFactoryPage = lazy(() => import('./pages/AssetFactoryPage'));
+const StyleGuidePage = lazy(() => import('./pages/StyleGuidePage'));
+const StyleGuideV2 = lazy(() => import('./pages/StyleGuideV2'));
 
 // Loading spinner para lazy components
 const PageLoader = () => (
@@ -35,6 +39,8 @@ root.render(
           <Route path="/box/:slug" element={<BoxPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/assets" element={<AssetFactoryPage />} />
+          <Route path="/style-guide" element={<StyleGuidePage />} />
+          <Route path="/style-guide-v2" element={<StyleGuideV2 />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

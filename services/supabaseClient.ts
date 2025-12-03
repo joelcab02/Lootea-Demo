@@ -1,4 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
+import type { ConnectionState } from '../core/types/api.types';
+
+// Re-export database types from centralized location
+export type {
+  DbItem,
+  DbBox,
+  DbBoxItem,
+  DbProfile,
+  DbWallet,
+  DbSpin,
+  DbUserSeed,
+  DbInventoryItem,
+  DbTransaction,
+  DbWithdrawal,
+  DbOddsHistory,
+} from '../core/types/database.types';
+
+export type { ConnectionState } from '../core/types/api.types';
 
 // Load from environment variables (Vite)
 // Fallback values for production until Netlify env vars are configured
@@ -13,13 +31,25 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    // Refrescar token 60 segundos antes de expirar
+    flowType: 'pkce',
   },
   global: {
     headers: {
       'x-client-info': 'lootea-web',
     },
+    // Timeout global para fetch requests (15 segundos)
+    fetch: (url, options = {}) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      return fetch(url, {
+        ...options,
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutId));
+    },
   },
-  // Configuración para manejar reconexión
+  // Configuración robusta para realtime y reconexión
   realtime: {
     params: {
       eventsPerSecond: 10,
@@ -28,162 +58,124 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // ============================================
-// Database Types - Normalized Schema v1.0
+// Connection State Management
+// ConnectionState type is in /core/types/api.types.ts
+// Re-exported at top of this file
 // ============================================
 
-// Items table
-export interface DbItem {
-  id: string;
-  legacy_id?: string;
-  name: string;
-  description?: string;
-  price: number;
-  rarity: 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY';
-  image_url: string;
-  brand?: string;
-  is_active: boolean;
-  created_at?: string;
-  updated_at?: string;
+type ConnectionListener = (state: ConnectionState) => void;
+const connectionListeners: Set<ConnectionListener> = new Set();
+let currentConnectionState: ConnectionState = 'connecting';
+
+/**
+ * Notifica a todos los listeners del cambio de estado de conexión
+ */
+function notifyConnectionListeners(state: ConnectionState) {
+  currentConnectionState = state;
+  connectionListeners.forEach(listener => listener(state));
 }
 
-// Boxes table
-export interface DbBox {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  price: number;
-  image?: string;
-  category: string;
-  is_active: boolean;
-  is_featured: boolean;
-  sort_order: number;
-  total_opens: number;
-  created_at?: string;
-  updated_at?: string;
+/**
+ * Suscribirse a cambios de estado de conexión
+ */
+export function subscribeConnectionState(listener: ConnectionListener): () => void {
+  connectionListeners.add(listener);
+  // Notificar estado actual inmediatamente
+  listener(currentConnectionState);
+  return () => connectionListeners.delete(listener);
 }
 
-// Box items junction table
-export interface DbBoxItem {
-  id: string;
-  box_id: string;
-  item_id: string;
-  odds: number;
-  ticket_start?: number;
-  ticket_end?: number;
-  created_at?: string;
+/**
+ * Obtener estado actual de conexión
+ */
+export function getConnectionState(): ConnectionState {
+  return currentConnectionState;
 }
 
-// User profile
-export interface DbProfile {
-  id: string;  // Same as auth.users.id
-  username?: string;
-  display_name?: string;
-  avatar_url?: string;
-  level: number;
-  xp: number;
-  is_admin: boolean;
-  created_at?: string;
-  updated_at?: string;
+/**
+ * Test de conexión - hace un ping simple a Supabase
+ * Retorna true si la conexión está activa
+ */
+export async function testConnection(): Promise<boolean> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    // Query simple y rápida para verificar conexión
+    const { error } = await supabase
+      .from('boxes')
+      .select('id')
+      .limit(1)
+      .abortSignal(controller.signal);
+    
+    clearTimeout(timeoutId);
+    
+    if (error) {
+      console.warn('🔌 Connection test failed:', error.message);
+      notifyConnectionListeners('error');
+      return false;
+    }
+    
+    notifyConnectionListeners('connected');
+    return true;
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      console.warn('🔌 Connection test timeout');
+    } else {
+      console.warn('🔌 Connection test error:', err.message);
+    }
+    notifyConnectionListeners('disconnected');
+    return false;
+  }
 }
 
-// User wallet
-export interface DbWallet {
-  id: string;
-  user_id: string;
-  balance: number;
-  currency: string;
-  created_at?: string;
-  updated_at?: string;
+/**
+ * Forzar reconexión - útil cuando se detecta que la conexión está muerta
+ */
+export async function forceReconnect(): Promise<boolean> {
+  console.log('🔄 Forcing reconnection...');
+  notifyConnectionListeners('connecting');
+  
+  try {
+    // 1. Refrescar sesión de auth
+    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    
+    if (authError) {
+      console.error('🔌 Auth reconnect failed:', authError.message);
+      notifyConnectionListeners('error');
+      return false;
+    }
+    
+    // 2. Si hay sesión, refrescar el token
+    if (session) {
+      const { error: refreshError } = await supabase.auth.refreshSession();
+      if (refreshError) {
+        console.warn('🔌 Token refresh failed:', refreshError.message);
+        // No es crítico, continuar
+      }
+    }
+    
+    // 3. Verificar que la conexión a la DB funciona
+    const isConnected = await testConnection();
+    
+    if (isConnected) {
+      console.log('✅ Reconnection successful');
+      return true;
+    }
+    
+    return false;
+  } catch (err: any) {
+    console.error('🔌 Reconnection error:', err.message);
+    notifyConnectionListeners('error');
+    return false;
+  }
 }
 
-// Spin record (with fairness data)
-export interface DbSpin {
-  id: string;
-  user_id?: string;
-  box_id?: string;
-  item_id?: string;
-  ticket_number: number;
-  client_seed?: string;
-  server_seed?: string;
-  server_seed_hash?: string;
-  nonce?: number;
-  cost: number;
-  item_value: number;
-  is_demo: boolean;
-  created_at?: string;
-}
+// Marcar como conectado inicialmente (optimista)
+// El primer request real confirmará el estado
+notifyConnectionListeners('connected');
 
-// User seeds for Provably Fair
-export interface DbUserSeed {
-  id: string;
-  user_id?: string;
-  client_seed: string;
-  server_seed: string;
-  server_seed_hash: string;
-  nonce: number;
-  is_active: boolean;
-  created_at?: string;
-  revealed_at?: string;
-}
-
-// Inventory item
-export interface DbInventoryItem {
-  id: string;
-  user_id: string;
-  item_id: string;
-  spin_id?: string;
-  status: 'available' | 'pending_withdrawal' | 'withdrawn' | 'sold';
-  acquired_value: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-// Transaction
-export interface DbTransaction {
-  id: string;
-  user_id?: string;
-  type: 'deposit' | 'withdrawal' | 'purchase' | 'win' | 'refund';
-  amount: number;
-  balance_before?: number;
-  balance_after?: number;
-  status: 'pending' | 'completed' | 'failed' | 'cancelled';
-  reference_id?: string;
-  reference_type?: string;
-  metadata?: Record<string, unknown>;
-  created_at?: string;
-  completed_at?: string;
-}
-
-// Withdrawal request
-export interface DbWithdrawal {
-  id: string;
-  user_id: string;
-  inventory_id: string;
-  shipping_name: string;
-  shipping_address: string;
-  shipping_city: string;
-  shipping_state: string;
-  shipping_zip: string;
-  shipping_country: string;
-  shipping_phone?: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  tracking_number?: string;
-  carrier?: string;
-  notes?: string;
-  created_at?: string;
-  updated_at?: string;
-  shipped_at?: string;
-  delivered_at?: string;
-}
-
-// Odds history (audit)
-export interface DbOddsHistory {
-  id: string;
-  box_item_id?: string;
-  old_odds?: number;
-  new_odds: number;
-  changed_by?: string;
-  reason?: string;
-  created_at?: string;
-}
+// ============================================
+// Database Types - Now in /core/types/database.types.ts
+// Re-exported at top of this file for compatibility
+// ============================================

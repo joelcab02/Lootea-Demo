@@ -9,6 +9,7 @@ import { getBoxes, BoxWithItems } from '../services/boxService';
 import { UserMenu } from '../components/auth/UserMenu';
 import Sidebar from '../components/layout/Sidebar';
 import Footer from '../components/layout/Footer';
+import { onTabVisible } from '../services/visibilityService';
 
 // Logo Icon
 const LogoIcon = () => (
@@ -42,18 +43,13 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     loadBoxes();
     
-    // Recargar cuando la pestaña vuelve a ser visible
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        console.log('[HomePage] Tab visible - reloading boxes');
-        loadBoxes();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
+    // Registrar callback de visibilidad (prioridad 30 = después de auth)
+    const unsubscribe = onTabVisible('homepage-boxes', () => {
+      console.log('[HomePage] Tab visible - reloading boxes');
+      loadBoxes();
+    }, 30);
     
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
+    return unsubscribe;
   }, []);
 
   return (

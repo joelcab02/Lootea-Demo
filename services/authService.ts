@@ -2,16 +2,15 @@
  * Auth Service - Supabase Authentication
  */
 
-import { supabase, DbProfile, DbWallet } from './supabaseClient';
+import { supabase } from './supabaseClient';
+import { onTabVisible } from './visibilityService';
 import type { User, Session } from '@supabase/supabase-js';
+import type { DbProfile, DbWallet } from '../core/types/database.types';
+import type { AuthState } from '../core/types/user.types';
 
-export interface AuthState {
-  user: User | null;
-  session: Session | null;
-  profile: DbProfile | null;
-  wallet: DbWallet | null;
-  isLoading: boolean;
-}
+// Re-export for compatibility
+export type { AuthState } from '../core/types/user.types';
+export type { DbProfile } from '../core/types/database.types';
 
 // Listeners for auth state changes
 type AuthListener = (state: AuthState) => void;
@@ -70,18 +69,21 @@ export async function initAuth(): Promise<AuthState> {
     notifyListeners();
   });
   
-  // Manejar visibilitychange internamente
-  document.addEventListener('visibilitychange', async () => {
-    if (document.visibilityState === 'visible' && currentState.user) {
+  // Registrar callback de visibilidad (prioridad 10 = se ejecuta primero)
+  onTabVisible('auth-refresh', async () => {
+    if (currentState.user) {
       console.log('🔐 Tab visible - refreshing session');
-      // Refrescar sesión silenciosamente
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        await loadUserData(session.user, session);
-        notifyListeners();
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          await loadUserData(session.user, session);
+          notifyListeners();
+        }
+      } catch (err) {
+        console.error('🔐 Session refresh failed:', err);
       }
     }
-  });
+  }, 10); // Prioridad 10 = auth se refresca primero
   
   return currentState;
 }

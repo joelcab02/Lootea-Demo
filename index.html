@@ -6,7 +6,10 @@
     <title>LOOTEA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <!-- Satoshi from Fontshare CDN -->
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,900&display=swap" rel="stylesheet">
+    <!-- Inter from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
     
@@ -14,8 +17,9 @@
       /* 
        * TYPOGRAPHY SYSTEM
        * -----------------
-       * Display/Titles: Montserrat (Black, Italic, Tight tracking)
+       * Display/Titles: Satoshi Black (tight tracking)
        * Body/UI: Inter (Regular to Bold)
+       * Prices/Data: JetBrains Mono
        */
       html, body {
         font-family: 'Inter', system-ui, sans-serif;
@@ -36,20 +40,25 @@
       }
       
       /* Display font for titles, CTAs, branding */
-      /* Montserrat Black Italic - Tight tracking */
+      /* Satoshi Black - Tight tracking */
       .font-display {
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Satoshi', 'Inter', sans-serif;
         font-weight: 900;
-        font-style: italic;
-        letter-spacing: -0.05em;
+        letter-spacing: -0.02em;
       }
       
       /* Legacy alias */
       .font-gamer {
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Satoshi', 'Inter', sans-serif;
         font-weight: 900;
-        font-style: italic;
-        letter-spacing: -0.05em;
+        letter-spacing: -0.02em;
+      }
+      
+      /* Prices/Numbers - Inter Bold with tabular numerals */
+      .font-mono {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-weight: 700;
+        font-feature-settings: "tnum" 1;
       }
       /* GPU Acceleration Classes */
       .gpu-accelerate {

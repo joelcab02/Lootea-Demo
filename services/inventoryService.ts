@@ -2,29 +2,21 @@
  * Inventory Service
  * Manages user's cart/inventory - items won from boxes
  * Allows selling items for balance or requesting withdrawal
+ * 
+ * Este servicio usa el API layer para las queries.
+ * Aquí va el estado y la lógica de negocio.
  */
 
-import { supabase } from './supabaseClient';
+import { 
+  callGetInventory, 
+  callSellItem, 
+  callSellAll, 
+  callGetInventoryCount 
+} from '../api';
+import type { InventoryItem, InventoryState } from '../core/types/inventory.types';
 
-export interface InventoryItem {
-  inventory_id: string;
-  item_id: string;
-  name: string;
-  price: number;
-  rarity: string;
-  image: string;
-  acquired_at: string;
-  acquired_value: number;
-  status: 'available' | 'sold' | 'withdrawn' | 'pending_withdrawal';
-}
-
-export interface InventoryState {
-  items: InventoryItem[];
-  totalValue: number;
-  itemCount: number;
-  isLoading: boolean;
-  error: string | null;
-}
+// Re-export for compatibility
+export type { InventoryItem, InventoryState } from '../core/types/inventory.types';
 
 // Subscribers for reactive updates
 type InventorySubscriber = (state: InventoryState) => void;
@@ -64,52 +56,40 @@ export async function fetchInventory(): Promise<InventoryState> {
     notifySubscribers();
   }
   
-  try {
-    const { data, error } = await supabase.rpc('get_user_inventory');
-    
-    if (error) {
-      console.error('❌ Inventory fetch error:', error);
-      currentState = { 
-        ...currentState, 
-        isLoading: false, 
-        error: error.message 
-      };
-      notifySubscribers();
-      return currentState;
-    }
-    
-    if (!data.success) {
-      currentState = { 
-        ...currentState, 
-        isLoading: false, 
-        error: data.message || 'Error al cargar inventario' 
-      };
-      notifySubscribers();
-      return currentState;
-    }
-    
-    currentState = {
-      items: data.items || [],
-      totalValue: data.total_value || 0,
-      itemCount: data.item_count || 0,
-      isLoading: false,
-      error: null,
-    };
-    
-    console.log('📦 Inventory loaded:', currentState.itemCount, 'items, $' + currentState.totalValue);
-    notifySubscribers();
-    return currentState;
-    
-  } catch (err) {
-    console.error('❌ Inventory fetch exception:', err);
+  const { data, error } = await callGetInventory();
+  
+  if (error) {
+    console.error('❌ Inventory fetch error:', error.message);
     currentState = { 
       ...currentState, 
       isLoading: false, 
-      error: 'Error de conexión' 
+      error: error.message 
     };
     notifySubscribers();
     return currentState;
   }
+  
+  if (!data?.success) {
+    currentState = { 
+      ...currentState, 
+      isLoading: false, 
+      error: data?.message || 'Error al cargar inventario' 
+    };
+    notifySubscribers();
+    return currentState;
+  }
+  
+  currentState = {
+    items: data.items || [],
+    totalValue: data.total_value || 0,
+    itemCount: data.item_count || 0,
+    isLoading: false,
+    error: null,
+  };
+  
+  console.log('📦 Inventory loaded:', currentState.itemCount, 'items, $' + currentState.totalValue);
+  notifySubscribers();
+  return currentState;
 }
 
 /**
@@ -120,35 +100,27 @@ export async function sellItem(inventoryId: string): Promise<{
   message?: string;
   newBalance?: number;
 }> {
-  try {
-    const { data, error } = await supabase.rpc('sell_inventory_item', {
-      p_inventory_id: inventoryId
-    });
-    
-    if (error) {
-      console.error('❌ Sell item error:', error);
-      return { success: false, message: error.message };
-    }
-    
-    if (!data.success) {
-      return { success: false, message: data.message };
-    }
-    
-    console.log('💰 Sold item:', data.sold_item.name, 'for $' + data.sold_item.price);
-    
-    // Refresh inventory
-    await fetchInventory();
-    
-    return { 
-      success: true, 
-      newBalance: data.new_balance,
-      message: `Vendiste ${data.sold_item.name} por $${data.sold_item.price}`
-    };
-    
-  } catch (err) {
-    console.error('❌ Sell item exception:', err);
-    return { success: false, message: 'Error de conexión' };
+  const { data, error } = await callSellItem(inventoryId);
+  
+  if (error) {
+    console.error('❌ Sell item error:', error.message);
+    return { success: false, message: error.message };
   }
+  
+  if (!data?.success) {
+    return { success: false, message: data?.message };
+  }
+  
+  console.log('💰 Sold item:', data.sold_item?.name, 'for $' + data.sold_item?.price);
+  
+  // Refresh inventory
+  await fetchInventory();
+  
+  return { 
+    success: true, 
+    newBalance: data.new_balance,
+    message: `Vendiste ${data.sold_item?.name} por $${data.sold_item?.price}`
+  };
 }
 
 /**
@@ -161,55 +133,43 @@ export async function sellAllItems(): Promise<{
   totalValue?: number;
   newBalance?: number;
 }> {
-  try {
-    const { data, error } = await supabase.rpc('sell_all_inventory');
-    
-    if (error) {
-      console.error('❌ Sell all error:', error);
-      return { success: false, message: error.message };
-    }
-    
-    if (!data.success) {
-      return { success: false, message: data.message };
-    }
-    
-    console.log('💰 Sold all:', data.items_sold, 'items for $' + data.total_value);
-    
-    // Refresh inventory
-    await fetchInventory();
-    
-    return { 
-      success: true, 
-      itemsSold: data.items_sold,
-      totalValue: data.total_value,
-      newBalance: data.new_balance,
-      message: `Vendiste ${data.items_sold} items por $${data.total_value}`
-    };
-    
-  } catch (err) {
-    console.error('❌ Sell all exception:', err);
-    return { success: false, message: 'Error de conexión' };
+  const { data, error } = await callSellAll();
+  
+  if (error) {
+    console.error('❌ Sell all error:', error.message);
+    return { success: false, message: error.message };
   }
+  
+  if (!data?.success) {
+    return { success: false, message: data?.message };
+  }
+  
+  console.log('💰 Sold all:', data.items_sold, 'items for $' + data.total_value);
+  
+  // Refresh inventory
+  await fetchInventory();
+  
+  return { 
+    success: true, 
+    itemsSold: data.items_sold,
+    totalValue: data.total_value,
+    newBalance: data.new_balance,
+    message: `Vendiste ${data.items_sold} items por $${data.total_value}`
+  };
 }
 
 /**
  * Get quick count for header badge
  */
 export async function getInventoryCount(): Promise<number> {
-  try {
-    const { data, error } = await supabase.rpc('get_inventory_count');
-    
-    if (error) {
-      console.error('❌ Inventory count error:', error);
-      return 0;
-    }
-    
-    return data || 0;
-    
-  } catch (err) {
-    console.error('❌ Inventory count exception:', err);
+  const { data, error } = await callGetInventoryCount();
+  
+  if (error) {
+    console.error('❌ Inventory count error:', error.message);
     return 0;
   }
+  
+  return data ?? 0;
 }
 
 /**
