@@ -118,24 +118,43 @@ export async function uploadToStorage(
   // Determine content type from filename
   const contentType = filename.endsWith('.png') ? 'image/png' : 'image/webp';
   
-  const { data, error } = await supabase.storage
-    .from(BUCKET_NAME)
-    .upload(filename, blob, {
-      contentType,
-      cacheControl: '31536000', // 1 year cache
-      upsert: false
-    });
+  console.log('[ImageService] uploadToStorage called:', {
+    filename,
+    contentType,
+    blobSize: blob.size,
+    blobType: blob.type
+  });
   
-  if (error) {
-    throw new Error(`Upload failed: ${error.message}`);
+  try {
+    console.log('[ImageService] Calling supabase.storage.upload...');
+    
+    const { data, error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(filename, blob, {
+        contentType,
+        cacheControl: '31536000', // 1 year cache
+        upsert: false
+      });
+    
+    console.log('[ImageService] Upload response:', { data, error });
+    
+    if (error) {
+      console.error('[ImageService] Upload error:', error);
+      throw new Error(`Upload failed: ${error.message}`);
+    }
+    
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(data.path);
+    
+    console.log('[ImageService] Public URL:', urlData.publicUrl);
+    
+    return urlData.publicUrl;
+  } catch (err: any) {
+    console.error('[ImageService] Exception in uploadToStorage:', err);
+    throw err;
   }
-  
-  // Get public URL
-  const { data: urlData } = supabase.storage
-    .from(BUCKET_NAME)
-    .getPublicUrl(data.path);
-  
-  return urlData.publicUrl;
 }
 
 /**
