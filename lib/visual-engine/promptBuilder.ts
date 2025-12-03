@@ -106,29 +106,39 @@ export function buildRecreatePrompt(input: GenerationInput): string {
 TASK: Transform this reference image into a premium Lootea-style ${template.label} render.
 
 === CRITICAL - MAXIMUM FIDELITY TO REFERENCE ===
-You MUST replicate the reference image with maximum fidelity:
-- EXACT same products/items shown - do not add or remove anything
-- EXACT same composition, layout, and arrangement
-- EXACT same angles and perspectives of each product
-- EXACT same number of items in the same positions
-- EXACT same product colors - do not change or tint any colors
-- If reference shows front view, show front view. If shows back, show back.
-- If reference shows 1 product, show 1 product. If shows 3, show exactly 3.
+You MUST replicate the reference image with PIXEL-PERFECT positioning:
 
-=== WHAT TO ENHANCE (Lootea DNA) ===
+POSITION & LAYOUT (HIGHEST PRIORITY):
+- EXACT same position of each product - do not move, rotate, or reposition
+- EXACT same spacing between products - maintain relative distances
+- EXACT same angles and orientations - if vertical, keep vertical
+- EXACT same overlap/layering - if products touch or overlap, keep it
+- Products must be in the SAME location in the frame as the reference
+- Do NOT float, tilt, or separate products that are together in reference
+- Do NOT add artistic interpretation to the layout
+
+QUANTITY & IDENTITY:
+- EXACT same number of products - count them and match exactly
+- EXACT same product types and models
+- EXACT same colors - do not change or tint any colors
+- If reference shows front view, show front view. If shows back, show back.
+
+=== WHAT TO ENHANCE (Lootea DNA) - WITHOUT CHANGING POSITION ===
 - Upgrade to premium 3D render quality
 - Add subtle golden rim light AROUND product edges (ambient lighting only)
 - Replace background with pure black or dark textured surface
 - Enhance material definition (metal, glass, plastic look more realistic)
 - Add depth, dimension, and cinematic shadows
 - Sharp focus on all products
+- Keep products in their ORIGINAL positions from reference
 
 === WHAT TO NEVER CHANGE ===
+- Product positions, angles, and arrangement from reference
 - Product colors must remain EXACTLY as in reference
 - Product design, logos, and details must be identical
-- Composition and layout must match reference
 - Do NOT add gold/yellow tint to products themselves
-- Do NOT add elements not present in reference (no boxes unless reference has them)
+- Do NOT add elements not present in reference
+- Do NOT reinterpret or "improve" the composition
 ${productAuthenticitySection}
 === ASSET TYPE: ${template.label.toUpperCase()} ===
 ${template.basePrompt}
