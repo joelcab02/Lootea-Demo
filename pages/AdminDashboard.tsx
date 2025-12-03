@@ -1572,7 +1572,7 @@ const ProductEditSection: React.FC<{
         name: data.name,
         price: String(data.price),
         rarity: data.rarity as Rarity,
-        image: data.image_url || data.image || ''
+        image: data.image_url || ''
       });
     }
   };
@@ -1583,46 +1583,41 @@ const ProductEditSection: React.FC<{
       return;
     }
     
-    console.log('[ProductEdit] Starting save...', { isNew, form });
     setIsSaving(true);
     
-    try {
-      if (isNew) {
-        const { data, error } = await supabase.from('items').insert({
-          name: form.name,
-          price: parseFloat(form.price),
-          rarity: form.rarity,
-          image_url: form.image
-        }).select().single();
-        
-        if (error) {
-          alert('Error al crear: ' + error.message);
-          setIsSaving(false);
-          return;
-        }
-      } else {
-        const { error } = await supabase.from('items').update({
-          name: form.name,
-          price: parseFloat(form.price),
-          rarity: form.rarity,
-          image_url: form.image
-        }).eq('id', productId).select().single();
-        
-        if (error) {
-          alert('Error al actualizar: ' + error.message);
-          setIsSaving(false);
-          return;
-        }
+    if (isNew) {
+      const { data, error } = await supabase.from('items').insert({
+        name: form.name,
+        price: parseFloat(form.price),
+        rarity: form.rarity,
+        image_url: form.image
+      }).select().single();
+      
+      if (error) {
+        alert('Error: ' + error.message);
+        setIsSaving(false);
+        return;
       }
       
-      console.log('[ProductEdit] Save successful, navigating...');
+      setIsSaving(false);
       navigate('products');
+      onSave();
+    } else {
+      const { error } = await supabase.from('items').update({
+        name: form.name,
+        price: parseFloat(form.price),
+        rarity: form.rarity,
+        image_url: form.image
+      }).eq('id', productId);
+      
+      if (error) {
+        alert('Error: ' + error.message);
+        setIsSaving(false);
+        return;
+      }
+      
       setIsSaving(false);
       onSave();
-    } catch (err) {
-      console.error('[ProductEdit] Unexpected error:', err);
-      alert('Error inesperado: ' + (err as Error).message);
-      setIsSaving(false);
     }
   };
 
@@ -1676,25 +1671,22 @@ const ProductEditSection: React.FC<{
           </div>
           
           <div>
-            <label className="text-xs text-slate-500 block mb-1">Imagen (emoji, URL o base64)</label>
+            <label className="text-xs text-slate-500 block mb-1">Imagen (URL)</label>
             <input
               type="text"
               value={form.image}
               onChange={(e) => setForm({ ...form, image: e.target.value })}
-              placeholder="📱 o https://..."
+              placeholder="https://..."
               className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
             />
-            {/* Preview */}
-            <div className="mt-2 flex items-center gap-3">
-              <div className="w-16 h-16 bg-[#0d1019] border border-[#2a3040] rounded-lg flex items-center justify-center">
-                {form.image.startsWith('http') || form.image.startsWith('data:') ? (
+            {form.image && form.image.startsWith('http') && (
+              <div className="mt-2 flex items-center gap-3">
+                <div className="w-16 h-16 bg-[#0d1019] border border-[#2a3040] rounded-lg flex items-center justify-center">
                   <img src={form.image} alt="" className="w-full h-full object-contain rounded" />
-                ) : (
-                  <span className="text-slate-600 text-sm">Sin imagen</span>
-                )}
+                </div>
+                <span className="text-xs text-slate-500">Vista previa</span>
               </div>
-              <span className="text-xs text-slate-500">Vista previa</span>
-            </div>
+            )}
           </div>
           
           <div className="pt-4">
