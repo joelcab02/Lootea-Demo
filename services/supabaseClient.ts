@@ -66,9 +66,20 @@ export const supabase = new Proxy({} as SupabaseClient, {
 
 /**
  * Recreate the Supabase client (use when connection is dead)
+ * Properly cleans up the old client before creating a new one
+ * Note: Session is persisted in localStorage, so new client will restore it
  */
 export function recreateSupabaseClient(): void {
   console.log('[Supabase] Recreating client (was v' + clientVersion + ')');
+  
+  // Cleanup old client - remove realtime subscriptions
+  try {
+    supabaseInstance.removeAllChannels();
+  } catch (e) {
+    // Ignore cleanup errors - the client might already be dead
+  }
+  
+  // Create new client - it will automatically restore session from localStorage
   clientVersion++;
   supabaseInstance = createSupabaseClient();
   console.log('[Supabase] New client created (v' + clientVersion + ')');
@@ -156,7 +167,7 @@ export async function forceReconnect(): Promise<boolean> {
   notifyConnectionListeners('connecting');
   
   // Recrear cliente inmediatamente - no intentar operaciones con cliente potencialmente muerto
-  recreateSupabaseClient();
+  await recreateSupabaseClient();
   
   // Pequeña pausa para estabilizar
   await new Promise(resolve => setTimeout(resolve, 100));
