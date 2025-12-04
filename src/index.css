@@ -20,7 +20,7 @@ html {
 body {
   background-color: #111111;
   color: white;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -36,19 +36,19 @@ body {
    ============================================ */
 
 .font-display {
-  font-family: 'Satoshi', 'Inter', sans-serif;
+  font-family: 'Satoshi', system-ui, sans-serif;
   font-weight: 900;
   letter-spacing: -0.02em;
 }
 
 .font-gamer {
-  font-family: 'Satoshi', 'Inter', sans-serif;
+  font-family: 'Satoshi', system-ui, sans-serif;
   font-weight: 900;
   letter-spacing: -0.02em;
 }
 
 .font-mono {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Satoshi', system-ui, sans-serif;
   font-weight: 700;
   font-feature-settings: "tnum" 1;
 }

@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { Link } from 'react-router-dom';
 import { Logo } from '../shared/Logo';
 
 const Icons = {
@@ -85,10 +86,10 @@ function Footer() {
           <div>
             <h5 className="font-display text-white uppercase text-sm mb-4 tracking-wide">Legal</h5>
             <div className="flex flex-col gap-2.5">
-              <FooterLink>Términos de Servicio</FooterLink>
-              <FooterLink>Privacidad</FooterLink>
-              <FooterLink>Política AML</FooterLink>
-              <FooterLink>Envíos y Devoluciones</FooterLink>
+              <FooterLink to="/terminos">Terminos de Servicio</FooterLink>
+              <FooterLink to="/privacidad">Privacidad</FooterLink>
+              <FooterLink to="/aml">Politica AML</FooterLink>
+              <FooterLink to="/envios">Envios y Devoluciones</FooterLink>
             </div>
           </div>
 
@@ -96,9 +97,9 @@ function Footer() {
           <div>
             <h5 className="font-display text-white uppercase text-sm mb-4 tracking-wide">Juegos</h5>
             <div className="flex flex-col gap-2.5">
-              <FooterLink>Cajas Misteriosas</FooterLink>
-              <FooterLink>Batallas de Cajas</FooterLink>
-              <FooterLink>Upgrader</FooterLink>
+              <FooterLink to="/">Cajas Misteriosas</FooterLink>
+              <FooterLink to="/">Batallas de Cajas</FooterLink>
+              <FooterLink to="/">Upgrader</FooterLink>
             </div>
           </div>
 
@@ -106,9 +107,9 @@ function Footer() {
           <div>
             <h5 className="font-display text-white uppercase text-sm mb-4 tracking-wide">Ayuda</h5>
             <div className="flex flex-col gap-2.5">
-              <FooterLink>Soporte 24/7</FooterLink>
-              <FooterLink>Preguntas Frecuentes</FooterLink>
-              <FooterLink>Provably Fair</FooterLink>
+              <FooterLink to="/faq">Soporte 24/7</FooterLink>
+              <FooterLink to="/faq">Preguntas Frecuentes</FooterLink>
+              <FooterLink to="/provably-fair">Provably Fair</FooterLink>
             </div>
           </div>
         </div>
@@ -190,11 +191,11 @@ function PaymentBadge({ children, highlight = false }: { children: React.ReactNo
   )
 }
 
-function FooterLink({ children }: { children?: React.ReactNode }) {
+function FooterLink({ children, to }: { children?: React.ReactNode; to: string }) {
   return (
-    <a href="#" className="text-slate-500 hover:text-[#F7C948] text-sm transition-colors">
+    <Link to={to} className="text-slate-500 hover:text-[#F7C948] text-sm transition-colors">
       {children}
-    </a>
+    </Link>
   )
 }
 

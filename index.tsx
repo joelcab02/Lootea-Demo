@@ -6,6 +6,7 @@ import { initAuth } from './services/authService';
 import { initVisibilityService } from './services/visibilityService';
 import HomePage from './pages/HomePage';
 import BoxPage from './pages/BoxPage';
+import ScrollToTop from './components/shared/ScrollToTop';
 
 // Inicializar servicios UNA sola vez al cargar la app
 initVisibilityService(); // Primero: manejo de cambio de pestaña
@@ -16,6 +17,14 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const VisualEnginePage = lazy(() => import('./pages/VisualEnginePage'));
 const StyleGuidePage = lazy(() => import('./pages/StyleGuidePage'));
 const StyleGuideV2 = lazy(() => import('./pages/StyleGuideV2'));
+
+// Lazy load páginas legales
+const TerminosPage = lazy(() => import('./pages/legal/TerminosPage'));
+const PrivacidadPage = lazy(() => import('./pages/legal/PrivacidadPage'));
+const AMLPage = lazy(() => import('./pages/legal/AMLPage'));
+const EnviosPage = lazy(() => import('./pages/legal/EnviosPage'));
+const ProvablyFairPage = lazy(() => import('./pages/legal/ProvablyFairPage'));
+const FAQPage = lazy(() => import('./pages/legal/FAQPage'));
 
 // Loading spinner para lazy components
 const PageLoader = () => (
@@ -33,6 +42,7 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -41,6 +51,13 @@ root.render(
           <Route path="/visual-engine" element={<VisualEnginePage />} />
           <Route path="/style-guide" element={<StyleGuidePage />} />
           <Route path="/style-guide-v2" element={<StyleGuideV2 />} />
+          {/* Páginas Legales */}
+          <Route path="/terminos" element={<TerminosPage />} />
+          <Route path="/privacidad" element={<PrivacidadPage />} />
+          <Route path="/aml" element={<AMLPage />} />
+          <Route path="/envios" element={<EnviosPage />} />
+          <Route path="/provably-fair" element={<ProvablyFairPage />} />
+          <Route path="/faq" element={<FAQPage />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
