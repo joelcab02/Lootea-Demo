@@ -166,10 +166,10 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
           <button 
             onClick={handleSpin}
             disabled={isSpinning || isLoading}
-            className="w-full py-4 mb-3 bg-[#F7C948] hover:bg-[#FFD966] text-black rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(247,201,72,0.3)]"
+            className="w-full py-3.5 mb-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99]"
           >
-            <span className="font-display text-2xl font-black tracking-tight uppercase">ABRIR</span>
-            <span className="font-display text-2xl font-black tracking-tight">
+            <span className="font-display text-lg font-black tracking-tight uppercase">ABRIR</span>
+            <span className="font-display text-lg font-black tracking-tight">
               ${BOX_PRICE.toFixed(2)} MXN
             </span>
           </button>

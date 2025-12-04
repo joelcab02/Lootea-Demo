@@ -94,7 +94,7 @@ const HomePage: React.FC = () => {
             <h2 className="text-xl font-bold text-white mb-2">{error}</h2>
             <button 
               onClick={loadBoxes}
-              className="mt-4 px-6 py-2 bg-[#F7C948] text-black font-bold rounded-lg hover:bg-[#FFD966] transition-colors"
+              className="mt-4 px-6 py-2.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99]"
             >
               Reintentar
             </button>

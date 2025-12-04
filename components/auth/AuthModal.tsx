@@ -196,26 +196,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
             )}
 
-            {/* Submit Button - Premium Metallic */}
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl transition-all disabled:opacity-50 uppercase text-sm font-display relative overflow-hidden group"
-              style={isLogin ? {
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,240,240,1) 100%)',
-                boxShadow: '0 4px 0 #999, 0 6px 15px rgba(0,0,0,0.2)',
-                color: 'black',
-              } : {
-                background: 'linear-gradient(180deg, #FFD966 0%, #FFD700 20%, #F7C948 50%, #E6A800 80%, #D4A520 100%)',
-                boxShadow: '0 4px 0 #996600, 0 6px 20px rgba(247,201,72,0.3)',
-                color: 'black',
-              }}
+              className={`w-full py-3 rounded-xl transition-all duration-200 disabled:opacity-50 uppercase text-sm font-display font-bold hover:scale-[1.01] active:scale-[0.99] ${
+                isLogin 
+                  ? 'bg-gradient-to-b from-white to-gray-100 hover:from-gray-50 hover:to-white text-black shadow-[0_4px_16px_rgba(255,255,255,0.15)] hover:shadow-[0_6px_20px_rgba(255,255,255,0.25)]'
+                  : 'bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)]'
+              }`}
             >
-              <div className="absolute inset-0 opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%)' }}></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_ease-out]"></div>
-              <span className="relative font-bold">
-                {loading ? 'Cargando...' : (isLogin ? 'Iniciar Sesión' : 'Crear Cuenta')}
-              </span>
+              {loading ? 'Cargando...' : (isLogin ? 'Iniciar Sesion' : 'Crear Cuenta')}
             </button>
           </form>
 

@@ -289,12 +289,7 @@ const Header: React.FC = () => {
                   {/* Login Button - Gold Bar */}
                   <button 
                     onClick={() => setShowAuthModal(true)}
-                    className="px-4 py-2 rounded-lg font-display text-sm tracking-tight transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                    style={{
-                      background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
-                      color: 'black',
-                      boxShadow: '0 4px 15px rgba(247,201,72,0.3)',
-                    }}
+                    className="px-5 py-2 rounded-xl font-display text-sm tracking-tight transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)]"
                   >
                     ENTRAR
                   </button>

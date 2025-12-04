@@ -337,9 +337,9 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 <button
                   onClick={handleConfirmDeposit}
                   disabled={isSubmitting}
-                  className="w-full py-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-lg rounded-xl transition-all shadow-[0_0_30px_rgba(247,201,72,0.3)] disabled:opacity-50"
+                  className="w-full py-3.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Procesando...' : 'Ya realicé la transferencia'}
+                  {isSubmitting ? 'Procesando...' : 'Ya realice la transferencia'}
                 </button>
               </div>
             )}
@@ -405,9 +405,9 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 <button
                   onClick={handleConfirmDeposit}
                   disabled={isSubmitting}
-                  className="w-full py-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-lg rounded-xl transition-all shadow-[0_0_30px_rgba(247,201,72,0.3)] disabled:opacity-50"
+                  className="w-full py-3.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Procesando...' : 'Ya realicé el pago'}
+                  {isSubmitting ? 'Procesando...' : 'Ya realice el pago'}
                 </button>
               </div>
             )}
@@ -461,7 +461,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 
                 <button
                   onClick={onClose}
-                  className="w-full py-3 bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold rounded-xl transition-colors"
+                  className="w-full py-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99]"
                 >
                   Entendido
                 </button>
