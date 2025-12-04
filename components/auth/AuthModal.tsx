@@ -25,7 +25,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +35,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setError('');
       setEmail('');
       setPassword('');
-      setAgreed(false);
     }
   }, [initialMode, isOpen]);
 
@@ -46,13 +44,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Only require terms for registration
-    if (!isLogin && !agreed) {
-      setError('Debes aceptar los términos de servicio');
-      return;
-    }
-    
     setError('');
     setLoading(true);
 
@@ -83,11 +74,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const handleGoogle = async () => {
-    // Only require terms for registration
-    if (!isLogin && !agreed) {
-      setError('Debes aceptar los términos de servicio');
-      return;
-    }
     setLoading(true);
     await signInWithProvider('google');
   };
@@ -95,7 +81,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const switchMode = () => {
     setMode(isLogin ? 'register' : 'login');
     setError('');
-    setAgreed(false);
   };
 
   const modalContent = (
@@ -173,21 +158,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               />
             </div>
 
-            {/* Terms checkbox - Only for registration */}
-            {!isLogin && (
-              <label className="flex items-start gap-2 text-[11px] text-slate-500 mb-4 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  className="mt-0.5 w-3.5 h-3.5 rounded border-[#2a2d36] bg-[#1a1d26] text-[#F7C948] focus:ring-[#F7C948] focus:ring-offset-0 accent-[#F7C948]"
-                />
-                <span className="group-hover:text-slate-400 transition-colors leading-tight">
-                  Confirmo que tengo <strong>18+ años</strong> y acepto los{' '}
-                  <a href="#" className="text-[#F7C948] hover:underline">Términos de Servicio</a>.
-                </span>
-              </label>
-            )}
 
             {/* Error */}
             {error && (
