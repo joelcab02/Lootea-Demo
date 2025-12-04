@@ -6,11 +6,20 @@
    ============================================ */
 
 /* ============================================
+   TAILWIND THEME OVERRIDES
+   ============================================ */
+
+@theme {
+  --font-sans: 'Satoshi', system-ui, -apple-system, sans-serif;
+}
+
+/* ============================================
    BASE STYLES
    ============================================ */
 
 * {
   -webkit-tap-highlight-color: transparent;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
 }
 
 html {
