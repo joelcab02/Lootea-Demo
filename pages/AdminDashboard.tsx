@@ -647,6 +647,7 @@ const BoxEditSection: React.FC<{
     sequence: { item_id: string; display: string }[];
     cta_text: string;
     prize_code: string;
+    bonus_amount: number;
   }>({
     sequence: [
       { item_id: '', display: '' },
@@ -654,7 +655,8 @@ const BoxEditSection: React.FC<{
       { item_id: '', display: '' }
     ],
     cta_text: 'CREAR CUENTA Y RECLAMAR',
-    prize_code: ''
+    prize_code: '',
+    bonus_amount: 0
   });
 
   useEffect(() => {
@@ -1166,8 +1168,8 @@ const BoxEditSection: React.FC<{
                 })}
               </div>
               
-              {/* CTA and Prize Code */}
-              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-[#1a1d24]">
+              {/* CTA, Prize Code and Bonus Amount */}
+              <div className="grid grid-cols-3 gap-4 pt-3 border-t border-[#1a1d24]">
                 <div>
                   <label className="text-xs text-slate-500 block mb-1">Texto del boton CTA</label>
                   <input
@@ -1185,6 +1187,16 @@ const BoxEditSection: React.FC<{
                     value={promoConfig.prize_code}
                     onChange={(e) => setPromoConfig({ ...promoConfig, prize_code: e.target.value })}
                     placeholder="WELCOME500"
+                    className="w-full px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 block mb-1">Bono de bienvenida (MXN)</label>
+                  <input
+                    type="number"
+                    value={promoConfig.bonus_amount || ''}
+                    onChange={(e) => setPromoConfig({ ...promoConfig, bonus_amount: parseFloat(e.target.value) || 0 })}
+                    placeholder="500"
                     className="w-full px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
                   />
                 </div>

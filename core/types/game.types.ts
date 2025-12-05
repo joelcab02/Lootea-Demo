@@ -54,6 +54,7 @@ export interface PromoConfig {
   sequence: PromoSequenceItem[];  // 3 items: spin 1, 2, 3
   cta_text: string;               // "CREAR CUENTA Y RECLAMAR"
   prize_code: string;             // "WELCOME500"
+  bonus_amount: number;           // Bono en MXN al registrarse
 }
 
 // ============================================

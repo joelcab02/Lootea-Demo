@@ -27,6 +27,7 @@ export interface BoxRow {
     sequence: { item_id: string; display: string }[];
     cta_text: string;
     prize_code: string;
+    bonus_amount: number;
   } | null;
 }
 

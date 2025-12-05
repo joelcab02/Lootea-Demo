@@ -127,6 +127,58 @@ export async function signUp(email: string, password: string, displayName?: stri
 }
 
 /**
+ * Sign up from promo funnel with welcome bonus
+ */
+export async function signUpWithBonus(
+  email: string, 
+  password: string, 
+  bonusAmount: number,
+  promoSlug: string,
+  prizeCode: string
+): Promise<{ error?: string; userId?: string }> {
+  // 1. Create user
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        promo_slug: promoSlug,
+        prize_code: prizeCode,
+        registered_from: 'promo_funnel',
+      },
+    },
+  });
+  
+  if (error) {
+    return { error: error.message };
+  }
+  
+  if (!data.user) {
+    return { error: 'No se pudo crear el usuario' };
+  }
+  
+  // 2. Add bonus to wallet (the trigger should have created the wallet)
+  // Wait a moment for the trigger to complete
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  if (bonusAmount > 0) {
+    const { error: walletError } = await supabase
+      .from('wallets')
+      .update({ 
+        balance: bonusAmount,
+      })
+      .eq('user_id', data.user.id);
+    
+    if (walletError) {
+      console.error('Error adding bonus:', walletError);
+      // Don't fail registration if bonus fails
+    }
+  }
+  
+  return { userId: data.user.id };
+}
+
+/**
  * Sign in with email and password
  */
 export async function signIn(email: string, password: string): Promise<{ error?: string }> {

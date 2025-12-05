@@ -10,11 +10,12 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import SpinnerV2 from '../components/box/SpinnerV2';
 import { LootItem, Rarity } from '../types';
 import { audioService } from '../services/audioService';
 import { fetchPromoBoxBySlug, fetchBoxItems } from '../api';
+import { signUpWithBonus } from '../services/authService';
 import type { BoxRow } from '../api';
 
 // ============================================
@@ -30,6 +31,7 @@ interface PromoConfig {
   sequence: PromoSequenceItem[];
   cta_text: string;
   prize_code: string;
+  bonus_amount: number;
 }
 
 // ============================================
@@ -64,6 +66,7 @@ const Icons = {
 
 const PromoPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   
   // Box data
   const [box, setBox] = useState<BoxRow | null>(null);
@@ -81,6 +84,13 @@ const PromoPage: React.FC = () => {
   
   // UI state
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  
+  // Registration form state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [registerError, setRegisterError] = useState<string | null>(null);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
   
   // ============================================
   // LOAD PROMO BOX
@@ -195,6 +205,57 @@ const PromoPage: React.FC = () => {
         setShowRegisterModal(true);
       }, 2000);
     }
+  };
+  
+  // ============================================
+  // REGISTRATION HANDLER
+  // ============================================
+  
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      setRegisterError('Completa todos los campos');
+      return;
+    }
+    
+    if (password.length < 8) {
+      setRegisterError('La contrasena debe tener al menos 8 caracteres');
+      return;
+    }
+    
+    setIsRegistering(true);
+    setRegisterError(null);
+    
+    const result = await signUpWithBonus(
+      email,
+      password,
+      promoConfig?.bonus_amount || 0,
+      slug || '',
+      promoConfig?.prize_code || ''
+    );
+    
+    setIsRegistering(false);
+    
+    if (result.error) {
+      // Translate common errors
+      if (result.error.includes('already registered')) {
+        setRegisterError('Este email ya esta registrado');
+      } else if (result.error.includes('invalid')) {
+        setRegisterError('Email invalido');
+      } else {
+        setRegisterError(result.error);
+      }
+      return;
+    }
+    
+    // Success!
+    setRegisterSuccess(true);
+    
+    // Redirect to home after 2 seconds
+    setTimeout(() => {
+      navigate('/');
+    }, 2500);
   };
   
   // ============================================
@@ -362,7 +423,7 @@ const PromoPage: React.FC = () => {
           {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-            onClick={() => setShowRegisterModal(false)}
+            onClick={() => !isRegistering && !registerSuccess && setShowRegisterModal(false)}
           />
           
           {/* Modal */}
@@ -371,69 +432,117 @@ const PromoPage: React.FC = () => {
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent"></div>
             
             <div className="p-6 md:p-8">
-              {/* Prize display */}
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#F7C948]/10 flex items-center justify-center">
-                  <Icons.Gift />
-                </div>
-                <h2 className="font-display font-black text-2xl text-white mb-2">
-                  Felicidades
-                </h2>
-                {lastResult && (
-                  <p className="text-[#F7C948] font-bold text-lg">
-                    Ganaste: {lastResult.display}
-                  </p>
-                )}
-                <p className="text-slate-400 text-sm mt-2">
-                  Crea tu cuenta para reclamar tu premio
-                </p>
-              </div>
-              
-              {/* Register form placeholder */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
-                    Email
-                  </label>
-                  <input 
-                    type="email"
-                    placeholder="tu@email.com"
-                    className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
-                    Contrasena
-                  </label>
-                  <input 
-                    type="password"
-                    placeholder="Min. 8 caracteres"
-                    className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600"
-                  />
-                </div>
-                
-                {/* Prize code badge */}
-                {promoConfig?.prize_code && (
-                  <div className="flex items-center justify-between p-3 bg-[#F7C948]/10 border border-[#F7C948]/30 rounded-lg">
-                    <span className="text-slate-400 text-sm">Codigo de premio:</span>
-                    <span className="font-mono font-bold text-[#F7C948]">{promoConfig.prize_code}</span>
+              {registerSuccess ? (
+                // Success state
+                <div className="text-center py-4">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <Icons.Check />
                   </div>
-                )}
-                
-                <button 
-                  className="w-full py-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-display font-black text-lg uppercase tracking-tight rounded-lg transition-all shadow-[0_0_20px_rgba(247,201,72,0.2)] hover:shadow-[0_0_30px_rgba(247,201,72,0.4)]"
-                >
-                  {promoConfig?.cta_text || 'Crear Cuenta y Reclamar'}
-                </button>
-                
-                <p className="text-center text-slate-500 text-xs">
-                  Ya tienes cuenta?{' '}
-                  <Link to="/" className="text-[#F7C948] hover:underline">
-                    Inicia sesion
-                  </Link>
-                </p>
-              </div>
+                  <h2 className="font-display font-black text-2xl text-white mb-2">
+                    Cuenta Creada
+                  </h2>
+                  <p className="text-green-400 font-bold text-lg mb-2">
+                    +${promoConfig?.bonus_amount || 0} MXN agregados a tu balance
+                  </p>
+                  <p className="text-slate-400 text-sm">
+                    Redirigiendo...
+                  </p>
+                </div>
+              ) : (
+                // Registration form
+                <>
+                  {/* Prize display */}
+                  <div className="text-center mb-6">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#F7C948]/10 flex items-center justify-center text-[#F7C948]">
+                      <Icons.Gift />
+                    </div>
+                    <h2 className="font-display font-black text-2xl text-white mb-2">
+                      Felicidades
+                    </h2>
+                    {lastResult && (
+                      <p className="text-[#F7C948] font-bold text-lg">
+                        Ganaste: {lastResult.display}
+                      </p>
+                    )}
+                    {promoConfig?.bonus_amount && promoConfig.bonus_amount > 0 && (
+                      <p className="text-green-400 font-bold text-sm mt-1">
+                        + Bono de ${promoConfig.bonus_amount} MXN
+                      </p>
+                    )}
+                    <p className="text-slate-400 text-sm mt-2">
+                      Crea tu cuenta para reclamar tu premio
+                    </p>
+                  </div>
+                  
+                  {/* Register form */}
+                  <form onSubmit={handleRegister} className="space-y-4">
+                    <div>
+                      <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
+                        Email
+                      </label>
+                      <input 
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="tu@email.com"
+                        disabled={isRegistering}
+                        className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 disabled:opacity-50"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
+                        Contrasena
+                      </label>
+                      <input 
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Min. 8 caracteres"
+                        disabled={isRegistering}
+                        className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 disabled:opacity-50"
+                      />
+                    </div>
+                    
+                    {/* Prize code badge */}
+                    {promoConfig?.prize_code && (
+                      <div className="flex items-center justify-between p-3 bg-[#F7C948]/10 border border-[#F7C948]/30 rounded-lg">
+                        <span className="text-slate-400 text-sm">Codigo de premio:</span>
+                        <span className="font-mono font-bold text-[#F7C948]">{promoConfig.prize_code}</span>
+                      </div>
+                    )}
+                    
+                    {/* Error message */}
+                    {registerError && (
+                      <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
+                        {registerError}
+                      </div>
+                    )}
+                    
+                    <button 
+                      type="submit"
+                      disabled={isRegistering}
+                      className="w-full py-4 bg-[#F7C948] hover:bg-[#FFD966] text-black font-display font-black text-lg uppercase tracking-tight rounded-lg transition-all shadow-[0_0_20px_rgba(247,201,72,0.2)] hover:shadow-[0_0_30px_rgba(247,201,72,0.4)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {isRegistering ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                          <span>Creando cuenta...</span>
+                        </>
+                      ) : (
+                        promoConfig?.cta_text || 'Crear Cuenta y Reclamar'
+                      )}
+                    </button>
+                    
+                    <p className="text-center text-slate-500 text-xs">
+                      Ya tienes cuenta?{' '}
+                      <Link to="/" className="text-[#F7C948] hover:underline">
+                        Inicia sesion
+                      </Link>
+                    </p>
+                  </form>
+                </>
+              )}
             </div>
           </div>
         </div>
