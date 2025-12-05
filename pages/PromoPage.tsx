@@ -326,46 +326,49 @@ const PromoPage: React.FC = () => {
       <main className="flex-1 flex flex-col">
         {/* Title & Progress */}
         <div className="text-center py-6 px-4">
-          <h1 className="font-display font-black text-2xl md:text-4xl text-white mb-2">
-            {box?.name || 'Caja Promocional'}
+          <h1 className="font-display font-black text-2xl md:text-3xl text-white mb-6">
+            Gira 3 veces <span className="text-[#F7C948]">GRATIS</span> para ganar premios
           </h1>
-          <p className="text-slate-400 mb-4">
-            Gira 3 veces GRATIS para ganar premios
-          </p>
           
-          {/* Progress bar */}
-          <div className="max-w-xs mx-auto">
-            <div className="flex justify-between text-xs text-slate-500 mb-1">
-              <span>Progreso</span>
-              <span>{spinsUsed}/3 giros</span>
-            </div>
-            <div className="h-2 bg-[#1a1d26] rounded-full overflow-hidden">
+          {/* Progress with synced indicators */}
+          <div className="max-w-sm mx-auto">
+            {/* Spin indicators with connected progress bar */}
+            <div className="relative flex justify-between items-center">
+              {/* Background bar */}
+              <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-1 bg-[#1a1d26] rounded-full" />
+              
+              {/* Progress bar - synced with circles */}
               <div 
-                className="h-full bg-gradient-to-r from-[#F7C948] to-[#FFD966] transition-all duration-500"
-                style={{ width: `${(spinsUsed / 3) * 100}%` }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-[#F7C948] to-[#FFD966] rounded-full transition-all duration-500"
+                style={{ 
+                  width: spinsUsed === 0 ? '0%' : spinsUsed === 1 ? 'calc(50% - 16px)' : spinsUsed === 2 ? 'calc(100% - 32px)' : 'calc(100% - 32px)'
+                }}
               />
-            </div>
-            
-            {/* Spin indicators */}
-            <div className="flex justify-between mt-3">
+              
+              {/* Circle indicators */}
               {[0, 1, 2].map((index) => (
                 <div 
                   key={index}
-                  className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${
+                  className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ${
                     index < spinsUsed
                       ? 'bg-[#F7C948] border-[#F7C948] text-black'
                       : index === currentSpin && !allSpinsUsed
-                        ? 'border-[#F7C948] text-[#F7C948]'
-                        : 'border-[#2a2d36] text-slate-600'
+                        ? 'border-[#F7C948] text-[#F7C948] bg-[#111111]'
+                        : 'border-[#2a2d36] text-slate-600 bg-[#111111]'
                   }`}
                 >
                   {index < spinsUsed ? (
                     <Icons.Check />
                   ) : (
-                    <span className="text-xs font-bold">{index + 1}</span>
+                    <span className="text-sm font-bold">{index + 1}</span>
                   )}
                 </div>
               ))}
+            </div>
+            
+            {/* Progress text */}
+            <div className="text-center mt-3 text-xs text-slate-500">
+              {spinsUsed}/3 giros completados
             </div>
           </div>
         </div>
