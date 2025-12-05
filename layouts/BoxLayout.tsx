@@ -4,12 +4,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SpinnerV2 from '../components/box/SpinnerV2';
 import { Layout } from '../components/layout/Layout';
 import CaseContentGrid from '../components/box/CaseContentGrid';
 import { LootItem } from '../types';
 import { audioService } from '../services/audioService';
-import { subscribeAuth, isLoggedIn } from '../services/authService';
+import { subscribeAuth, isLoggedIn, isAdmin } from '../services/authService';
 import { AuthModal } from '../components/auth/AuthModal';
 import { useGameStore, selectIsSpinning } from '../stores';
 
@@ -27,6 +28,8 @@ interface BoxLayoutProps {
 }
 
 const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
+  const [searchParams] = useSearchParams();
+  
   // ============================================
   // ZUSTAND STORE - Estado centralizado del juego
   // ============================================
@@ -35,6 +38,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   const items = useGameStore(state => state.items);
   const predeterminedWinner = useGameStore(state => state.predeterminedWinner);
   const storeError = useGameStore(state => state.error);
+  const contentMode = useGameStore(state => state.contentMode);
   
   const isSpinning = useGameStore(selectIsSpinning);
   const lastWinner = useGameStore(state => state.lastWinner);
@@ -42,7 +46,8 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   const { 
     startSpin, 
     onSpinComplete, 
-    setMode, 
+    setMode,
+    setContentMode,
     loadDefaultBox,
     loadBox,
     syncBalance,
@@ -90,6 +95,21 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
+  
+  // Content Mode: detectar params de URL (solo para admins)
+  useEffect(() => {
+    const isContentMode = searchParams.get('content_mode') === 'true';
+    const forcedItemId = searchParams.get('forced_item');
+    const addInventory = searchParams.get('add_inventory') === 'true';
+    
+    if (isContentMode && forcedItemId && isAdmin()) {
+      console.log('[BoxLayout] Content Mode activated:', { forcedItemId, addInventory });
+      setContentMode(true, forcedItemId, addInventory);
+    } else {
+      setContentMode(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   // ============================================
   // HANDLERS
@@ -141,6 +161,20 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
 
   return (
     <Layout>
+      {/* Content Mode Banner */}
+      {contentMode && (
+        <div className="bg-emerald-500/20 border-b border-emerald-500/30 py-2 px-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 text-emerald-400 text-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="2" fill="none"/>
+            </svg>
+            <span className="font-medium">MODO CONTENIDO</span>
+            <span className="text-emerald-300/70">- Resultado controlado para grabacion</span>
+          </div>
+        </div>
+      )}
+      
       {/* GAME AREA */}
       <div className="flex flex-col items-center relative">
         {/* SPINNER */}
