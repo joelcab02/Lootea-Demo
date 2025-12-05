@@ -186,13 +186,14 @@ const BottomNav: React.FC = () => {
           />
           
           {/* More Menu with Dropdown */}
-          <div className="relative flex-1">
-            <NavItem
-              icon={<Icons.Menu />}
-              label="Mas"
+          <div className="relative flex-1 flex justify-center">
+            <button 
               onClick={() => setShowMoreMenu(!showMoreMenu)}
-              isActive={showMoreMenu}
-            />
+              className={`flex flex-col items-center justify-center gap-1 py-3 px-4 transition-colors ${showMoreMenu ? 'text-[#F7C948]' : 'text-slate-400'}`}
+            >
+              <Icons.Menu />
+              <span className="text-[11px] font-medium">Mas</span>
+            </button>
             
             {/* More Dropdown */}
             {showMoreMenu && (
