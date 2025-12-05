@@ -168,10 +168,48 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
           <div className="p-6">
             {/* Header */}
             <h2 className="font-display font-black italic text-xl text-white mb-1">
-              {step === 'pending' ? '¡Solicitud Enviada!' : 'Depositar Fondos'}
+              {step === 'pending' ? '¡Solicitud Enviada!' : 'Agregar Fondos'}
             </h2>
-            {step === 'select' && (
-              <p className="text-slate-500 text-xs mb-5">Selecciona el monto y método de pago</p>
+            
+            {/* Step Indicator - Only show on select and details */}
+            {(step === 'select' || step === 'details') && (
+              <div className="mb-5">
+                <p className="text-slate-500 text-xs mb-3">
+                  {step === 'select' ? 'Elige cuanto quieres depositar' : 'Completa tu pago'}
+                </p>
+                
+                {/* Progress Steps */}
+                <div className="flex items-center gap-2">
+                  {/* Step 1 */}
+                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
+                    step === 'select' 
+                      ? 'bg-[#F7C948] text-black' 
+                      : 'bg-emerald-500/20 text-emerald-400'
+                  }`}>
+                    {step === 'details' ? (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    ) : (
+                      <span>1</span>
+                    )}
+                    <span>Monto</span>
+                  </div>
+                  
+                  {/* Connector */}
+                  <div className={`flex-1 h-0.5 ${step === 'details' ? 'bg-[#F7C948]' : 'bg-[#2a2d36]'}`} />
+                  
+                  {/* Step 2 */}
+                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
+                    step === 'details' 
+                      ? 'bg-[#F7C948] text-black' 
+                      : 'bg-[#1a1d26] text-slate-500 border border-[#2a2d36]'
+                  }`}>
+                    <span>2</span>
+                    <span>Pagar</span>
+                  </div>
+                </div>
+              </div>
             )}
             
             {/* STEP 1: Select Amount & Method */}
@@ -217,31 +255,43 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 
                 {/* Payment Methods */}
                 <label className="block text-slate-400 text-[10px] font-medium mb-2 uppercase tracking-wider">
-                  Método de pago
+                  Metodo de pago
                 </label>
-                <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="grid grid-cols-2 gap-3 mb-5">
                   {/* SPEI - Selectable */}
                   <button
-                    onClick={() => handleSelectMethod('spei')}
-                    className="flex flex-col items-center gap-2 p-4 bg-[#1a1d26] border border-[#2a2d36] rounded-xl hover:border-[#F7C948] transition-all group"
+                    onClick={() => setSelectedMethod('spei')}
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
+                      selectedMethod === 'spei'
+                        ? 'bg-[#F7C948]/10 border-2 border-[#F7C948]'
+                        : 'bg-[#1a1d26] border border-[#2a2d36] hover:border-[#F7C948]/50'
+                    }`}
                   >
-                    <div className="w-12 h-12 bg-[#0d1019] rounded-full flex items-center justify-center group-hover:bg-[#F7C948]/10 transition-colors">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                      selectedMethod === 'spei' ? 'bg-[#F7C948]/20' : 'bg-[#0d1019]'
+                    }`}>
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
                         <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
                       </svg>
                     </div>
                     <div className="text-center">
                       <p className="font-bold text-white text-sm">SPEI</p>
-                      <p className="text-[10px] text-slate-500">Transferencia</p>
+                      <p className="text-[10px] text-slate-500">5-30 min</p>
                     </div>
                   </button>
                   
                   {/* OXXO - Selectable */}
                   <button
-                    onClick={() => handleSelectMethod('oxxo')}
-                    className="flex flex-col items-center gap-2 p-4 bg-[#1a1d26] border border-[#2a2d36] rounded-xl hover:border-[#F7C948] transition-all group"
+                    onClick={() => setSelectedMethod('oxxo')}
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
+                      selectedMethod === 'oxxo'
+                        ? 'bg-[#F7C948]/10 border-2 border-[#F7C948]'
+                        : 'bg-[#1a1d26] border border-[#2a2d36] hover:border-[#F7C948]/50'
+                    }`}
                   >
-                    <div className="w-12 h-12 bg-[#0d1019] rounded-full flex items-center justify-center group-hover:bg-[#F7C948]/10 transition-colors">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                      selectedMethod === 'oxxo' ? 'bg-[#F7C948]/20' : 'bg-[#0d1019]'
+                    }`}>
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
@@ -249,19 +299,23 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                     </div>
                     <div className="text-center">
                       <p className="font-bold text-white text-sm">OXXO</p>
-                      <p className="text-[10px] text-slate-500">Pago en efectivo</p>
+                      <p className="text-[10px] text-slate-500">1-24 hrs</p>
                     </div>
                   </button>
                 </div>
                 
-                {/* Minimum Notice */}
-                <p className="text-[10px] text-slate-500 text-center mb-4">
-                  Depósito mínimo: $100 MXN • Acreditación: 5-30 min
-                </p>
+                {/* Continue Button */}
+                <button
+                  onClick={() => handleSelectMethod(selectedMethod)}
+                  disabled={!selectedMethod || !isValidAmount}
+                  className="w-full py-3.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+                >
+                  Continuar
+                </button>
                 
-                {/* Footer disclaimer */}
-                <p className="text-[10px] text-slate-600 text-center">
-                  Los fondos depositados solo pueden usarse para jugar. No hay reembolsos.
+                {/* Minimum Notice */}
+                <p className="text-[10px] text-slate-500 text-center">
+                  Minimo $100 MXN • Sin comisiones
                 </p>
               </>
             )}
