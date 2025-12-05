@@ -185,19 +185,36 @@ const Header: React.FC = () => {
                     )}
                   </button>
 
-                  {/* Balance - Gold Bar Style */}
-                  <button 
-                    onClick={() => setShowDeposit(true)}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                    style={{
-                      background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
-                      boxShadow: '0 4px 15px rgba(247,201,72,0.3)',
-                    }}
-                  >
-                    <span className="font-mono font-bold text-sm text-black">
-                      ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
-                    </span>
-                  </button>
+                  {/* Balance + Deposit Button Group */}
+                  <div className="flex items-center">
+                    {/* Balance Display */}
+                    <button 
+                      onClick={() => setShowDeposit(true)}
+                      className="flex items-center gap-1.5 pl-3 pr-2 py-2 rounded-l-lg transition-all duration-300 hover:brightness-110"
+                      style={{
+                        background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
+                        boxShadow: '0 4px 15px rgba(247,201,72,0.3)',
+                      }}
+                      title="Click para depositar"
+                    >
+                      <span className="font-mono font-bold text-sm text-black">
+                        ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
+                      </span>
+                    </button>
+                    
+                    {/* Deposit "+" Button */}
+                    <button 
+                      onClick={() => setShowDeposit(true)}
+                      className="flex items-center justify-center w-9 h-9 rounded-r-lg transition-all duration-300 hover:brightness-110 active:scale-95"
+                      style={{
+                        background: 'linear-gradient(180deg, #E6B800 0%, #D4A600 100%)',
+                        boxShadow: '0 4px 15px rgba(247,201,72,0.3)',
+                      }}
+                      title="Depositar fondos"
+                    >
+                      <Icons.Plus />
+                    </button>
+                  </div>
 
                   {/* Menu Button */}
                   <div className="relative">
