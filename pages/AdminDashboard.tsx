@@ -642,6 +642,10 @@ const BoxEditSection: React.FC<{
   const [showOnlyInBox, setShowOnlyInBox] = useState(false);
   const isNew = !boxId;
   
+  // Tab state
+  type EditTab = 'details' | 'items' | 'promo';
+  const [activeTab, setActiveTab] = useState<EditTab>('details');
+  
   // Promo config state
   const [isPromo, setIsPromo] = useState(false);
   const [promoConfig, setPromoConfig] = useState<{
@@ -1021,521 +1025,440 @@ const BoxEditSection: React.FC<{
     });
 
   return (
-    <div className="space-y-6">
-      {/* Back button */}
-      <button onClick={() => navigate('boxes')} className="text-slate-400 hover:text-white text-sm">
-        ← Volver a cajas
-      </button>
+    <div className="space-y-4">
+      {/* Header with back button and save */}
+      <div className="flex items-center justify-between">
+        <button onClick={() => navigate('boxes')} className="text-slate-400 hover:text-white text-sm flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Volver a cajas
+        </button>
+        <button
+          onClick={handleSave}
+          disabled={hasErrors}
+          className="px-4 py-2 bg-[#F7C948] text-black text-sm font-bold rounded-lg hover:bg-[#EAB308] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          {isNew ? 'Crear Caja' : 'Guardar'}
+        </button>
+      </div>
 
-      {/* Box Details */}
-      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-        <h2 className="text-sm font-medium text-white mb-4">Detalles de la caja</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label className="text-xs text-slate-500 block mb-1">Nombre *</label>
-            <input
-              type="text"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value, slug: isNew ? e.target.value.toLowerCase().replace(/\s+/g, '-') : form.slug })}
-              placeholder="Apple Collection"
-              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
-            />
-          </div>
-          <div>
-            <label className="text-xs text-slate-500 block mb-1">Slug (URL) *</label>
-            <input
-              type="text"
-              value={form.slug}
-              onChange={(e) => setForm({ ...form, slug: e.target.value })}
-              placeholder="apple-collection"
-              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
-            />
-          </div>
-          <div>
-            <label className="text-xs text-slate-500 block mb-1">Precio *</label>
-            <input
-              type="number"
-              value={form.price}
-              onChange={(e) => setForm({ ...form, price: e.target.value })}
-              placeholder="299"
-              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
-            />
-          </div>
-          <div>
-            <label className="text-xs text-slate-500 block mb-1">Categoría</label>
-            <input
-              type="text"
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
-              placeholder="tech"
-              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
-            />
-          </div>
-        </div>
-        
-        {/* Image URL Field */}
-        <div className="mt-4">
-          <label className="text-xs text-slate-500 block mb-1">Imagen de la caja (URL)</label>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              value={form.image}
-              onChange={(e) => setForm({ ...form, image: e.target.value })}
-              placeholder="https://i.imgur.com/ejemplo.png"
-              className="flex-1 px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
-            />
-            {form.image && (
-              <div className="w-12 h-12 bg-[#08090c] border border-[#1a1d24] rounded-lg overflow-hidden flex-shrink-0">
-                <img 
-                  src={form.image} 
-                  alt="Preview" 
-                  className="w-full h-full object-contain"
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-              </div>
+      {/* Tabs Navigation */}
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg">
+        <div className="flex border-b border-[#1a1d24]">
+          <button
+            onClick={() => setActiveTab('details')}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'details' 
+                ? 'text-[#F7C948] border-b-2 border-[#F7C948] bg-[#F7C948]/5' 
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Detalles
+          </button>
+          <button
+            onClick={() => setActiveTab('items')}
+            disabled={isNew}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'items' 
+                ? 'text-[#F7C948] border-b-2 border-[#F7C948] bg-[#F7C948]/5' 
+                : 'text-slate-400 hover:text-white'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            Items y Odds
+            {boxItems.length > 0 && (
+              <span className="ml-2 px-1.5 py-0.5 bg-[#1a1d24] rounded text-[10px]">{boxItems.length}</span>
             )}
-          </div>
-          <p className="text-xs text-slate-600 mt-1">
-            Sube tu imagen a <a href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer" className="text-[#F7C948] hover:underline">Imgur</a> y pega el link aquí
-          </p>
+          </button>
+          <button
+            onClick={() => setActiveTab('promo')}
+            disabled={isNew}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'promo' 
+                ? 'text-[#F7C948] border-b-2 border-[#F7C948] bg-[#F7C948]/5' 
+                : 'text-slate-400 hover:text-white'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            Promo Funnel
+            {isPromo && (
+              <span className="ml-2 px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded text-[10px]">ON</span>
+            )}
+          </button>
         </div>
 
-        {/* Promo Config Section */}
-        <div className="mt-6 pt-6 border-t border-[#1a1d24]">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={isPromo}
-              onChange={(e) => setIsPromo(e.target.checked)}
-              className="w-4 h-4 rounded border-slate-600 bg-[#08090c] text-[#F7C948] focus:ring-[#F7C948]"
-            />
-            <div>
-              <span className="text-sm font-medium text-white">Caja Promocional (Funnel)</span>
-              <p className="text-xs text-slate-500">Resultados preprogramados para adquisicion de usuarios</p>
-            </div>
-          </label>
-          
-          {isPromo && (
-            <div className="mt-4 p-4 bg-[#08090c] border border-amber-500/30 rounded-lg space-y-4">
-              <div className="flex items-center gap-2 text-amber-400 text-xs">
-                <span>!</span>
-                <span>Los usuarios tendran 3 giros gratis con resultados fijos</span>
-              </div>
-              
-              {/* Sequence Config */}
-              <div className="space-y-3">
-                {[0, 1, 2].map((index) => {
-                  const spinLabels = ['Spin 1 (Ganancia pequena)', 'Spin 2 (Casi gana)', 'Spin 3 (PREMIO GRANDE)'];
-                  return (
-                    <div key={index} className="flex items-center gap-3">
-                      <span className="text-xs text-slate-400 w-36 flex-shrink-0">{spinLabels[index]}</span>
-                      <select
-                        value={promoConfig.sequence[index]?.item_id || ''}
-                        onChange={(e) => {
-                          const newSequence = [...promoConfig.sequence];
-                          const selectedProduct = products.find(p => p.id === e.target.value);
-                          newSequence[index] = {
-                            item_id: e.target.value,
-                            display: selectedProduct?.name || ''
-                          };
-                          setPromoConfig({ ...promoConfig, sequence: newSequence });
-                        }}
-                        className="flex-1 px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
-                      >
-                        <option value="">Seleccionar item...</option>
-                        {boxItems.map(bi => {
-                          const product = products.find(p => p.id === bi.item_id);
-                          if (!product) return null;
-                          return (
-                            <option key={bi.item_id} value={bi.item_id}>
-                              {product.name} (${product.price}) - {product.rarity}
-                            </option>
-                          );
-                        })}
-                      </select>
-                      <input
-                        type="text"
-                        value={promoConfig.sequence[index]?.display || ''}
-                        onChange={(e) => {
-                          const newSequence = [...promoConfig.sequence];
-                          newSequence[index] = { ...newSequence[index], display: e.target.value };
-                          setPromoConfig({ ...promoConfig, sequence: newSequence });
-                        }}
-                        placeholder="Texto a mostrar"
-                        className="w-32 px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-              
-              {/* CTA, Prize Code and Bonus Amount */}
-              <div className="grid grid-cols-3 gap-4 pt-3 border-t border-[#1a1d24]">
+        {/* Tab Content */}
+        <div className="p-5">
+          {/* === TAB: DETALLES === */}
+          {activeTab === 'details' && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <label className="text-xs text-slate-500 block mb-1">Texto del boton CTA</label>
+                  <label className="text-xs text-slate-500 block mb-1">Nombre *</label>
                   <input
                     type="text"
-                    value={promoConfig.cta_text}
-                    onChange={(e) => setPromoConfig({ ...promoConfig, cta_text: e.target.value })}
-                    placeholder="CREAR CUENTA Y RECLAMAR"
-                    className="w-full px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value, slug: isNew ? e.target.value.toLowerCase().replace(/\s+/g, '-') : form.slug })}
+                    placeholder="Apple Collection"
+                    className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-slate-500 block mb-1">Codigo de premio</label>
+                  <label className="text-xs text-slate-500 block mb-1">Slug (URL) *</label>
                   <input
                     type="text"
-                    value={promoConfig.prize_code}
-                    onChange={(e) => setPromoConfig({ ...promoConfig, prize_code: e.target.value })}
-                    placeholder="WELCOME500"
-                    className="w-full px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                    value={form.slug}
+                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                    placeholder="apple-collection"
+                    className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-slate-500 block mb-1">Bono de bienvenida (MXN)</label>
+                  <label className="text-xs text-slate-500 block mb-1">Precio *</label>
                   <input
                     type="number"
-                    value={promoConfig.bonus_amount || ''}
-                    onChange={(e) => setPromoConfig({ ...promoConfig, bonus_amount: parseFloat(e.target.value) || 0 })}
-                    placeholder="500"
-                    className="w-full px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                    value={form.price}
+                    onChange={(e) => setForm({ ...form, price: e.target.value })}
+                    placeholder="299"
+                    className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 block mb-1">Categoria</label>
+                  <input
+                    type="text"
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    placeholder="tech"
+                    className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
                   />
                 </div>
               </div>
               
-              {/* Preview URL */}
-              {form.slug && (
-                <div className="pt-3 border-t border-[#1a1d24]">
-                  <label className="text-xs text-slate-500 block mb-1">URL del funnel</label>
-                  <code className="text-xs text-[#F7C948] bg-[#0c0e14] px-2 py-1 rounded">
-                    /promo/{form.slug}
-                  </code>
+              {/* Image URL Field */}
+              <div>
+                <label className="text-xs text-slate-500 block mb-1">Imagen de la caja (URL)</label>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    value={form.image}
+                    onChange={(e) => setForm({ ...form, image: e.target.value })}
+                    placeholder="https://i.imgur.com/ejemplo.png"
+                    className="flex-1 px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
+                  />
+                  {form.image && (
+                    <div className="w-12 h-12 bg-[#08090c] border border-[#1a1d24] rounded-lg overflow-hidden flex-shrink-0">
+                      <img 
+                        src={form.image} 
+                        alt="Preview" 
+                        className="w-full h-full object-contain"
+                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                      />
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-slate-600 mt-1">
+                  Sube tu imagen a <a href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer" className="text-[#F7C948] hover:underline">Imgur</a> y pega el link aqui
+                </p>
+              </div>
+
+              {/* Quick links */}
+              {!isNew && (
+                <div className="pt-4 border-t border-[#1a1d24] flex gap-3">
+                  <Link
+                    to={`/box/${form.slug}`}
+                    target="_blank"
+                    className="text-xs text-slate-400 hover:text-[#F7C948] flex items-center gap-1"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Ver caja
+                  </Link>
+                  {isPromo && (
+                    <Link
+                      to={`/promo/${form.slug}`}
+                      target="_blank"
+                      className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      Ver promo funnel
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
           )}
-        </div>
 
-        <div className="mt-4">
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 bg-[#F7C948] text-black text-sm font-bold rounded-lg hover:bg-[#EAB308] transition-colors"
-          >
-            {isNew ? 'Crear Caja' : 'Guardar Cambios'}
-          </button>
-        </div>
-      </div>
-
-      {/* Validation Panel - Always show when editing */}
-      {!isNew && (
-        <div className={`border rounded-lg p-4 ${
-          hasErrors 
-            ? 'bg-red-500/5 border-red-500/30' 
-            : hasWarnings 
-              ? 'bg-amber-500/5 border-amber-500/30'
-              : 'bg-emerald-500/5 border-emerald-500/30'
-        }`}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              hasErrors 
-                ? 'bg-red-500/20' 
-                : hasWarnings 
-                  ? 'bg-amber-500/20'
-                  : 'bg-emerald-500/20'
-            }`}>
-              {hasErrors && <span className="text-red-400">✕</span>}
-              {!hasErrors && hasWarnings && <span className="text-amber-400">!</span>}
-              {isReady && <span className="text-emerald-400">✓</span>}
-            </div>
-            <div>
-              <h3 className={`text-sm font-medium ${
-                hasErrors ? 'text-red-400' : hasWarnings ? 'text-amber-400' : 'text-emerald-400'
-              }`}>
-                {hasErrors && 'Errores que corregir'}
-                {!hasErrors && hasWarnings && 'Advertencias'}
-                {isReady && 'Caja lista'}
-              </h3>
-              <p className="text-xs text-slate-500">
-                {validations.length} validación{validations.length !== 1 ? 'es' : ''}
-              </p>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            {validations.map((v, i) => (
-              <div 
-                key={i}
-                className={`flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-xs ${
-                  v.type === 'error' 
-                    ? 'bg-red-500/10 text-red-300' 
-                    : v.type === 'warning'
-                      ? 'bg-amber-500/10 text-amber-300'
-                      : 'bg-emerald-500/10 text-emerald-300'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span>
-                    {v.type === 'error' && '❌'}
-                    {v.type === 'warning' && '⚠️'}
-                    {v.type === 'success' && '✅'}
-                  </span>
-                  <span>{v.message}</span>
-                </div>
-                {v.action && (
-                  <button
-                    onClick={v.action}
-                    className="px-2 py-1 bg-white/10 rounded text-[10px] font-medium hover:bg-white/20 transition-colors"
-                  >
-                    {v.actionLabel}
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Analytics Panel - Only show if editing existing box */}
-      {!isNew && boxItems.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Odds Distribution */}
-          <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-white">Distribución de Odds</h3>
-              <span className={`text-xs font-mono px-2 py-1 rounded ${
-                Math.abs(totalOdds - 100) < 0.1 
-                  ? 'bg-emerald-500/10 text-emerald-400' 
-                  : 'bg-amber-500/10 text-amber-400'
-              }`}>
-                Total: {totalOdds.toFixed(2)}%
-              </span>
-            </div>
-            
-            <div className="space-y-3">
-              {(['LEGENDARY', 'EPIC', 'RARE', 'COMMON'] as const).map(rarity => (
-                <div key={rarity} className="space-y-1">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className={getRarityColor(rarity as Rarity)}>{rarity}</span>
-                    <span className="text-slate-400 font-mono">{oddsByRarity[rarity].toFixed(2)}%</span>
-                  </div>
-                  <div className="h-2 bg-[#1a1d24] rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full ${getRarityBgColor(rarity)} transition-all duration-300`}
-                      style={{ width: `${Math.min(oddsByRarity[rarity], 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            {/* Normalize button */}
-            {Math.abs(totalOdds - 100) > 0.1 && (
-              <button
-                onClick={normalizeOdds}
-                className="mt-4 w-full px-3 py-2 bg-amber-500/10 text-amber-400 text-xs font-medium rounded-lg hover:bg-amber-500/20 transition-colors"
-              >
-                ⚡ Normalizar a 100%
-              </button>
-            )}
-          </div>
-
-          {/* Profitability Calculator */}
-          <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-            <h3 className="text-sm font-medium text-white mb-4">Análisis de Rentabilidad</h3>
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between py-2 border-b border-[#1a1d24]">
-                <span className="text-xs text-slate-400">Precio de la caja</span>
-                <span className="text-sm font-bold text-white">${boxPrice.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between py-2 border-b border-[#1a1d24]">
-                <span className="text-xs text-slate-400">Valor Esperado (EV)</span>
-                <span className="text-sm font-bold text-[#F7C948]">${expectedValue.toFixed(2)}</span>
-              </div>
-              <div className="flex items-center justify-between py-2 border-b border-[#1a1d24]">
-                <span className="text-xs text-slate-400">House Edge</span>
-                <span className={`text-sm font-bold ${
-                  houseEdge >= 10 && houseEdge <= 25 ? 'text-emerald-400' : 
-                  houseEdge < 10 ? 'text-red-400' : 'text-amber-400'
+          {/* === TAB: ITEMS Y ODDS === */}
+          {activeTab === 'items' && !isNew && (
+            <div className="space-y-4">
+              {/* Validation Panel */}
+              {validations.length > 0 && (
+                <div className={`border rounded-lg p-3 ${
+                  hasErrors 
+                    ? 'bg-red-500/5 border-red-500/30' 
+                    : hasWarnings 
+                      ? 'bg-amber-500/5 border-amber-500/30'
+                      : 'bg-emerald-500/5 border-emerald-500/30'
                 }`}>
-                  {houseEdge.toFixed(2)}%
-                </span>
+                  <div className="flex items-center gap-2 mb-2">
+                    {hasErrors && <span className="text-red-400 text-sm">Errores que corregir</span>}
+                    {!hasErrors && hasWarnings && <span className="text-amber-400 text-sm">Advertencias</span>}
+                    {isReady && <span className="text-emerald-400 text-sm">Caja lista</span>}
+                  </div>
+                  <div className="space-y-1">
+                    {validations.slice(0, 3).map((v, i) => (
+                      <div key={i} className="flex items-center justify-between text-xs">
+                        <span className={v.type === 'error' ? 'text-red-300' : v.type === 'warning' ? 'text-amber-300' : 'text-emerald-300'}>
+                          {v.message}
+                        </span>
+                        {v.action && (
+                          <button onClick={v.action} className="px-2 py-0.5 bg-white/10 rounded text-[10px] hover:bg-white/20">
+                            {v.actionLabel}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Analytics Row */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="bg-[#08090c] border border-[#1a1d24] rounded-lg p-3">
+                  <div className="text-xs text-slate-500">Precio Caja</div>
+                  <div className="text-lg font-bold text-white">${boxPrice}</div>
+                </div>
+                <div className="bg-[#08090c] border border-[#1a1d24] rounded-lg p-3">
+                  <div className="text-xs text-slate-500">Valor Esperado</div>
+                  <div className="text-lg font-bold text-[#F7C948]">${expectedValue.toFixed(0)}</div>
+                </div>
+                <div className="bg-[#08090c] border border-[#1a1d24] rounded-lg p-3">
+                  <div className="text-xs text-slate-500">House Edge</div>
+                  <div className={`text-lg font-bold ${houseEdge >= 10 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {houseEdge.toFixed(1)}%
+                  </div>
+                </div>
+                <div className="bg-[#08090c] border border-[#1a1d24] rounded-lg p-3">
+                  <div className="text-xs text-slate-500">Total Odds</div>
+                  <div className={`text-lg font-bold ${Math.abs(totalOdds - 100) < 0.1 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                    {totalOdds.toFixed(1)}%
+                  </div>
+                </div>
               </div>
+
+              {/* Auto-distribute */}
               <div className="flex items-center justify-between py-2">
-                <span className="text-xs text-slate-400">RTP (Return to Player)</span>
-                <span className="text-sm font-bold text-white">{rtp.toFixed(2)}%</span>
-              </div>
-            </div>
-            
-            {/* Status indicator */}
-            <div className={`mt-4 p-3 rounded-lg text-xs ${
-              houseEdge >= 10 && houseEdge <= 25 
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                : houseEdge < 10 
-                  ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-            }`}>
-              {houseEdge >= 10 && houseEdge <= 25 && '✅ House Edge óptimo (10-25%)'}
-              {houseEdge < 10 && '⚠️ House Edge muy bajo - la caja no es rentable'}
-              {houseEdge > 25 && '⚠️ House Edge alto - considera mejorar el RTP'}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Auto-distribute templates */}
-      {!isNew && boxItems.length > 0 && (
-        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <span className="text-xs text-slate-400">Distribución automática:</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => autoDistributeOdds('budget')}
-                className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830] transition-colors"
-              >
-                🎯 Económica
-              </button>
-              <button
-                onClick={() => autoDistributeOdds('balanced')}
-                className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830] transition-colors"
-              >
-                ⚖️ Balanceada
-              </button>
-              <button
-                onClick={() => autoDistributeOdds('premium')}
-                className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830] transition-colors"
-              >
-                💎 Premium
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Box Items - Only show if editing existing box */}
-      {!isNew && (
-        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white">Productos</h3>
-            <span className="text-xs text-slate-500">{boxItems.length} asignados</span>
-          </div>
-          
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-4 pb-4 border-b border-[#1a1d24]">
-            <input
-              type="text"
-              placeholder="Buscar producto..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 min-w-[200px] px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
-            />
-            <select
-              value={filterRarity}
-              onChange={(e) => setFilterRarity(e.target.value)}
-              className="px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
-            >
-              <option value="all">Todas las rarezas</option>
-              <option value="LEGENDARY">Legendary</option>
-              <option value="EPIC">Epic</option>
-              <option value="RARE">Rare</option>
-              <option value="COMMON">Common</option>
-            </select>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
-            >
-              <option value="odds">Ordenar por Odds</option>
-              <option value="price">Ordenar por Precio</option>
-              <option value="rarity">Ordenar por Rareza</option>
-              <option value="name">Ordenar por Nombre</option>
-            </select>
-            <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showOnlyInBox}
-                onChange={(e) => setShowOnlyInBox(e.target.checked)}
-                className="rounded border-slate-600"
-              />
-              Solo en caja
-            </label>
-          </div>
-          
-          <div className="space-y-2 max-h-[500px] overflow-y-auto">
-            {filteredProducts.map(product => {
-              const inBox = isItemInBox(product.id);
-              const odds = getItemOdds(product.id);
-              const normalizedOdds = totalOdds > 0 ? (odds / totalOdds) * 100 : 0;
-              
-              return (
-                <div 
-                  key={product.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
-                    inBox 
-                      ? 'bg-emerald-500/5 border-emerald-500/30' 
-                      : 'bg-[#08090c] border-[#1a1d24] hover:border-[#252830]'
-                  }`}
-                >
-                  {/* Checkbox */}
-                  <button
-                    onClick={() => toggleItem(product.id)}
-                    className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                      inBox 
-                        ? 'bg-emerald-500 border-emerald-500 text-white' 
-                        : 'border-slate-600 hover:border-[#F7C948]'
-                    }`}
-                  >
-                    {inBox && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                <span className="text-xs text-slate-400">Distribucion automatica:</span>
+                <div className="flex gap-2">
+                  <button onClick={() => autoDistributeOdds('budget')} className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830]">
+                    Economica
                   </button>
-                  
-                  {/* Image */}
-                  <div className="w-9 h-9 bg-[#1a1d24] rounded flex items-center justify-center flex-shrink-0">
-                    {product.image && (product.image.startsWith('http') || product.image.startsWith('data:')) ? (
-                      <img src={product.image} alt="" className="w-full h-full object-contain rounded" />
-                    ) : (
-                      <span className="text-sm">{product.image || '?'}</span>
-                    )}
-                  </div>
-                  
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-white text-sm truncate">{product.name}</div>
-                    <div className={`text-[10px] ${getRarityColor(product.rarity)}`}>{product.rarity}</div>
-                  </div>
-                  
-                  {/* Price */}
-                  <div className="text-[#F7C948] font-bold text-xs">
-                    ${product.price.toLocaleString()}
-                  </div>
-                  
-                  {/* Odds */}
-                  {inBox && (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        value={odds}
-                        onChange={(e) => updateOdds(product.id, parseFloat(e.target.value) || 0)}
-                        step="0.1"
-                        min="0"
-                        className="w-16 px-2 py-1 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs text-right font-mono focus:border-[#F7C948] outline-none"
-                      />
-                      <span className="text-[10px] text-slate-500 w-14 text-right font-mono">
-                        ({normalizedOdds.toFixed(2)}%)
-                      </span>
-                    </div>
+                  <button onClick={() => autoDistributeOdds('balanced')} className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830]">
+                    Balanceada
+                  </button>
+                  <button onClick={() => autoDistributeOdds('premium')} className="px-3 py-1.5 bg-[#1a1d24] text-slate-300 text-xs rounded hover:bg-[#252830]">
+                    Premium
+                  </button>
+                  {Math.abs(totalOdds - 100) > 0.1 && (
+                    <button onClick={normalizeOdds} className="px-3 py-1.5 bg-amber-500/20 text-amber-400 text-xs rounded hover:bg-amber-500/30">
+                      Normalizar 100%
+                    </button>
                   )}
                 </div>
-              );
-            })}
-            
-            {filteredProducts.length === 0 && (
-              <div className="py-8 text-center text-slate-500 text-sm">
-                No se encontraron productos
               </div>
-            )}
-          </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-3 py-3 border-y border-[#1a1d24]">
+                <input
+                  type="text"
+                  placeholder="Buscar producto..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="flex-1 min-w-[200px] px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                />
+                <select
+                  value={filterRarity}
+                  onChange={(e) => setFilterRarity(e.target.value)}
+                  className="px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs"
+                >
+                  <option value="all">Todas las rarezas</option>
+                  <option value="LEGENDARY">Legendary</option>
+                  <option value="EPIC">Epic</option>
+                  <option value="RARE">Rare</option>
+                  <option value="COMMON">Common</option>
+                </select>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs"
+                >
+                  <option value="odds">Por Odds</option>
+                  <option value="price">Por Precio</option>
+                  <option value="rarity">Por Rareza</option>
+                  <option value="name">Por Nombre</option>
+                </select>
+                <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
+                  <input type="checkbox" checked={showOnlyInBox} onChange={(e) => setShowOnlyInBox(e.target.checked)} className="rounded border-slate-600" />
+                  Solo en caja
+                </label>
+              </div>
+
+              {/* Products List */}
+              <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                {filteredProducts.map(product => {
+                  const inBox = isItemInBox(product.id);
+                  const odds = getItemOdds(product.id);
+                  const normalizedOdds = totalOdds > 0 ? (odds / totalOdds) * 100 : 0;
+                  
+                  return (
+                    <div 
+                      key={product.id}
+                      className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                        inBox 
+                          ? 'bg-emerald-500/5 border-emerald-500/30' 
+                          : 'bg-[#08090c] border-[#1a1d24] hover:border-[#252830]'
+                      }`}
+                    >
+                      <button
+                        onClick={() => toggleItem(product.id)}
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                          inBox ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-600 hover:border-[#F7C948]'
+                        }`}
+                      >
+                        {inBox && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                      </button>
+                      
+                      <div className="w-10 h-10 bg-[#0c0e14] rounded overflow-hidden flex-shrink-0">
+                        {product.image && <img src={product.image} alt="" className="w-full h-full object-contain" />}
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-white truncate">{product.name}</div>
+                        <div className={`text-xs ${getRarityColor(product.rarity)}`}>{product.rarity}</div>
+                      </div>
+                      
+                      <div className="text-sm font-bold text-[#F7C948]">${product.price.toLocaleString()}</div>
+                      
+                      {inBox && (
+                        <>
+                          <input
+                            type="number"
+                            value={odds}
+                            onChange={(e) => updateOdds(product.id, parseFloat(e.target.value) || 0)}
+                            className="w-16 px-2 py-1 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs text-center"
+                            step="0.1"
+                          />
+                          <span className="text-xs text-slate-500 w-16 text-right">({normalizedOdds.toFixed(2)}%)</span>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* === TAB: PROMO FUNNEL === */}
+          {activeTab === 'promo' && !isNew && (
+            <div className="space-y-4">
+              <label className="flex items-center gap-3 cursor-pointer p-3 bg-[#08090c] border border-[#1a1d24] rounded-lg">
+                <input
+                  type="checkbox"
+                  checked={isPromo}
+                  onChange={(e) => setIsPromo(e.target.checked)}
+                  className="w-5 h-5 rounded border-slate-600 bg-[#08090c] text-[#F7C948] focus:ring-[#F7C948]"
+                />
+                <div>
+                  <span className="text-sm font-medium text-white">Activar Promo Funnel</span>
+                  <p className="text-xs text-slate-500">Resultados preprogramados para adquisicion de usuarios</p>
+                </div>
+              </label>
+              
+              {isPromo && (
+                <>
+                  <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs text-amber-400">
+                    Los usuarios tendran 3 giros gratis con resultados fijos. Configura la secuencia de premios.
+                  </div>
+                  
+                  {/* Sequence Config - Reversed order for clarity */}
+                  <div className="space-y-3">
+                    <h4 className="text-xs text-slate-400 uppercase tracking-wider">Secuencia de Premios</h4>
+                    {[2, 1, 0].map((index) => {
+                      const spinLabels = ['Spin 1 - Premio menor', 'Spin 2 - Premio medio', 'Spin 3 - PREMIO GRANDE'];
+                      const spinColors = ['text-slate-400', 'text-blue-400', 'text-[#F7C948]'];
+                      return (
+                        <div key={index} className={`p-3 bg-[#08090c] border border-[#1a1d24] rounded-lg ${index === 2 ? 'border-[#F7C948]/30' : ''}`}>
+                          <div className={`text-xs font-medium mb-2 ${spinColors[index]}`}>{spinLabels[index]}</div>
+                          <select
+                            value={promoConfig.sequence[index]?.item_id || ''}
+                            onChange={(e) => {
+                              const newSequence = [...promoConfig.sequence];
+                              const selectedProduct = products.find(p => p.id === e.target.value);
+                              newSequence[index] = { item_id: e.target.value, display: selectedProduct?.name || '' };
+                              setPromoConfig({ ...promoConfig, sequence: newSequence });
+                            }}
+                            className="w-full px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-sm focus:border-[#F7C948] outline-none"
+                          >
+                            <option value="">Seleccionar item...</option>
+                            {boxItems.map(bi => {
+                              const product = products.find(p => p.id === bi.item_id);
+                              if (!product) return null;
+                              return (
+                                <option key={bi.item_id} value={bi.item_id}>
+                                  {product.name} - ${product.price} ({product.rarity})
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Bonus Config */}
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#1a1d24]">
+                    <div>
+                      <label className="text-xs text-slate-500 block mb-1">Texto del boton CTA</label>
+                      <input
+                        type="text"
+                        value={promoConfig.cta_text}
+                        onChange={(e) => setPromoConfig({ ...promoConfig, cta_text: e.target.value })}
+                        placeholder="CREAR CUENTA Y RECLAMAR"
+                        className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-slate-500 block mb-1">Bono de bienvenida (MXN)</label>
+                      <input
+                        type="number"
+                        value={promoConfig.bonus_amount || ''}
+                        onChange={(e) => setPromoConfig({ ...promoConfig, bonus_amount: parseFloat(e.target.value) || 0 })}
+                        placeholder="500"
+                        className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Preview URL */}
+                  {form.slug && (
+                    <div className="flex items-center justify-between p-3 bg-[#08090c] border border-[#1a1d24] rounded-lg">
+                      <div>
+                        <div className="text-xs text-slate-500">URL del funnel</div>
+                        <code className="text-sm text-[#F7C948]">/promo/{form.slug}</code>
+                      </div>
+                      <Link
+                        to={`/promo/${form.slug}`}
+                        target="_blank"
+                        className="px-3 py-1.5 bg-[#F7C948] text-black text-xs font-bold rounded hover:bg-[#EAB308]"
+                      >
+                        Probar Funnel
+                      </Link>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
