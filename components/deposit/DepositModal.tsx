@@ -138,7 +138,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
         />
         
         {/* Modal */}
-        <div className="relative z-10 w-full max-w-sm bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="relative z-10 w-full max-w-sm bg-[#111111] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
           {/* Close button */}
           <button 
             onClick={onClose}
@@ -167,7 +167,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
           
           <div className="p-6">
             {/* Header */}
-            <h2 className="font-display font-black italic text-xl text-white mb-1">
+            <h2 className="font-display font-black text-xl text-white mb-1">
               {step === 'pending' ? '¡Solicitud Enviada!' : 'Agregar Fondos'}
             </h2>
             
