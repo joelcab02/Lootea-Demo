@@ -325,8 +325,8 @@ const PromoPage: React.FC = () => {
       {/* Main content */}
       <main className="flex-1 flex flex-col">
         {/* Title & Progress */}
-        <div className="text-center py-4 px-4">
-          <h1 className="font-display font-black text-xl sm:text-2xl md:text-3xl text-white mb-4">
+        <div className="text-center py-6 px-4">
+          <h1 className="font-display font-black text-2xl md:text-3xl text-white mb-6">
             Gira 3 veces <span className="text-[#F7C948]">GRATIS</span> para ganar premios
           </h1>
           
@@ -349,7 +349,7 @@ const PromoPage: React.FC = () => {
               {[0, 1, 2].map((index) => (
                 <div 
                   key={index}
-                  className={`relative z-10 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 transition-all duration-300 ${
+                  className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ${
                     index < spinsUsed
                       ? 'bg-[#F7C948] border-[#F7C948] text-black'
                       : index === currentSpin && !allSpinsUsed
@@ -385,15 +385,15 @@ const PromoPage: React.FC = () => {
         </div>
         
         {/* Spin button */}
-        <div className="px-4 py-4">
-          <div className="max-w-sm mx-auto">
+        <div className="px-4 py-6">
+          <div className="max-w-md mx-auto">
             {!allSpinsUsed ? (
               <button 
                 onClick={handleSpin}
                 disabled={isSpinning}
-                className="w-full py-4 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)] active:scale-[0.98]"
+                className="w-full py-5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)] hover:scale-[1.02] active:scale-[0.98]"
               >
-                <span className="font-display font-black text-xl sm:text-2xl uppercase tracking-tight">
+                <span className="font-display font-black text-2xl uppercase tracking-tight">
                   {isSpinning ? 'Girando...' : `GIRAR GRATIS`}
                 </span>
                 {!isSpinning && (
@@ -427,22 +427,22 @@ const PromoPage: React.FC = () => {
           />
           
           {/* Modal */}
-          <div className="relative bg-[#111111] border border-[#1e2330] rounded-2xl overflow-hidden shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-[scaleIn_0.2s_ease-out]">
+          <div className="relative bg-[#111111] border border-[#1e2330] rounded-2xl overflow-hidden shadow-2xl max-w-md w-full animate-[scaleIn_0.2s_ease-out]">
             {/* Gold accent line */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent"></div>
             
-            <div className="p-5 sm:p-6 md:p-8">
+            <div className="p-6 md:p-8">
               {registerSuccess ? (
                 // Success state
                 <div className="text-center py-4">
-                  <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
                     <Icons.Check />
                   </div>
-                  <h2 className="font-display font-black text-xl sm:text-2xl text-white mb-2">
+                  <h2 className="font-display font-black text-2xl text-white mb-2">
                     Cuenta Creada
                   </h2>
-                  <p className="text-green-400 font-bold text-base sm:text-lg mb-2">
-                    +${promoConfig?.bonus_amount || 0} MXN agregados
+                  <p className="text-green-400 font-bold text-lg mb-2">
+                    +${promoConfig?.bonus_amount || 0} MXN agregados a tu balance
                   </p>
                   <p className="text-slate-400 text-sm">
                     Redirigiendo...
@@ -452,28 +452,28 @@ const PromoPage: React.FC = () => {
                 // Registration form with steps
                 <>
                   {/* Header */}
-                  <div className="text-center mb-4 sm:mb-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-2 sm:mb-3 rounded-full bg-[#F7C948]/10 flex items-center justify-center text-[#F7C948]">
+                  <div className="text-center mb-6">
+                    <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-[#F7C948]/10 flex items-center justify-center text-[#F7C948]">
                       <Icons.Gift />
                     </div>
-                    <h2 className="font-display font-black text-xl sm:text-2xl text-white mb-1">
+                    <h2 className="font-display font-black text-2xl text-white mb-1">
                       Reclama tu Premio
                     </h2>
-                    <p className="text-slate-400 text-xs sm:text-sm">
+                    <p className="text-slate-400 text-sm">
                       Completa estos pasos para obtener tu premio
                     </p>
                   </div>
                   
                   {/* Steps */}
-                  <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                  <div className="space-y-3 mb-6">
                     {/* Step 1 - Prize won */}
-                    <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="flex items-start gap-3 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <Icons.Check />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[10px] sm:text-xs text-emerald-400 font-medium uppercase tracking-wider">Paso 1 - Completado</div>
-                        <div className="text-white text-sm sm:text-base font-medium truncate">
+                      <div className="flex-1">
+                        <div className="text-xs text-emerald-400 font-medium uppercase tracking-wider">Paso 1 - Completado</div>
+                        <div className="text-white font-medium">
                           {lastResult ? lastResult.display : 'Premio ganado'}
                         </div>
                       </div>
@@ -481,33 +481,33 @@ const PromoPage: React.FC = () => {
                     
                     {/* Step 2 - Bonus (if applicable) */}
                     {promoConfig?.bonus_amount && promoConfig.bonus_amount > 0 && (
-                      <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="flex items-start gap-3 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                        <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Icons.Check />
                         </div>
                         <div className="flex-1">
-                          <div className="text-[10px] sm:text-xs text-emerald-400 font-medium uppercase tracking-wider">Paso 2 - Bono incluido</div>
-                          <div className="text-white text-sm sm:text-base font-medium">+${promoConfig.bonus_amount} MXN</div>
+                          <div className="text-xs text-emerald-400 font-medium uppercase tracking-wider">Paso 2 - Bono incluido</div>
+                          <div className="text-white font-medium">+${promoConfig.bonus_amount} MXN de bienvenida</div>
                         </div>
                       </div>
                     )}
                     
                     {/* Step 3 - Create account */}
-                    <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-[#F7C948]/10 border border-[#F7C948]/30 rounded-lg">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#F7C948] text-black flex items-center justify-center flex-shrink-0 mt-0.5 text-[10px] sm:text-xs font-bold">
+                    <div className="flex items-start gap-3 p-3 bg-[#F7C948]/10 border border-[#F7C948]/30 rounded-lg">
+                      <div className="w-6 h-6 rounded-full bg-[#F7C948] text-black flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">
                         {promoConfig?.bonus_amount ? '3' : '2'}
                       </div>
                       <div className="flex-1">
-                        <div className="text-[10px] sm:text-xs text-[#F7C948] font-medium uppercase tracking-wider">Paso final</div>
-                        <div className="text-white text-sm sm:text-base font-medium">Crea tu cuenta</div>
+                        <div className="text-xs text-[#F7C948] font-medium uppercase tracking-wider">Paso final - Crea tu cuenta</div>
+                        <div className="text-white font-medium">Registrate para reclamar todo</div>
                       </div>
                     </div>
                   </div>
                   
                   {/* Register form */}
-                  <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
+                  <form onSubmit={handleRegister} className="space-y-4">
                     <div>
-                      <label className="block text-slate-400 text-[10px] sm:text-xs font-medium mb-1.5 sm:mb-2 uppercase tracking-wider">
+                      <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
                         Email
                       </label>
                       <input 
@@ -516,12 +516,12 @@ const PromoPage: React.FC = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="tu@email.com"
                         disabled={isRegistering}
-                        className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 disabled:opacity-50 text-sm sm:text-base"
+                        className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 disabled:opacity-50"
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-slate-400 text-[10px] sm:text-xs font-medium mb-1.5 sm:mb-2 uppercase tracking-wider">
+                      <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
                         Contrasena
                       </label>
                       <input 
@@ -530,7 +530,7 @@ const PromoPage: React.FC = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Min. 8 caracteres"
                         disabled={isRegistering}
-                        className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 disabled:opacity-50 text-sm sm:text-base"
+                        className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 disabled:opacity-50"
                       />
                     </div>
                     
