@@ -429,7 +429,7 @@ const PromoPage: React.FC = () => {
           />
           
           {/* Modal */}
-          <div className="relative bg-[#0d1019] border border-[#1e2330] rounded-2xl overflow-hidden shadow-2xl max-w-md w-full animate-[scaleIn_0.2s_ease-out]">
+          <div className="relative bg-[#111111] border border-[#1e2330] rounded-2xl overflow-hidden shadow-2xl max-w-md w-full animate-[scaleIn_0.2s_ease-out]">
             {/* Gold accent line */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent"></div>
             
