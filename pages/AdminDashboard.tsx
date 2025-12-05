@@ -548,13 +548,6 @@ const BoxesSection: React.FC<{
   setIsSaving: (v: boolean) => void;
 }> = ({ boxes, navigate, onRefresh, setIsSaving }) => {
   
-  const openContentMode = (box: Box) => {
-    // Abrir la caja en nueva ventana
-    window.open(`/box/${box.slug}`, '_blank');
-    // Mostrar instrucciones
-    alert('En la nueva ventana:\n\n1. Presiona Ctrl+Shift+C\n2. Selecciona el item ganador\n3. Click "Activar"\n4. Haz el spin');
-  };
-
   const handleDelete = async (box: Box) => {
     if (!confirm(`¿Eliminar "${box.name}"?`)) return;
     setIsSaving(true);
@@ -604,13 +597,6 @@ const BoxesSection: React.FC<{
                 </td>
                 <td className="py-3 px-4 text-right">
                   <div className="flex justify-end gap-1.5">
-                    <button
-                      onClick={() => openContentMode(box)}
-                      className="px-2 py-1 text-emerald-400 text-[11px] font-medium rounded hover:text-emerald-300 hover:bg-emerald-500/10 transition-colors"
-                      title="Grabar contenido con resultado controlado"
-                    >
-                      Contenido
-                    </button>
                     <Link
                       to={`/box/${box.slug}`}
                       className="px-2 py-1 text-slate-400 text-[11px] font-medium rounded hover:text-white hover:bg-[#1a1d24] transition-colors"

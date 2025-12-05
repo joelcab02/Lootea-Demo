@@ -3,13 +3,13 @@
  * Extraído de App.tsx para reutilizar en /box/:slug
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import SpinnerV2 from '../components/box/SpinnerV2';
 import { Layout } from '../components/layout/Layout';
 import CaseContentGrid from '../components/box/CaseContentGrid';
 import { LootItem } from '../types';
 import { audioService } from '../services/audioService';
-import { subscribeAuth, isLoggedIn, isAdmin } from '../services/authService';
+import { subscribeAuth, isLoggedIn } from '../services/authService';
 import { AuthModal } from '../components/auth/AuthModal';
 import { useGameStore, selectIsSpinning } from '../stores';
 
@@ -35,9 +35,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   const items = useGameStore(state => state.items);
   const predeterminedWinner = useGameStore(state => state.predeterminedWinner);
   const storeError = useGameStore(state => state.error);
-  const contentMode = useGameStore(state => state.contentMode);
-  const forcedItemId = useGameStore(state => state.forcedItemId);
-  
+    
   const isSpinning = useGameStore(selectIsSpinning);
   const lastWinner = useGameStore(state => state.lastWinner);
   
@@ -45,7 +43,6 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
     startSpin, 
     onSpinComplete, 
     setMode,
-    setContentMode,
     loadDefaultBox,
     loadBox,
     syncBalance,
@@ -60,10 +57,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Content Mode Panel (solo admins)
-  const [showContentPanel, setShowContentPanel] = useState(false);
-  const [selectedForcedItem, setSelectedForcedItem] = useState<string>('');
-
+  
   // Derivados
   const demoMode = mode === 'demo';
   const BOX_PRICE = currentBox?.price || 99.00;
@@ -98,38 +92,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
   
-  // Hotkey para Content Mode: Ctrl+Shift+C (solo admins)
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'C' && isAdmin()) {
-      e.preventDefault();
-      setShowContentPanel(prev => !prev);
-    }
-  }, []);
   
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
-  
-  // Sync selected item when panel opens
-  useEffect(() => {
-    if (showContentPanel && items.length > 0 && !selectedForcedItem) {
-      setSelectedForcedItem(items[0].id);
-    }
-  }, [showContentPanel, items, selectedForcedItem]);
-  
-  // Handlers para Content Mode
-  const activateContentMode = () => {
-    if (selectedForcedItem) {
-      setContentMode(true, selectedForcedItem, false);
-    }
-  };
-  
-  const deactivateContentMode = () => {
-    setContentMode(false);
-    setSelectedForcedItem('');
-  };
-
   // ============================================
   // HANDLERS
   // ============================================
@@ -180,19 +143,6 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
 
   return (
     <Layout>
-      {/* Content Mode Indicator - Pequeño y discreto */}
-      {contentMode && !showContentPanel && (
-        <div className="fixed top-20 right-4 z-40">
-          <button
-            onClick={() => setShowContentPanel(true)}
-            className="flex items-center gap-2 px-3 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs font-medium hover:bg-emerald-500/30 transition-colors"
-          >
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-            REC
-          </button>
-        </div>
-      )}
-      
       {/* GAME AREA */}
       <div className="flex flex-col items-center relative">
         {/* SPINNER */}
@@ -308,108 +258,6 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             >
               <Icons.Close />
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Content Mode Panel - Solo visible para admins con Ctrl+Shift+C */}
-      {showContentPanel && isAdmin() && (
-        <div className="fixed top-20 right-4 z-50 w-80 bg-[#111111] border border-emerald-500/30 rounded-xl shadow-2xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-emerald-500/20 px-4 py-3 flex items-center justify-between border-b border-emerald-500/30">
-            <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-emerald-400">
-                <circle cx="12" cy="12" r="5" />
-                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="2" fill="none"/>
-              </svg>
-              <span className="text-emerald-400 font-bold text-sm">MODO CONTENIDO</span>
-            </div>
-            <button 
-              onClick={() => setShowContentPanel(false)}
-              className="text-slate-400 hover:text-white transition-colors"
-            >
-              <Icons.Close />
-            </button>
-          </div>
-          
-          {/* Content */}
-          <div className="p-4 space-y-4">
-            {/* Status indicator */}
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
-              contentMode 
-                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                : 'bg-slate-800/50 text-slate-400 border border-slate-700'
-            }`}>
-              <div className={`w-2 h-2 rounded-full ${contentMode ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`}></div>
-              {contentMode ? 'Activo - Resultado controlado' : 'Inactivo - Resultado aleatorio'}
-            </div>
-            
-            {/* Item selector */}
-            <div>
-              <label className="block text-xs text-slate-400 mb-2 uppercase tracking-wider">
-                Item ganador
-              </label>
-              <select
-                value={selectedForcedItem}
-                onChange={(e) => setSelectedForcedItem(e.target.value)}
-                disabled={contentMode}
-                className="w-full px-3 py-2.5 bg-[#0c0e14] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-emerald-500 outline-none disabled:opacity-50"
-              >
-                {items.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name} - ${item.price}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            {/* Selected item preview */}
-            {selectedForcedItem && (
-              <div className="flex items-center gap-3 p-3 bg-[#0c0e14] border border-[#1a1d24] rounded-lg">
-                {(() => {
-                  const item = items.find(i => i.id === selectedForcedItem);
-                  if (!item) return null;
-                  return (
-                    <>
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="w-12 h-12 object-contain rounded"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-white truncate">{item.name}</div>
-                        <div className="text-xs text-emerald-400">${item.price} MXN</div>
-                      </div>
-                    </>
-                  );
-                })()}
-              </div>
-            )}
-            
-            {/* Action buttons */}
-            <div className="flex gap-2">
-              {contentMode ? (
-                <button
-                  onClick={deactivateContentMode}
-                  className="flex-1 py-2.5 bg-red-500/20 text-red-400 text-sm font-bold rounded-lg hover:bg-red-500/30 transition-colors border border-red-500/30"
-                >
-                  Desactivar
-                </button>
-              ) : (
-                <button
-                  onClick={activateContentMode}
-                  disabled={!selectedForcedItem}
-                  className="flex-1 py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-lg hover:bg-emerald-400 transition-colors disabled:opacity-50"
-                >
-                  Activar
-                </button>
-              )}
-            </div>
-            
-            {/* Help text */}
-            <p className="text-xs text-slate-500 text-center">
-              Ctrl+Shift+C para mostrar/ocultar
-            </p>
           </div>
         </div>
       )}

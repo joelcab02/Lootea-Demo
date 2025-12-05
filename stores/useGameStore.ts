@@ -52,17 +52,12 @@ interface GameState {
   // Balance (sincronizado con authService)
   balance: number;
   
-  // Content Mode (para grabar videos de marketing)
-  contentMode: boolean;
-  forcedItemId: string | null;
-  addToInventory: boolean;
-}
+  }
 
 interface GameActions {
   // Configuración
   setMode: (mode: GameMode) => void;
-  setContentMode: (enabled: boolean, forcedItemId?: string, addToInventory?: boolean) => void;
-  
+    
   // Carga de datos
   loadBox: (slugOrId?: string) => Promise<void>;
   loadDefaultBox: () => Promise<void>;
@@ -94,10 +89,7 @@ const initialState: GameState = {
   isLoadingBox: false,
   error: null,
   balance: 0,
-  contentMode: false,
-  forcedItemId: null,
-  addToInventory: false,
-};
+  };
 
 // ============================================
 // STORE
@@ -130,16 +122,7 @@ export const useGameStore = create<GameStore>()(
         set({ mode }, false, 'setMode');
       },
       
-      setContentMode: (enabled, forcedItemId, addToInventory) => {
-        set({ 
-          contentMode: enabled,
-          forcedItemId: forcedItemId || null,
-          addToInventory: addToInventory || false,
-          // Content mode siempre usa demo mode (no cobra)
-          mode: enabled ? 'demo' : 'demo',
-        }, false, 'setContentMode');
-      },
-
+      
       // ----------------------------------------
       // CARGA DE DATOS
       // ----------------------------------------
@@ -231,18 +214,8 @@ export const useGameStore = create<GameStore>()(
 
         let winner: LootItem | null = null;
 
-        // 🎬 CONTENT MODE - Usar item forzado
-        const { contentMode, forcedItemId } = get();
-        if (contentMode && forcedItemId) {
-          winner = items.find(item => item.id === forcedItemId) || null;
-          if (!winner) {
-            set({ error: 'Item forzado no encontrado en la caja' }, false, 'startSpin/forcedItemNotFound');
-            return false;
-          }
-          console.log('[GameStore] Content Mode winner (forced):', winner.name);
-        }
         // 🎮 DEMO MODE - Calcular winner localmente
-        else if (mode === 'demo') {
+        if (mode === 'demo') {
           const itemsWithTickets = calculateTicketRanges(items);
           if (itemsWithTickets.length === 0) {
             set({ error: 'No hay items disponibles' }, false, 'startSpin/noItems');
