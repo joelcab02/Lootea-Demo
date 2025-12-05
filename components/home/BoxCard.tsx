@@ -16,10 +16,13 @@ export const BoxCard: React.FC<BoxCardProps> = ({ box }) => {
       to={`/box/${box.slug}`}
       className="group flex flex-col items-center"
     >
-      {/* Card */}
+      {/* Card with gold glow on hover */}
       <div className="relative w-full rounded-xl overflow-hidden
-                      border border-slate-700/50 group-hover:border-slate-600
-                      transition-colors duration-150">
+                      border border-[#2a2d36] 
+                      shadow-[0_0_15px_rgba(247,201,72,0.08)]
+                      group-hover:shadow-[0_0_25px_rgba(247,201,72,0.15)]
+                      group-hover:border-[#F7C948]/30
+                      transition-all duration-300">
         
         {/* Background Image */}
         {box.image ? (
@@ -37,9 +40,12 @@ export const BoxCard: React.FC<BoxCardProps> = ({ box }) => {
         )}
       </div>
 
-      {/* Price */}
-      <div className="mt-2">
-        <span className="text-white text-sm md:text-base">
+      {/* Box Name */}
+      <div className="mt-3 text-center">
+        <h3 className="text-white font-medium text-sm md:text-base truncate max-w-full">
+          {box.name}
+        </h3>
+        <span className="text-[#F7C948] text-sm md:text-base font-bold">
           ${box.price.toLocaleString()} MXN
         </span>
       </div>
