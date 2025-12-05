@@ -320,78 +320,63 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
               </>
             )}
             
-            {/* STEP 2: Bank Details */}
+            {/* STEP 2: Bank Details - SPEI */}
             {step === 'details' && selectedMethod === 'spei' && (
-              <div className="space-y-3">
-                {/* Amount Summary */}
-                <div className="bg-gradient-to-r from-[#F7C948]/15 to-[#F7C948]/5 border border-[#F7C948]/30 rounded-xl p-3 text-center">
-                  <p className="text-xs text-[#F7C948] uppercase tracking-wider mb-0.5">Monto a transferir</p>
-                  <p className="text-2xl font-bold text-white">${numericAmount.toLocaleString('es-MX')}.00</p>
+              <div className="space-y-4">
+                {/* Amount */}
+                <div className="text-center py-2">
+                  <p className="text-2xl font-bold text-white">${numericAmount.toLocaleString('es-MX')}.00 MXN</p>
                 </div>
                 
-                {/* Bank Info */}
-                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl divide-y divide-[#2a2d36]">
-                  {/* Banco */}
-                  <div className="px-4 py-3">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Banco destino</p>
-                    <p className="text-white text-sm font-medium">{BANK_INFO.spei.banco}</p>
+                {/* Bank Info - Simple list */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 text-sm">Banco</span>
+                    <span className="text-white text-sm font-medium">{BANK_INFO.spei.banco}</span>
                   </div>
                   
-                  {/* CLABE */}
-                  <div className="px-4 py-3">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">CLABE Interbancaria</p>
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-white font-mono text-sm tracking-wide break-all">{BANK_INFO.spei.clabe}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 text-sm">Beneficiario</span>
+                    <span className="text-white text-sm font-medium">{BANK_INFO.spei.beneficiario}</span>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-slate-400 text-sm">CLABE</span>
                       <button 
                         onClick={() => copyToClipboard(BANK_INFO.spei.clabe, 'clabe')}
-                        className={`px-2 py-1 rounded text-xs font-medium transition-all flex-shrink-0 ${
-                          copied === 'clabe' 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
-                        }`}
+                        className={`text-xs font-medium ${copied === 'clabe' ? 'text-green-400' : 'text-[#F7C948]'}`}
                       >
                         {copied === 'clabe' ? 'Copiado' : 'Copiar'}
                       </button>
                     </div>
+                    <p className="text-white font-mono text-sm bg-[#1a1d26] px-3 py-2 rounded-lg">{BANK_INFO.spei.clabe}</p>
                   </div>
                   
-                  {/* Beneficiario */}
-                  <div className="px-4 py-3">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Beneficiario</p>
-                    <p className="text-white text-sm font-medium">{BANK_INFO.spei.beneficiario}</p>
-                  </div>
-                  
-                  {/* Referencia */}
-                  <div className="px-4 py-3">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Concepto / Referencia</p>
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-[#F7C948] font-mono text-sm font-bold">{reference}</p>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-slate-400 text-sm">Referencia</span>
                       <button 
                         onClick={() => copyToClipboard(reference, 'ref')}
-                        className={`px-2 py-1 rounded text-xs font-medium transition-all flex-shrink-0 ${
-                          copied === 'ref' 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
-                        }`}
+                        className={`text-xs font-medium ${copied === 'ref' ? 'text-green-400' : 'text-[#F7C948]'}`}
                       >
                         {copied === 'ref' ? 'Copiado' : 'Copiar'}
                       </button>
                     </div>
+                    <p className="text-[#F7C948] font-mono text-sm font-bold bg-[#1a1d26] px-3 py-2 rounded-lg">{reference}</p>
                   </div>
                 </div>
                 
-                {/* Warning */}
-                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
-                  <p className="text-xs text-amber-400 leading-relaxed">
-                    <strong>Importante:</strong> Incluye la referencia <strong>{reference}</strong> en el concepto de tu transferencia.
-                  </p>
-                </div>
+                {/* Note */}
+                <p className="text-xs text-slate-500 text-center">
+                  Incluye la referencia en el concepto de tu transferencia
+                </p>
                 
                 {/* Confirm Button */}
                 <button
                   onClick={handleConfirmDeposit}
                   disabled={isSubmitting}
-                  className="w-full py-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] disabled:opacity-50"
+                  className="w-full py-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] text-black font-bold text-sm rounded-xl disabled:opacity-50"
                 >
                   {isSubmitting ? 'Procesando...' : 'Ya realice la transferencia'}
                 </button>
@@ -400,66 +385,43 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             
             {/* STEP 2: OXXO Details */}
             {step === 'details' && selectedMethod === 'oxxo' && (
-              <div className="space-y-3">
-                {/* Amount Summary */}
-                <div className="bg-gradient-to-r from-[#F7C948]/15 to-[#F7C948]/5 border border-[#F7C948]/30 rounded-xl p-3 text-center">
-                  <p className="text-xs text-[#F7C948] uppercase tracking-wider mb-0.5">Monto a pagar en OXXO</p>
-                  <p className="text-2xl font-bold text-white">${numericAmount.toLocaleString('es-MX')}.00</p>
+              <div className="space-y-4">
+                {/* Amount */}
+                <div className="text-center py-2">
+                  <p className="text-2xl font-bold text-white">${numericAmount.toLocaleString('es-MX')}.00 MXN</p>
                 </div>
                 
-                {/* Reference Code */}
-                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl px-4 py-3">
-                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Numero de referencia</p>
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-[#F7C948] font-mono font-bold text-base">{reference}</p>
+                {/* Reference */}
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-slate-400 text-sm">Referencia OXXO</span>
                     <button 
                       onClick={() => copyToClipboard(reference, 'ref')}
-                      className={`px-2 py-1 rounded text-xs font-medium transition-all flex-shrink-0 ${
-                        copied === 'ref' 
-                          ? 'bg-green-500/20 text-green-400' 
-                          : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
-                      }`}
+                      className={`text-xs font-medium ${copied === 'ref' ? 'text-green-400' : 'text-[#F7C948]'}`}
                     >
                       {copied === 'ref' ? 'Copiado' : 'Copiar'}
                     </button>
                   </div>
+                  <p className="text-[#F7C948] font-mono text-lg font-bold bg-[#1a1d26] px-3 py-2 rounded-lg text-center">{reference}</p>
                 </div>
                 
-                {/* Instructions */}
-                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl px-4 py-3">
-                  <p className="text-sm text-white font-medium mb-2">Instrucciones:</p>
-                  <ol className="text-xs text-slate-400 space-y-1.5">
-                    <li className="flex gap-2">
-                      <span className="text-[#F7C948] font-bold">1.</span>
-                      Acude a cualquier tienda OXXO
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-[#F7C948] font-bold">2.</span>
-                      Indica pago de servicio "LOOTEA"
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-[#F7C948] font-bold">3.</span>
-                      Proporciona el numero de referencia
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-[#F7C948] font-bold">4.</span>
-                      Paga el monto exacto en efectivo
-                    </li>
-                  </ol>
+                {/* Simple Instructions */}
+                <div className="text-sm text-slate-400 space-y-1">
+                  <p>1. Acude a cualquier OXXO</p>
+                  <p>2. Paga servicio "LOOTEA" con tu referencia</p>
+                  <p>3. Guarda tu ticket</p>
                 </div>
                 
-                {/* Warning */}
-                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
-                  <p className="text-xs text-amber-400 leading-relaxed">
-                    <strong>Importante:</strong> Guarda tu ticket. Tu saldo se acreditara en maximo 24 horas.
-                  </p>
-                </div>
+                {/* Note */}
+                <p className="text-xs text-slate-500 text-center">
+                  Tu saldo se acreditara en maximo 24 horas
+                </p>
                 
                 {/* Confirm Button */}
                 <button
                   onClick={handleConfirmDeposit}
                   disabled={isSubmitting}
-                  className="w-full py-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] disabled:opacity-50"
+                  className="w-full py-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] text-black font-bold text-sm rounded-xl disabled:opacity-50"
                 >
                   {isSubmitting ? 'Procesando...' : 'Ya realice el pago'}
                 </button>
