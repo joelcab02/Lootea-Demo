@@ -391,12 +391,16 @@ const PromoPage: React.FC = () => {
               <button 
                 onClick={handleSpin}
                 disabled={isSpinning}
-                className="w-full py-4 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)] hover:scale-[1.02] active:scale-[0.98]"
               >
-                <Icons.Spin />
-                <span className="font-display font-black text-xl uppercase tracking-tight">
-                  {isSpinning ? 'Girando...' : `Girar Gratis (${spinsRemaining})`}
+                <span className="font-display font-black text-2xl uppercase tracking-tight">
+                  {isSpinning ? 'Girando...' : `GIRAR GRATIS`}
                 </span>
+                {!isSpinning && (
+                  <span className="block text-sm font-bold mt-1 opacity-80">
+                    {spinsRemaining} {spinsRemaining === 1 ? 'giro restante' : 'giros restantes'}
+                  </span>
+                )}
               </button>
             ) : (
               <div className="text-center">
