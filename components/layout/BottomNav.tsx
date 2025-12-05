@@ -17,27 +17,27 @@ import { DepositModal } from '../deposit/DepositModal';
 
 const Icons = {
   Home: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
       <polyline points="9 22 9 12 15 12 15 22" />
     </svg>
   ),
   Box: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
       <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
       <line x1="12" y1="22.08" x2="12" y2="12" />
     </svg>
   ),
   Deposit: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="8" x2="12" y2="16" />
       <line x1="8" y1="12" x2="16" y2="12" />
     </svg>
   ),
   Gift: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 12 20 22 4 22 4 12" />
       <rect x="2" y="7" width="20" height="5" />
       <line x1="12" y1="22" x2="12" y2="7" />
@@ -46,7 +46,7 @@ const Icons = {
     </svg>
   ),
   Menu: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
       <line x1="3" y1="12" x2="21" y2="12" />
       <line x1="3" y1="6" x2="21" y2="6" />
       <line x1="3" y1="18" x2="21" y2="18" />
@@ -94,20 +94,20 @@ interface NavItemProps {
 }
 
 const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive, isHighlighted, onClick, to }) => {
-  const baseClasses = "flex flex-col items-center justify-center gap-0.5 flex-1 py-2 transition-colors";
+  const baseClasses = "flex flex-col items-center justify-center gap-1 flex-1 py-3 transition-colors";
   
   const colorClasses = isHighlighted
     ? "text-[#F7C948]"
     : isActive
       ? "text-[#F7C948]"
-      : "text-slate-500";
+      : "text-slate-400";
 
   const content = (
     <>
-      <div className={isHighlighted ? "drop-shadow-[0_0_8px_rgba(247,201,72,0.5)]" : ""}>
+      <div className={isHighlighted ? "drop-shadow-[0_0_10px_rgba(247,201,72,0.6)]" : ""}>
         {icon}
       </div>
-      <span className={`text-[10px] font-medium ${isHighlighted ? "font-bold" : ""}`}>
+      <span className={`text-[11px] font-medium ${isHighlighted ? "font-bold" : ""}`}>
         {label}
       </span>
     </>
@@ -152,11 +152,11 @@ const BottomNav: React.FC = () => {
     <>
       {/* Bottom Navigation Bar */}
       <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden">
-        {/* Background with blur */}
-        <div className="absolute inset-0 bg-[#0d1019]/95 backdrop-blur-xl border-t border-[#1e2330]" />
+        {/* Background - solid black matching app */}
+        <div className="absolute inset-0 bg-[#111111] border-t border-[#2a2d36]" />
         
         {/* Nav Items */}
-        <div className="relative flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
+        <div className="relative flex items-center justify-around px-4 pb-[env(safe-area-inset-bottom)]">
           <NavItem
             icon={<Icons.Home />}
             label="Inicio"
