@@ -59,6 +59,42 @@ const Icons = {
       <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
     </svg>
   ),
+  HowItWorks: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+  ),
+  Box: () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+    </svg>
+  ),
+  Trophy: () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+      <path d="M4 22h16"></path>
+      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+    </svg>
+  ),
+  Wallet: () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+      <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+      <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+    </svg>
+  ),
+  ChevronDown: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  ),
 };
 
 // ============================================
@@ -92,6 +128,9 @@ const PromoPage: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [registerError, setRegisterError] = useState<string | null>(null);
   const [registerSuccess, setRegisterSuccess] = useState(false);
+  
+  // FAQ state
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   
   // ============================================
   // LOAD PROMO BOX
@@ -415,6 +454,101 @@ const PromoPage: React.FC = () => {
             )}
           </div>
         </div>
+        
+        {/* How It Works Section */}
+        <section className="py-12 px-4 border-t border-[#1e2330]">
+          <div className="max-w-4xl mx-auto">
+            {/* Section Header */}
+            <div className="flex items-center gap-2 mb-8">
+              <div className="text-[#F7C948]">
+                <Icons.HowItWorks />
+              </div>
+              <h2 className="font-display font-black text-xl text-white">Como Funciona</h2>
+            </div>
+            
+            {/* Steps Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Step 1 */}
+              <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-6 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-[#0d1019] rounded-xl flex items-center justify-center text-[#F7C948]">
+                  <Icons.Box />
+                </div>
+                <h3 className="font-display font-bold text-white mb-2">01. Abre Cajas</h3>
+                <p className="text-slate-400 text-sm">
+                  Encuentra tu caja perfecta y vive la emocion de descubrir premios
+                </p>
+              </div>
+              
+              {/* Step 2 */}
+              <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-6 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-[#0d1019] rounded-xl flex items-center justify-center text-[#F7C948]">
+                  <Icons.Trophy />
+                </div>
+                <h3 className="font-display font-bold text-white mb-2">02. Gana Items</h3>
+                <p className="text-slate-400 text-sm">
+                  Descubre un item por caja de las mejores marcas que conoces
+                </p>
+              </div>
+              
+              {/* Step 3 */}
+              <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-6 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-[#0d1019] rounded-xl flex items-center justify-center text-[#F7C948]">
+                  <Icons.Wallet />
+                </div>
+                <h3 className="font-display font-bold text-white mb-2">03. Cobra o Reclama</h3>
+                <p className="text-slate-400 text-sm">
+                  Vende tus items por saldo, retira efectivo o recibe tu premio
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* FAQ Section */}
+        <section className="py-12 px-4 border-t border-[#1e2330]">
+          <div className="max-w-4xl mx-auto">
+            {/* FAQ Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                { q: 'Que es Lootea?', a: 'Lootea es una plataforma de mystery boxes donde puedes ganar productos de marcas premium. Cada caja contiene items reales que puedes reclamar o vender por saldo.' },
+                { q: 'Como deposito fondos?', a: 'Puedes depositar via SPEI (transferencia bancaria) o en efectivo en OXXO. Los depositos SPEI se acreditan en 5-30 minutos.' },
+                { q: 'Es seguro y justo?', a: 'Si. Usamos un sistema Provably Fair que garantiza que cada resultado es aleatorio y verificable. No podemos manipular los resultados.' },
+                { q: 'Como retiro mis ganancias?', a: 'Puedes vender tus items ganados por saldo y solicitar un retiro a tu cuenta bancaria. Los retiros se procesan en 24-48 horas.' },
+                { q: 'Puedo recibir mis premios fisicos?', a: 'Si. Puedes elegir recibir cualquier item fisico. Los envios son gratis en pedidos mayores a $500 MXN.' },
+                { q: 'Como obtengo soporte?', a: 'Puedes contactarnos via chat en vivo, email a soporte@lootea.mx o por WhatsApp. Respondemos en menos de 24 horas.' },
+              ].map((faq, index) => (
+                <button
+                  key={index}
+                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  className="w-full text-left bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-4 transition-all hover:border-[#F7C948]/30"
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="font-medium text-white">{faq.q}</span>
+                    <div className={`text-slate-400 transition-transform duration-200 ${openFaq === index ? 'rotate-180' : ''}`}>
+                      <Icons.ChevronDown />
+                    </div>
+                  </div>
+                  {openFaq === index && (
+                    <p className="mt-3 text-slate-400 text-sm leading-relaxed">
+                      {faq.a}
+                    </p>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Footer */}
+        <footer className="py-8 px-4 border-t border-[#1e2330] text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Logo size={20} />
+            <span className="font-display font-bold text-white">LOOTEA</span>
+          </div>
+          <p className="text-slate-500 text-xs">
+            Solo para mayores de 18 anos. Juega responsablemente.
+          </p>
+        </footer>
       </main>
       
       {/* Register Modal */}
