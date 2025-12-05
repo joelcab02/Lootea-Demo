@@ -431,7 +431,7 @@ const PromoPage: React.FC = () => {
               {registerSuccess ? (
                 // Success state
                 <div className="text-center py-4">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
                     <Icons.Check />
                   </div>
                   <h2 className="font-display font-black text-2xl text-white mb-2">
@@ -445,29 +445,59 @@ const PromoPage: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                // Registration form
+                // Registration form with steps
                 <>
-                  {/* Prize display */}
+                  {/* Header */}
                   <div className="text-center mb-6">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#F7C948]/10 flex items-center justify-center text-[#F7C948]">
+                    <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-[#F7C948]/10 flex items-center justify-center text-[#F7C948]">
                       <Icons.Gift />
                     </div>
-                    <h2 className="font-display font-black text-2xl text-white mb-2">
-                      Felicidades
+                    <h2 className="font-display font-black text-2xl text-white mb-1">
+                      Reclama tu Premio
                     </h2>
-                    {lastResult && (
-                      <p className="text-[#F7C948] font-bold text-lg">
-                        Ganaste: {lastResult.display}
-                      </p>
-                    )}
-                    {promoConfig?.bonus_amount && promoConfig.bonus_amount > 0 && (
-                      <p className="text-green-400 font-bold text-sm mt-1">
-                        + Bono de ${promoConfig.bonus_amount} MXN
-                      </p>
-                    )}
-                    <p className="text-slate-400 text-sm mt-2">
-                      Crea tu cuenta para reclamar tu premio
+                    <p className="text-slate-400 text-sm">
+                      Completa estos pasos para obtener tu premio
                     </p>
+                  </div>
+                  
+                  {/* Steps */}
+                  <div className="space-y-3 mb-6">
+                    {/* Step 1 - Prize won */}
+                    <div className="flex items-start gap-3 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Icons.Check />
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-xs text-emerald-400 font-medium uppercase tracking-wider">Paso 1 - Completado</div>
+                        <div className="text-white font-medium">
+                          {lastResult ? lastResult.display : 'Premio ganado'}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Step 2 - Bonus (if applicable) */}
+                    {promoConfig?.bonus_amount && promoConfig.bonus_amount > 0 && (
+                      <div className="flex items-start gap-3 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                        <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Icons.Check />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-xs text-emerald-400 font-medium uppercase tracking-wider">Paso 2 - Bono incluido</div>
+                          <div className="text-white font-medium">+${promoConfig.bonus_amount} MXN de bienvenida</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Step 3 - Create account */}
+                    <div className="flex items-start gap-3 p-3 bg-[#F7C948]/10 border border-[#F7C948]/30 rounded-lg">
+                      <div className="w-6 h-6 rounded-full bg-[#F7C948] text-black flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">
+                        {promoConfig?.bonus_amount ? '3' : '2'}
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-xs text-[#F7C948] font-medium uppercase tracking-wider">Paso final - Crea tu cuenta</div>
+                        <div className="text-white font-medium">Registrate para reclamar todo</div>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Register form */}
@@ -499,14 +529,6 @@ const PromoPage: React.FC = () => {
                         className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-600 disabled:opacity-50"
                       />
                     </div>
-                    
-                    {/* Prize code badge */}
-                    {promoConfig?.prize_code && (
-                      <div className="flex items-center justify-between p-3 bg-[#F7C948]/10 border border-[#F7C948]/30 rounded-lg">
-                        <span className="text-slate-400 text-sm">Codigo de premio:</span>
-                        <span className="font-mono font-bold text-[#F7C948]">{promoConfig.prize_code}</span>
-                      </div>
-                    )}
                     
                     {/* Error message */}
                     {registerError && (
