@@ -1353,6 +1353,16 @@ const BoxEditSection: React.FC<{
                   );
                 })}
               </div>
+              
+              {/* Save button for items */}
+              <button
+                onClick={handleSave}
+                disabled={hasErrors}
+                className="w-full py-3 bg-[#F7C948] text-black text-sm font-bold rounded-lg hover:bg-[#EAB308] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Guardar Cambios
+              </button>
             </div>
           )}
 
@@ -1453,6 +1463,15 @@ const BoxEditSection: React.FC<{
                       </Link>
                     </div>
                   )}
+                  
+                  {/* Save button for promo config */}
+                  <button
+                    onClick={handleSave}
+                    className="w-full py-3 bg-[#F7C948] text-black text-sm font-bold rounded-lg hover:bg-[#EAB308] transition-colors flex items-center justify-center gap-2"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Guardar Configuracion Promo
+                  </button>
                 </>
               )}
             </div>
