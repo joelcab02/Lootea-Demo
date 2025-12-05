@@ -167,14 +167,14 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
           
           <div className="p-6">
             {/* Header */}
-            <h2 className="font-display font-black text-xl text-white mb-1">
-              {step === 'pending' ? '¡Solicitud Enviada!' : 'Agregar Fondos'}
+            <h2 className="font-display font-bold text-lg text-white mb-1">
+              {step === 'pending' ? 'Solicitud Enviada' : 'Agregar Fondos'}
             </h2>
             
             {/* Step Indicator - Only show on select and details */}
             {(step === 'select' || step === 'details') && (
               <div className="mb-5">
-                <p className="text-slate-500 text-xs mb-3">
+                <p className="text-slate-400 text-sm mb-3">
                   {step === 'select' ? 'Elige cuanto quieres depositar' : 'Completa tu pago'}
                 </p>
                 
@@ -217,17 +217,17 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
               <>
                 {/* Amount Input */}
                 <div className="mb-4">
-                  <label className="block text-slate-400 text-[10px] font-medium mb-1.5 uppercase tracking-wider">
+                  <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
                     Monto a depositar
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl font-bold">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg font-bold">$</span>
                     <input
                       type="text"
                       inputMode="numeric"
                       value={amount}
                       onChange={(e) => handleAmountChange(e.target.value)}
-                      className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white text-2xl font-bold pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors"
+                      className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white text-xl font-bold pl-9 pr-4 py-3 rounded-lg focus:outline-none focus:border-[#F7C948] transition-colors"
                       placeholder="0"
                     />
                   </div>
@@ -254,52 +254,52 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 </div>
                 
                 {/* Payment Methods */}
-                <label className="block text-slate-400 text-[10px] font-medium mb-2 uppercase tracking-wider">
+                <label className="block text-slate-400 text-xs font-medium mb-2 uppercase tracking-wider">
                   Metodo de pago
                 </label>
                 <div className="grid grid-cols-2 gap-3 mb-5">
                   {/* SPEI - Selectable */}
                   <button
                     onClick={() => setSelectedMethod('spei')}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all ${
                       selectedMethod === 'spei'
                         ? 'bg-[#F7C948]/10 border-2 border-[#F7C948]'
                         : 'bg-[#1a1d26] border border-[#2a2d36] hover:border-[#F7C948]/50'
                     }`}
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
                       selectedMethod === 'spei' ? 'bg-[#F7C948]/20' : 'bg-[#0d1019]'
                     }`}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
                         <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
                       </svg>
                     </div>
                     <div className="text-center">
                       <p className="font-bold text-white text-sm">SPEI</p>
-                      <p className="text-[10px] text-slate-500">5-30 min</p>
+                      <p className="text-xs text-slate-500">5-30 min</p>
                     </div>
                   </button>
                   
                   {/* OXXO - Selectable */}
                   <button
                     onClick={() => setSelectedMethod('oxxo')}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all ${
                       selectedMethod === 'oxxo'
                         ? 'bg-[#F7C948]/10 border-2 border-[#F7C948]'
                         : 'bg-[#1a1d26] border border-[#2a2d36] hover:border-[#F7C948]/50'
                     }`}
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
                       selectedMethod === 'oxxo' ? 'bg-[#F7C948]/20' : 'bg-[#0d1019]'
                     }`}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#F7C948]">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                       </svg>
                     </div>
                     <div className="text-center">
                       <p className="font-bold text-white text-sm">OXXO</p>
-                      <p className="text-[10px] text-slate-500">1-24 hrs</p>
+                      <p className="text-xs text-slate-500">1-24 hrs</p>
                     </div>
                   </button>
                 </div>
@@ -314,76 +314,76 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 </button>
                 
                 {/* Minimum Notice */}
-                <p className="text-[10px] text-slate-500 text-center">
-                  Minimo $100 MXN • Sin comisiones
+                <p className="text-xs text-slate-500 text-center">
+                  Minimo $100 MXN - Sin comisiones
                 </p>
               </>
             )}
             
             {/* STEP 2: Bank Details */}
             {step === 'details' && selectedMethod === 'spei' && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {/* Amount Summary */}
-                <div className="bg-gradient-to-r from-[#F7C948]/20 to-[#F7C948]/5 border border-[#F7C948]/30 rounded-xl p-4 text-center">
-                  <p className="text-xs text-[#F7C948] uppercase tracking-wider mb-1">Monto a transferir</p>
-                  <p className="text-3xl font-black text-white">${numericAmount.toLocaleString('es-MX')}<span className="text-lg">.00</span></p>
+                <div className="bg-gradient-to-r from-[#F7C948]/15 to-[#F7C948]/5 border border-[#F7C948]/30 rounded-xl p-3 text-center">
+                  <p className="text-xs text-[#F7C948] uppercase tracking-wider mb-0.5">Monto a transferir</p>
+                  <p className="text-2xl font-bold text-white">${numericAmount.toLocaleString('es-MX')}.00</p>
                 </div>
                 
                 {/* Bank Info */}
                 <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl divide-y divide-[#2a2d36]">
                   {/* Banco */}
-                  <div className="p-4">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Banco destino</p>
-                    <p className="text-white font-medium">{BANK_INFO.spei.banco}</p>
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Banco destino</p>
+                    <p className="text-white text-sm font-medium">{BANK_INFO.spei.banco}</p>
                   </div>
                   
                   {/* CLABE */}
-                  <div className="p-4">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">CLABE Interbancaria</p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-white font-mono text-lg tracking-wider">{BANK_INFO.spei.clabe}</p>
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">CLABE Interbancaria</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-white font-mono text-sm tracking-wide break-all">{BANK_INFO.spei.clabe}</p>
                       <button 
                         onClick={() => copyToClipboard(BANK_INFO.spei.clabe, 'clabe')}
-                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                        className={`px-2 py-1 rounded text-xs font-medium transition-all flex-shrink-0 ${
                           copied === 'clabe' 
                             ? 'bg-green-500/20 text-green-400' 
                             : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
                         }`}
                       >
-                        {copied === 'clabe' ? '✓ Copiado' : 'Copiar'}
+                        {copied === 'clabe' ? 'Copiado' : 'Copiar'}
                       </button>
                     </div>
                   </div>
                   
                   {/* Beneficiario */}
-                  <div className="p-4">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Beneficiario</p>
-                    <p className="text-white font-medium">{BANK_INFO.spei.beneficiario}</p>
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Beneficiario</p>
+                    <p className="text-white text-sm font-medium">{BANK_INFO.spei.beneficiario}</p>
                   </div>
                   
                   {/* Referencia */}
-                  <div className="p-4">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Concepto / Referencia</p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-[#F7C948] font-mono font-bold">{reference}</p>
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Concepto / Referencia</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[#F7C948] font-mono text-sm font-bold">{reference}</p>
                       <button 
                         onClick={() => copyToClipboard(reference, 'ref')}
-                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                        className={`px-2 py-1 rounded text-xs font-medium transition-all flex-shrink-0 ${
                           copied === 'ref' 
                             ? 'bg-green-500/20 text-green-400' 
                             : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
                         }`}
                       >
-                        {copied === 'ref' ? '✓ Copiado' : 'Copiar'}
+                        {copied === 'ref' ? 'Copiado' : 'Copiar'}
                       </button>
                     </div>
                   </div>
                 </div>
                 
                 {/* Warning */}
-                <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
-                  <p className="text-sm text-amber-400">
-                    <strong>⚠️ Importante:</strong> Incluye la referencia <strong>{reference}</strong> en el concepto de tu transferencia para identificar tu pago.
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
+                  <p className="text-xs text-amber-400 leading-relaxed">
+                    <strong>Importante:</strong> Incluye la referencia <strong>{reference}</strong> en el concepto de tu transferencia.
                   </p>
                 </div>
                 
@@ -391,7 +391,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 <button
                   onClick={handleConfirmDeposit}
                   disabled={isSubmitting}
-                  className="w-full py-3.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+                  className="w-full py-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] disabled:opacity-50"
                 >
                   {isSubmitting ? 'Procesando...' : 'Ya realice la transferencia'}
                 </button>
@@ -400,46 +400,46 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             
             {/* STEP 2: OXXO Details */}
             {step === 'details' && selectedMethod === 'oxxo' && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {/* Amount Summary */}
-                <div className="bg-gradient-to-r from-[#F7C948]/20 to-[#F7C948]/5 border border-[#F7C948]/30 rounded-xl p-4 text-center">
-                  <p className="text-xs text-[#F7C948] uppercase tracking-wider mb-1">Monto a pagar en OXXO</p>
-                  <p className="text-3xl font-black text-white">${numericAmount.toLocaleString('es-MX')}<span className="text-lg">.00</span></p>
+                <div className="bg-gradient-to-r from-[#F7C948]/15 to-[#F7C948]/5 border border-[#F7C948]/30 rounded-xl p-3 text-center">
+                  <p className="text-xs text-[#F7C948] uppercase tracking-wider mb-0.5">Monto a pagar en OXXO</p>
+                  <p className="text-2xl font-bold text-white">${numericAmount.toLocaleString('es-MX')}.00</p>
                 </div>
                 
                 {/* Reference Code */}
-                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-4">
-                  <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Número de referencia</p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-[#F7C948] font-mono font-bold text-xl">{reference}</p>
+                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl px-4 py-3">
+                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Numero de referencia</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[#F7C948] font-mono font-bold text-base">{reference}</p>
                     <button 
                       onClick={() => copyToClipboard(reference, 'ref')}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                      className={`px-2 py-1 rounded text-xs font-medium transition-all flex-shrink-0 ${
                         copied === 'ref' 
                           ? 'bg-green-500/20 text-green-400' 
                           : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
                       }`}
                     >
-                      {copied === 'ref' ? '✓ Copiado' : 'Copiar'}
+                      {copied === 'ref' ? 'Copiado' : 'Copiar'}
                     </button>
                   </div>
                 </div>
                 
                 {/* Instructions */}
-                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-4">
-                  <p className="text-sm text-white font-medium mb-3">Instrucciones:</p>
-                  <ol className="text-sm text-slate-400 space-y-2">
+                <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl px-4 py-3">
+                  <p className="text-sm text-white font-medium mb-2">Instrucciones:</p>
+                  <ol className="text-xs text-slate-400 space-y-1.5">
                     <li className="flex gap-2">
                       <span className="text-[#F7C948] font-bold">1.</span>
                       Acude a cualquier tienda OXXO
                     </li>
                     <li className="flex gap-2">
                       <span className="text-[#F7C948] font-bold">2.</span>
-                      Indica que harás un pago de servicio "LOOTEA"
+                      Indica pago de servicio "LOOTEA"
                     </li>
                     <li className="flex gap-2">
                       <span className="text-[#F7C948] font-bold">3.</span>
-                      Proporciona el número de referencia
+                      Proporciona el numero de referencia
                     </li>
                     <li className="flex gap-2">
                       <span className="text-[#F7C948] font-bold">4.</span>
@@ -449,9 +449,9 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 </div>
                 
                 {/* Warning */}
-                <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
-                  <p className="text-sm text-amber-400">
-                    <strong>⚠️ Importante:</strong> Guarda tu ticket. Tu saldo se acreditará en máximo 24 horas.
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
+                  <p className="text-xs text-amber-400 leading-relaxed">
+                    <strong>Importante:</strong> Guarda tu ticket. Tu saldo se acreditara en maximo 24 horas.
                   </p>
                 </div>
                 
@@ -459,7 +459,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 <button
                   onClick={handleConfirmDeposit}
                   disabled={isSubmitting}
-                  className="w-full py-3.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+                  className="w-full py-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] disabled:opacity-50"
                 >
                   {isSubmitting ? 'Procesando...' : 'Ya realice el pago'}
                 </button>
