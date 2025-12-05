@@ -18,6 +18,9 @@ const VisualEnginePage = lazy(() => import('./pages/VisualEnginePage'));
 const StyleGuidePage = lazy(() => import('./pages/StyleGuidePage'));
 const StyleGuideV2 = lazy(() => import('./pages/StyleGuideV2'));
 
+// Lazy load promo page (funnel de adquisicion)
+const PromoPage = lazy(() => import('./pages/PromoPage'));
+
 // Lazy load páginas legales
 const TerminosPage = lazy(() => import('./pages/legal/TerminosPage'));
 const PrivacidadPage = lazy(() => import('./pages/legal/PrivacidadPage'));
@@ -47,6 +50,7 @@ root.render(
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/box/:slug" element={<BoxPage />} />
+          <Route path="/promo/:slug" element={<PromoPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/visual-engine" element={<VisualEnginePage />} />
           <Route path="/style-guide" element={<StyleGuidePage />} />
