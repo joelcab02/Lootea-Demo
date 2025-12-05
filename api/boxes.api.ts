@@ -23,6 +23,11 @@ export interface BoxRow {
   sort_order?: number;
   total_opens?: number;
   created_at?: string;
+  promo_config?: {
+    sequence: { item_id: string; display: string }[];
+    cta_text: string;
+    prize_code: string;
+  } | null;
 }
 
 export interface BoxItemRow {
@@ -161,6 +166,30 @@ export async function fetchCategories(): Promise<{ data: string[] | null; error:
 
     const categories = [...new Set((data || []).map(b => b.category))].filter(Boolean);
     return { data: categories, error: null };
+  } catch (err: any) {
+    return { data: null, error: err };
+  }
+}
+
+/**
+ * Fetch promo box by slug (boxes with promo_config)
+ */
+export async function fetchPromoBoxBySlug(
+  slug: string
+): Promise<{ data: BoxRow | null; error: Error | null }> {
+  try {
+    const { data, error } = await supabase
+      .from('boxes')
+      .select('*')
+      .eq('slug', slug)
+      .not('promo_config', 'is', null)
+      .single();
+
+    if (error) {
+      return { data: null, error: new Error(error.message) };
+    }
+
+    return { data, error: null };
   } catch (err: any) {
     return { data: null, error: err };
   }

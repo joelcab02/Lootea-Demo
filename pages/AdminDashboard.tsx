@@ -640,6 +640,22 @@ const BoxEditSection: React.FC<{
   const [sortBy, setSortBy] = useState<'name' | 'price' | 'odds' | 'rarity'>('odds');
   const [showOnlyInBox, setShowOnlyInBox] = useState(false);
   const isNew = !boxId;
+  
+  // Promo config state
+  const [isPromo, setIsPromo] = useState(false);
+  const [promoConfig, setPromoConfig] = useState<{
+    sequence: { item_id: string; display: string }[];
+    cta_text: string;
+    prize_code: string;
+  }>({
+    sequence: [
+      { item_id: '', display: '' },
+      { item_id: '', display: '' },
+      { item_id: '', display: '' }
+    ],
+    cta_text: 'CREAR CUENTA Y RECLAMAR',
+    prize_code: ''
+  });
 
   useEffect(() => {
     if (boxId) {
@@ -657,6 +673,14 @@ const BoxEditSection: React.FC<{
         image: box.image || '',
         category: box.category || 'general'
       });
+      
+      // Load promo config if exists
+      if (box.promo_config) {
+        setIsPromo(true);
+        setPromoConfig(box.promo_config);
+      } else {
+        setIsPromo(false);
+      }
     }
     
     const { data: items } = await supabase.from('box_items').select('item_id, odds').eq('box_id', boxId);
@@ -671,13 +695,17 @@ const BoxEditSection: React.FC<{
     
     setIsSaving(true);
     
+    // Prepare promo_config (null if not promo)
+    const promoConfigData = isPromo ? promoConfig : null;
+    
     if (isNew) {
       const { data, error } = await supabase.from('boxes').insert({
         name: form.name,
         slug: form.slug.toLowerCase().replace(/\s+/g, '-'),
         price: parseFloat(form.price),
         image: form.image,
-        category: form.category
+        category: form.category,
+        promo_config: promoConfigData
       }).select().single();
       
       if (error) {
@@ -695,7 +723,8 @@ const BoxEditSection: React.FC<{
         slug: form.slug,
         price: parseFloat(form.price),
         image: form.image,
-        category: form.category
+        category: form.category,
+        promo_config: promoConfigData
       }).eq('id', boxId);
       
       if (error) {
@@ -1066,6 +1095,112 @@ const BoxEditSection: React.FC<{
           <p className="text-xs text-slate-600 mt-1">
             Sube tu imagen a <a href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer" className="text-[#F7C948] hover:underline">Imgur</a> y pega el link aquí
           </p>
+        </div>
+
+        {/* Promo Config Section */}
+        <div className="mt-6 pt-6 border-t border-[#1a1d24]">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isPromo}
+              onChange={(e) => setIsPromo(e.target.checked)}
+              className="w-4 h-4 rounded border-slate-600 bg-[#08090c] text-[#F7C948] focus:ring-[#F7C948]"
+            />
+            <div>
+              <span className="text-sm font-medium text-white">Caja Promocional (Funnel)</span>
+              <p className="text-xs text-slate-500">Resultados preprogramados para adquisicion de usuarios</p>
+            </div>
+          </label>
+          
+          {isPromo && (
+            <div className="mt-4 p-4 bg-[#08090c] border border-amber-500/30 rounded-lg space-y-4">
+              <div className="flex items-center gap-2 text-amber-400 text-xs">
+                <span>!</span>
+                <span>Los usuarios tendran 3 giros gratis con resultados fijos</span>
+              </div>
+              
+              {/* Sequence Config */}
+              <div className="space-y-3">
+                {[0, 1, 2].map((index) => {
+                  const spinLabels = ['Spin 1 (Ganancia pequena)', 'Spin 2 (Casi gana)', 'Spin 3 (PREMIO GRANDE)'];
+                  return (
+                    <div key={index} className="flex items-center gap-3">
+                      <span className="text-xs text-slate-400 w-36 flex-shrink-0">{spinLabels[index]}</span>
+                      <select
+                        value={promoConfig.sequence[index]?.item_id || ''}
+                        onChange={(e) => {
+                          const newSequence = [...promoConfig.sequence];
+                          const selectedProduct = products.find(p => p.id === e.target.value);
+                          newSequence[index] = {
+                            item_id: e.target.value,
+                            display: selectedProduct?.name || ''
+                          };
+                          setPromoConfig({ ...promoConfig, sequence: newSequence });
+                        }}
+                        className="flex-1 px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                      >
+                        <option value="">Seleccionar item...</option>
+                        {boxItems.map(bi => {
+                          const product = products.find(p => p.id === bi.item_id);
+                          if (!product) return null;
+                          return (
+                            <option key={bi.item_id} value={bi.item_id}>
+                              {product.name} (${product.price}) - {product.rarity}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <input
+                        type="text"
+                        value={promoConfig.sequence[index]?.display || ''}
+                        onChange={(e) => {
+                          const newSequence = [...promoConfig.sequence];
+                          newSequence[index] = { ...newSequence[index], display: e.target.value };
+                          setPromoConfig({ ...promoConfig, sequence: newSequence });
+                        }}
+                        placeholder="Texto a mostrar"
+                        className="w-32 px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* CTA and Prize Code */}
+              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-[#1a1d24]">
+                <div>
+                  <label className="text-xs text-slate-500 block mb-1">Texto del boton CTA</label>
+                  <input
+                    type="text"
+                    value={promoConfig.cta_text}
+                    onChange={(e) => setPromoConfig({ ...promoConfig, cta_text: e.target.value })}
+                    placeholder="CREAR CUENTA Y RECLAMAR"
+                    className="w-full px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 block mb-1">Codigo de premio</label>
+                  <input
+                    type="text"
+                    value={promoConfig.prize_code}
+                    onChange={(e) => setPromoConfig({ ...promoConfig, prize_code: e.target.value })}
+                    placeholder="WELCOME500"
+                    className="w-full px-3 py-2 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                  />
+                </div>
+              </div>
+              
+              {/* Preview URL */}
+              {form.slug && (
+                <div className="pt-3 border-t border-[#1a1d24]">
+                  <label className="text-xs text-slate-500 block mb-1">URL del funnel</label>
+                  <code className="text-xs text-[#F7C948] bg-[#0c0e14] px-2 py-1 rounded">
+                    /promo/{form.slug}
+                  </code>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="mt-4">

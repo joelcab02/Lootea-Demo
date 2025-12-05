@@ -42,6 +42,21 @@ export interface LootItemWithTickets extends LootItem {
 }
 
 // ============================================
+// PROMO CONFIG
+// ============================================
+
+export interface PromoSequenceItem {
+  item_id: string;
+  display: string;
+}
+
+export interface PromoConfig {
+  sequence: PromoSequenceItem[];  // 3 items: spin 1, 2, 3
+  cta_text: string;               // "CREAR CUENTA Y RECLAMAR"
+  prize_code: string;             // "WELCOME500"
+}
+
+// ============================================
 // BOXES
 // ============================================
 
@@ -53,6 +68,7 @@ export interface Box {
   image: string;
   category: string;
   is_active: boolean;
+  promo_config?: PromoConfig | null;
 }
 
 export interface BoxWithItems extends Box {
@@ -63,7 +79,7 @@ export interface BoxWithItems extends Box {
 // GAME STATE
 // ============================================
 
-export type GameMode = 'demo' | 'real';
+export type GameMode = 'demo' | 'real' | 'promo';
 
 /**
  * Fases del juego:

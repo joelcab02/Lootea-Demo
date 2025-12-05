@@ -15,6 +15,7 @@ export {
   fetchBoxBySlug,
   fetchBoxItems,
   fetchCategories,
+  fetchPromoBoxBySlug,
   type BoxRow,
   type BoxItemRow,
 } from './boxes.api';
