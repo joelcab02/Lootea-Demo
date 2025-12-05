@@ -3,6 +3,7 @@
  * 
  * Incluye:
  * - Header global
+ * - BottomNav mobile
  * - Footer (opcional)
  * - Fondo consistente #111111
  */
@@ -10,6 +11,7 @@
 import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import BottomNav from './BottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -25,11 +27,15 @@ export const Layout: React.FC<LayoutProps> = ({
       <div className="flex flex-col min-h-screen">
         <Header />
         
-        <main className="flex-1">
+        {/* Main content with bottom padding for mobile nav */}
+        <main className="flex-1 pb-16 md:pb-0">
           {children}
         </main>
         
         {showFooter && <Footer />}
+        
+        {/* Mobile Bottom Navigation */}
+        <BottomNav />
       </div>
     </div>
   );
