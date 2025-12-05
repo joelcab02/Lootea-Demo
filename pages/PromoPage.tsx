@@ -381,15 +381,6 @@ const PromoPage: React.FC = () => {
           />
         </div>
         
-        {/* Result display */}
-        {lastResult && !isSpinning && (
-          <div className="text-center py-4 animate-[fadeIn_0.3s_ease-out]">
-            <p className="text-[#F7C948] font-display font-black text-xl">
-              {lastResult.display}
-            </p>
-          </div>
-        )}
-        
         {/* Spin button */}
         <div className="px-4 py-6">
           <div className="max-w-md mx-auto">
