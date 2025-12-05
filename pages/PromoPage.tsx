@@ -12,6 +12,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import SpinnerV2 from '../components/box/SpinnerV2';
+import { Logo } from '../components/shared/Logo';
 import { LootItem, Rarity } from '../types';
 import { audioService } from '../services/audioService';
 import { fetchPromoBoxBySlug, fetchBoxItems } from '../api';
@@ -264,7 +265,7 @@ const PromoPage: React.FC = () => {
   
   if (isLoadingBox) {
     return (
-      <div className="min-h-screen bg-[#0d1019] flex items-center justify-center">
+      <div className="min-h-screen bg-[#111111] flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
       </div>
     );
@@ -276,7 +277,7 @@ const PromoPage: React.FC = () => {
   
   if (loadError) {
     return (
-      <div className="min-h-screen bg-[#0d1019] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#111111] flex items-center justify-center px-4">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
@@ -306,12 +307,13 @@ const PromoPage: React.FC = () => {
   const allSpinsUsed = spinsUsed >= 3;
   
   return (
-    <div className="min-h-screen bg-[#0d1019] flex flex-col">
+    <div className="min-h-screen bg-[#111111] flex flex-col">
       {/* Header minimo */}
       <header className="py-4 px-4 border-b border-[#1e2330]">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link to="/" className="font-display font-black text-xl text-white">
-            LOOTEA
+          <Link to="/" className="flex items-center gap-2">
+            <Logo size={28} />
+            <span className="font-display font-black text-xl text-white tracking-tight">LOOTEA</span>
           </Link>
           <div className="flex items-center gap-2 text-[#F7C948]">
             <Icons.Gift />
