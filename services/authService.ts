@@ -175,6 +175,19 @@ export async function signUpWithBonus(
     }
   }
   
+  // 3. Auto-login after signup (if email confirmation is disabled in Supabase)
+  // This ensures the user has an active session when redirected
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  
+  if (signInError) {
+    console.error('Auto-login failed:', signInError);
+    // User was created but couldn't auto-login (maybe email confirmation required)
+    // Still return success - user can login manually
+  }
+  
   return { userId: data.user.id };
 }
 
