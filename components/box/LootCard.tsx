@@ -37,6 +37,14 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
           height: '100%',
         }}
       >
+        {/* Subtle glow behind image - PackDraw style */}
+        <div 
+          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(255,255,255,0.04) 0%, transparent 60%)',
+          }}
+        />
+        
         {/* Image only - no name/price until winner reveal */}
         <div className={`relative ${imageSizeClass} flex items-center justify-center`}>
           {isLoading ? (
