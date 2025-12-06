@@ -252,7 +252,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
 
   return (
     <div 
-      className="relative w-full h-[220px] sm:h-[300px] flex items-center"
+      className="relative w-full h-[280px] sm:h-[320px] flex items-center"
       style={{
         background: 'linear-gradient(180deg, #0a0a0a 0%, #111111 50%, #0a0a0a 100%)',
         overflow: 'clip',
@@ -348,11 +348,11 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
               
-              {/* Winner Info */}
+              {/* Winner Info - positioned below the card but inside spinner area */}
               {isWinnerCard && (
-                <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
-                  <p className="text-white font-medium text-sm">{item.name}</p>
-                  <p className="text-slate-400 text-sm">${item.price.toFixed(2)} MXN</p>
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
+                  <p className="text-white font-medium text-base">{item.name}</p>
+                  <p className="text-[#F7C948] font-bold text-sm">${item.price.toFixed(2)} MXN</p>
                 </div>
               )}
             </div>
