@@ -219,8 +219,6 @@ interface ItemCardProps {
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, onSell, isSelling }) => {
-  const rarityColor = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
-  
   return (
     <div 
       className="group relative rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02]"
@@ -232,17 +230,11 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSell, isSelling }) => {
       {/* Top shine */}
       <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       
-      {/* Rarity indicator */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-1"
-        style={{ backgroundColor: rarityColor }}
-      />
-      
       {/* Hover glow */}
       <div 
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
         style={{
-          boxShadow: `inset 0 0 30px ${rarityColor}15, 0 0 20px ${rarityColor}10`,
+          boxShadow: 'inset 0 0 30px rgba(247,201,72,0.1), 0 0 20px rgba(247,201,72,0.05)',
         }}
       />
       
