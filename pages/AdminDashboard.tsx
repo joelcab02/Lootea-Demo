@@ -835,24 +835,29 @@ const BoxEditSection: React.FC<{
   const getValidations = (): ValidationItem[] => {
     const validations: ValidationItem[] = [];
     
-    // For new boxes, only validate basic fields - items come later
-    if (isNew) {
-      if (!form.name || !form.slug || !form.price) {
-        validations.push({
-          type: 'error',
-          message: 'Completa nombre, slug y precio'
-        });
-      }
+    // Basic form validation - these block saving
+    if (!form.name || !form.slug || !form.price) {
+      validations.push({
+        type: 'error',
+        message: 'Completa nombre, slug y precio'
+      });
       return validations;
     }
     
-    // Check if box has items (only for existing boxes)
+    // For new boxes, only validate basic fields - items come later
+    if (isNew) {
+      return validations;
+    }
+    
+    // === WARNINGS ONLY (don't block saving) ===
+    
+    // Check if box has items
     if (boxItems.length === 0) {
       validations.push({
-        type: 'error',
+        type: 'warning',
         message: 'La caja no tiene productos asignados'
       });
-      return validations; // Return early, other validations don't apply
+      return validations;
     }
     
     // Check odds sum to 100
@@ -868,7 +873,7 @@ const BoxEditSection: React.FC<{
     // Check house edge
     if (houseEdge < 5) {
       validations.push({
-        type: 'error',
+        type: 'warning',
         message: `House Edge muy bajo (${houseEdge.toFixed(1)}%) - la caja pierde dinero`
       });
     } else if (houseEdge < 10) {
@@ -899,7 +904,7 @@ const BoxEditSection: React.FC<{
     const zeroOddsItems = boxItems.filter(bi => bi.odds <= 0);
     if (zeroOddsItems.length > 0) {
       validations.push({
-        type: 'error',
+        type: 'warning',
         message: `${zeroOddsItems.length} producto(s) con odds en 0 - nunca saldrán`
       });
     }
@@ -940,7 +945,7 @@ const BoxEditSection: React.FC<{
     
     if (maxItemValue < boxPrice) {
       validations.push({
-        type: 'error',
+        type: 'warning',
         message: `El item más caro ($${maxItemValue}) vale menos que la caja ($${boxPrice})`
       });
     }
@@ -949,7 +954,7 @@ const BoxEditSection: React.FC<{
     if (validations.length === 0) {
       validations.push({
         type: 'success',
-        message: '¡Caja lista para publicar!'
+        message: 'Caja lista para publicar'
       });
     }
     
