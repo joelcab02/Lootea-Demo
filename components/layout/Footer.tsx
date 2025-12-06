@@ -2,10 +2,6 @@ import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 
 const Icons = {
-    ShieldCheck: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>,
-    RefreshCW: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
-    Truck: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>,
-    Card: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>,
     Social: {
         X: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
         Insta: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>,
@@ -29,25 +25,6 @@ function Footer() {
       
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 md:px-6 pt-10 md:pt-14 pb-8">
         
-        {/* Trust Badges - Premium Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 md:mb-16">
-          <TrustCard 
-            icon={<Icons.ShieldCheck />}
-            title="100% Auténticos"
-            desc="Verificados por StockX y retailers oficiales"
-          />
-          <TrustCard 
-            icon={<Icons.RefreshCW />}
-            title="Intercambio Instantáneo"
-            desc="Cambia items por saldo sin comisiones"
-          />
-          <TrustCard 
-            icon={<Icons.Truck />}
-            title="Envío Gratis México"
-            desc="Entrega asegurada a tu puerta"
-          />
-        </div>
-
         {/* Main Grid */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12 pb-12 border-b border-white/5">
           
@@ -115,41 +92,6 @@ function Footer() {
       </div>
     </footer>
   );
-}
-
-function TrustCard({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
-  return (
-    <div 
-      className="p-5 rounded-2xl relative overflow-hidden group"
-      style={{
-        background: '#1a1a1a',
-        border: '1px solid #222222',
-        contain: 'layout paint',
-      }}
-    >
-      {/* Top shine */}
-      <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      
-      {/* Hover glow */}
-      <div className="absolute top-0 right-0 w-24 h-24 bg-[#F7C948] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
-      
-      <div className="flex items-start gap-4">
-        <div 
-          className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)',
-            border: '1px solid rgba(247,201,72,0.2)',
-          }}
-        >
-          <div className="text-[#F7C948]">{icon}</div>
-        </div>
-        <div>
-          <h3 className="font-display text-white text-sm uppercase mb-1">{title}</h3>
-          <p className="text-slate-500 text-xs leading-relaxed">{desc}</p>
-        </div>
-      </div>
-    </div>
-  )
 }
 
 function PaymentBadge({ children, highlight = false }: { children: React.ReactNode, highlight?: boolean }) {
