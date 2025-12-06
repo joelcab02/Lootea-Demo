@@ -12,7 +12,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import SpinnerV2 from '../components/box/SpinnerV2';
-import { Logo } from '../components/shared/Logo';
 import { LootItem, Rarity } from '../types';
 import { audioService } from '../services/audioService';
 import { fetchPromoBoxBySlug, fetchBoxItems } from '../api';
@@ -351,8 +350,11 @@ const PromoPage: React.FC = () => {
       <header className="py-4 px-4 border-b border-[#1e2330]">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <Logo size={28} />
-            <span className="font-display font-black text-xl text-white tracking-tight">LOOTEA</span>
+            <img 
+              src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/download__3___1_-removebg-preview.png"
+              alt="Lootea"
+              className="h-8 w-auto"
+            />
           </Link>
           <div className="flex items-center gap-2 text-[#F7C948]">
             <Icons.Gift />
@@ -574,9 +576,12 @@ const PromoPage: React.FC = () => {
         
         {/* Footer */}
         <footer className="py-8 px-4 border-t border-[#1e2330] text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Logo size={20} />
-            <span className="font-display font-bold text-white">LOOTEA</span>
+          <div className="flex items-center justify-center mb-2">
+            <img 
+              src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/download__3___1_-removebg-preview.png"
+              alt="Lootea"
+              className="h-7 w-auto"
+            />
           </div>
           <p className="text-slate-500 text-xs">
             Solo para mayores de 18 anos. Juega responsablemente.
