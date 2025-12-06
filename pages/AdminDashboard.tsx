@@ -832,7 +832,18 @@ const BoxEditSection: React.FC<{
   const getValidations = (): ValidationItem[] => {
     const validations: ValidationItem[] = [];
     
-    // Check if box has items
+    // For new boxes, only validate basic fields - items come later
+    if (isNew) {
+      if (!form.name || !form.slug || !form.price) {
+        validations.push({
+          type: 'error',
+          message: 'Completa nombre, slug y precio'
+        });
+      }
+      return validations;
+    }
+    
+    // Check if box has items (only for existing boxes)
     if (boxItems.length === 0) {
       validations.push({
         type: 'error',
