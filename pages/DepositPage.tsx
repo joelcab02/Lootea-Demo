@@ -59,13 +59,9 @@ const DepositPage: React.FC = () => {
     setStep('details');
   };
 
-  const handleBack = () => {
-    if (step === 'details') {
-      setStep('select');
-      setSelectedMethod(null);
-    } else {
-      navigate(-1);
-    }
+  const handleBackToSelect = () => {
+    setStep('select');
+    setSelectedMethod(null);
   };
 
   const copyToClipboard = async (text: string, field: string) => {
@@ -113,34 +109,16 @@ const DepositPage: React.FC = () => {
     <Layout>
       <div className="px-4 md:px-8 py-6 md:py-10 max-w-lg mx-auto">
         
-        {/* Header with back button */}
-        {step !== 'pending' && (
-          <button 
-            onClick={handleBack}
-            className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            <span className="text-sm">Volver</span>
-          </button>
-        )}
-
-        {/* Title */}
+        {/* Title - Same style as Inventory */}
         <div className="text-center mb-6">
           <h1 className="font-display text-2xl md:text-4xl font-black uppercase tracking-tight mb-2">
             {step === 'pending' ? 'Solicitud Enviada' : 'Agregar Fondos'}
           </h1>
-          {step === 'select' && (
-            <p className="text-slate-500 text-sm">
-              Elige cuanto quieres depositar
-            </p>
-          )}
-          {step === 'details' && (
-            <p className="text-slate-500 text-sm">
-              Completa tu pago
-            </p>
-          )}
+          <p className="text-slate-500 text-sm md:text-base">
+            {step === 'select' && 'Elige cuanto quieres depositar'}
+            {step === 'details' && 'Completa tu pago'}
+            {step === 'pending' && 'Tu solicitud esta siendo procesada'}
+          </p>
         </div>
 
         {/* Progress Steps - Only on select and details */}
