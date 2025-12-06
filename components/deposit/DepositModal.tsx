@@ -138,7 +138,13 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
         />
         
         {/* Modal */}
-        <div className="relative z-10 w-full max-w-sm bg-[#111111] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div 
+          className="relative z-10 w-full max-w-sm rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+          style={{ background: '#1a1a1a', border: '1px solid #222222' }}
+        >
+          {/* Top shine */}
+          <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10" />
+          
           {/* Close button */}
           <button 
             onClick={onClose}
@@ -161,11 +167,8 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
               </svg>
             </button>
           )}
-
-          {/* Gold accent line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent" />
           
-          <div className="p-6">
+          <div className="p-6 pt-8">
             {/* Header */}
             <h2 className="font-display font-bold text-lg text-white mb-1">
               {step === 'pending' ? 'Solicitud Enviada' : 'Agregar Fondos'}

@@ -155,24 +155,29 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
       />
       
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-2xl bg-[#0d1019] border border-[#1e2330] rounded-xl shadow-2xl max-h-[85vh] flex flex-col">
+      <div 
+        className="relative z-10 w-full max-w-2xl rounded-2xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden"
+        style={{ background: '#1a1a1a', border: '1px solid #222222' }}
+      >
+        {/* Top shine */}
+        <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10" />
         
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[#1e2330]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <span className="text-white font-bold text-lg">Tu Carrito</span>
+            <span className="text-white font-display text-lg">Tu Carrito</span>
             <span className="text-[#F7C948] font-bold">${inventory.totalValue.toFixed(2)} MXN</span>
           </div>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors p-1"
+            className="text-slate-500 hover:text-white transition-colors p-1"
           >
             <Icons.X />
           </button>
         </div>
         
         {/* Action Bar */}
-        <div className="flex items-center justify-between p-4 border-b border-[#1e2330] bg-[#0a0c10]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-black/20">
           <div className="text-slate-400 text-sm">
             {selectedItems.size > 0 ? (
               <span>{selectedItems.size} seleccionados <span className="text-[#F7C948]">${selectedValue.toFixed(2)} MXN</span></span>
@@ -228,17 +233,16 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
               {inventory.items.map((item) => (
                 <div 
                   key={item.inventory_id}
-                  className={`
-                    relative bg-[#1a1d26] rounded-lg overflow-hidden border transition-all cursor-pointer
-                    ${selectedItems.has(item.inventory_id) 
-                      ? 'border-[#F7C948] ring-1 ring-[#F7C948]/50' 
-                      : 'border-[#1e2330] hover:border-slate-600'}
-                  `}
+                  className="relative rounded-xl overflow-hidden cursor-pointer transition-all group"
+                  style={{ 
+                    background: '#222222', 
+                    border: selectedItems.has(item.inventory_id) ? '2px solid #F7C948' : '1px solid #2a2a2a'
+                  }}
                   onClick={() => toggleSelectItem(item.inventory_id)}
                 >
                   {/* Rarity indicator */}
                   <div 
-                    className="absolute top-0 left-0 right-0 h-1"
+                    className="absolute top-0 left-0 right-0 h-0.5"
                     style={{ backgroundColor: RARITY_COLORS[item.rarity] || RARITY_COLORS.common }}
                   />
                   
@@ -281,7 +285,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                       handleSellItem(item.inventory_id);
                     }}
                     disabled={sellingItem === item.inventory_id}
-                    className="w-full py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium transition-colors disabled:opacity-50"
+                    className="w-full py-2 bg-slate-600/50 hover:bg-slate-600 text-white text-xs font-medium transition-colors disabled:opacity-50"
                   >
                     {sellingItem === item.inventory_id ? 'Vendiendo...' : 'Vender'}
                   </button>
@@ -293,16 +297,16 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         
         {/* Footer */}
         {inventory.items.length > 0 && (
-          <div className="flex items-center justify-between p-4 border-t border-[#1e2330] bg-[#0a0c10]">
+          <div className="flex items-center justify-between p-4 border-t border-white/5 bg-black/20">
             <button
               onClick={selectAll}
-              className="text-slate-400 hover:text-white text-sm transition-colors"
+              className="text-slate-500 hover:text-white text-sm transition-colors"
             >
               {selectedItems.size === inventory.items.length ? 'Deseleccionar todo' : `Seleccionar todo (${inventory.itemCount})`}
             </button>
             
-            <div className="text-sm text-slate-400">
-              Ordenar por: <span className="text-white">Precio ↓</span>
+            <div className="text-sm text-slate-500">
+              Ordenar por: <span className="text-white">Precio</span>
             </div>
           </div>
         )}

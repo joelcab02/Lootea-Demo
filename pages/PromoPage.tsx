@@ -469,36 +469,66 @@ const PromoPage: React.FC = () => {
             {/* Steps Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Step 1 */}
-              <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-6 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-[#0d1019] rounded-xl flex items-center justify-center text-[#F7C948]">
-                  <Icons.Box />
+              <div 
+                className="p-5 rounded-2xl relative overflow-hidden group"
+                style={{ background: '#1a1a1a', border: '1px solid #222222' }}
+              >
+                <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#F7C948] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
+                <div className="text-center">
+                  <div 
+                    className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)', border: '1px solid rgba(247,201,72,0.2)' }}
+                  >
+                    <Icons.Box />
+                  </div>
+                  <h3 className="font-display text-white text-sm uppercase mb-1">01. Abre Cajas</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed">
+                    Encuentra tu caja perfecta y vive la emocion de descubrir premios
+                  </p>
                 </div>
-                <h3 className="font-display font-bold text-white mb-2">01. Abre Cajas</h3>
-                <p className="text-slate-400 text-sm">
-                  Encuentra tu caja perfecta y vive la emocion de descubrir premios
-                </p>
               </div>
               
               {/* Step 2 */}
-              <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-6 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-[#0d1019] rounded-xl flex items-center justify-center text-[#F7C948]">
-                  <Icons.Trophy />
+              <div 
+                className="p-5 rounded-2xl relative overflow-hidden group"
+                style={{ background: '#1a1a1a', border: '1px solid #222222' }}
+              >
+                <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#F7C948] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
+                <div className="text-center">
+                  <div 
+                    className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)', border: '1px solid rgba(247,201,72,0.2)' }}
+                  >
+                    <Icons.Trophy />
+                  </div>
+                  <h3 className="font-display text-white text-sm uppercase mb-1">02. Gana Items</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed">
+                    Descubre un item por caja de las mejores marcas que conoces
+                  </p>
                 </div>
-                <h3 className="font-display font-bold text-white mb-2">02. Gana Items</h3>
-                <p className="text-slate-400 text-sm">
-                  Descubre un item por caja de las mejores marcas que conoces
-                </p>
               </div>
               
               {/* Step 3 */}
-              <div className="bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-6 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-[#0d1019] rounded-xl flex items-center justify-center text-[#F7C948]">
-                  <Icons.Wallet />
+              <div 
+                className="p-5 rounded-2xl relative overflow-hidden group"
+                style={{ background: '#1a1a1a', border: '1px solid #222222' }}
+              >
+                <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#F7C948] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
+                <div className="text-center">
+                  <div 
+                    className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)', border: '1px solid rgba(247,201,72,0.2)' }}
+                  >
+                    <Icons.Wallet />
+                  </div>
+                  <h3 className="font-display text-white text-sm uppercase mb-1">03. Cobra o Reclama</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed">
+                    Vende tus items por saldo, retira efectivo o recibe tu premio
+                  </p>
                 </div>
-                <h3 className="font-display font-bold text-white mb-2">03. Cobra o Reclama</h3>
-                <p className="text-slate-400 text-sm">
-                  Vende tus items por saldo, retira efectivo o recibe tu premio
-                </p>
               </div>
             </div>
           </div>
@@ -520,16 +550,18 @@ const PromoPage: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full text-left bg-[#1a1d26] border border-[#2a2d36] rounded-xl p-4 transition-all hover:border-[#F7C948]/30"
+                  className="w-full text-left p-4 rounded-2xl relative overflow-hidden group transition-all"
+                  style={{ background: '#1a1a1a', border: '1px solid #222222' }}
                 >
+                  <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                   <div className="flex items-center justify-between gap-4">
-                    <span className="font-medium text-white">{faq.q}</span>
-                    <div className={`text-slate-400 transition-transform duration-200 ${openFaq === index ? 'rotate-180' : ''}`}>
+                    <span className="font-display text-white text-sm">{faq.q}</span>
+                    <div className={`text-slate-500 transition-transform duration-200 ${openFaq === index ? 'rotate-180' : ''}`}>
                       <Icons.ChevronDown />
                     </div>
                   </div>
                   {openFaq === index && (
-                    <p className="mt-3 text-slate-400 text-sm leading-relaxed">
+                    <p className="mt-3 text-slate-500 text-xs leading-relaxed">
                       {faq.a}
                     </p>
                   )}

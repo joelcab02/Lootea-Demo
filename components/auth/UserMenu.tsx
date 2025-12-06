@@ -192,14 +192,17 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
           
             {/* Dropdown Menu */}
             {dropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-56 bg-[#0d1019] border border-[#1e2330] rounded-xl shadow-2xl z-50 overflow-hidden">
-              {/* Gold accent line */}
-              <div className="h-0.5 bg-gradient-to-r from-transparent via-[#F7C948] to-transparent" />
+            <div 
+              className="absolute right-0 top-full mt-2 w-56 rounded-2xl shadow-2xl z-50 overflow-hidden"
+              style={{ background: '#1a1a1a', border: '1px solid #222222' }}
+            >
+              {/* Top shine */}
+              <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
               
               {/* User info header */}
-              <div className="p-3 border-b border-[#1e2330]">
+              <div className="p-4 border-b border-white/5">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F7C948] to-[#FF9500] flex items-center justify-center text-black text-lg font-display font-black">
+                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#F7C948] to-[#FF9500] flex items-center justify-center text-black text-lg font-display font-black">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -214,32 +217,32 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
               
               {/* Menu items */}
               <div className="p-2">
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#F7C948] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-[#F7C948] rounded-lg text-sm transition-colors">
                   <Icons.Inventory />
                   <span>Mi Inventario</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#F7C948] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-[#F7C948] rounded-lg text-sm transition-colors">
                   <Icons.History />
                   <span>Historial</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#F7C948] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-[#F7C948] rounded-lg text-sm transition-colors">
                   <Icons.Fairness />
                   <span>Provably Fair</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-[#1a1d26] hover:text-[#F7C948] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-[#F7C948] rounded-lg text-sm transition-colors">
                   <Icons.Settings />
-                  <span>Configuración</span>
+                  <span>Configuracion</span>
                 </button>
               </div>
               
               {/* Logout */}
-              <div className="p-2 border-t border-[#1e2330]">
+              <div className="p-2 border-t border-white/5">
                 <button 
                   onClick={handleSignOut}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:text-red-300 rounded-lg text-sm transition-colors"
                 >
                   <Icons.Logout />
-                  <span>Cerrar Sesión</span>
+                  <span>Cerrar Sesion</span>
                 </button>
               </div>
             </div>

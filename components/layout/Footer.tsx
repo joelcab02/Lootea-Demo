@@ -93,16 +93,6 @@ function Footer() {
             </div>
           </div>
 
-          {/* Juegos */}
-          <div>
-            <h5 className="font-display text-white uppercase text-sm mb-4 tracking-wide">Juegos</h5>
-            <div className="flex flex-col gap-2.5">
-              <FooterLink to="/">Cajas Misteriosas</FooterLink>
-              <FooterLink to="/">Batallas de Cajas</FooterLink>
-              <FooterLink to="/">Upgrader</FooterLink>
-            </div>
-          </div>
-
           {/* Ayuda */}
           <div>
             <h5 className="font-display text-white uppercase text-sm mb-4 tracking-wide">Ayuda</h5>
