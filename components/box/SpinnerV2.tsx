@@ -348,9 +348,9 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
               
-              {/* Winner Info - positioned below the card but inside spinner area */}
+              {/* Winner Info - below the card */}
               {isWinnerCard && (
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
+                <div className="mt-4 text-center whitespace-nowrap z-50">
                   <p className="text-white font-medium text-base">{item.name}</p>
                   <p className="text-[#F7C948] font-bold text-sm">${item.price.toFixed(2)} MXN</p>
                 </div>
