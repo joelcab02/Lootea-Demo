@@ -1,81 +1,59 @@
 /**
  * BottomNav - Mobile Bottom Navigation
  * 
- * Opción B: Enfocada en Conversión
- * - Inicio, Cajas, Depositar (CTA), Premios, Más
- * - Solo visible en mobile (md:hidden)
- * - Depositar siempre destacado en dorado
+ * Diseño Premium:
+ * - Barra flotante con blur
+ * - 4 tabs con indicador de punto dorado
+ * - FAB dorado grande para Depositar
+ * - Iconos temáticos
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 // ============================================
-// ICONS
+// ICONS - Temáticos para Lootea
 // ============================================
 
 const Icons = {
+  // Cofre/Caja para Inicio
   Home: () => (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 8v13H3V8" />
+      <path d="M1 3h22v5H1z" />
+      <path d="M10 12h4" />
     </svg>
   ),
-  Cart: () => (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-    </svg>
-  ),
-  Deposit: () => (
-    <div className="w-7 h-7 rounded-full bg-[#F7C948] flex items-center justify-center">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19" />
-        <line x1="5" y1="12" x2="19" y2="12" />
-      </svg>
-    </div>
-  ),
-  Gift: () => (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 12 20 22 4 22 4 12" />
-      <rect x="2" y="7" width="20" height="5" />
-      <line x1="12" y1="22" x2="12" y2="7" />
-      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
-      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
-    </svg>
-  ),
-  Menu: () => (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-      <line x1="3" y1="12" x2="21" y2="12" />
+  // Mochila/Bolsa para Inventario
+  Inventory: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
       <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="18" x2="21" y2="18" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
     </svg>
   ),
+  // Monedas para Depositar (FAB)
+  Coins: () => (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  ),
+  // Trofeo para Premios
+  Trophy: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+      <path d="M4 22h16" />
+      <path d="M10 22V8a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v14" />
+      <path d="M6 4v5a6 6 0 0 0 12 0V4" />
+    </svg>
+  ),
+  // Usuario para Perfil
   User: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
-    </svg>
-  ),
-  History: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
-  ),
-  Help: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-      <line x1="12" y1="17" x2="12.01" y2="17" />
-    </svg>
-  ),
-  Logout: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <polyline points="16 17 21 12 16 7" />
-      <line x1="21" y1="12" x2="9" y2="12" />
     </svg>
   ),
 };
@@ -87,44 +65,25 @@ const Icons = {
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
-  isActive?: boolean;
-  isHighlighted?: boolean;
-  onClick?: () => void;
-  to?: string;
+  to: string;
+  isActive: boolean;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive, isHighlighted, onClick, to }) => {
-  const baseClasses = "flex flex-col items-center justify-center gap-1 flex-1 py-3 transition-colors";
-  
-  const colorClasses = isHighlighted
-    ? "text-[#F7C948]"
-    : isActive
-      ? "text-[#F7C948]"
-      : "text-slate-400";
-
-  const content = (
-    <>
-      <div className={isHighlighted ? "drop-shadow-[0_0_10px_rgba(247,201,72,0.6)]" : ""}>
-        {icon}
-      </div>
-      <span className={`text-[11px] font-medium ${isHighlighted ? "font-bold" : ""}`}>
-        {label}
-      </span>
-    </>
-  );
-
-  if (to) {
-    return (
-      <Link to={to} className={`${baseClasses} ${colorClasses}`}>
-        {content}
-      </Link>
-    );
-  }
-
+const NavItem: React.FC<NavItemProps> = ({ icon, label, to, isActive }) => {
   return (
-    <button onClick={onClick} className={`${baseClasses} ${colorClasses}`}>
-      {content}
-    </button>
+    <Link 
+      to={to} 
+      className={`relative flex flex-col items-center justify-center gap-1 py-2.5 px-3 transition-all duration-200 ${
+        isActive ? 'text-[#F7C948]' : 'text-slate-500'
+      }`}
+    >
+      {icon}
+      <span className="text-[10px] font-medium">{label}</span>
+      {/* Indicador de punto dorado */}
+      {isActive && (
+        <div className="absolute bottom-1 w-1 h-1 rounded-full bg-[#F7C948] shadow-[0_0_6px_rgba(247,201,72,0.8)]" />
+      )}
+    </Link>
   );
 };
 
@@ -134,7 +93,6 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive, isHighlighted,
 
 const BottomNav: React.FC = () => {
   const location = useLocation();
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   // Hide on admin and promo pages
   const hiddenRoutes = ['/admin', '/promo'];
@@ -148,14 +106,20 @@ const BottomNav: React.FC = () => {
   };
 
   return (
-    <>
-      {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden">
-        {/* Background - solid black matching app */}
-        <div className="absolute inset-0 bg-[#111111] border-t border-[#2a2d36]" />
-        
-        {/* Nav Items */}
-        <div className="relative flex items-center justify-around px-4 pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden px-3 pb-2">
+        <div 
+          className="relative flex items-center justify-around rounded-2xl py-1.5 mx-auto max-w-md"
+          style={{
+            background: 'rgba(17, 17, 17, 0.9)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 -4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)',
+          }}
+        >
+          {/* Top shine */}
+          <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          
           <NavItem
             icon={<Icons.Home />}
             label="Inicio"
@@ -164,84 +128,46 @@ const BottomNav: React.FC = () => {
           />
           
           <NavItem
-            icon={<Icons.Cart />}
+            icon={<Icons.Inventory />}
             label="Inventario"
             to="/inventory"
             isActive={isActive('/inventory')}
           />
           
-          <NavItem
-            icon={<Icons.Deposit />}
-            label="Depositar"
+          {/* Depositar - Centro destacado */}
+          <Link
             to="/deposit"
-            isActive={isActive('/deposit')}
-            isHighlighted={true}
-          />
+            className="relative flex flex-col items-center justify-center gap-1 py-1 px-3"
+          >
+            <div 
+              className="w-11 h-11 rounded-full flex items-center justify-center text-black shadow-[0_2px_12px_rgba(247,201,72,0.4)]"
+              style={{
+                background: 'linear-gradient(135deg, #FFE082 0%, #F7C948 50%, #E6B800 100%)',
+              }}
+            >
+              <Icons.Coins />
+            </div>
+            <span className="text-[10px] font-bold text-[#F7C948]">Depositar</span>
+          </Link>
           
           <NavItem
-            icon={<Icons.Gift />}
+            icon={<Icons.Trophy />}
             label="Premios"
             to="/rewards"
             isActive={isActive('/rewards')}
           />
           
-          {/* More Menu with Dropdown */}
-          <div className="relative flex-1 flex justify-center">
-            <button 
-              onClick={() => setShowMoreMenu(!showMoreMenu)}
-              className={`flex flex-col items-center justify-center gap-1 py-3 px-4 transition-colors ${showMoreMenu ? 'text-[#F7C948]' : 'text-slate-400'}`}
-            >
-              <Icons.Menu />
-              <span className="text-[11px] font-medium">Mas</span>
-            </button>
-            
-            {/* More Dropdown */}
-            {showMoreMenu && (
-              <>
-                {/* Backdrop */}
-                <div 
-                  className="fixed inset-0 z-40"
-                  onClick={() => setShowMoreMenu(false)}
-                />
-                
-                {/* Menu */}
-                <div className="absolute bottom-full right-0 mb-2 w-48 z-50 rounded-xl overflow-hidden shadow-2xl"
-                  style={{
-                    background: 'linear-gradient(180deg, #1a1d26 0%, #0d1019 100%)',
-                    border: '1px solid rgba(247,201,72,0.15)',
-                  }}
-                >
-                  {/* Gold accent */}
-                  <div className="h-px bg-gradient-to-r from-transparent via-[#F7C948]/50 to-transparent" />
-                  
-                  <div className="p-2">
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-[#F7C948] hover:bg-white/5 rounded-lg text-sm transition-colors">
-                      <Icons.User />
-                      <span>Mi Cuenta</span>
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-[#F7C948] hover:bg-white/5 rounded-lg text-sm transition-colors">
-                      <Icons.History />
-                      <span>Historial</span>
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-[#F7C948] hover:bg-white/5 rounded-lg text-sm transition-colors">
-                      <Icons.Help />
-                      <span>Ayuda</span>
-                    </button>
-                  </div>
-                  
-                  <div className="p-2 border-t border-white/5">
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg text-sm transition-colors">
-                      <Icons.Logout />
-                      <span>Cerrar Sesion</span>
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+          <NavItem
+            icon={<Icons.User />}
+            label="Perfil"
+            to="/profile"
+            isActive={isActive('/profile')}
+          />
         </div>
+        
+        {/* Safe area padding */}
+        <div className="h-[env(safe-area-inset-bottom)]" />
       </nav>
-    </>
   );
 };
 
