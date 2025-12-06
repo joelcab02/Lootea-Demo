@@ -19,6 +19,7 @@ export interface BoxRow {
   image: string;
   category: string;
   is_active: boolean;
+  show_in_home?: boolean;
   is_featured?: boolean;
   sort_order?: number;
   total_opens?: number;
@@ -59,6 +60,7 @@ export async function fetchBoxes(options?: {
       .from('boxes')
       .select('*')
       .eq('is_active', true)
+      .eq('show_in_home', true)
       .order('created_at', { ascending: false })
       .abortSignal(AbortSignal.timeout(timeout));
 

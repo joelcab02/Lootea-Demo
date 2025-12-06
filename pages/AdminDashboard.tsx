@@ -634,7 +634,7 @@ const BoxEditSection: React.FC<{
   setIsSaving: (v: boolean) => void;
   products: LootItem[];
 }> = ({ boxId, navigate, onSave, setIsSaving, products }) => {
-  const [form, setForm] = useState({ name: '', slug: '', price: '', image: '', category: 'general' });
+  const [form, setForm] = useState({ name: '', slug: '', price: '', image: '', category: 'general', show_in_home: true });
   const [boxItems, setBoxItems] = useState<{item_id: string, odds: number}[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRarity, setFilterRarity] = useState<string>('all');
@@ -678,7 +678,8 @@ const BoxEditSection: React.FC<{
         slug: box.slug,
         price: String(box.price),
         image: box.image || '',
-        category: box.category || 'general'
+        category: box.category || 'general',
+        show_in_home: box.show_in_home !== false
       });
       
       // Load promo config if exists
@@ -712,6 +713,7 @@ const BoxEditSection: React.FC<{
         price: parseFloat(form.price),
         image: form.image,
         category: form.category,
+        show_in_home: form.show_in_home,
         promo_config: promoConfigData
       }).select().single();
       
@@ -731,6 +733,7 @@ const BoxEditSection: React.FC<{
         price: parseFloat(form.price),
         image: form.image,
         category: form.category,
+        show_in_home: form.show_in_home,
         promo_config: promoConfigData
       }).eq('id', boxId);
       
@@ -1142,6 +1145,27 @@ const BoxEditSection: React.FC<{
                     className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
                   />
                 </div>
+              </div>
+              
+              {/* Show in Home Toggle */}
+              <div className="flex items-center justify-between p-3 bg-[#08090c] border border-[#1a1d24] rounded-lg">
+                <div>
+                  <p className="text-white text-sm font-medium">Mostrar en Home</p>
+                  <p className="text-slate-500 text-xs">Si esta activo, la caja aparece en la pagina principal</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, show_in_home: !form.show_in_home })}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${
+                    form.show_in_home ? 'bg-[#F7C948]' : 'bg-[#1a1d24]'
+                  }`}
+                >
+                  <div 
+                    className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
+                      form.show_in_home ? 'translate-x-7' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
               </div>
               
               {/* Image URL Field */}
