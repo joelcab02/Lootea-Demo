@@ -497,11 +497,12 @@ const PromoPage: React.FC = () => {
                 <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[#F7C948] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
                 <div className="text-center">
-                  <div 
-                    className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)', border: '1px solid rgba(247,201,72,0.2)' }}
-                  >
-                    <Icons.Trophy />
+                  <div className="w-16 h-16 mx-auto mb-4">
+                    <img 
+                      src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/asset-1764971245533-m35ks1.png"
+                      alt="Gana Items"
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <h3 className="font-display text-white text-sm uppercase mb-1">02. Gana Items</h3>
                   <p className="text-slate-500 text-xs leading-relaxed">
