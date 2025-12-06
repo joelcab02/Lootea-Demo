@@ -64,7 +64,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   const [isDesktop, setIsDesktop] = useState(false);
   const [displayWinner, setDisplayWinner] = useState<LootItem | null>(null);
   const [showWinnerEffect, setShowWinnerEffect] = useState(false);
-  const [isFadingOut, setIsFadingOut] = useState(false);
   
   // Mutable animation state
   const stateRef = useRef({
@@ -206,51 +205,39 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     if (justStartedSpinning && winner) {
       console.log('[SpinnerV2] Starting spin with winner:', winner.name);
       
-      // Funcion para iniciar la animacion
-      const startAnimation = () => {
-        // Lock winner for display
-        setDisplayWinner(winner);
-        
-        // Generate strip
-        generateStrip(winner);
-
-        // Calculate animation
-        const startX = -INITIAL_POSITION * ITEM_WIDTH;
-        const endX = -WINNING_INDEX * ITEM_WIDTH;
-        const travelDistance = endX - startX;
-
-        // Reset state
-        stateRef.current = {
-          startTime: 0,
-          targetX: travelDistance,
-          currentX: 0,
-          lastIndex: -1,
-          isAnimating: true,
-        };
-
-        // Reset position
-        if (containerRef.current) {
-          containerRef.current.style.transform = `translate3d(${startX}px,0,0)`;
-        }
-
-        // Start animation
-        cancelAnimationFrame(animationFrameId.current);
-        animationFrameId.current = requestAnimationFrame(animate);
-      };
+      // Limpiar efectos inmediatamente - sin delay
+      setShowWinnerEffect(false);
       
-      // Si hay efecto de winner visible, hacer fade out suave primero
-      if (showWinnerEffect) {
-        setIsFadingOut(true);
-        setTimeout(() => {
-          setShowWinnerEffect(false);
-          setIsFadingOut(false);
-          startAnimation();
-        }, 300); // 300ms fade out
-      } else {
-        startAnimation();
+      // Lock winner for display
+      setDisplayWinner(winner);
+      
+      // Generate strip
+      generateStrip(winner);
+
+      // Calculate animation
+      const startX = -INITIAL_POSITION * ITEM_WIDTH;
+      const endX = -WINNING_INDEX * ITEM_WIDTH;
+      const travelDistance = endX - startX;
+
+      // Reset state
+      stateRef.current = {
+        startTime: 0,
+        targetX: travelDistance,
+        currentX: 0,
+        lastIndex: -1,
+        isAnimating: true,
+      };
+
+      // Reset position
+      if (containerRef.current) {
+        containerRef.current.style.transform = `translate3d(${startX}px,0,0)`;
       }
+
+      // Start animation immediately
+      cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = requestAnimationFrame(animate);
     }
-  }, [isSpinning, winner, generateStrip, animate, ITEM_WIDTH, showWinnerEffect]);
+  }, [isSpinning, winner, generateStrip, animate, ITEM_WIDTH]);
 
   // Cleanup
   useEffect(() => {
@@ -333,10 +320,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
           
           // Determinar animacion
           let cardAnimation: string | undefined;
-          if (isFadingOut) {
-            // Fade out suave antes del siguiente spin
-            cardAnimation = 'fadeOutSmooth 0.3s ease-out forwards';
-          } else if (isWinnerCard) {
+          if (isWinnerCard) {
             cardAnimation = 'winnerReveal 0.6s ease-out forwards';
           } else if (isLoser) {
             cardAnimation = 'loserFade 0.4s ease-out forwards';
