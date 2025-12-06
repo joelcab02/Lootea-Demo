@@ -216,8 +216,8 @@ const Header: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Menu Button */}
-                  <div className="relative">
+                  {/* Menu Button - Hidden on mobile, shown on desktop */}
+                  <div className="hidden md:block relative">
                     <button 
                       onClick={toggleDropdown}
                       className="p-2.5 text-white/40 hover:text-white transition-colors rounded-lg hover:bg-white/5"
