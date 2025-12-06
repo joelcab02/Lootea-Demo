@@ -12,6 +12,7 @@ import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import BottomNav from './BottomNav';
+import { ConnectionOverlay } from '../shared/ConnectionOverlay';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -36,6 +37,9 @@ export const Layout: React.FC<LayoutProps> = ({
         
         {/* Mobile Bottom Navigation */}
         <BottomNav />
+        
+        {/* Connection Overlay - muestra cuando hay problemas de conexion */}
+        <ConnectionOverlay />
       </div>
     </div>
   );
