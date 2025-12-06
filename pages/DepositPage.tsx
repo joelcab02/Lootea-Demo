@@ -107,7 +107,7 @@ const DepositPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="px-4 md:px-8 py-6 md:py-10 max-w-lg mx-auto">
+      <div className="px-4 md:px-8 py-6 md:py-10 max-w-lg mx-auto animate-page-in">
         
         {/* Title - Same style as Inventory */}
         <div className="text-center mb-6">

@@ -53,7 +53,7 @@ const HomePage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="px-4 md:px-8 py-6 md:py-10">
+      <div className="px-4 md:px-8 py-6 md:py-10 animate-page-in">
         
         {/* Title */}
         <div className="text-center mb-8">

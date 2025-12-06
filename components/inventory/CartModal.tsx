@@ -150,13 +150,13 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-black/60 animate-backdrop-in"
         onClick={onClose}
       />
       
       {/* Modal */}
       <div 
-        className="relative z-10 w-full max-w-2xl rounded-2xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden"
+        className="relative z-10 w-full max-w-2xl rounded-2xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden animate-modal-in"
         style={{ background: '#1a1a1a', border: '1px solid #222222' }}
       >
         {/* Top shine */}
