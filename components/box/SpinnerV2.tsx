@@ -333,26 +333,19 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 animation: cardAnimation,
               }}
             >
-              {/* Winner golden border with glow */}
-              {isWinnerCard && (
-                <div 
-                  className="absolute -inset-1 rounded-2xl pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(135deg, #FFD966 0%, #F7C948 50%, #D4A520 100%)',
-                    boxShadow: '0 0 20px rgba(247,201,72,0.5), 0 0 40px rgba(247,201,72,0.3), 0 0 60px rgba(247,201,72,0.15)',
-                    animation: 'goldenGlow 2s ease-in-out infinite',
-                  }}
-                />
-              )}
-              
-              {/* Card */}
-              <div className="relative rounded-xl overflow-hidden">
+              {/* Card with optional winner glow */}
+              <div 
+                className="relative rounded-xl overflow-hidden"
+                style={isWinnerCard ? {
+                  boxShadow: '0 0 30px rgba(247,201,72,0.6), 0 0 60px rgba(247,201,72,0.3)',
+                } : undefined}
+              >
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
               
               {/* Winner Info - below the card */}
               {isWinnerCard && (
-                <div className="mt-4 text-center whitespace-nowrap z-50">
+                <div className="mt-4 text-center whitespace-nowrap">
                   <p className="text-white font-medium text-base">{item.name}</p>
                   <p className="text-[#F7C948] font-bold text-sm">${item.price.toFixed(2)} MXN</p>
                 </div>
