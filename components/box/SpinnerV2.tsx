@@ -262,6 +262,19 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       {/* Bottom border */}
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F7C948]/40 to-transparent z-30" />
       
+      {/* Winner Glow - fixed in center, outside animated elements */}
+      {showWinnerEffect && (
+        <div 
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20"
+          style={{
+            width: `${cardWidth * 1.8}px`,
+            height: `${cardWidth * 1.8}px`,
+            background: 'radial-gradient(circle, rgba(247,201,72,0.5) 0%, rgba(247,201,72,0.2) 35%, transparent 70%)',
+            borderRadius: '50%',
+          }}
+        />
+      )}
+      
       {/* Center Indicator */}
       <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showWinnerEffect ? 'opacity-0' : 'opacity-100'}`}>
         <div 
@@ -333,16 +346,9 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 animation: cardAnimation,
               }}
             >
-              {/* Card with glow via box-shadow on wrapper */}
-              <div 
-                className="relative rounded-xl"
-                style={isWinnerCard ? {
-                  boxShadow: '0 0 40px 15px rgba(247,201,72,0.35), 0 0 80px 30px rgba(247,201,72,0.15)',
-                } : undefined}
-              >
-                <div className="rounded-xl overflow-hidden">
-                  <LootCard item={item} width={cardWidth} isSpinner={true} />
-                </div>
+              {/* Card */}
+              <div className="relative rounded-xl overflow-hidden">
+                <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
               
               {/* Winner Info - below the card */}
