@@ -262,14 +262,14 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       {/* Bottom border */}
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F7C948]/40 to-transparent z-30" />
       
-      {/* Winner Glow - fixed in center, outside animated elements */}
+      {/* Winner Glow - fixed in center, BEHIND the cards */}
       {showWinnerEffect && (
         <div 
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
           style={{
-            width: `${cardWidth * 1.8}px`,
-            height: `${cardWidth * 1.8}px`,
-            background: 'radial-gradient(circle, rgba(247,201,72,0.5) 0%, rgba(247,201,72,0.2) 35%, transparent 70%)',
+            width: `${cardWidth * 2}px`,
+            height: `${cardWidth * 2}px`,
+            background: 'radial-gradient(circle, rgba(247,201,72,0.6) 0%, rgba(247,201,72,0.25) 40%, transparent 70%)',
             borderRadius: '50%',
           }}
         />
