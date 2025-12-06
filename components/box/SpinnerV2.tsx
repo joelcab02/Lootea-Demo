@@ -269,7 +269,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
           style={{
             width: `${cardWidth * 2}px`,
             height: `${cardWidth * 2}px`,
-            background: 'radial-gradient(circle, rgba(247,201,72,0.6) 0%, rgba(247,201,72,0.25) 40%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(247,201,72,0.35) 0%, rgba(247,201,72,0.12) 40%, transparent 70%)',
             borderRadius: '50%',
           }}
         />
