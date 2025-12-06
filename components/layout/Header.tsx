@@ -165,10 +165,10 @@ const Header: React.FC = () => {
               {/* Logged In */}
               {!isLoading && isLoggedIn && (
                 <>
-                  {/* Cart Button */}
+                  {/* Cart Button - Hidden on mobile, shown on desktop */}
                   <button 
                     onClick={() => setShowCart(true)}
-                    className="relative p-2.5 text-white/40 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                    className="hidden md:block relative p-2.5 text-white/40 hover:text-white transition-colors rounded-lg hover:bg-white/5"
                   >
                     <Icons.Cart />
                     {cartCount > 0 && (
