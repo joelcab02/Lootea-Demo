@@ -9,7 +9,6 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { DepositModal } from '../deposit/DepositModal';
 
 // ============================================
 // ICONS
@@ -134,7 +133,6 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive, isHighlighted,
 
 const BottomNav: React.FC = () => {
   const location = useLocation();
-  const [showDeposit, setShowDeposit] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   // Hide on admin and promo pages
@@ -174,7 +172,8 @@ const BottomNav: React.FC = () => {
           <NavItem
             icon={<Icons.Deposit />}
             label="Depositar"
-            onClick={() => setShowDeposit(true)}
+            to="/deposit"
+            isActive={isActive('/deposit')}
             isHighlighted={true}
           />
           
@@ -241,9 +240,6 @@ const BottomNav: React.FC = () => {
           </div>
         </div>
       </nav>
-
-      {/* Deposit Modal */}
-      <DepositModal isOpen={showDeposit} onClose={() => setShowDeposit(false)} />
     </>
   );
 };
