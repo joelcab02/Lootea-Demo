@@ -30,6 +30,8 @@ export const BoxCard: React.FC<BoxCardProps> = ({ box }) => {
             src={box.image} 
             alt={box.name}
             className="w-full aspect-[3/4] object-cover block"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="w-full aspect-[3/4] bg-gradient-to-br from-[#2a2d36] to-[#1a1d26] flex items-center justify-center">

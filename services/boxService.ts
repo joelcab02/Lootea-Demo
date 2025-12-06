@@ -3,6 +3,7 @@
  * 
  * Este servicio usa el API layer para las queries.
  * Aquí va la lógica de negocio y transformaciones.
+ * Incluye cache para reducir queries a Supabase.
  */
 
 import { 
@@ -14,14 +15,22 @@ import {
 } from '../api';
 import type { LootItem, Box, BoxWithItems } from '../core/types/game.types';
 import { Rarity } from '../core/types/game.types';
+import { cache, CACHE_KEYS } from './cacheService';
 
 // Re-export for compatibility
 export type { Box, BoxWithItems } from '../core/types/game.types';
 
 /**
- * Get all active boxes
+ * Get all active boxes (cached for 5 min)
  */
 export async function getBoxes(): Promise<Box[]> {
+  // Check cache first
+  const cached = cache.get<Box[]>(CACHE_KEYS.BOXES);
+  if (cached) {
+    console.log('[BoxService] Using cached boxes');
+    return cached;
+  }
+  
   const { data, error } = await fetchBoxes();
   
   if (error) {
@@ -29,7 +38,12 @@ export async function getBoxes(): Promise<Box[]> {
     return [];
   }
   
-  return data || [];
+  const boxes = data || [];
+  
+  // Cache the result
+  cache.set(CACHE_KEYS.BOXES, boxes);
+  
+  return boxes;
 }
 
 /**
@@ -47,9 +61,17 @@ export async function getBoxesByCategory(category: string): Promise<Box[]> {
 }
 
 /**
- * Get a single box by slug with all its items
+ * Get a single box by slug with all its items (cached for 5 min)
  */
 export async function getBoxBySlug(slug: string): Promise<BoxWithItems | null> {
+  // Check cache first
+  const cacheKey = CACHE_KEYS.BOX(slug);
+  const cached = cache.get<BoxWithItems>(cacheKey);
+  if (cached) {
+    console.log('[BoxService] Using cached box:', slug);
+    return cached;
+  }
+  
   // Get box
   const { data: box, error: boxError } = await fetchBoxBySlug(slug);
 
@@ -78,7 +100,12 @@ export async function getBoxBySlug(slug: string): Promise<BoxWithItems | null> {
       odds: Number(bi.odds)
     }));
 
-  return { ...box, items };
+  const boxWithItems = { ...box, items };
+  
+  // Cache the result
+  cache.set(cacheKey, boxWithItems);
+
+  return boxWithItems;
 }
 
 /**
