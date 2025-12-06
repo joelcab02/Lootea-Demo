@@ -333,12 +333,14 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 animation: cardAnimation,
               }}
             >
-              {/* Winner glow */}
+              {/* Winner golden border with glow */}
               {isWinnerCard && (
                 <div 
-                  className="absolute -inset-4 pointer-events-none rounded-full"
+                  className="absolute -inset-1 rounded-2xl pointer-events-none"
                   style={{
-                    background: 'radial-gradient(circle, rgba(247,201,72,0.3) 0%, transparent 70%)',
+                    background: 'linear-gradient(135deg, #FFD966 0%, #F7C948 50%, #D4A520 100%)',
+                    boxShadow: '0 0 20px rgba(247,201,72,0.5), 0 0 40px rgba(247,201,72,0.3), 0 0 60px rgba(247,201,72,0.15)',
+                    animation: 'goldenGlow 2s ease-in-out infinite',
                   }}
                 />
               )}
