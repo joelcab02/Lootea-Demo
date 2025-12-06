@@ -146,7 +146,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
       {/* GAME AREA */}
       <div className="flex flex-col items-center relative">
         {/* SPINNER */}
-        <div className="relative w-full max-w-[1600px] z-10 my-4">
+        <div className="relative w-full max-w-[1600px] z-10 mb-4">
           <SpinnerV2 
             items={items}
             winner={predeterminedWinner}
