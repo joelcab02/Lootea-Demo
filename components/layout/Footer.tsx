@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { Logo } from '../shared/Logo';
 
 const Icons = {
     ShieldCheck: () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>,
@@ -55,20 +54,11 @@ function Footer() {
           {/* Brand */}
           <div className="col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[#F7C948] blur-xl opacity-30" />
-                <Logo size={36} />
-              </div>
-              <span 
-                className="font-display text-2xl uppercase"
-                style={{
-                  background: 'linear-gradient(180deg, #FFFFFF 0%, #F7C948 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                LOOTEA
-              </span>
+              <img 
+                src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/download__3___1_-removebg-preview.png"
+                alt="Lootea"
+                className="h-10 w-auto"
+              />
             </div>
             <p className="text-slate-500 text-sm leading-relaxed mb-6 max-w-sm">
               La experiencia premium de Mystery Boxes en México. Abre cajas con probabilidad justa verificable.

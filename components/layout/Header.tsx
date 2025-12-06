@@ -13,7 +13,6 @@ import { Link } from 'react-router-dom';
 import { AuthModal } from '../auth/AuthModal';
 import { CartModal } from '../inventory/CartModal';
 import { DepositModal } from '../deposit/DepositModal';
-import { Logo } from '../shared/Logo';
 import { subscribeAuth, signOut, AuthState, getBalance } from '../../services/authService';
 import { subscribeInventory, InventoryState, fetchInventory } from '../../services/inventoryService';
 
@@ -142,13 +141,12 @@ const Header: React.FC = () => {
           <div className="flex items-center justify-between h-14 sm:h-16">
             
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="transition-transform duration-300 group-hover:scale-110">
-                <Logo size={28} />
-              </div>
-              <span className="font-display text-xl tracking-tight text-white">
-                LOOTEA
-              </span>
+            <Link to="/" className="flex items-center gap-2 group">
+              <img 
+                src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/download__3___1_-removebg-preview.png"
+                alt="Lootea"
+                className="h-8 sm:h-9 w-auto transition-transform duration-300 group-hover:scale-105"
+              />
             </Link>
 
             {/* Right Side */}
