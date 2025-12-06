@@ -259,9 +259,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         overflowY: 'visible',
       }}
     >
-      {/* Top border */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F7C948]/40 to-transparent z-30" />
-      
       {/* Bottom border */}
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F7C948]/40 to-transparent z-30" />
       
