@@ -333,13 +333,20 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 animation: cardAnimation,
               }}
             >
-              {/* Card with optional winner glow */}
-              <div 
-                className="relative rounded-xl overflow-hidden"
-                style={isWinnerCard ? {
-                  boxShadow: '0 0 30px rgba(247,201,72,0.6), 0 0 60px rgba(247,201,72,0.3)',
-                } : undefined}
-              >
+              {/* Winner glow - behind the card */}
+              {isWinnerCard && (
+                <div 
+                  className="absolute inset-0 rounded-xl pointer-events-none"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(247,201,72,0.4) 0%, rgba(247,201,72,0.15) 40%, transparent 70%)',
+                    filter: 'blur(20px)',
+                    transform: 'scale(1.3)',
+                  }}
+                />
+              )}
+              
+              {/* Card */}
+              <div className="relative rounded-xl overflow-hidden">
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
               
