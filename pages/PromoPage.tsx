@@ -497,11 +497,11 @@ const PromoPage: React.FC = () => {
                 <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[#F7C948] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
                 <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4">
+                  <div className="h-28 md:h-32 mx-auto mb-4 flex items-center justify-center">
                     <img 
                       src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/asset-1764971245533-m35ks1.png"
                       alt="Gana Items"
-                      className="w-full h-full object-contain"
+                      className="max-h-full w-auto object-contain"
                     />
                   </div>
                   <h3 className="font-display text-white text-sm uppercase mb-1">02. Gana Items</h3>
