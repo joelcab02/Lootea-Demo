@@ -1,11 +1,13 @@
 import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import './src/index.css';
 import { initAuth } from './services/authService';
 import { initVisibilityService } from './services/visibilityService';
 import HomePage from './pages/HomePage';
 import BoxPage from './pages/BoxPage';
+import InventoryPage from './pages/InventoryPage';
+import DepositPage from './pages/DepositPage';
 import ScrollToTop from './components/shared/ScrollToTop';
 
 // Inicializar servicios UNA sola vez al cargar la app
@@ -20,12 +22,6 @@ const StyleGuideV2 = lazy(() => import('./pages/StyleGuideV2'));
 
 // Lazy load promo page (funnel de adquisicion)
 const PromoPage = lazy(() => import('./pages/PromoPage'));
-
-// Lazy load inventory page
-const InventoryPage = lazy(() => import('./pages/InventoryPage'));
-
-// Lazy load deposit page
-const DepositPage = lazy(() => import('./pages/DepositPage'));
 
 // Lazy load páginas legales
 const TerminosPage = lazy(() => import('./pages/legal/TerminosPage'));
@@ -42,6 +38,57 @@ const PageLoader = () => (
   </div>
 );
 
+/**
+ * PersistentTabs - Mantiene las paginas principales montadas
+ * Cambiar de tab = cambiar visibilidad, no montar/desmontar
+ * Resultado: transiciones instantaneas
+ */
+const PersistentTabs: React.FC = () => {
+  const location = useLocation();
+  const path = location.pathname;
+  
+  // Tabs principales que se mantienen montados
+  const isHome = path === '/';
+  const isInventory = path === '/inventory';
+  const isDeposit = path === '/deposit';
+  const isMainTab = isHome || isInventory || isDeposit;
+  
+  return (
+    <>
+      {/* Tabs principales - siempre montados, visibilidad controlada */}
+      <div style={{ display: isHome ? 'block' : 'none' }}>
+        <HomePage />
+      </div>
+      <div style={{ display: isInventory ? 'block' : 'none' }}>
+        <InventoryPage />
+      </div>
+      <div style={{ display: isDeposit ? 'block' : 'none' }}>
+        <DepositPage />
+      </div>
+      
+      {/* Otras rutas - se montan/desmontan normalmente */}
+      {!isMainTab && (
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/box/:slug" element={<BoxPage />} />
+            <Route path="/promo/:slug" element={<PromoPage />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/visual-engine" element={<VisualEnginePage />} />
+            <Route path="/style-guide" element={<StyleGuidePage />} />
+            <Route path="/style-guide-v2" element={<StyleGuideV2 />} />
+            <Route path="/terminos" element={<TerminosPage />} />
+            <Route path="/privacidad" element={<PrivacidadPage />} />
+            <Route path="/aml" element={<AMLPage />} />
+            <Route path="/envios" element={<EnviosPage />} />
+            <Route path="/provably-fair" element={<ProvablyFairPage />} />
+            <Route path="/faq" element={<FAQPage />} />
+          </Routes>
+        </Suspense>
+      )}
+    </>
+  );
+};
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");
@@ -52,26 +99,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <ScrollToTop />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/box/:slug" element={<BoxPage />} />
-          <Route path="/inventory" element={<InventoryPage />} />
-          <Route path="/deposit" element={<DepositPage />} />
-          <Route path="/promo/:slug" element={<PromoPage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/visual-engine" element={<VisualEnginePage />} />
-          <Route path="/style-guide" element={<StyleGuidePage />} />
-          <Route path="/style-guide-v2" element={<StyleGuideV2 />} />
-          {/* Páginas Legales */}
-          <Route path="/terminos" element={<TerminosPage />} />
-          <Route path="/privacidad" element={<PrivacidadPage />} />
-          <Route path="/aml" element={<AMLPage />} />
-          <Route path="/envios" element={<EnviosPage />} />
-          <Route path="/provably-fair" element={<ProvablyFairPage />} />
-          <Route path="/faq" element={<FAQPage />} />
-        </Routes>
-      </Suspense>
+      <PersistentTabs />
     </BrowserRouter>
   </React.StrictMode>
 );
