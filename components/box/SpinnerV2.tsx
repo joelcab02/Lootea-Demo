@@ -64,6 +64,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   const [isDesktop, setIsDesktop] = useState(false);
   const [displayWinner, setDisplayWinner] = useState<LootItem | null>(null);
   const [showWinnerEffect, setShowWinnerEffect] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
   
   // Mutable animation state
   const stateRef = useRef({
@@ -184,9 +185,8 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       state.isAnimating = false;
       if (navigator.vibrate) navigator.vibrate(30);
       
-      // Mostrar efecto de winner por 3 segundos
+      // Mostrar efecto de winner - permanece hasta el siguiente spin
       setShowWinnerEffect(true);
-      setTimeout(() => setShowWinnerEffect(false), 3000);
       
       // SIEMPRE llamar onComplete
       onComplete();
@@ -206,39 +206,51 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     if (justStartedSpinning && winner) {
       console.log('[SpinnerV2] Starting spin with winner:', winner.name);
       
-      // IMPORTANTE: Resetear efectos visuales del spin anterior
-      setShowWinnerEffect(false);
-      
-      // Lock winner for display
-      setDisplayWinner(winner);
-      
-      // Generate strip
-      generateStrip(winner);
+      // Funcion para iniciar la animacion
+      const startAnimation = () => {
+        // Lock winner for display
+        setDisplayWinner(winner);
+        
+        // Generate strip
+        generateStrip(winner);
 
-      // Calculate animation
-      const startX = -INITIAL_POSITION * ITEM_WIDTH;
-      const endX = -WINNING_INDEX * ITEM_WIDTH;
-      const travelDistance = endX - startX;
+        // Calculate animation
+        const startX = -INITIAL_POSITION * ITEM_WIDTH;
+        const endX = -WINNING_INDEX * ITEM_WIDTH;
+        const travelDistance = endX - startX;
 
-      // Reset state
-      stateRef.current = {
-        startTime: 0,
-        targetX: travelDistance,
-        currentX: 0,
-        lastIndex: -1,
-        isAnimating: true,
+        // Reset state
+        stateRef.current = {
+          startTime: 0,
+          targetX: travelDistance,
+          currentX: 0,
+          lastIndex: -1,
+          isAnimating: true,
+        };
+
+        // Reset position
+        if (containerRef.current) {
+          containerRef.current.style.transform = `translate3d(${startX}px,0,0)`;
+        }
+
+        // Start animation
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = requestAnimationFrame(animate);
       };
-
-      // Reset position
-      if (containerRef.current) {
-        containerRef.current.style.transform = `translate3d(${startX}px,0,0)`;
+      
+      // Si hay efecto de winner visible, hacer fade out suave primero
+      if (showWinnerEffect) {
+        setIsFadingOut(true);
+        setTimeout(() => {
+          setShowWinnerEffect(false);
+          setIsFadingOut(false);
+          startAnimation();
+        }, 300); // 300ms fade out
+      } else {
+        startAnimation();
       }
-
-      // Start animation
-      cancelAnimationFrame(animationFrameId.current);
-      animationFrameId.current = requestAnimationFrame(animate);
     }
-  }, [isSpinning, winner, generateStrip, animate, ITEM_WIDTH]);
+  }, [isSpinning, winner, generateStrip, animate, ITEM_WIDTH, showWinnerEffect]);
 
   // Cleanup
   useEffect(() => {
@@ -319,6 +331,17 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
           const isWinnerCard = showWinnerEffect && displayWinner && index === WINNING_INDEX && item.id === displayWinner.id;
           const isLoser = showWinnerEffect && !isWinnerCard;
           
+          // Determinar animacion
+          let cardAnimation: string | undefined;
+          if (isFadingOut) {
+            // Fade out suave antes del siguiente spin
+            cardAnimation = 'fadeOutSmooth 0.3s ease-out forwards';
+          } else if (isWinnerCard) {
+            cardAnimation = 'winnerReveal 0.6s ease-out forwards';
+          } else if (isLoser) {
+            cardAnimation = 'loserFade 0.4s ease-out forwards';
+          }
+          
           return (
             <div 
               key={`${item.id}-${index}`} 
@@ -326,11 +349,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
               style={{ 
                 marginRight: `${cardGap}px`,
                 zIndex: isWinnerCard ? 50 : 1,
-                animation: isWinnerCard 
-                  ? 'winnerReveal 0.6s ease-out forwards' 
-                  : isLoser 
-                    ? 'loserFade 0.4s ease-out forwards' 
-                    : undefined,
+                animation: cardAnimation,
               }}
             >
               {/* Winner glow */}
