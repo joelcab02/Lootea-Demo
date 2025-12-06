@@ -141,9 +141,7 @@ const InventoryPage: React.FC = () => {
             >
               {sellingAll ? (
                 <Icons.Loader />
-              ) : (
-                <Icons.DollarSign />
-              )}
+              ) : null}
               Vender Todo (${inventory.totalValue.toFixed(2)})
             </button>
           </div>
