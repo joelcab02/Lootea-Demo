@@ -407,26 +407,27 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
               
-              {/* Winner Info - positioned absolutely, responsive text */}
-              {isWinnerCard && (
-                <div 
-                  className="absolute left-1/2 -translate-x-1/2 mt-3 sm:mt-4 text-center px-4"
-                  style={{ 
-                    top: '100%',
-                    width: 'max(280px, 50vw)',
-                    maxWidth: '90vw',
-                  }}
-                >
-                  <p className="text-white font-medium text-sm sm:text-base leading-tight line-clamp-2">
-                    {item.name}
-                  </p>
-                  <p className="text-[#F7C948] font-bold text-sm mt-1">{formatPrice(item.price)}</p>
-                </div>
-              )}
             </div>
           );
         })}
       </div>
+
+      {/* Winner Info - positioned outside strip to avoid overflow clipping */}
+      {showWinnerEffect && displayWinner && (
+        <div 
+          className="absolute left-1/2 -translate-x-1/2 text-center px-4 pointer-events-none"
+          style={{ 
+            bottom: '8px',
+            width: 'min(90vw, 400px)',
+            zIndex: 60,
+          }}
+        >
+          <p className="text-white font-medium text-sm sm:text-base leading-tight line-clamp-2">
+            {displayWinner.name}
+          </p>
+          <p className="text-[#F7C948] font-bold text-sm mt-1">{formatPrice(displayWinner.price)}</p>
+        </div>
+      )}
     </div>
   );
 };
