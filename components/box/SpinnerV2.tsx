@@ -407,14 +407,20 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
               
-              {/* Winner Info - positioned absolutely to not affect card width */}
+              {/* Winner Info - positioned absolutely, responsive text */}
               {isWinnerCard && (
                 <div 
-                  className="absolute left-1/2 -translate-x-1/2 mt-4 text-center whitespace-nowrap"
-                  style={{ top: '100%' }}
+                  className="absolute left-1/2 -translate-x-1/2 mt-3 sm:mt-4 text-center px-4"
+                  style={{ 
+                    top: '100%',
+                    width: 'max(280px, 50vw)',
+                    maxWidth: '90vw',
+                  }}
                 >
-                  <p className="text-white font-medium text-base">{item.name}</p>
-                  <p className="text-[#F7C948] font-bold text-sm">{formatPrice(item.price)}</p>
+                  <p className="text-white font-medium text-sm sm:text-base leading-tight line-clamp-2">
+                    {item.name}
+                  </p>
+                  <p className="text-[#F7C948] font-bold text-sm mt-1">{formatPrice(item.price)}</p>
                 </div>
               )}
             </div>
