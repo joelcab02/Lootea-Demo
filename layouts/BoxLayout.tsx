@@ -12,6 +12,7 @@ import { audioService } from '../services/audioService';
 import { subscribeAuth, isLoggedIn } from '../services/authService';
 import { AuthModal } from '../components/auth/AuthModal';
 import { useGameStore, selectIsSpinning } from '../stores';
+import { formatPrice } from '../lib/format';
 
 // SVG Icons
 const Icons = {
@@ -172,7 +173,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
           >
             <span className="font-display text-lg font-black tracking-tight uppercase">ABRIR</span>
             <span className="font-display text-lg font-black tracking-tight">
-              ${BOX_PRICE.toFixed(2)} MXN
+              {formatPrice(BOX_PRICE)}
             </span>
           </button>
 

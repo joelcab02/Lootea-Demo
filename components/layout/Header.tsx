@@ -15,6 +15,7 @@ import { CartModal } from '../inventory/CartModal';
 import { DepositModal } from '../deposit/DepositModal';
 import { subscribeAuth, signOut, AuthState, getBalance } from '../../services/authService';
 import { subscribeInventory, InventoryState, fetchInventory } from '../../services/inventoryService';
+import { formatPriceValue } from '../../lib/format';
 
 // ============================================
 // ICONS
@@ -196,7 +197,7 @@ const Header: React.FC = () => {
                       title="Click para depositar"
                     >
                       <span className="font-mono font-bold text-sm text-black">
-                        ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN
+                        ${formatPriceValue(balance)} MXN
                       </span>
                     </button>
                     

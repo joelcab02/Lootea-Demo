@@ -12,6 +12,7 @@ import { CartModal } from '../inventory/CartModal';
 import { DepositModal } from '../deposit/DepositModal';
 import { subscribeAuth, signOut, AuthState, getBalance } from '../../services/authService';
 import { subscribeInventory, InventoryState, fetchInventory } from '../../services/inventoryService';
+import { formatPriceValue } from '../../lib/format';
 
 // Icons
 const Icons = {
@@ -174,7 +175,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
             onClick={() => setShowDeposit(true)}
             className="px-3 py-1.5 rounded-lg bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-sm transition-colors"
           >
-            ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ${formatPriceValue(balance)}
           </button>
 
           {/* Menu Button - Opens user dropdown */}

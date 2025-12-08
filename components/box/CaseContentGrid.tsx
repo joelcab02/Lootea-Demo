@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import { LootItem } from '../../types';
 import { calculateTicketRanges } from '../../services/oddsService';
+import { formatPrice } from '../../lib/format';
 
 interface CaseContentGridProps {
     items: LootItem[];
@@ -112,7 +113,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
               WebkitTextFillColor: 'transparent',
             }}
           >
-            ${item.price.toLocaleString()} MXN
+            {formatPrice(item.price, false)}
           </span>
           <span className="text-slate-500 text-[10px] font-medium">
             {item.normalizedOdds < 1 

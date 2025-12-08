@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { LootItem } from '../../types';
+import { formatPrice } from '../../lib/format';
 
 interface LootCardProps {
   item: LootItem;
@@ -130,7 +131,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
               WebkitTextFillColor: 'transparent',
             }}
           >
-            ${item.price.toLocaleString('es-MX')} MXN
+            {formatPrice(item.price)}
           </span>
         </div>
       </div>

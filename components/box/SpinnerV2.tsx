@@ -14,6 +14,7 @@ import { CARD_WIDTH, CARD_WIDTH_DESKTOP, CARD_GAP, CARD_GAP_DESKTOP, TOTAL_CARDS
 import LootCard from './LootCard';
 import { audioService } from '../../services/audioService';
 import { calculateTicketRanges, selectWeightedWinner } from '../../services/oddsService';
+import { formatPrice } from '../../lib/format';
 
 // ============================================
 // TYPES - Interfaz limpia y simple
@@ -341,6 +342,8 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
               key={`${item.id}-${index}`} 
               className="relative"
               style={{ 
+                width: `${cardWidth}px`,
+                flexShrink: 0,
                 marginRight: `${cardGap}px`,
                 zIndex: isWinnerCard ? 50 : 1,
                 animation: cardAnimation,
@@ -351,11 +354,14 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
               
-              {/* Winner Info - below the card */}
+              {/* Winner Info - positioned absolutely to not affect card width */}
               {isWinnerCard && (
-                <div className="mt-4 text-center whitespace-nowrap">
+                <div 
+                  className="absolute left-1/2 -translate-x-1/2 mt-4 text-center whitespace-nowrap"
+                  style={{ top: '100%' }}
+                >
                   <p className="text-white font-medium text-base">{item.name}</p>
-                  <p className="text-[#F7C948] font-bold text-sm">${item.price.toFixed(2)} MXN</p>
+                  <p className="text-[#F7C948] font-bold text-sm">{formatPrice(item.price)}</p>
                 </div>
               )}
             </div>

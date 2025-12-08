@@ -5,6 +5,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { BoxWithItems } from '../../services/boxService';
+import { formatPrice } from '../../lib/format';
 
 interface BoxCardProps {
   box: BoxWithItems;
@@ -48,7 +49,7 @@ export const BoxCard: React.FC<BoxCardProps> = ({ box }) => {
           {box.name}
         </h3>
         <span className="text-[#F7C948] text-sm md:text-base font-bold">
-          ${box.price.toLocaleString()} MXN
+          {formatPrice(box.price, false)}
         </span>
       </div>
     </Link>
