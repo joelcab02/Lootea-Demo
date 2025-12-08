@@ -133,7 +133,14 @@ export const useGameStore = create<GameStore>()(
       },
 
       loadBox: async (slugOrId) => {
-        set({ isLoadingBox: true, error: null }, false, 'loadBox/start');
+        // Clear items immediately to prevent showing stale data from previous box
+        set({ 
+          isLoadingBox: true, 
+          error: null,
+          items: [],
+          predeterminedWinner: null,
+          lastWinner: null,
+        }, false, 'loadBox/start');
         
         try {
           let boxData: BoxWithItems | null = null;

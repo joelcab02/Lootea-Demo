@@ -30,6 +30,9 @@ interface SpinnerProps {
   /** Trigger de animación */
   isSpinning: boolean;
   
+  /** Loading state - shows skeleton while loading new box */
+  isLoading?: boolean;
+  
   /** Duración de la animación en ms */
   duration?: number;
   
@@ -52,6 +55,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   items,
   winner,
   isSpinning,
+  isLoading = false,
   duration = SPIN_DURATION,
   onComplete,
 }) => {
@@ -59,6 +63,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const wasSpinningRef = useRef(false);
   const animationFrameId = useRef<number>(0);
+  const prevItemsKeyRef = useRef<string>('');
   
   // State
   const [strip, setStrip] = useState<LootItem[]>([]);
@@ -132,13 +137,41 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     setStrip(newStrip);
   }, [itemsWithTickets]);
 
-  // Initialize strip on mount
+  // Initialize strip on mount AND when items change (e.g., navigating to different box)
   useEffect(() => {
-    if (itemsWithTickets.length > 0 && strip.length === 0) {
+    // When items are cleared (loading new box), clear the strip immediately
+    if (itemsWithTickets.length === 0) {
+      if (strip.length > 0) {
+        setStrip([]);
+        setShowWinnerEffect(false);
+        setDisplayWinner(null);
+        prevItemsKeyRef.current = '';
+      }
+      return;
+    }
+    
+    // Create a key from item IDs to detect when items change
+    const itemsKey = itemsWithTickets.map(i => i.id).sort().join(',');
+    
+    // Only regenerate if items actually changed or strip is empty
+    if (itemsKey !== prevItemsKeyRef.current || strip.length === 0) {
+      prevItemsKeyRef.current = itemsKey;
+      
+      // Reset visual state when box changes
+      setShowWinnerEffect(false);
+      setDisplayWinner(null);
+      
+      // Reset strip position
+      if (containerRef.current) {
+        const ITEM_WIDTH_LOCAL = (isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH) + (isDesktop ? CARD_GAP_DESKTOP : CARD_GAP);
+        containerRef.current.style.transform = `translate3d(${-INITIAL_POSITION * ITEM_WIDTH_LOCAL}px,0,0)`;
+      }
+      
+      // Generate new strip with new items
       const result = selectWeightedWinner(itemsWithTickets);
       if (result) generateStrip(result.winner);
     }
-  }, [itemsWithTickets, strip.length, generateStrip]);
+  }, [itemsWithTickets, strip.length, generateStrip, isDesktop]);
 
   // ============================================
   // ANIMATION
@@ -313,9 +346,29 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         </div>
       </div>
 
-      {/* Strip Container */}
+      {/* Loading Skeleton - smooth fade in/out */}
       <div 
-        className="flex items-center justify-center h-full will-change-transform"
+        className={`absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 ease-out ${isLoading || strip.length === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      >
+        <div className="flex items-center gap-4">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="rounded-xl animate-pulse"
+              style={{
+                width: `${cardWidth}px`,
+                height: `${cardWidth * 1.2}px`,
+                background: 'linear-gradient(180deg, #1a1d26 0%, #12141a 100%)',
+                opacity: i === 2 ? 1 : 0.5,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Strip Container - smooth fade transition */}
+      <div 
+        className={`flex items-center justify-center h-full will-change-transform transition-opacity duration-300 ease-out ${isLoading || strip.length === 0 ? 'opacity-0' : 'opacity-100'}`}
         ref={containerRef}
         style={{ 
           width: `${stripWidth}px`,
@@ -327,13 +380,13 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       >
         {strip.map((item, index) => {
           const isWinnerCard = showWinnerEffect && displayWinner && index === WINNING_INDEX && item.id === displayWinner.id;
-          const isLoser = showWinnerEffect && !isWinnerCard;
+          const isLoserCard = showWinnerEffect && !isWinnerCard;
           
           // Determinar animacion
           let cardAnimation: string | undefined;
           if (isWinnerCard) {
             cardAnimation = 'winnerReveal 0.6s ease-out forwards';
-          } else if (isLoser) {
+          } else if (isLoserCard) {
             cardAnimation = 'loserFade 0.4s ease-out forwards';
           }
           

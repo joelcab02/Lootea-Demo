@@ -36,6 +36,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   const items = useGameStore(state => state.items);
   const predeterminedWinner = useGameStore(state => state.predeterminedWinner);
   const storeError = useGameStore(state => state.error);
+  const isLoadingBox = useGameStore(state => state.isLoadingBox);
     
   const isSpinning = useGameStore(selectIsSpinning);
   const lastWinner = useGameStore(state => state.lastWinner);
@@ -152,6 +153,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             items={items}
             winner={predeterminedWinner}
             isSpinning={isSpinning}
+            isLoading={isLoadingBox}
             duration={fastMode ? 2000 : 5500}
             onComplete={handleSpinComplete}
           />
