@@ -487,9 +487,8 @@ const PromoPage: React.FC = () => {
                 {/* Hero Section */}
                 <div className="text-center mb-5">
                   {/* Celebration Header */}
-                  <p className="text-[#F7C948] text-sm font-bold uppercase tracking-widest mb-1">Felicidades</p>
-                  <h1 className="font-display font-bold text-xl text-white mb-4">
-                    Has acumulado
+                  <h1 className="font-display font-bold text-2xl text-white mb-4">
+                    ¡Felicidades! Has acumulado
                   </h1>
                   
                   {/* Balance Display - Animated Shimmer */}
