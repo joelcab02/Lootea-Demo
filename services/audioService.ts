@@ -10,7 +10,7 @@ class AudioService {
   private clickBuffer: AudioBuffer | null = null;
   private winBuffer: AudioBuffer | null = null;
   private masterGain: GainNode | null = null;
-  private isMuted: boolean = false;
+  private isMuted: boolean = true; // Default muted for mobile compatibility
   private isReady: boolean = false;
   private initPromise: Promise<void> | null = null;
   

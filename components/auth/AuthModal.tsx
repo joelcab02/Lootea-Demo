@@ -89,7 +89,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       <div className="absolute inset-0 bg-black/60 animate-backdrop-in" onClick={onClose} />
       
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-sm bg-[#0d1019] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-modal-in">
+      <div className="relative z-10 w-full max-w-sm bg-[#111111] border border-[#1e2330] rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-modal-in">
         {/* Close button */}
         <button 
           onClick={onClose}
@@ -106,11 +106,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         
         <div className="p-6">
           {/* Logo */}
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#F7C948" stroke="none" className="filter drop-shadow-[0_0_10px_rgba(247,201,72,0.5)]">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            <span className="font-display font-black text-2xl text-white drop-shadow-lg">LOOTEA</span>
+          <div className="flex items-center justify-center mb-3">
+            <img 
+              src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/download__3___1_-removebg-preview.png"
+              alt="Lootea"
+              className="h-10 w-auto"
+            />
           </div>
           
           {/* Header - Different for login vs register */}
