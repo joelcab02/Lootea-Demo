@@ -582,20 +582,20 @@ const PromoPage: React.FC = () => {
             />
           </Link>
           <div className="flex items-center gap-3">
-            {/* Balance Card - Header Style */}
+            {/* Balance Card - Dark Minimal Style */}
             <div 
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all ${
                 isBalanceAnimating 
-                  ? 'bg-[#F7C948]/20 border-[#F7C948]/50' 
-                  : 'bg-[#1a1d26] border-[#2a2d36]'
-              } border`}
+                  ? 'bg-[#1e2028] ring-1 ring-[#F7C948]/30' 
+                  : 'bg-[#1e2028]'
+              }`}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F7C948" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F7C948" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
                 <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
                 <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
               </svg>
-              <span className={`font-bold text-sm transition-colors ${isBalanceAnimating ? 'text-[#F7C948]' : 'text-white'}`}>
+              <span className={`font-bold text-sm transition-colors ${isBalanceAnimating ? 'text-[#F7C948]' : 'text-slate-300'}`}>
                 ${displayBalance.toLocaleString()}
               </span>
             </div>
