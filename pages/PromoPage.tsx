@@ -227,9 +227,9 @@ const PromoPage: React.FC = () => {
       return;
     }
     
-    // Init audio on first interaction
-    audioService.init();
+    // Set mute state BEFORE init to prevent sound leak
     audioService.setMute(isMuted);
+    audioService.init();
     
     setCurrentWinner(winner);
     setLastResult(null);

@@ -71,11 +71,12 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   const [displayWinner, setDisplayWinner] = useState<LootItem | null>(null);
   const [showWinnerEffect, setShowWinnerEffect] = useState(false);
   
-  // Mutable animation state
+  // Mutable animation state - using performance.now() for precise timing
   const stateRef = useRef({
     startTime: 0,
     targetX: 0,
     currentX: 0,
+    lastTickTime: 0,
     lastIndex: -1,
     isAnimating: false,
   });
@@ -177,35 +178,38 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   // ANIMATION
   // ============================================
   
-  const animate = useCallback((timestamp: number) => {
+  const animate = useCallback(() => {
     const state = stateRef.current;
     if (!state.isAnimating) return;
 
-    if (!state.startTime) state.startTime = timestamp;
+    const now = performance.now();
+    if (!state.startTime) state.startTime = now;
     
-    const elapsed = timestamp - state.startTime;
+    const elapsed = now - state.startTime;
     const rawProgress = Math.min(elapsed / duration, 1);
     
-    // Easing
-    const progress = Math.pow(rawProgress, 0.75);
-    const c1 = 0.38;
-    const c3 = c1 + 1;
-    const ease = 1 + c3 * Math.pow(progress - 1, 3) + c1 * Math.pow(progress - 1, 2);
+    // Simplified easing - single cubic ease-out for smoother animation
+    const ease = 1 - Math.pow(1 - rawProgress, 3);
     
     const newX = state.targetX * ease;
     state.currentX = newX;
 
-    // Tick sound
+    // Tick sound - throttled to prevent audio overlap
     const tickPosition = Math.abs(newX);
     const currentIndex = (tickPosition / ITEM_WIDTH) | 0;
+    const minTickInterval = 30; // Minimum ms between ticks
 
     if (currentIndex !== state.lastIndex && currentIndex > state.lastIndex) {
-      const velocityNormalized = Math.max(0.1, 1 - rawProgress);
-      audioService.playTick(velocityNormalized, rawProgress > 0.9);
-      state.lastIndex = currentIndex;
+      const timeSinceLastTick = now - state.lastTickTime;
+      if (timeSinceLastTick >= minTickInterval) {
+        const velocityNormalized = Math.max(0.1, 1 - rawProgress);
+        audioService.playTick(velocityNormalized, rawProgress > 0.9);
+        state.lastIndex = currentIndex;
+        state.lastTickTime = now;
+      }
     }
 
-    // DOM update
+    // DOM update - use will-change for GPU acceleration
     const startX = -INITIAL_POSITION * ITEM_WIDTH;
     if (containerRef.current) {
       containerRef.current.style.transform = `translate3d(${startX + newX}px,0,0)`;
@@ -258,6 +262,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         startTime: 0,
         targetX: travelDistance,
         currentX: 0,
+        lastTickTime: 0,
         lastIndex: -1,
         isAnimating: true,
       };

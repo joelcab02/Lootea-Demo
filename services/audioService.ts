@@ -47,8 +47,11 @@ class AudioService {
       const AudioCtor = window.AudioContext || (window as any).webkitAudioContext;
       this.context = new AudioCtor({ latencyHint: 'interactive' }); 
       this.masterGain = this.context.createGain();
-      this.updateGain();
+      // Start with volume 0 to prevent any sound leak, updateGain will set correct value
+      this.masterGain.gain.value = 0;
       this.masterGain.connect(this.context.destination);
+      // Now apply the correct mute state
+      this.updateGain();
     }
     // Always try to resume on mobile (iOS can suspend unexpectedly)
     if (this.context.state === 'suspended') {
