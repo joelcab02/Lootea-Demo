@@ -153,8 +153,8 @@ export async function uploadToStorage(
       return urlData.publicUrl;
     },
     {
-      timeoutMs: 15000, // 15 seconds for uploads (larger files)
-      retries: 1,
+      timeoutMs: 30000, // 30 seconds for uploads (larger files)
+      retries: 2,
       operationName: 'Storage Upload'
     }
   );

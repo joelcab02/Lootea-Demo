@@ -132,6 +132,16 @@ const PromoPage: React.FC = () => {
   // FAQ state
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   
+  // Audio state - default muted for mobile
+  const [isMuted, setIsMuted] = useState(true);
+  
+  const toggleMute = () => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    audioService.init();
+    audioService.setMute(newMuted);
+  };
+  
   // ============================================
   // LOAD PROMO BOX
   // ============================================
@@ -214,6 +224,7 @@ const PromoPage: React.FC = () => {
     
     // Init audio on first interaction
     audioService.init();
+    audioService.setMute(isMuted);
     
     setCurrentWinner(winner);
     setLastResult(null);
@@ -565,10 +576,29 @@ const PromoPage: React.FC = () => {
               className="h-8 w-auto"
             />
           </Link>
-          <div className="flex items-center gap-2 text-[#F7C948]">
-            <Icons.Gift />
-            <span className="font-bold text-sm">GIROS GRATIS</span>
-          </div>
+          {/* Mute toggle - highlighted */}
+          <button
+            onClick={toggleMute}
+            className={`p-2.5 rounded-xl transition-all ${
+              isMuted 
+                ? 'bg-[#F7C948]/20 border border-[#F7C948]/50 text-[#F7C948]' 
+                : 'bg-[#1a1d26] border border-[#2a2d36] text-white'
+            }`}
+            aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
+          >
+            {isMuted ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+            )}
+          </button>
         </div>
       </header>
       
@@ -577,7 +607,7 @@ const PromoPage: React.FC = () => {
         {/* Title & Progress */}
         <div className="text-center py-6 px-4">
           <h1 className="font-display font-black text-2xl md:text-3xl text-white mb-6">
-            Gira 3 veces <span className="text-[#F7C948]">GRATIS</span> para ganar premios
+            Abre 3 Mystery Boxes <span className="text-[#F7C948]">GRATIS</span> y gana bonos de hasta $1,000 MXN
           </h1>
           
           {/* Progress with synced indicators */}
@@ -643,16 +673,21 @@ const PromoPage: React.FC = () => {
                 disabled={isSpinning}
                 className="w-full py-5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)]"
               >
-                <span className="font-display font-black text-2xl uppercase tracking-tight">
-                  GIRAR GRATIS
+                <span className="font-display font-black text-2xl uppercase tracking-tight flex items-center justify-center gap-2">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                  ABRIR GRATIS
                 </span>
                 <span className="block text-sm font-bold mt-1 opacity-80">
-                  {spinsRemaining} {spinsRemaining === 1 ? 'giro restante' : 'giros restantes'}
+                  {spinsRemaining} {spinsRemaining === 1 ? 'caja restante' : 'cajas restantes'}
                 </span>
               </button>
             ) : (
               <div className="text-center">
-                <p className="text-slate-400 mb-4">Has usado todos tus giros gratis</p>
+                <p className="text-slate-400 mb-4">Has abierto todas tus cajas gratis</p>
                 <button 
                   onClick={() => setShowRegisterModal(true)}
                   className="w-full py-4 bg-gradient-to-b from-[#FFD966] to-[#F7C948] text-black rounded-xl font-display font-black text-xl uppercase tracking-tight shadow-[0_4px_20px_rgba(247,201,72,0.3)]"
@@ -691,9 +726,9 @@ const PromoPage: React.FC = () => {
                   >
                     <Icons.Box />
                   </div>
-                  <h3 className="font-display text-white text-sm uppercase mb-1">01. Abre Cajas</h3>
+                  <h3 className="font-display text-white text-sm uppercase mb-1">01. Abre Mystery Boxes</h3>
                   <p className="text-slate-500 text-xs leading-relaxed">
-                    Encuentra tu caja perfecta y vive la emocion de descubrir premios
+                    Selecciona la caja que mas te llame la atencion y gana premios de hasta $200,000 MXN
                   </p>
                 </div>
               </div>
@@ -706,16 +741,15 @@ const PromoPage: React.FC = () => {
                 <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[#F7C948] opacity-0 group-hover:opacity-5 blur-3xl transition-opacity" />
                 <div className="text-center">
-                  <div className="h-28 md:h-32 mx-auto mb-4 flex items-center justify-center">
-                    <img 
-                      src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/asset-1764971245533-m35ks1.png"
-                      alt="Gana Items"
-                      className="max-h-full w-auto object-contain"
-                    />
+                  <div 
+                    className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, rgba(247,201,72,0.15) 0%, rgba(247,201,72,0.05) 100%)', border: '1px solid rgba(247,201,72,0.2)' }}
+                  >
+                    <Icons.Trophy />
                   </div>
-                  <h3 className="font-display text-white text-sm uppercase mb-1">02. Gana Items</h3>
+                  <h3 className="font-display text-white text-sm uppercase mb-1">02. Gana Premios</h3>
                   <p className="text-slate-500 text-xs leading-relaxed">
-                    Descubre un item por caja de las mejores marcas que conoces
+                    Desde un iPhone 17 Pro Max hasta un Porsche al abrir cualquier caja de Lootea
                   </p>
                 </div>
               </div>
@@ -734,9 +768,9 @@ const PromoPage: React.FC = () => {
                   >
                     <Icons.Wallet />
                   </div>
-                  <h3 className="font-display text-white text-sm uppercase mb-1">03. Cobra o Reclama</h3>
+                  <h3 className="font-display text-white text-sm uppercase mb-1">03. Canjea o Recibe</h3>
                   <p className="text-slate-500 text-xs leading-relaxed">
-                    Vende tus items por saldo, retira efectivo o recibe tu premio
+                    Tu decides si canjear tu premio por dinero o pedirlo directamente a tu casa al instante
                   </p>
                 </div>
               </div>
