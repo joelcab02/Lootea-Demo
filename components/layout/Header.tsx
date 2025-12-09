@@ -184,36 +184,22 @@ const Header: React.FC = () => {
                     )}
                   </button>
 
-                  {/* Balance + Deposit Button Group */}
-                  <div className="flex items-center">
-                    {/* Balance Display */}
-                    <button 
-                      onClick={() => setShowDeposit(true)}
-                      className="flex items-center gap-1.5 pl-3 pr-2 py-2 rounded-l-lg transition-all duration-300 hover:brightness-110"
-                      style={{
-                        background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
-                        boxShadow: '0 4px 15px rgba(247,201,72,0.3)',
-                      }}
-                      title="Click para depositar"
-                    >
-                      <span className="font-mono font-bold text-sm text-black">
-                        ${formatPriceValue(balance)} MXN
-                      </span>
-                    </button>
-                    
-                    {/* Deposit "+" Button */}
-                    <button 
-                      onClick={() => setShowDeposit(true)}
-                      className="flex items-center justify-center w-9 h-9 rounded-r-lg transition-all duration-300 hover:brightness-110 active:scale-95"
-                      style={{
-                        background: 'linear-gradient(180deg, #E6B800 0%, #D4A600 100%)',
-                        boxShadow: '0 4px 15px rgba(247,201,72,0.3)',
-                      }}
-                      title="Depositar fondos"
-                    >
-                      <Icons.Plus />
-                    </button>
-                  </div>
+                  {/* Balance + Deposit Button Group - Dark Minimal Style */}
+                  <button 
+                    onClick={() => setShowDeposit(true)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#1e2028] hover:bg-[#252830] transition-all duration-200"
+                    title="Click para depositar"
+                  >
+                    {/* Wallet Icon */}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F7C948" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                      <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                      <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                    </svg>
+                    <span className="font-bold text-sm text-slate-300">
+                      ${formatPriceValue(balance)}
+                    </span>
+                  </button>
 
                   {/* Menu Button - Hidden on mobile, shown on desktop */}
                   <div className="hidden md:block relative">
