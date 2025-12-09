@@ -122,6 +122,11 @@ const PromoPage: React.FC = () => {
   // UI state
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   
+  // Accumulated balance - sum of all prizes won
+  const [accumulatedBalance, setAccumulatedBalance] = useState(0);
+  const [displayBalance, setDisplayBalance] = useState(0); // For animation
+  const [isBalanceAnimating, setIsBalanceAnimating] = useState(false);
+  
   // Registration form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -234,10 +239,37 @@ const PromoPage: React.FC = () => {
   const handleSpinComplete = () => {
     setIsSpinning(false);
     
-    // Save result
+    // Save result and add to balance
     if (currentWinner && promoConfig) {
       const displayText = promoConfig.sequence[currentSpin].display || currentWinner.name;
       setLastResult({ item: currentWinner, display: displayText });
+      
+      // Add prize value to accumulated balance with animation
+      const prizeValue = currentWinner.price || 0;
+      const newBalance = accumulatedBalance + prizeValue;
+      setAccumulatedBalance(newBalance);
+      
+      // Animate the balance counter
+      setIsBalanceAnimating(true);
+      const startValue = displayBalance;
+      const duration = 1000; // 1 second animation
+      const startTime = Date.now();
+      
+      const animateBalance = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic for satisfying feel
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentValue = Math.round(startValue + (newBalance - startValue) * easeOut);
+        setDisplayBalance(currentValue);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animateBalance);
+        } else {
+          setIsBalanceAnimating(false);
+        }
+      };
+      requestAnimationFrame(animateBalance);
       
       // Play win sound
       audioService.playWin();
@@ -277,7 +309,7 @@ const PromoPage: React.FC = () => {
     const result = await signUpWithBonus(
       email,
       password,
-      promoConfig?.bonus_amount || 0,
+      accumulatedBalance, // Use accumulated balance from all spins
       slug || '',
       promoConfig?.prize_code || ''
     );
@@ -316,7 +348,7 @@ const PromoPage: React.FC = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/?promo=${slug}&bonus=${promoConfig?.bonus_amount || 0}`,
+        redirectTo: `${window.location.origin}/?promo=${slug}&bonus=${accumulatedBalance}`,
       }
     });
     
@@ -398,70 +430,43 @@ const PromoPage: React.FC = () => {
             {registerSuccess ? (
               // Success state
               <div className="text-center py-8">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#F7C948]/20 flex items-center justify-center text-[#F7C948]">
                   <Icons.Check />
                 </div>
-                <h1 className="font-display font-black text-3xl text-white mb-3">
-                  Cuenta Creada
+                <h1 className="font-display font-bold text-2xl text-white mb-2">
+                  Bienvenido a Lootea
                 </h1>
-                <p className="text-green-400 font-bold text-xl mb-2">
-                  +${promoConfig?.bonus_amount || 0} MXN agregados a tu balance
+                <p className="text-[#F7C948] font-bold text-xl mb-1">
+                  +${accumulatedBalance.toLocaleString()} MXN en tu cuenta
                 </p>
-                <p className="text-slate-400">
+                <p className="text-slate-500 text-sm">
                   Redirigiendo...
                 </p>
               </div>
             ) : (
               <>
-                {/* Prize Hero */}
+                {/* Accumulated Balance Hero */}
                 <div className="text-center mb-6">
                   {/* Celebration Header */}
                   <div className="mb-4">
                     <p className="text-[#F7C948] text-sm font-bold uppercase tracking-widest">Felicidades</p>
+                    <h1 className="font-display font-bold text-xl text-white mt-2">
+                      Has acumulado
+                    </h1>
                   </div>
                   
-                  {/* Prize Image - Larger */}
-                  {lastResult?.item?.image && (
-                    <div className="w-36 h-36 mx-auto mb-4 flex items-center justify-center">
-                      <img 
-                        src={lastResult.item.image} 
-                        alt={lastResult.display}
-                        className="max-w-full max-h-full object-contain drop-shadow-[0_8px_30px_rgba(247,201,72,0.25)]"
-                      />
-                    </div>
-                  )}
+                  {/* Balance Display - Hero */}
+                  <div className="inline-block px-6 py-3 rounded-2xl bg-[#F7C948]/10 border border-[#F7C948]/30 mb-4">
+                    <span className="font-display font-black text-4xl text-[#F7C948]">
+                      ${accumulatedBalance.toLocaleString()}
+                    </span>
+                    <span className="text-[#F7C948]/70 text-lg font-bold ml-1">MXN</span>
+                  </div>
                   
-                  {/* Prize Name */}
-                  <h1 className="font-display font-bold text-xl text-white mb-3 leading-tight px-2">
-                    {lastResult ? lastResult.display : 'Premio'}
-                  </h1>
-                  
-                  {/* Value display - clean style, no card */}
-                  {(() => {
-                    const isBonusPrize = lastResult?.display?.toLowerCase().includes('bono');
-                    const hasPrice = lastResult?.item?.price && lastResult.item.price > 0;
-                    const hasBonus = promoConfig?.bonus_amount && promoConfig.bonus_amount > 0;
-                    
-                    // Don't show if prize is already a bonus (redundant) and no extra bonus
-                    if (isBonusPrize && !hasBonus) return null;
-                    // Don't show if nothing to display
-                    if (!hasPrice && !hasBonus) return null;
-                    
-                    return (
-                      <div className="text-center">
-                        {!isBonusPrize && hasPrice && (
-                          <p className="text-[#F7C948] font-bold text-xl">
-                            ${lastResult.item.price.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
-                          </p>
-                        )}
-                        {hasBonus && (
-                          <p className="text-[#F7C948]/70 text-sm font-medium mt-1">
-                            + ${promoConfig.bonus_amount} MXN de bono
-                          </p>
-                        )}
-                      </div>
-                    );
-                  })()}
+                  {/* CTA Text */}
+                  <p className="text-slate-400 text-sm">
+                    Crea tu cuenta para reclamar tu bono
+                  </p>
                 </div>
                 
                 {/* Register form - matching AuthModal style */}
@@ -576,29 +581,49 @@ const PromoPage: React.FC = () => {
               className="h-8 w-auto"
             />
           </Link>
-          {/* Mute toggle - highlighted */}
-          <button
-            onClick={toggleMute}
-            className={`p-2.5 rounded-xl transition-all ${
-              isMuted 
-                ? 'bg-[#F7C948]/20 border border-[#F7C948]/50 text-[#F7C948]' 
-                : 'bg-[#1a1d26] border border-[#2a2d36] text-white'
-            }`}
-            aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
-          >
-            {isMuted ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <line x1="23" y1="9" x2="17" y2="15"></line>
-                <line x1="17" y1="9" x2="23" y2="15"></line>
+          <div className="flex items-center gap-3">
+            {/* Balance Card - Header Style */}
+            <div 
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all ${
+                isBalanceAnimating 
+                  ? 'bg-[#F7C948]/20 border-[#F7C948]/50' 
+                  : 'bg-[#1a1d26] border-[#2a2d36]'
+              } border`}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F7C948" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
               </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              </svg>
-            )}
-          </button>
+              <span className={`font-bold text-sm transition-colors ${isBalanceAnimating ? 'text-[#F7C948]' : 'text-white'}`}>
+                ${displayBalance.toLocaleString()}
+              </span>
+            </div>
+            
+            {/* Mute toggle */}
+            <button
+              onClick={toggleMute}
+              className={`p-2 rounded-lg transition-all ${
+                isMuted 
+                  ? 'bg-[#F7C948]/20 border border-[#F7C948]/50 text-[#F7C948]' 
+                  : 'bg-[#1a1d26] border border-[#2a2d36] text-white'
+              }`}
+              aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
+            >
+              {isMuted ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <line x1="23" y1="9" x2="17" y2="15"></line>
+                  <line x1="17" y1="9" x2="23" y2="15"></line>
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </header>
       
@@ -629,7 +654,7 @@ const PromoPage: React.FC = () => {
               {[0, 1, 2].map((index) => (
                 <div 
                   key={index}
-                  className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ${
+                  className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-lg border-2 transition-all duration-300 ${
                     index < spinsUsed
                       ? 'bg-[#F7C948] border-[#F7C948] text-black'
                       : index === currentSpin && !allSpinsUsed
@@ -640,15 +665,20 @@ const PromoPage: React.FC = () => {
                   {index < spinsUsed ? (
                     <Icons.Check />
                   ) : (
-                    <span className="text-sm font-bold">{index + 1}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
                   )}
                 </div>
               ))}
             </div>
             
             {/* Progress text */}
-            <div className="text-center mt-3 text-xs text-slate-500">
-              {spinsUsed}/3 giros completados
+            <div className="text-center mt-4">
+              <span className="text-[#F7C948] font-bold text-sm">{spinsRemaining}</span>
+              <span className="text-slate-400 text-sm"> {spinsRemaining === 1 ? 'caja restante' : 'cajas restantes'}</span>
             </div>
           </div>
         </div>
@@ -671,30 +701,31 @@ const PromoPage: React.FC = () => {
               <button 
                 onClick={handleSpin}
                 disabled={isSpinning}
-                className="w-full py-5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)]"
+                className="w-full py-3.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)]"
               >
-                <span className="font-display font-black text-2xl uppercase tracking-tight flex items-center justify-center gap-2">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <span className="font-display font-bold text-base uppercase tracking-tight flex items-center justify-center gap-2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                   </svg>
                   ABRIR GRATIS
                 </span>
-                <span className="block text-sm font-bold mt-1 opacity-80">
-                  {spinsRemaining} {spinsRemaining === 1 ? 'caja restante' : 'cajas restantes'}
-                </span>
               </button>
             ) : (
-              <div className="text-center">
-                <p className="text-slate-400 mb-4">Has abierto todas tus cajas gratis</p>
-                <button 
-                  onClick={() => setShowRegisterModal(true)}
-                  className="w-full py-4 bg-gradient-to-b from-[#FFD966] to-[#F7C948] text-black rounded-xl font-display font-black text-xl uppercase tracking-tight shadow-[0_4px_20px_rgba(247,201,72,0.3)]"
-                >
-                  {promoConfig?.cta_text || 'Reclamar Premio'}
-                </button>
-              </div>
+              <button 
+                onClick={() => setShowRegisterModal(true)}
+                className="w-full py-3.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl font-display font-bold text-base uppercase tracking-tight shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)] transition-all"
+              >
+                <span className="flex items-center justify-center gap-2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                  </svg>
+                  {promoConfig?.cta_text || 'Reclamar Bono'}
+                </span>
+              </button>
             )}
           </div>
         </div>
