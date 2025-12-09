@@ -417,7 +417,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         <div 
           className="absolute left-1/2 -translate-x-1/2 text-center px-4 pointer-events-none"
           style={{ 
-            bottom: '8px',
+            bottom: '24px',
             width: 'min(90vw, 400px)',
             zIndex: 60,
           }}
