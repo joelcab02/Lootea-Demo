@@ -519,10 +519,10 @@ const PromoPage: React.FC = () => {
                 
                 {/* Countdown Timer - Urgency */}
                 <div className="flex items-center justify-center gap-2 mb-5">
-                  <svg className="w-4 h-4 text-orange-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-[#F7C948] animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="text-orange-400 text-sm font-medium">
+                  <span className="text-[#F7C948] text-sm font-medium">
                     Reclama en los próximos <span className="font-bold">{formatTime(timeLeft)}</span>
                   </span>
                 </div>
