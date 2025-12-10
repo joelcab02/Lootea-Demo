@@ -48,7 +48,7 @@ export const RiskSettings: React.FC<RiskSettingsProps> = ({ box, onSave }) => {
   };
 
   // Calculate current loss percentage
-  const currentLoss = riskState ? Math.max(0, -riskState.net_profit) : 0;
+  const currentLoss = riskState ? Math.max(0, -riskState.profit_total) : 0;
   const lossPercentage = maxDailyLoss > 0 ? (currentLoss / maxDailyLoss) * 100 : 0;
 
   return (
@@ -80,13 +80,13 @@ export const RiskSettings: React.FC<RiskSettingsProps> = ({ box, onSave }) => {
               />
               <StatCard
                 label="Profit"
-                value={`$${riskState.net_profit.toLocaleString()}`}
-                color={riskState.net_profit >= 0 ? '#10B981' : '#EF4444'}
+                value={`$${riskState.profit_total.toLocaleString()}`}
+                color={riskState.profit_total >= 0 ? '#10B981' : '#EF4444'}
               />
               <StatCard
                 label="Status"
-                value={riskState.is_throttled ? 'THROTTLED' : 'NORMAL'}
-                color={riskState.is_throttled ? '#EF4444' : '#10B981'}
+                value={riskState.is_paused ? 'PAUSADO' : 'NORMAL'}
+                color={riskState.is_paused ? '#EF4444' : '#10B981'}
               />
             </div>
 
@@ -255,36 +255,24 @@ const StatCard: React.FC<{
 );
 
 const RiskEventRow: React.FC<{ event: RiskEvent }> = ({ event }) => {
-  const getEventIcon = () => {
+  const getEventStyle = () => {
     switch (event.event_type) {
-      case 'tier_downgrade':
-        return 'DG';
-      case 'daily_limit_hit':
-        return 'LIM';
-      case 'jackpot_cooldown':
-        return 'CD';
-      case 'manual_throttle':
-        return 'MT';
+      case 'downgrade':
+        return { icon: 'DG', color: 'text-amber-400', label: 'Downgrade' };
+      case 'block':
+        return { icon: 'BLK', color: 'text-red-400', label: 'Bloqueado' };
+      case 'pause':
+        return { icon: 'P', color: 'text-red-400', label: 'Pausado' };
+      case 'resume':
+        return { icon: 'R', color: 'text-emerald-400', label: 'Reanudado' };
+      case 'alert':
+        return { icon: '!', color: 'text-amber-400', label: 'Alerta' };
       default:
-        return '-';
+        return { icon: '-', color: 'text-slate-400', label: event.event_type };
     }
   };
 
-  const getEventLabel = () => {
-    switch (event.event_type) {
-      case 'tier_downgrade':
-        return 'Tier Downgrade';
-      case 'daily_limit_hit':
-        return 'Límite Alcanzado';
-      case 'jackpot_cooldown':
-        return 'Jackpot Cooldown';
-      case 'manual_throttle':
-        return 'Throttle Manual';
-      default:
-        return event.event_type;
-    }
-  };
-
+  const style = getEventStyle();
   const time = new Date(event.created_at).toLocaleTimeString('es-MX', {
     hour: '2-digit',
     minute: '2-digit',
@@ -293,12 +281,17 @@ const RiskEventRow: React.FC<{ event: RiskEvent }> = ({ event }) => {
   return (
     <div className="flex items-center justify-between py-2 border-b border-[#1a1d24] last:border-0">
       <div className="flex items-center gap-2">
-        <span className="text-lg">{getEventIcon()}</span>
+        <span className={`text-sm font-bold ${style.color}`}>{style.icon}</span>
         <div>
-          <div className="text-xs text-white">{getEventLabel()}</div>
+          <div className="text-xs text-white">{style.label}</div>
           <div className="text-[10px] text-slate-500">
-            {event.details?.reason || 'Sin detalles'}
+            {event.reason || 'Sin detalles'}
           </div>
+          {event.original_tier && event.final_tier && (
+            <div className="text-[10px] text-slate-600">
+              {event.original_tier} → {event.final_tier}
+            </div>
+          )}
         </div>
       </div>
       <div className="text-[10px] text-slate-500">{time}</div>

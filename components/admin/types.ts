@@ -80,12 +80,19 @@ export interface RiskDailyState {
   id: string;
   box_id: string;
   date: string;
+  total_rounds: number;
   total_revenue: number;
   total_payout_cost: number;
-  net_profit: number;
+  profit_total: number;
+  actual_rtp: number;
+  common_count: number;
+  mid_count: number;
   rare_count: number;
   jackpot_count: number;
-  is_throttled: boolean;
+  downgrade_count: number;
+  is_paused: boolean;
+  paused_reason: string | null;
+  paused_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -94,8 +101,11 @@ export interface RiskEvent {
   id: string;
   box_id: string;
   spin_id: string | null;
-  event_type: 'tier_downgrade' | 'daily_limit_hit' | 'jackpot_cooldown' | 'manual_throttle';
-  details: Record<string, any>;
+  event_type: 'downgrade' | 'block' | 'pause' | 'resume' | 'alert';
+  original_tier: string | null;
+  final_tier: string | null;
+  reason: string;
+  risk_state_snapshot: Record<string, any>;
   created_at: string;
 }
 
