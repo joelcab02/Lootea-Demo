@@ -638,6 +638,11 @@ const BoxEditSection: React.FC<{
   const [filterRarity, setFilterRarity] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'name' | 'price' | 'odds' | 'rarity'>('odds');
   const [showOnlyInBox, setShowOnlyInBox] = useState(false);
+  // New filters
+  const [priceMin, setPriceMin] = useState<string>('');
+  const [priceMax, setPriceMax] = useState<string>('');
+  const [filterBrand, setFilterBrand] = useState<string>('all');
+  const [showCreateItemModal, setShowCreateItemModal] = useState(false);
   const isNew = !boxId;
   
   // Tab state - Game Engine v2.0 added 'tiers' and 'risk'
@@ -1039,12 +1044,20 @@ const BoxEditSection: React.FC<{
     }
   };
 
+  // Get unique brands for filter
+  const uniqueBrands = [...new Set(products.map(p => (p as any).brand).filter(Boolean))];
+  
   // Filter and sort products
   const filteredProducts = products
     .filter(p => {
       if (showOnlyInBox && !isItemInBox(p.id)) return false;
       if (filterRarity !== 'all' && p.rarity !== filterRarity) return false;
       if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+      // Price range filter
+      if (priceMin && p.price < parseFloat(priceMin)) return false;
+      if (priceMax && p.price > parseFloat(priceMax)) return false;
+      // Brand filter
+      if (filterBrand !== 'all' && (p as any).brand !== filterBrand) return false;
       return true;
     })
     .sort((a, b) => {
@@ -1060,6 +1073,15 @@ const BoxEditSection: React.FC<{
           return a.name.localeCompare(b.name);
       }
     });
+  
+  // Quick price presets based on box price
+  const boxPriceNum = parseFloat(form.price) || 0;
+  const pricePresets = [
+    { label: 'Todos', min: '', max: '' },
+    { label: `< $${Math.round(boxPriceNum * 0.5)}`, min: '', max: String(Math.round(boxPriceNum * 0.5)) },
+    { label: `$${Math.round(boxPriceNum * 0.5)} - $${Math.round(boxPriceNum * 5)}`, min: String(Math.round(boxPriceNum * 0.5)), max: String(Math.round(boxPriceNum * 5)) },
+    { label: `> $${Math.round(boxPriceNum * 5)}`, min: String(Math.round(boxPriceNum * 5)), max: '' },
+  ];
 
   return (
     <div className="space-y-4">
@@ -1345,15 +1367,63 @@ const BoxEditSection: React.FC<{
                 </div>
               </div>
 
-              {/* Filters */}
-              <div className="flex flex-wrap gap-3 py-3 border-y border-[#1a1d24]">
+              {/* Filters - Row 1: Search and Create */}
+              <div className="flex gap-3 py-3 border-t border-[#1a1d24]">
                 <input
                   type="text"
                   placeholder="Buscar producto..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="flex-1 min-w-[200px] px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs focus:border-[#F7C948] outline-none"
+                  className="flex-1 px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm focus:border-[#F7C948] outline-none"
                 />
+                <button
+                  onClick={() => setShowCreateItemModal(true)}
+                  className="px-4 py-2 bg-[#F7C948] text-black text-sm font-bold rounded hover:bg-[#E6B800] transition-colors flex items-center gap-2"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  Crear Item
+                </button>
+              </div>
+              
+              {/* Filters - Row 2: Price Presets */}
+              <div className="flex items-center gap-2 py-2">
+                <span className="text-xs text-slate-500">Precio:</span>
+                {pricePresets.map((preset, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setPriceMin(preset.min); setPriceMax(preset.max); }}
+                    className={`px-2 py-1 text-xs rounded transition-colors ${
+                      priceMin === preset.min && priceMax === preset.max
+                        ? 'bg-[#F7C948] text-black'
+                        : 'bg-[#1a1d24] text-slate-300 hover:bg-[#252830]'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+                <div className="flex items-center gap-1 ml-2">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={priceMin}
+                    onChange={(e) => setPriceMin(e.target.value)}
+                    className="w-20 px-2 py-1 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs"
+                  />
+                  <span className="text-slate-500">-</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={priceMax}
+                    onChange={(e) => setPriceMax(e.target.value)}
+                    className="w-20 px-2 py-1 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs"
+                  />
+                </div>
+              </div>
+              
+              {/* Filters - Row 3: Other Filters */}
+              <div className="flex flex-wrap gap-3 py-2 border-b border-[#1a1d24]">
                 <select
                   value={filterRarity}
                   onChange={(e) => setFilterRarity(e.target.value)}
@@ -1365,6 +1435,18 @@ const BoxEditSection: React.FC<{
                   <option value="RARE">Rare</option>
                   <option value="COMMON">Common</option>
                 </select>
+                {uniqueBrands.length > 0 && (
+                  <select
+                    value={filterBrand}
+                    onChange={(e) => setFilterBrand(e.target.value)}
+                    className="px-3 py-1.5 bg-[#08090c] border border-[#1a1d24] rounded text-white text-xs"
+                  >
+                    <option value="all">Todas las marcas</option>
+                    {uniqueBrands.map(brand => (
+                      <option key={brand} value={brand}>{brand}</option>
+                    ))}
+                  </select>
+                )}
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
@@ -1379,6 +1461,9 @@ const BoxEditSection: React.FC<{
                   <input type="checkbox" checked={showOnlyInBox} onChange={(e) => setShowOnlyInBox(e.target.checked)} className="rounded border-slate-600" />
                   Solo en caja
                 </label>
+                <span className="text-xs text-slate-500 ml-auto">
+                  {filteredProducts.length} de {products.length} productos
+                </span>
               </div>
 
               {/* Products List */}
@@ -1573,6 +1658,181 @@ const BoxEditSection: React.FC<{
               )}
             </div>
           )}
+        </div>
+      </div>
+      
+      {/* Create Item Modal */}
+      {showCreateItemModal && (
+        <CreateItemModal
+          onClose={() => setShowCreateItemModal(false)}
+          onCreated={async (newItemId) => {
+            // Refresh products list
+            onSave();
+            // Auto-add to box with default odds
+            if (boxId) {
+              await supabase.from('box_items').insert({ box_id: boxId, item_id: newItemId, odds: 1 });
+              const { data } = await supabase.from('box_items').select('item_id, odds').eq('box_id', boxId);
+              setBoxItems(data || []);
+            }
+            setShowCreateItemModal(false);
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+// === CREATE ITEM MODAL (Inline) ===
+const CreateItemModal: React.FC<{
+  onClose: () => void;
+  onCreated: (itemId: string) => void;
+}> = ({ onClose, onCreated }) => {
+  const [form, setForm] = useState({
+    name: '',
+    price: '',
+    valueCost: '',
+    rarity: Rarity.COMMON,
+    image: '',
+    brand: ''
+  });
+  const [saving, setSaving] = useState(false);
+
+  const handleCreate = async () => {
+    if (!form.name || !form.price) {
+      alert('Nombre y precio son requeridos');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { data, error } = await supabase.from('items').insert({
+        name: form.name,
+        price: parseFloat(form.price),
+        value_cost: form.valueCost ? parseFloat(form.valueCost) : parseFloat(form.price),
+        rarity: form.rarity,
+        image_url: form.image,
+        brand: form.brand || null
+      }).select().single();
+
+      if (error) throw error;
+      onCreated(data.id);
+    } catch (err: any) {
+      alert('Error: ' + err.message);
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-xl w-full max-w-lg">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-[#1a1d24]">
+          <h3 className="text-lg font-bold text-white">Crear Item Rapido</h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-white">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Form */}
+        <div className="p-4 space-y-4">
+          <div>
+            <label className="text-xs text-slate-500 block mb-1">Nombre *</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="iPhone 16 Pro Max"
+              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm focus:border-[#F7C948] outline-none"
+              autoFocus
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Precio Display *</label>
+              <input
+                type="number"
+                value={form.price}
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
+                placeholder="49999"
+                className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm focus:border-[#F7C948] outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Costo Real (Cashout)</label>
+              <input
+                type="number"
+                value={form.valueCost}
+                onChange={(e) => setForm({ ...form, valueCost: e.target.value })}
+                placeholder={form.price || 'Igual al precio'}
+                className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm focus:border-[#F7C948] outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Rareza</label>
+              <select
+                value={form.rarity}
+                onChange={(e) => setForm({ ...form, rarity: e.target.value as Rarity })}
+                className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm"
+              >
+                <option value={Rarity.COMMON}>Common</option>
+                <option value={Rarity.RARE}>Rare</option>
+                <option value={Rarity.EPIC}>Epic</option>
+                <option value={Rarity.LEGENDARY}>Legendary</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Marca</label>
+              <input
+                type="text"
+                value={form.brand}
+                onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                placeholder="Apple, Samsung..."
+                className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm focus:border-[#F7C948] outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs text-slate-500 block mb-1">Imagen (URL)</label>
+            <input
+              type="text"
+              value={form.image}
+              onChange={(e) => setForm({ ...form, image: e.target.value })}
+              placeholder="https://..."
+              className="w-full px-3 py-2 bg-[#08090c] border border-[#1a1d24] rounded text-white text-sm focus:border-[#F7C948] outline-none"
+            />
+            {form.image && (
+              <div className="mt-2 flex items-center gap-2">
+                <div className="w-12 h-12 bg-[#08090c] border border-[#1a1d24] rounded overflow-hidden">
+                  <img src={form.image} alt="" className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                </div>
+                <span className="text-xs text-slate-500">Preview</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex gap-3 p-4 border-t border-[#1a1d24]">
+          <button
+            onClick={onClose}
+            className="flex-1 py-2 bg-[#1a1d24] text-slate-300 text-sm rounded hover:bg-[#252830]"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleCreate}
+            disabled={saving || !form.name || !form.price}
+            className="flex-1 py-2 bg-[#F7C948] text-black text-sm font-bold rounded hover:bg-[#E6B800] disabled:opacity-50"
+          >
+            {saving ? 'Creando...' : 'Crear y Agregar a Caja'}
+          </button>
         </div>
       </div>
     </div>
