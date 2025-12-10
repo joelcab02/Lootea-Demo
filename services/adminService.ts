@@ -242,6 +242,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     .from('spins')
     .select(`
       id,
+      user_id,
       cost,
       item_value,
       payout_cost,
@@ -249,8 +250,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       tier_id,
       created_at,
       boxes:box_id (id, name, price, max_daily_loss),
-      items:item_id (id, name, price),
-      profiles:user_id (email)
+      items:item_id (id, name, price)
     `)
     .gte('created_at', `${today}T00:00:00`)
     .lt('created_at', `${today}T23:59:59`)
@@ -305,7 +305,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     .slice(0, 5)
     .map((s: any) => ({
       id: s.id,
-      user_email: s.profiles?.email || 'Unknown',
+      user_email: s.user_id ? `user_${s.user_id.slice(0, 8)}` : 'Unknown',
       item_name: s.items?.name || 'Unknown',
       item_value: s.item_value,
       box_name: s.boxes?.name || 'Unknown',
