@@ -1,11 +1,9 @@
 /**
- * Header - Design System V2 "The Render Look"
+ * Header - Stake-inspired design with Lootea DNA
  * 
- * Features:
- * - Black glass background with blur
- * - Golden rim light accent
- * - Logged in: Cart + Balance (gold bar) + Menu
- * - Guest: Login button + Menu
+ * Structure:
+ * - Logo (left)
+ * - Balance + Wallet button + User icons (right)
  */
 
 import React, { useState, useEffect } from 'react';
@@ -21,58 +19,50 @@ import { formatPriceValue } from '../../lib/format';
 // ICONS
 // ============================================
 const Icons = {
-  Cart: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+  DollarCircle: () => (
+    <div className="w-5 h-5 rounded-full bg-[#22c55e] flex items-center justify-center">
+      <span className="text-white text-xs font-bold">$</span>
+    </div>
+  ),
+  ChevronDown: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9" />
     </svg>
   ),
-  Menu: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-6 h-6">
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="18" x2="21" y2="18" />
+  Wallet: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+      <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+      <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
     </svg>
   ),
-  Plus: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="w-3.5 h-3.5">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  ),
-  Level: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  User: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   ),
   Inventory: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-      <line x1="12" y1="22.08" x2="12" y2="12" />
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
     </svg>
   ),
   History: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10" />
       <polyline points="12 6 12 12 16 14" />
     </svg>
   ),
-  Fairness: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <polyline points="9 12 11 14 15 10" />
-    </svg>
-  ),
   Settings: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
   ),
   Logout: () => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
       <polyline points="16 17 21 12 16 7" />
       <line x1="21" y1="12" x2="9" y2="12" />
@@ -89,7 +79,7 @@ const Header: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [showDeposit, setShowDeposit] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   // Auth subscription
   useEffect(() => {
@@ -106,174 +96,153 @@ const Header: React.FC = () => {
     }
   }, [authState?.user]);
 
-  // Close dropdown on outside click
+  // Close menus on outside click
   useEffect(() => {
-    const handleClickOutside = () => setDropdownOpen(false);
-    if (dropdownOpen) {
+    const handleClickOutside = () => {
+      setUserMenuOpen(false);
+    };
+    if (userMenuOpen) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [dropdownOpen]);
+  }, [userMenuOpen]);
 
   const handleSignOut = async () => {
-    setDropdownOpen(false);
+    setUserMenuOpen(false);
     await signOut();
-  };
-
-  const toggleDropdown = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setDropdownOpen(!dropdownOpen);
   };
 
   const isLoggedIn = authState?.user;
   const isLoading = !authState || authState.isLoading;
   const balance = getBalance();
-  const cartCount = inventory?.itemCount || 0;
   const displayName = authState?.profile?.display_name || authState?.user?.email?.split('@')[0] || 'User';
-  const level = authState?.profile?.level || 1;
 
   return (
     <>
-      <header 
-        className="sticky top-0 z-50 w-full bg-[#111111] border-b border-[#222222]"
-      >
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-14 sm:h-16">
+      <header className="sticky top-0 z-50 w-full bg-[#1a1d24] border-b border-[#252830]">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-14">
             
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
+            <Link to="/" className="flex items-center">
               <img 
                 src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/download__3___1_-removebg-preview.png"
                 alt="Lootea"
-                className="h-8 sm:h-9 w-auto transition-transform duration-300 group-hover:scale-105"
+                className="h-8 w-auto"
               />
             </Link>
 
             {/* Right Side */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2">
               
               {/* Loading State */}
               {isLoading && (
-                <>
-                  <div className="w-20 h-9 bg-[#141720] rounded-lg animate-pulse" />
-                  <div className="w-10 h-9 bg-[#141720] rounded-lg animate-pulse" />
-                </>
+                <div className="flex items-center gap-2">
+                  <div className="w-28 h-10 bg-[#252830] rounded-lg animate-pulse" />
+                  <div className="w-10 h-10 bg-[#252830] rounded-lg animate-pulse" />
+                </div>
               )}
 
               {/* Logged In */}
               {!isLoading && isLoggedIn && (
                 <>
-                  {/* Cart Button - Hidden on mobile, shown on desktop */}
+                  {/* Balance + Wallet Group */}
+                  <div className="flex items-center bg-[#252830] rounded-lg overflow-hidden">
+                    {/* Balance Display */}
+                    <button 
+                      className="flex items-center gap-2 px-3 py-2 hover:bg-[#2d3139] transition-colors"
+                      onClick={() => setShowDeposit(true)}
+                    >
+                      <Icons.DollarCircle />
+                      <span className="text-white font-semibold text-sm">
+                        MX${formatPriceValue(balance)}
+                      </span>
+                      <Icons.ChevronDown />
+                    </button>
+                    
+                    {/* Wallet Button */}
+                    <button 
+                      onClick={() => setShowDeposit(true)}
+                      className="flex items-center justify-center w-10 h-10 bg-[#3b82f6] hover:bg-[#2563eb] transition-colors text-white"
+                      title="Depositar"
+                    >
+                      <Icons.Wallet />
+                    </button>
+                  </div>
+
+                  {/* Inventory Button - Desktop only */}
                   <button 
                     onClick={() => setShowCart(true)}
-                    className="hidden md:block relative p-2.5 text-white/40 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                    className="hidden md:flex items-center justify-center w-10 h-10 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
+                    title="Inventario"
                   >
-                    <Icons.Cart />
-                    {cartCount > 0 && (
-                      <span 
-                        className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full flex items-center justify-center"
-                        style={{
-                          background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
-                          color: 'black',
-                          boxShadow: '0 2px 8px rgba(247,201,72,0.4)',
-                        }}
-                      >
-                        {cartCount > 99 ? '99+' : cartCount}
+                    <Icons.Inventory />
+                    {(inventory?.itemCount || 0) > 0 && (
+                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#F7C948] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
+                        {inventory?.itemCount}
                       </span>
                     )}
                   </button>
 
-                  {/* Balance + Deposit Button Group - Dark Minimal Style */}
-                  <button 
-                    onClick={() => setShowDeposit(true)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#1e2028] hover:bg-[#252830] transition-all duration-200"
-                    title="Click para depositar"
-                  >
-                    {/* Wallet Icon */}
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F7C948" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
-                      <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
-                      <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
-                    </svg>
-                    <span className="font-bold text-sm text-slate-300">
-                      ${formatPriceValue(balance)}
-                    </span>
-                  </button>
-
-                  {/* Menu Button - Hidden on mobile, shown on desktop */}
-                  <div className="hidden md:block relative">
+                  {/* User Menu */}
+                  <div className="relative">
                     <button 
-                      onClick={toggleDropdown}
-                      className="p-2.5 text-white/40 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                      onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
+                      className="flex items-center justify-center w-10 h-10 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
+                      title="Perfil"
                     >
-                      <Icons.Menu />
+                      <Icons.User />
                     </button>
 
-                    {/* Dropdown Menu */}
-                    {dropdownOpen && (
-                      <div 
-                        className="absolute right-0 top-full mt-2 w-56 rounded-xl overflow-hidden z-50"
-                        style={{
-                          background: 'linear-gradient(180deg, #141720 0%, #0d1019 100%)',
-                          border: '1px solid rgba(247,201,72,0.15)',
-                          boxShadow: '0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(247,201,72,0.1)',
-                        }}
-                      >
-                        {/* Top rim light */}
-                        <div 
-                          className="h-px"
-                          style={{
-                            background: 'linear-gradient(90deg, transparent, rgba(247,201,72,0.5), transparent)',
-                          }}
-                        />
-
+                    {/* User Dropdown */}
+                    {userMenuOpen && (
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-[#1a1d24] border border-[#252830] rounded-xl shadow-xl overflow-hidden z-50">
                         {/* User Info */}
-                        <div className="p-3 border-b border-white/5">
+                        <div className="p-3 border-b border-[#252830]">
                           <div className="flex items-center gap-3">
-                            <div 
-                              className="w-10 h-10 rounded-full flex items-center justify-center text-black text-lg font-display font-black"
-                              style={{
-                                background: 'linear-gradient(135deg, #FFD966 0%, #F7C948 100%)',
-                              }}
-                            >
+                            <div className="w-10 h-10 rounded-full bg-[#F7C948] flex items-center justify-center text-black font-bold">
                               {displayName.charAt(0).toUpperCase()}
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-white font-medium text-sm truncate">{displayName}</p>
-                              <div className="flex items-center gap-1 text-[#F7C948]">
-                                <Icons.Level />
-                                <span className="text-xs font-medium">Nivel {level}</span>
-                              </div>
+                            <div>
+                              <p className="text-white font-medium text-sm">{displayName}</p>
+                              <p className="text-slate-500 text-xs">MX${formatPriceValue(balance)}</p>
                             </div>
                           </div>
                         </div>
 
                         {/* Menu Items */}
                         <div className="p-2">
-                          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-[#F7C948] hover:bg-white/5 rounded-lg text-sm transition-colors">
+                          <Link 
+                            to="/inventory"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                          >
                             <Icons.Inventory />
                             <span>Mi Inventario</span>
-                          </button>
-                          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-[#F7C948] hover:bg-white/5 rounded-lg text-sm transition-colors">
+                          </Link>
+                          <Link 
+                            to="/profile"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                          >
                             <Icons.History />
                             <span>Historial</span>
-                          </button>
-                          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-[#F7C948] hover:bg-white/5 rounded-lg text-sm transition-colors">
-                            <Icons.Fairness />
-                            <span>Provably Fair</span>
-                          </button>
-                          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-white/60 hover:text-[#F7C948] hover:bg-white/5 rounded-lg text-sm transition-colors">
+                          </Link>
+                          <Link 
+                            to="/profile"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                          >
                             <Icons.Settings />
                             <span>Configuración</span>
-                          </button>
+                          </Link>
                         </div>
 
                         {/* Logout */}
-                        <div className="p-2 border-t border-white/5">
+                        <div className="p-2 border-t border-[#252830]">
                           <button 
                             onClick={handleSignOut}
-                            className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
+                            className="w-full flex items-center gap-3 px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
                           >
                             <Icons.Logout />
                             <span>Cerrar Sesión</span>
@@ -287,16 +256,20 @@ const Header: React.FC = () => {
 
               {/* Guest */}
               {!isLoading && !isLoggedIn && (
-                <>
-                  {/* Login Button - Gold Bar */}
+                <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setShowAuthModal(true)}
-                    className="px-5 py-2 rounded-xl font-display text-sm tracking-tight transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)]"
+                    className="px-4 py-2 text-slate-300 hover:text-white text-sm font-medium transition-colors"
                   >
-                    ENTRAR
+                    Iniciar Sesión
                   </button>
-
-                </>
+                  <button 
+                    onClick={() => setShowAuthModal(true)}
+                    className="px-4 py-2 bg-[#F7C948] hover:bg-[#E6B800] text-black text-sm font-bold rounded-lg transition-colors"
+                  >
+                    Registrarse
+                  </button>
+                </div>
               )}
 
             </div>
