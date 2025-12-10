@@ -1,6 +1,8 @@
 /**
  * Lootea Admin Dashboard - Shopify-style admin panel
  * Protected route - only accessible by admin users
+ * 
+ * Game Engine v2.0 - Includes Analytics, Tiers, Risk Settings
  */
 
 import React, { useState, useEffect } from 'react';
@@ -9,6 +11,10 @@ import { Rarity, LootItem } from '../types';
 import { supabase, withRetry } from '../services/supabaseClient';
 import { Box, getBoxes, getBoxBySlug } from '../services/boxService';
 import type { User } from '@supabase/supabase-js';
+
+// Game Engine v2.0 Components
+import { AnalyticsDashboard, TierEditor, RiskSettings } from '../components/admin';
+import type { AdminBox, PrizeTier } from '../components/admin/types';
 
 // Sections
 type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'assets' | 'users' | 'user-detail';
@@ -422,7 +428,7 @@ const AdminDashboard: React.FC = () => {
           ) : (
             <>
               {section === 'dashboard' && (
-                <DashboardSection stats={stats} boxes={boxes} navigate={navigate} />
+                <AnalyticsDashboard onNavigateToBox={(boxId) => navigate('box-edit', boxId)} />
               )}
               {section === 'boxes' && (
                 <BoxesSection boxes={boxes} navigate={navigate} onRefresh={refreshData} setIsSaving={setIsSaving} />
@@ -634,9 +640,12 @@ const BoxEditSection: React.FC<{
   const [showOnlyInBox, setShowOnlyInBox] = useState(false);
   const isNew = !boxId;
   
-  // Tab state
-  type EditTab = 'details' | 'items' | 'promo';
+  // Tab state - Game Engine v2.0 added 'tiers' and 'risk'
+  type EditTab = 'details' | 'items' | 'tiers' | 'risk' | 'promo';
   const [activeTab, setActiveTab] = useState<EditTab>('details');
+  
+  // Box data for Game Engine v2.0
+  const [boxData, setBoxData] = useState<AdminBox | null>(null);
   
   // Promo config state
   const [isPromo, setIsPromo] = useState(false);
@@ -672,6 +681,23 @@ const BoxEditSection: React.FC<{
         image: box.image || '',
         category: box.category || 'general',
         show_in_home: box.show_in_home !== false
+      });
+      
+      // Set boxData for Game Engine v2.0 components
+      setBoxData({
+        id: box.id,
+        name: box.name,
+        slug: box.slug,
+        price: box.price,
+        image: box.image,
+        category: box.category,
+        is_active: box.is_active,
+        show_in_home: box.show_in_home,
+        total_opens: box.total_opens || 0,
+        base_ev: box.base_ev,
+        max_daily_loss: box.max_daily_loss,
+        volatility: box.volatility,
+        promo_config: box.promo_config,
       });
       
       // Load promo config if exists
@@ -1081,6 +1107,28 @@ const BoxEditSection: React.FC<{
             )}
           </button>
           <button
+            onClick={() => setActiveTab('tiers')}
+            disabled={isNew}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'tiers' 
+                ? 'text-[#F7C948] border-b-2 border-[#F7C948] bg-[#F7C948]/5' 
+                : 'text-slate-400 hover:text-white'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            🎯 Tiers
+          </button>
+          <button
+            onClick={() => setActiveTab('risk')}
+            disabled={isNew}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'risk' 
+                ? 'text-[#F7C948] border-b-2 border-[#F7C948] bg-[#F7C948]/5' 
+                : 'text-slate-400 hover:text-white'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            ⚠️ Risk
+          </button>
+          <button
             onClick={() => setActiveTab('promo')}
             disabled={isNew}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
@@ -1089,7 +1137,7 @@ const BoxEditSection: React.FC<{
                 : 'text-slate-400 hover:text-white'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            Promo Funnel
+            Promo
             {isPromo && (
               <span className="ml-2 px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded text-[10px]">ON</span>
             )}
@@ -1396,6 +1444,23 @@ const BoxEditSection: React.FC<{
                 Guardar Cambios
               </button>
             </div>
+          )}
+
+          {/* === TAB: TIERS (Game Engine v2.0) === */}
+          {activeTab === 'tiers' && !isNew && (
+            <TierEditor 
+              boxId={boxId} 
+              boxPrice={parseFloat(form.price) || 0}
+              onSave={loadBox}
+            />
+          )}
+
+          {/* === TAB: RISK (Game Engine v2.0) === */}
+          {activeTab === 'risk' && !isNew && boxData && (
+            <RiskSettings 
+              box={boxData}
+              onSave={loadBox}
+            />
           )}
 
           {/* === TAB: PROMO FUNNEL === */}
@@ -1706,7 +1771,7 @@ const ProductEditSection: React.FC<{
   onSave: () => void;
   setIsSaving: (v: boolean) => void;
 }> = ({ productId, navigate, onSave, setIsSaving }) => {
-  const [form, setForm] = useState({ name: '', price: '', rarity: Rarity.COMMON, image: '' });
+  const [form, setForm] = useState({ name: '', price: '', valueCost: '', rarity: Rarity.COMMON, image: '' });
   const isNew = !productId;
 
   useEffect(() => {
@@ -1721,11 +1786,17 @@ const ProductEditSection: React.FC<{
       setForm({
         name: data.name,
         price: String(data.price),
+        valueCost: data.value_cost ? String(data.value_cost) : '',
         rarity: data.rarity as Rarity,
         image: data.image_url || ''
       });
     }
   };
+  
+  // Calculate margin
+  const displayPrice = parseFloat(form.price) || 0;
+  const costValue = parseFloat(form.valueCost) || displayPrice;
+  const margin = displayPrice > 0 ? ((displayPrice - costValue) / displayPrice) * 100 : 0;
 
   const handleSave = async () => {
     if (!form.name || !form.price) {
@@ -1736,12 +1807,15 @@ const ProductEditSection: React.FC<{
     setIsSaving(true);
     
     try {
+      const valueCostValue = form.valueCost ? parseFloat(form.valueCost) : parseFloat(form.price);
+      
       if (isNew) {
         await withRetry(
           async () => {
             const { data, error } = await supabase.from('items').insert({
               name: form.name,
               price: parseFloat(form.price),
+              value_cost: valueCostValue,
               rarity: form.rarity,
               image_url: form.image
             }).select().single();
@@ -1761,6 +1835,7 @@ const ProductEditSection: React.FC<{
             const { error } = await supabase.from('items').update({
               name: form.name,
               price: parseFloat(form.price),
+              value_cost: valueCostValue,
               rarity: form.rarity,
               image_url: form.image
             }).eq('id', productId);
@@ -1802,9 +1877,9 @@ const ProductEditSection: React.FC<{
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="text-xs text-slate-500 block mb-1">Precio *</label>
+              <label className="text-xs text-slate-500 block mb-1">Precio Display *</label>
               <input
                 type="number"
                 value={form.price}
@@ -1812,6 +1887,18 @@ const ProductEditSection: React.FC<{
                 placeholder="1299"
                 className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
               />
+              <p className="text-[10px] text-slate-600 mt-1">Lo que ve el usuario</p>
+            </div>
+            <div>
+              <label className="text-xs text-slate-500 block mb-1">Costo Real (Cashout)</label>
+              <input
+                type="number"
+                value={form.valueCost}
+                onChange={(e) => setForm({ ...form, valueCost: e.target.value })}
+                placeholder={form.price || '0'}
+                className="w-full px-4 py-2 bg-[#0d1019] border border-[#2a3040] rounded-lg text-white focus:border-[#F7C948] outline-none"
+              />
+              <p className="text-[10px] text-slate-600 mt-1">Lo que pagas en cashout</p>
             </div>
             <div>
               <label className="text-xs text-slate-500 block mb-1">Rareza</label>
@@ -1827,6 +1914,21 @@ const ProductEditSection: React.FC<{
               </select>
             </div>
           </div>
+          
+          {/* Margin indicator */}
+          {displayPrice > 0 && (
+            <div className={`p-3 rounded-lg border ${margin >= 0 ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-red-500/5 border-red-500/30'}`}>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400">Margen sobre cashout:</span>
+                <span className={`text-sm font-bold ${margin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {margin.toFixed(1)}%
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-500 mt-1">
+                Si valor vacío, costo = precio display (margen 0%)
+              </p>
+            </div>
+          )}
           
           <div>
             <label className="text-xs text-slate-500 block mb-1">Imagen (URL)</label>
