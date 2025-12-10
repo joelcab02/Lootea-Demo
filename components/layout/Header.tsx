@@ -189,7 +189,7 @@ const Header: React.FC = () => {
                   {/* Inventory Button - Desktop only */}
                   <button 
                     onClick={() => setShowCart(true)}
-                    className="relative hidden md:flex items-center justify-center w-10 h-10 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
+                    className="relative hidden md:flex items-center justify-center w-10 h-10 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
                     title="Inventario"
                   >
                     <Icons.Inventory />
@@ -204,7 +204,7 @@ const Header: React.FC = () => {
                   <div className="relative">
                     <button 
                       onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
-                      className="flex items-center justify-center w-10 h-10 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
+                      className="flex items-center justify-center w-10 h-10 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
                       title="Perfil"
                     >
                       <Icons.User />
@@ -221,7 +221,7 @@ const Header: React.FC = () => {
                             </div>
                             <div>
                               <p className="text-white font-medium text-sm">{displayName}</p>
-                              <p className="text-slate-500 text-xs">MX${formatPriceValue(balance)}</p>
+                              <p className="text-white/50 text-xs">MX${formatPriceValue(balance)}</p>
                             </div>
                           </div>
                         </div>
@@ -231,7 +231,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/inventory"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                            className="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
                           >
                             <Icons.Inventory />
                             <span>Mi Inventario</span>
@@ -239,7 +239,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/profile"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                            className="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
                           >
                             <Icons.History />
                             <span>Historial</span>
@@ -247,7 +247,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/profile"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                            className="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
                           >
                             <Icons.Settings />
                             <span>Configuración</span>
@@ -275,7 +275,7 @@ const Header: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setShowAuthModal(true)}
-                    className="px-4 py-2 text-slate-300 hover:text-white text-sm font-medium transition-colors"
+                    className="px-4 py-2 text-white/70 hover:text-white text-sm font-medium transition-colors"
                   >
                     Iniciar Sesión
                   </button>

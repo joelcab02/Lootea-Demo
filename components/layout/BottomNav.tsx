@@ -69,7 +69,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, to, isActive }) => {
     <Link
       to={to}
       className={`flex flex-col items-center justify-center gap-1 py-2 px-4 transition-colors ${
-        isActive ? 'text-[#F7C948]' : 'text-slate-500 hover:text-slate-300'
+        isActive ? 'text-[#F7C948]' : 'text-white/60 hover:text-white'
       }`}
     >
       {icon}
