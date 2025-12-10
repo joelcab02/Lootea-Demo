@@ -121,10 +121,10 @@ const Header: React.FC = () => {
     <>
       <header className="sticky top-0 z-50 w-full bg-[#1a1d24] border-b border-[#252830]">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-14">
+          <div className="flex items-center h-14">
             
-            {/* Logo */}
-            <Link to="/" className="flex items-center">
+            {/* Logo - Left */}
+            <Link to="/" className="flex items-center flex-shrink-0">
               <img 
                 src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/download__3___1_-removebg-preview.png"
                 alt="Lootea"
@@ -132,48 +132,64 @@ const Header: React.FC = () => {
               />
             </Link>
 
-            {/* Right Side */}
+            {/* Center Spacer */}
+            <div className="flex-1" />
+
+            {/* Center - Balance (logged in only) */}
             <div className="flex items-center gap-2">
+              
+              {/* Loading State - Center */}
+              {isLoading && (
+                <div className="w-32 h-10 bg-[#252830] rounded-lg animate-pulse" />
+              )}
+
+              {/* Logged In - Balance Center */}
+              {!isLoading && isLoggedIn && (
+                <div className="flex items-center bg-[#252830] rounded-lg overflow-hidden">
+                  {/* Balance Display */}
+                  <button 
+                    className="flex items-center gap-2 px-3 py-2 hover:bg-[#2d3139] transition-colors"
+                    onClick={() => setShowDeposit(true)}
+                  >
+                    <Icons.DollarCircle />
+                    <span className="text-white font-semibold text-sm">
+                      MX${formatPriceValue(balance)}
+                    </span>
+                    <Icons.ChevronDown />
+                  </button>
+                  
+                  {/* Wallet Button */}
+                  <button 
+                    onClick={() => setShowDeposit(true)}
+                    className="flex items-center justify-center w-10 h-10 bg-[#3b82f6] hover:bg-[#2563eb] transition-colors text-white"
+                    title="Depositar"
+                  >
+                    <Icons.Wallet />
+                  </button>
+                </div>
+              )}
+
+            {/* Right Spacer */}
+            <div className="flex-1" />
+
+            {/* Right Side - Icons */}
+            <div className="flex items-center gap-1">
               
               {/* Loading State */}
               {isLoading && (
                 <div className="flex items-center gap-2">
-                  <div className="w-28 h-10 bg-[#252830] rounded-lg animate-pulse" />
+                  <div className="w-10 h-10 bg-[#252830] rounded-lg animate-pulse" />
                   <div className="w-10 h-10 bg-[#252830] rounded-lg animate-pulse" />
                 </div>
               )}
 
-              {/* Logged In */}
+              {/* Logged In - Right Icons */}
               {!isLoading && isLoggedIn && (
                 <>
-                  {/* Balance + Wallet Group */}
-                  <div className="flex items-center bg-[#252830] rounded-lg overflow-hidden">
-                    {/* Balance Display */}
-                    <button 
-                      className="flex items-center gap-2 px-3 py-2 hover:bg-[#2d3139] transition-colors"
-                      onClick={() => setShowDeposit(true)}
-                    >
-                      <Icons.DollarCircle />
-                      <span className="text-white font-semibold text-sm">
-                        MX${formatPriceValue(balance)}
-                      </span>
-                      <Icons.ChevronDown />
-                    </button>
-                    
-                    {/* Wallet Button */}
-                    <button 
-                      onClick={() => setShowDeposit(true)}
-                      className="flex items-center justify-center w-10 h-10 bg-[#3b82f6] hover:bg-[#2563eb] transition-colors text-white"
-                      title="Depositar"
-                    >
-                      <Icons.Wallet />
-                    </button>
-                  </div>
-
                   {/* Inventory Button - Desktop only */}
                   <button 
                     onClick={() => setShowCart(true)}
-                    className="hidden md:flex items-center justify-center w-10 h-10 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
+                    className="relative hidden md:flex items-center justify-center w-10 h-10 text-slate-400 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
                     title="Inventario"
                   >
                     <Icons.Inventory />
