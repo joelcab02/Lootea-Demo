@@ -1,54 +1,38 @@
 /**
- * BottomNav - Mobile Bottom Navigation
- * 
- * Diseño simple estilo Stake:
- * - Barra fija al fondo
- * - 5 tabs con iconos y labels
- * - Activo en dorado
+ * BottomNav - Mobile Bottom Navigation (Stake Style)
  */
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 // ============================================
-// ICONS
+// ICONS - Filled style like Stake
 // ============================================
 
 const Icons = {
   Home: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
     </svg>
   ),
   Inventory: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <path d="M16 10a4 4 0 0 1-8 0" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/>
     </svg>
   ),
   Deposit: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="16" />
-      <line x1="8" y1="12" x2="16" y2="12" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
     </svg>
   ),
   Trophy: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-      <path d="M4 22h16" />
-      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
     </svg>
   ),
   User: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
     </svg>
   ),
 };
@@ -68,8 +52,8 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, to, isActive }) => {
   return (
     <Link
       to={to}
-      className={`flex flex-col items-center justify-center gap-1 py-2 px-4 transition-colors ${
-        isActive ? 'text-[#F7C948]' : 'text-white/60 hover:text-white'
+      className={`flex flex-col items-center justify-center gap-1 py-3 px-4 transition-colors ${
+        isActive ? 'text-white' : 'text-white/50 hover:text-white/70'
       }`}
     >
       {icon}
@@ -85,7 +69,6 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, to, isActive }) => {
 const BottomNav: React.FC = () => {
   const location = useLocation();
 
-  // Hide on admin and promo pages
   const hiddenRoutes = ['/admin', '/promo'];
   const shouldHide = hiddenRoutes.some(route => location.pathname.startsWith(route));
   
@@ -98,8 +81,7 @@ const BottomNav: React.FC = () => {
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden">
-      {/* Main bar */}
-      <div className="bg-[#1a1d24] border-t border-[#252830]">
+      <div className="bg-[#1e2329] border-t border-[#2b3139]">
         <div className="flex items-center justify-around">
           <NavItem
             icon={<Icons.Home />}
@@ -138,8 +120,8 @@ const BottomNav: React.FC = () => {
         </div>
       </div>
       
-      {/* Safe area padding for iOS */}
-      <div className="bg-[#1a1d24] h-[env(safe-area-inset-bottom)]" />
+      {/* Safe area for iOS */}
+      <div className="bg-[#1e2329] h-[env(safe-area-inset-bottom)]" />
     </nav>
   );
 };
