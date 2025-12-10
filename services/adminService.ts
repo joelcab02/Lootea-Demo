@@ -237,6 +237,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   const today = new Date().toISOString().split('T')[0];
 
   // Get today's spins with box and item info
+  // Filter only Game Engine v2 spins (profit_margin IS NOT NULL)
   const { data: spinsToday, error: spinsError } = await supabase
     .from('spins')
     .select(`
@@ -252,7 +253,8 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       profiles:user_id (email)
     `)
     .gte('created_at', `${today}T00:00:00`)
-    .lt('created_at', `${today}T23:59:59`);
+    .lt('created_at', `${today}T23:59:59`)
+    .not('profit_margin', 'is', null);
 
   if (spinsError) {
     console.error('Error fetching spins:', spinsError);
