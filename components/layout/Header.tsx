@@ -168,6 +168,7 @@ const Header: React.FC = () => {
                   </button>
                 </div>
               )}
+            </div>
 
             {/* Right Spacer */}
             <div className="flex-1" />
