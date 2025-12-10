@@ -15,28 +15,28 @@ import { Link, useLocation } from 'react-router-dom';
 // ============================================
 
 const Icons = {
-  Home: ({ active }: { active?: boolean }) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  Home: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
       <polyline points="9 22 9 12 15 12 15 22" />
     </svg>
   ),
-  Inventory: ({ active }: { active?: boolean }) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  Inventory: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
       <line x1="3" y1="6" x2="21" y2="6" />
       <path d="M16 10a4 4 0 0 1-8 0" />
     </svg>
   ),
-  Deposit: ({ active }: { active?: boolean }) => (
+  Deposit: () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" fill={active ? "currentColor" : "none"} />
-      <line x1="12" y1="8" x2="12" y2="16" stroke={active ? "#1a1d24" : "currentColor"} />
-      <line x1="8" y1="12" x2="16" y2="12" stroke={active ? "#1a1d24" : "currentColor"} />
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="16" />
+      <line x1="8" y1="12" x2="16" y2="12" />
     </svg>
   ),
-  Trophy: ({ active }: { active?: boolean }) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  Trophy: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
       <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
       <path d="M4 22h16" />
@@ -45,8 +45,8 @@ const Icons = {
       <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
     </svg>
   ),
-  User: ({ active }: { active?: boolean }) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  User: () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
     </svg>
@@ -102,35 +102,35 @@ const BottomNav: React.FC = () => {
       <div className="bg-[#1a1d24] border-t border-[#252830]">
         <div className="flex items-center justify-around">
           <NavItem
-            icon={<Icons.Home active={isActive('/')} />}
+            icon={<Icons.Home />}
             label="Inicio"
             to="/"
             isActive={isActive('/')}
           />
           
           <NavItem
-            icon={<Icons.Inventory active={isActive('/inventory')} />}
+            icon={<Icons.Inventory />}
             label="Inventario"
             to="/inventory"
             isActive={isActive('/inventory')}
           />
           
           <NavItem
-            icon={<Icons.Deposit active={isActive('/deposit')} />}
+            icon={<Icons.Deposit />}
             label="Depositar"
             to="/deposit"
             isActive={isActive('/deposit')}
           />
           
           <NavItem
-            icon={<Icons.Trophy active={isActive('/rewards')} />}
+            icon={<Icons.Trophy />}
             label="Premios"
             to="/rewards"
             isActive={isActive('/rewards')}
           />
           
           <NavItem
-            icon={<Icons.User active={isActive('/profile')} />}
+            icon={<Icons.User />}
             label="Perfil"
             to="/profile"
             isActive={isActive('/profile')}
