@@ -5,5 +5,6 @@
 export { AnalyticsDashboard } from './AnalyticsDashboard';
 export { TierEditor } from './TierEditor';
 export { RiskSettings } from './RiskSettings';
+export { BoxAutoConfig } from './BoxAutoConfig';
 export * from './types';
 

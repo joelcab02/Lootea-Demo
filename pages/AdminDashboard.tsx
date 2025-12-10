@@ -13,8 +13,10 @@ import { Box, getBoxes, getBoxBySlug } from '../services/boxService';
 import type { User } from '@supabase/supabase-js';
 
 // Game Engine v2.0 Components
-import { AnalyticsDashboard, TierEditor, RiskSettings } from '../components/admin';
+import { AnalyticsDashboard, TierEditor, RiskSettings, BoxAutoConfig } from '../components/admin';
 import type { AdminBox, PrizeTier } from '../components/admin/types';
+import type { AutoConfigResult } from '../utils/boxAutoConfig';
+import { applyAutoConfig } from '../services/adminService';
 
 // Sections
 type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'users';
@@ -336,16 +338,6 @@ const AdminDashboard: React.FC = () => {
         {/* Navigation */}
         <nav className="flex-1 py-3 px-2">
           {navItems.map(item => (
-            item.link ? (
-              <Link
-                key={item.id}
-                to={item.link}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-md text-slate-400 hover:text-white hover:bg-[#1a1d24] transition-all text-[13px]"
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ) : (
               <button
                 key={item.id}
                 onClick={() => navigate(item.id as Section)}
@@ -358,7 +350,6 @@ const AdminDashboard: React.FC = () => {
                 {item.icon}
                 <span>{item.label}</span>
               </button>
-            )
           ))}
         </nav>
 
@@ -570,6 +561,9 @@ const BoxEditSection: React.FC<{
   
   // Box data for Game Engine v2.0
   const [boxData, setBoxData] = useState<AdminBox | null>(null);
+  
+  // Auto-config modal state
+  const [showAutoConfig, setShowAutoConfig] = useState(false);
   
   // Promo config state
   const [isPromo, setIsPromo] = useState(false);
@@ -1452,10 +1446,61 @@ const BoxEditSection: React.FC<{
 
           {/* === TAB: TIERS (Game Engine v2.0) === */}
           {activeTab === 'tiers' && !isNew && (
-            <TierEditor 
-              boxId={boxId} 
+            <div className="space-y-4">
+              {/* Auto-Config Button */}
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#F7C948]/10 to-transparent border border-[#F7C948]/20 rounded-lg">
+                <div>
+                  <div className="text-sm font-medium text-white">Auto-Configuración</div>
+                  <div className="text-xs text-slate-500">Calcula probabilidades óptimas para un RTP objetivo</div>
+                </div>
+                <button
+                  onClick={() => setShowAutoConfig(true)}
+                  className="px-4 py-2 bg-[#F7C948] text-black text-sm font-bold rounded-lg hover:bg-[#E6B800] transition-colors flex items-center gap-2"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                  </svg>
+                  Configurar Automático
+                </button>
+              </div>
+              
+              <TierEditor 
+                boxId={boxId} 
+                boxPrice={parseFloat(form.price) || 0}
+                onSave={loadBox}
+              />
+            </div>
+          )}
+          
+          {/* Auto-Config Modal */}
+          {showAutoConfig && (
+            <BoxAutoConfig
+              boxId={boxId}
+              boxName={form.name || 'Nueva Caja'}
               boxPrice={parseFloat(form.price) || 0}
-              onSave={loadBox}
+              items={boxItems.map(bi => {
+                const product = products.find(p => p.id === bi.item_id);
+                return {
+                  id: bi.item_id,
+                  name: product?.name || 'Unknown',
+                  price: product?.price || 0,
+                  value_cost: (product as any)?.value_cost || null,
+                };
+              })}
+              onApply={async (config) => {
+                setIsSaving(true);
+                try {
+                  // Apply configuration to database
+                  await applyAutoConfig(boxId, config, setIsSaving);
+                  setShowAutoConfig(false);
+                  loadBox(); // Refresh
+                } catch (err) {
+                  console.error('Error applying config:', err);
+                } finally {
+                  setIsSaving(false);
+                }
+              }}
+              onCancel={() => setShowAutoConfig(false)}
             />
           )}
 

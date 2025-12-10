@@ -393,3 +393,89 @@ export function calculateRTP(ev: number, boxPrice: number): { rtp: number; house
   return { rtp, houseEdge };
 }
 
+// ============================================
+// AUTO-CONFIG
+// ============================================
+
+import type { AutoConfigResult, TierConfig } from '../utils/boxAutoConfig';
+
+/**
+ * Apply auto-generated configuration to database
+ */
+export async function applyAutoConfig(
+  boxId: string,
+  config: AutoConfigResult,
+  setIsSaving?: (v: boolean) => void
+): Promise<boolean> {
+  try {
+    if (setIsSaving) setIsSaving(true);
+
+    // 1. Delete existing tiers for this box
+    await supabase
+      .from('prize_tiers')
+      .delete()
+      .eq('box_id', boxId);
+
+    // 2. Create new tiers
+    const tierInserts = config.tiers.map((tier, index) => ({
+      box_id: boxId,
+      tier_name: tier.tier_name,
+      display_name: tier.display_name,
+      probability: tier.probability,
+      avg_cost_value: tier.avg_value,
+      min_value: Math.min(...tier.items.map(i => i.value_cost ?? i.price)),
+      max_value: Math.max(...tier.items.map(i => i.value_cost ?? i.price)),
+      color_hex: tier.color_hex,
+      sort_order: index,
+      requires_risk_check: tier.tier_name === 'rare' || tier.tier_name === 'jackpot',
+      is_active: true,
+    }));
+
+    const { data: insertedTiers, error: tierError } = await supabase
+      .from('prize_tiers')
+      .insert(tierInserts)
+      .select();
+
+    if (tierError) {
+      console.error('Error creating tiers:', tierError);
+      return false;
+    }
+
+    // 3. Assign items to tiers and set value_cost
+    for (const tier of config.tiers) {
+      const dbTier = insertedTiers?.find(t => t.tier_name === tier.tier_name);
+      if (!dbTier) continue;
+
+      for (const item of tier.items) {
+        // Update item with tier_id and value_cost
+        await supabase
+          .from('items')
+          .update({ 
+            tier_id: dbTier.id,
+            value_cost: item.value_cost ?? item.price,
+          })
+          .eq('id', item.id);
+      }
+    }
+
+    // 4. Update box settings
+    await supabase
+      .from('boxes')
+      .update({
+        base_ev: config.actual_rtp,
+        max_daily_loss: 100000, // Default
+        volatility: 'medium',
+      })
+      .eq('id', boxId);
+
+    console.log('Auto-config applied successfully');
+    return true;
+
+  } catch (err) {
+    console.error('Error applying auto-config:', err);
+    return false;
+  } finally {
+    if (setIsSaving) setIsSaving(false);
+  }
+}
+
