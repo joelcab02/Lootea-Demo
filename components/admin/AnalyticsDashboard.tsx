@@ -131,7 +131,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onNaviga
       <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg overflow-hidden">
         <div className="px-4 py-3 border-b border-[#1a1d24]">
           <h3 className="text-sm font-medium text-white flex items-center gap-2">
-            <span className="text-[#F7C948]">🏆</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#F7C948]"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
             Premios Grandes Recientes
           </h3>
         </div>
@@ -234,7 +234,7 @@ const RiskAlertCard: React.FC<{
   >
     <div className="flex items-center gap-3">
       <div className={`text-xl ${alert.severity === 'critical' ? 'text-red-400' : 'text-amber-400'}`}>
-        {alert.severity === 'critical' ? '🚨' : '⚠️'}
+        {alert.severity === 'critical' ? '!' : '!'}
       </div>
       <div>
         <div className={`text-sm font-medium ${alert.severity === 'critical' ? 'text-red-300' : 'text-amber-300'}`}>
@@ -310,7 +310,7 @@ const RecentWinRow: React.FC<{ win: RecentWin }> = ({ win }) => {
     <div className="px-4 py-3 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 bg-[#F7C948]/10 rounded-full flex items-center justify-center text-[#F7C948]">
-          🎁
+          +
         </div>
         <div>
           <div className="text-sm text-white">{win.item_name}</div>

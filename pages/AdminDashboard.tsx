@@ -17,7 +17,7 @@ import { AnalyticsDashboard, TierEditor, RiskSettings } from '../components/admi
 import type { AdminBox, PrizeTier } from '../components/admin/types';
 
 // Sections
-type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'assets' | 'users';
+type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'users';
 
 // User type for CRM
 interface UserData {
@@ -302,7 +302,6 @@ const AdminDashboard: React.FC = () => {
     dashboard: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
     boxes: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
     products: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>,
-    assets: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
     back: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>,
     plus: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
     trash: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
@@ -316,7 +315,6 @@ const AdminDashboard: React.FC = () => {
     { id: 'users', icon: icons.users, label: 'Usuarios' },
     { id: 'boxes', icon: icons.boxes, label: 'Cajas' },
     { id: 'products', icon: icons.products, label: 'Productos' },
-    { id: 'assets', icon: icons.assets, label: 'Asset Factory', link: '/assets' },
   ];
 
   return (
@@ -1058,7 +1056,7 @@ const BoxEditSection: React.FC<{
                 : 'text-slate-400 hover:text-white'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            🎯 Tiers
+            Tiers
           </button>
           <button
             onClick={() => setActiveTab('risk')}
@@ -1069,7 +1067,7 @@ const BoxEditSection: React.FC<{
                 : 'text-slate-400 hover:text-white'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            ⚠️ Risk
+            Risk
           </button>
           <button
             onClick={() => setActiveTab('promo')}

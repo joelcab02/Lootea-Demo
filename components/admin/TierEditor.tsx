@@ -25,10 +25,10 @@ const TIER_COLORS: Record<string, string> = {
 };
 
 const TIER_ICONS: Record<string, string> = {
-  common: '⚪',
-  mid: '🔵',
-  rare: '🟣',
-  jackpot: '🟡',
+  common: 'C',
+  mid: 'M',
+  rare: 'R',
+  jackpot: 'J',
 };
 
 export const TierEditor: React.FC<TierEditorProps> = ({ boxId, boxPrice, onSave }) => {
@@ -170,7 +170,7 @@ export const TierEditor: React.FC<TierEditorProps> = ({ boxId, boxPrice, onSave 
       {Math.abs(totalProbability - 1) > 0.001 && (
         <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
           <div className="text-sm text-amber-400">
-            ⚠️ Las probabilidades de los tiers deben sumar 100% (actualmente: {(totalProbability * 100).toFixed(2)}%)
+            Las probabilidades de los tiers deben sumar 100% (actualmente: {(totalProbability * 100).toFixed(2)}%)
           </div>
         </div>
       )}
@@ -190,7 +190,7 @@ export const TierEditor: React.FC<TierEditorProps> = ({ boxId, boxPrice, onSave 
               {/* Tier Header */}
               <div className="p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">{TIER_ICONS[tier.tier_name] || '⚪'}</span>
+                  <span className="text-sm font-bold w-6 h-6 rounded flex items-center justify-center" style={{ backgroundColor: tier.color_hex + '30', color: tier.color_hex }}>{TIER_ICONS[tier.tier_name] || 'C'}</span>
                   <div>
                     <div className="text-sm font-medium text-white">{tier.display_name}</div>
                     <div className="text-[10px] text-slate-500 uppercase">{tier.tier_name}</div>
@@ -297,7 +297,7 @@ export const TierEditor: React.FC<TierEditorProps> = ({ boxId, boxPrice, onSave 
       {getUnassignedItems().length > 0 && (
         <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
           <div className="text-sm text-amber-400 mb-2">
-            ⚠️ {getUnassignedItems().length} items sin tier asignado
+            {getUnassignedItems().length} items sin tier asignado
           </div>
           <div className="flex flex-wrap gap-1">
             {getUnassignedItems().map(item => (
