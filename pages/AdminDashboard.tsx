@@ -17,7 +17,7 @@ import { AnalyticsDashboard, TierEditor, RiskSettings } from '../components/admi
 import type { AdminBox, PrizeTier } from '../components/admin/types';
 
 // Sections
-type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'assets' | 'users' | 'user-detail';
+type Section = 'dashboard' | 'boxes' | 'box-edit' | 'products' | 'product-edit' | 'assets' | 'users';
 
 // User type for CRM
 interface UserData {
@@ -404,7 +404,6 @@ const AdminDashboard: React.FC = () => {
           <h1 className="text-sm font-medium text-white">
             {section === 'dashboard' && 'Dashboard'}
             {section === 'users' && 'Usuarios'}
-            {section === 'user-detail' && 'Detalle de Usuario'}
             {section === 'boxes' && 'Cajas'}
             {section === 'box-edit' && (editId ? 'Editar Caja' : 'Nueva Caja')}
             {section === 'products' && 'Productos'}
@@ -445,9 +444,6 @@ const AdminDashboard: React.FC = () => {
               {section === 'users' && (
                 <UsersSection users={users} navigate={navigate} onRefresh={refreshData} setIsSaving={setIsSaving} />
               )}
-              {section === 'user-detail' && (
-                <UserDetailSection userId={editId} navigate={navigate} onRefresh={refreshData} setIsSaving={setIsSaving} />
-              )}
             </>
           )}
         </div>
@@ -460,81 +456,6 @@ const AdminDashboard: React.FC = () => {
 const LoadingState = () => (
   <div className="flex items-center justify-center h-64">
     <div className="w-8 h-8 border-2 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin"></div>
-  </div>
-);
-
-// === DASHBOARD SECTION ===
-const DashboardSection: React.FC<{
-  stats: { boxes: number; products: number; totalValue: number };
-  boxes: Box[];
-  navigate: (section: Section, id?: string) => void;
-}> = ({ stats, boxes, navigate }) => (
-  <div className="space-y-5">
-    {/* Stats Cards */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-        <div className="text-2xl font-semibold text-white">{stats.boxes}</div>
-        <div className="text-xs text-slate-500 mt-1">Cajas activas</div>
-      </div>
-      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-        <div className="text-2xl font-semibold text-white">{stats.products}</div>
-        <div className="text-xs text-slate-500 mt-1">Productos en catálogo</div>
-      </div>
-      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-        <div className="text-2xl font-semibold text-[#F7C948]">${stats.totalValue.toLocaleString()}</div>
-        <div className="text-xs text-slate-500 mt-1">Valor total del inventario</div>
-      </div>
-    </div>
-
-    {/* Quick Actions */}
-    <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-      <h2 className="text-sm font-medium text-white mb-3">Acciones rápidas</h2>
-      <div className="flex flex-wrap gap-2">
-        <button
-          onClick={() => navigate('box-edit')}
-          className="px-3 py-1.5 bg-[#F7C948] text-black text-xs font-medium rounded hover:bg-[#EAB308] transition-colors"
-        >
-          Nueva Caja
-        </button>
-        <button
-          onClick={() => navigate('product-edit')}
-          className="px-3 py-1.5 bg-[#1a1d24] text-white text-xs font-medium rounded hover:bg-[#252830] transition-colors"
-        >
-          Nuevo Producto
-        </button>
-        <Link
-          to="/assets"
-          className="px-3 py-1.5 bg-[#1a1d24] text-white text-xs font-medium rounded hover:bg-[#252830] transition-colors"
-        >
-          Generar Assets
-        </Link>
-      </div>
-    </div>
-
-    {/* Recent Boxes */}
-    <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-5">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-medium text-white">Cajas recientes</h2>
-        <button onClick={() => navigate('boxes')} className="text-xs text-slate-400 hover:text-white transition-colors">
-          Ver todas
-        </button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {boxes.slice(0, 3).map(box => (
-          <div 
-            key={box.id}
-            onClick={() => navigate('box-edit', box.id)}
-            className="bg-[#08090c] border border-[#1a1d24] rounded-md p-3 hover:border-[#F7C948]/50 cursor-pointer transition-all"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-white">{box.name}</span>
-              <span className="text-[#F7C948] text-sm font-medium">${box.price}</span>
-            </div>
-            <div className="text-[11px] text-slate-500 mt-1">/box/{box.slug}</div>
-          </div>
-        ))}
-      </div>
-    </div>
   </div>
 );
 
@@ -2315,7 +2236,6 @@ const UsersSection: React.FC<{
               <th className="py-3 px-4 text-right font-medium">Balance</th>
               <th className="py-3 px-4 text-right font-medium">Inventario</th>
               <th className="py-3 px-4 font-medium">Registro</th>
-              <th className="py-3 px-4 text-right font-medium">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -2360,14 +2280,6 @@ const UsersSection: React.FC<{
                     {formatDate(user.created_at)}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-right">
-                  <button
-                    onClick={() => navigate('user-detail', user.id)}
-                    className="px-2 py-1 text-slate-400 text-[11px] font-medium rounded hover:text-white hover:bg-[#1a1d24] transition-colors"
-                  >
-                    Ver detalle
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>
@@ -2383,269 +2295,5 @@ const UsersSection: React.FC<{
   );
 };
 
-// === USER DETAIL SECTION ===
-const UserDetailSection: React.FC<{
-  userId: string;
-  navigate: (section: Section, id?: string) => void;
-  onRefresh: () => void;
-  setIsSaving: (v: boolean) => void;
-}> = ({ userId, navigate, onRefresh, setIsSaving }) => {
-  const [user, setUser] = useState<any>(null);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [inventory, setInventory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [balanceAdjust, setBalanceAdjust] = useState('');
-
-  useEffect(() => {
-    loadUserData();
-  }, [userId]);
-
-  const loadUserData = async () => {
-    setLoading(true);
-    
-    const [profileRes, walletRes, transactionsRes, inventoryRes] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', userId).single(),
-      supabase.from('wallets').select('*').eq('user_id', userId).single(),
-      supabase.from('transactions').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(20),
-      supabase.from('inventory').select('*, items(*)').eq('user_id', userId).eq('status', 'available')
-    ]);
-
-    if (profileRes.data) {
-      setUser({
-        ...profileRes.data,
-        balance: walletRes.data?.balance || 0
-      });
-    }
-    
-    setTransactions(transactionsRes.data || []);
-    setInventory(inventoryRes.data || []);
-    setLoading(false);
-  };
-
-  const handleAdjustBalance = async (amount: number) => {
-    if (!amount) return;
-    
-    setIsSaving(true);
-    
-    // Get current balance
-    const { data: wallet } = await supabase
-      .from('wallets')
-      .select('balance')
-      .eq('user_id', userId)
-      .single();
-    
-    const currentBalance = wallet?.balance || 0;
-    const newBalance = currentBalance + amount;
-    
-    // Update wallet
-    await supabase
-      .from('wallets')
-      .upsert({ user_id: userId, balance: newBalance, currency: 'MXN' });
-    
-    // Record transaction
-    await supabase.from('transactions').insert({
-      user_id: userId,
-      type: amount > 0 ? 'deposit' : 'withdrawal',
-      amount: Math.abs(amount),
-      balance_before: currentBalance,
-      balance_after: newBalance,
-      status: 'completed',
-      reference_type: 'admin_adjustment'
-    });
-    
-    setBalanceAdjust('');
-    await loadUserData();
-    onRefresh();
-    setIsSaving(false);
-  };
-
-  const handleToggleAdmin = async () => {
-    if (!user) return;
-    setIsSaving(true);
-    
-    await supabase
-      .from('profiles')
-      .update({ is_admin: !user.is_admin })
-      .eq('id', userId);
-    
-    await loadUserData();
-    onRefresh();
-    setIsSaving(false);
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString('es-MX', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-slate-500">Usuario no encontrado</p>
-        <button onClick={() => navigate('users')} className="mt-4 text-[#F7C948] hover:underline">
-          Volver a usuarios
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Back button */}
-      <button onClick={() => navigate('users')} className="text-slate-400 hover:text-white text-sm">
-        ← Volver a usuarios
-      </button>
-
-      {/* User Header */}
-      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-[#1a1d24] rounded-full flex items-center justify-center text-2xl font-bold text-slate-400">
-              {(user.display_name || user.email)[0].toUpperCase()}
-            </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl font-bold text-white">
-                  {user.display_name || user.email.split('@')[0]}
-                </h2>
-                {user.is_admin && (
-                  <span className="px-2 py-1 bg-[#F7C948]/10 text-[#F7C948] text-xs font-bold rounded">
-                    ADMIN
-                  </span>
-                )}
-              </div>
-              <p className="text-slate-400 text-sm">{user.email}</p>
-              <p className="text-slate-500 text-xs mt-1">ID: {user.id}</p>
-            </div>
-          </div>
-          
-          <button
-            onClick={handleToggleAdmin}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              user.is_admin
-                ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
-                : 'bg-[#F7C948]/10 text-[#F7C948] hover:bg-[#F7C948]/20'
-            }`}
-          >
-            {user.is_admin ? 'Quitar Admin' : 'Hacer Admin'}
-          </button>
-        </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
-          <div className="text-2xl font-semibold text-[#F7C948]">${user.balance.toLocaleString()}</div>
-          <div className="text-xs text-slate-500">Balance actual</div>
-        </div>
-        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
-          <div className="text-2xl font-semibold text-white">{inventory.length}</div>
-          <div className="text-xs text-slate-500">Items en inventario</div>
-        </div>
-        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
-          <div className="text-2xl font-semibold text-white">Nivel {user.level}</div>
-          <div className="text-xs text-slate-500">Nivel de usuario</div>
-        </div>
-        <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
-          <div className="text-2xl font-semibold text-white">{transactions.length}</div>
-          <div className="text-xs text-slate-500">Transacciones</div>
-        </div>
-      </div>
-
-      {/* Balance Adjustment */}
-      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
-        <h3 className="text-sm font-medium text-white mb-3">Ajustar Balance</h3>
-        <div className="flex gap-3">
-          <input
-            type="number"
-            value={balanceAdjust}
-            onChange={(e) => setBalanceAdjust(e.target.value)}
-            placeholder="Cantidad (positivo o negativo)"
-            className="flex-1 px-4 py-2 bg-[#08090c] border border-[#1a1d24] rounded-lg text-white text-sm focus:border-[#F7C948] outline-none"
-          />
-          <button
-            onClick={() => handleAdjustBalance(parseFloat(balanceAdjust))}
-            disabled={!balanceAdjust}
-            className="px-4 py-2 bg-[#F7C948] text-black font-bold text-sm rounded-lg hover:bg-[#EAB308] transition-colors disabled:opacity-50"
-          >
-            Aplicar
-          </button>
-        </div>
-        <p className="text-xs text-slate-500 mt-2">
-          Usa valores negativos para restar balance
-        </p>
-      </div>
-
-      {/* Recent Transactions */}
-      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
-        <h3 className="text-sm font-medium text-white mb-3">Transacciones Recientes</h3>
-        {transactions.length > 0 ? (
-          <div className="space-y-2 max-h-64 overflow-y-auto">
-            {transactions.map(tx => (
-              <div key={tx.id} className="flex items-center justify-between py-2 border-b border-[#1a1d24] last:border-0">
-                <div>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    tx.type === 'deposit' || tx.type === 'win' || tx.type === 'sale'
-                      ? 'bg-emerald-500/10 text-emerald-400'
-                      : 'bg-red-500/10 text-red-400'
-                  }`}>
-                    {tx.type.toUpperCase()}
-                  </span>
-                  <span className="text-xs text-slate-500 ml-2">{formatDate(tx.created_at)}</span>
-                </div>
-                <span className={`font-bold text-sm ${
-                  tx.type === 'deposit' || tx.type === 'win' || tx.type === 'sale'
-                    ? 'text-emerald-400'
-                    : 'text-red-400'
-                }`}>
-                  {tx.type === 'deposit' || tx.type === 'win' || tx.type === 'sale' ? '+' : '-'}${tx.amount.toLocaleString()}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-slate-500 text-sm">Sin transacciones</p>
-        )}
-      </div>
-
-      {/* Inventory */}
-      <div className="bg-[#0c0e14] border border-[#1a1d24] rounded-lg p-4">
-        <h3 className="text-sm font-medium text-white mb-3">Inventario ({inventory.length} items)</h3>
-        {inventory.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-64 overflow-y-auto">
-            {inventory.map(inv => (
-              <div key={inv.id} className="bg-[#08090c] border border-[#1a1d24] rounded-lg p-3 text-center">
-                <div className="w-12 h-12 mx-auto bg-[#1a1d24] rounded flex items-center justify-center mb-2">
-                  {inv.items?.image_url ? (
-                    <img src={inv.items.image_url} alt="" className="w-full h-full object-contain rounded" />
-                  ) : (
-                    <span className="text-slate-500 text-xs">?</span>
-                  )}
-                </div>
-                <p className="text-xs text-white truncate">{inv.items?.name || 'Item'}</p>
-                <p className="text-xs text-[#F7C948] font-bold">${inv.items?.price?.toLocaleString() || 0}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-slate-500 text-sm">Inventario vacío</p>
-        )}
-      </div>
-    </div>
-  );
-};
 
 export default AdminDashboard;
