@@ -7,10 +7,17 @@ import { supabase, testConnection, forceReconnect } from './supabaseClient';
 import { refreshWallet, isLoggedIn, getAuthState } from './authService';
 import type { LootItem } from '../core/types/game.types';
 import { Rarity } from '../core/types/game.types';
-import type { PlayResult, OpenBoxResponse } from '../core/types/api.types';
+import type { PlayResult, GameEngineResponse } from '../core/types/api.types';
 
 // Re-export for compatibility
 export type { PlayResult } from '../core/types/api.types';
+
+/**
+ * Generate a unique request ID for idempotency
+ */
+function generateRequestId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+}
 
 /**
  * Check if user can play (logged in + has balance)
@@ -80,11 +87,17 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       }
     }
     
-    // 3. Ejecutar RPC con timeout (el timeout global de 15s aplica)
-    console.log('📡 Calling open_box RPC with boxId:', boxId);
+    // 3. Generate request ID for idempotency
+    const requestId = generateRequestId();
+    
+    // 4. Ejecutar RPC game_engine_play (v2)
+    console.log('📡 Calling game_engine_play RPC with boxId:', boxId, 'requestId:', requestId);
     const startTime = Date.now();
     
-    const { data, error } = await supabase.rpc('open_box', { p_box_id: boxId });
+    const { data, error } = await supabase.rpc('game_engine_play', { 
+      p_box_id: boxId,
+      p_request_id: requestId
+    });
     
     console.log('✅ RPC completed in', Date.now() - startTime, 'ms');
     
@@ -103,7 +116,7 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       };
     }
     
-    const response = data as OpenBoxResponse;
+    const response = data as GameEngineResponse;
     
     if (!response.success) {
       return {
@@ -113,14 +126,20 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       };
     }
     
-    // Convert winner to LootItem format
-    const winner: LootItem = {
+    // Log if result was cached (idempotency)
+    if (response.cached) {
+      console.log('📦 Result was cached (idempotent retry)');
+    }
+    
+    // Convert winner to LootItem format with tier
+    const winner: LootItem & { tier?: string } = {
       id: response.winner!.id,
       name: response.winner!.name,
       price: response.winner!.price,
       rarity: response.winner!.rarity as Rarity,
       image: response.winner!.image,
-      odds: 0 // Not needed for display
+      odds: 0, // Not needed for display
+      tier: response.winner!.tier
     };
     
     // Refresh wallet to update balance in UI
@@ -131,7 +150,9 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       winner,
       spinId: response.spin_id,
       ticket: response.ticket,
-      newBalance: response.new_balance
+      newBalance: response.new_balance,
+      cached: response.cached,
+      profitMargin: response.profit_margin
     };
     
   } catch (err: any) {

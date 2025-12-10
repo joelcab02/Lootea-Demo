@@ -24,16 +24,18 @@ export type ConnectionState = 'connected' | 'connecting' | 'disconnected' | 'err
  */
 export interface PlayResult {
   success: boolean;
-  winner?: LootItem;
+  winner?: LootItem & { tier?: string };
   spinId?: string;
   ticket?: number;
   newBalance?: number;
-  error?: 'NOT_AUTHENTICATED' | 'INSUFFICIENT_FUNDS' | 'BOX_NOT_FOUND' | 'BOX_EMPTY' | 'INTERNAL_ERROR';
+  cached?: boolean;
+  profitMargin?: number;
+  error?: 'NOT_AUTHENTICATED' | 'INSUFFICIENT_FUNDS' | 'BOX_NOT_FOUND' | 'BOX_EMPTY' | 'NO_TIERS_CONFIGURED' | 'NO_ITEMS_IN_TIER' | 'INTERNAL_ERROR';
   message?: string;
 }
 
 /**
- * Respuesta del RPC open_box (interno)
+ * Respuesta del RPC open_box (legacy)
  */
 export interface OpenBoxResponse {
   success: boolean;
@@ -48,6 +50,31 @@ export interface OpenBoxResponse {
   ticket?: number;
   new_balance?: number;
   cost?: number;
+  error?: string;
+  message?: string;
+  required?: number;
+  current?: number;
+}
+
+/**
+ * Respuesta del RPC game_engine_play (v2)
+ */
+export interface GameEngineResponse {
+  success: boolean;
+  cached?: boolean;
+  winner?: {
+    id: string;
+    name: string;
+    price: number;
+    rarity: string;
+    image: string;
+    tier: string;
+  };
+  spin_id?: string;
+  ticket?: number;
+  new_balance?: number;
+  cost?: number;
+  profit_margin?: number;
   error?: string;
   message?: string;
   required?: number;
