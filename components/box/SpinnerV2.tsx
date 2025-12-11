@@ -1,11 +1,10 @@
 /**
- * SpinnerV2 - Modelo PackDraw
+ * SpinnerV2 - Stake Style
  * 
- * Principios:
- * 1. Solo hace UNA cosa: animar hacia un winner dado
- * 2. NO decide el winner - siempre viene como prop
- * 3. SIEMPRE llama onComplete al terminar
- * 4. Diseño idéntico al original
+ * Colors:
+ * - Background: #0f212e → #1a2c38 (teal)
+ * - Indicator: #3b82f6 (blue)
+ * - Winner glow: Blue
  */
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
@@ -17,26 +16,15 @@ import { calculateTicketRanges, selectWeightedWinner } from '../../services/odds
 import { formatPrice } from '../../lib/format';
 
 // ============================================
-// TYPES - Interfaz limpia y simple
+// TYPES
 // ============================================
 
 interface SpinnerProps {
-  /** Items para generar el strip visual */
   items: LootItem[];
-  
-  /** Winner YA determinado - REQUERIDO cuando isSpinning=true */
   winner: LootItem | null;
-  
-  /** Trigger de animación */
   isSpinning: boolean;
-  
-  /** Loading state - shows skeleton while loading new box */
   isLoading?: boolean;
-  
-  /** Duración de la animación en ms */
   duration?: number;
-  
-  /** Callback cuando termina la animación - SIEMPRE se llama */
   onComplete: () => void;
 }
 
@@ -71,7 +59,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   const [displayWinner, setDisplayWinner] = useState<LootItem | null>(null);
   const [showWinnerEffect, setShowWinnerEffect] = useState(false);
   
-  // Mutable animation state - using performance.now() for precise timing
   const stateRef = useRef({
     startTime: 0,
     targetX: 0,
@@ -97,7 +84,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   const ITEM_WIDTH = cardWidth + cardGap;
 
   // ============================================
-  // ITEMS WITH TICKETS (memoized)
+  // ITEMS WITH TICKETS
   // ============================================
   
   const itemsWithTickets = useMemo(() => {
@@ -123,7 +110,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       }
     }
 
-    // Near miss: poner item legendario cerca del winner
     if (winnerItem.rarity !== Rarity.LEGENDARY) {
       const legendary = itemsWithTickets.find(i => i.rarity === Rarity.LEGENDARY);
       if (legendary) {
@@ -138,9 +124,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     setStrip(newStrip);
   }, [itemsWithTickets]);
 
-  // Initialize strip on mount AND when items change (e.g., navigating to different box)
   useEffect(() => {
-    // When items are cleared (loading new box), clear the strip immediately
     if (itemsWithTickets.length === 0) {
       if (strip.length > 0) {
         setStrip([]);
@@ -151,24 +135,19 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       return;
     }
     
-    // Create a key from item IDs to detect when items change
     const itemsKey = itemsWithTickets.map(i => i.id).sort().join(',');
     
-    // Only regenerate if items actually changed or strip is empty
     if (itemsKey !== prevItemsKeyRef.current || strip.length === 0) {
       prevItemsKeyRef.current = itemsKey;
       
-      // Reset visual state when box changes
       setShowWinnerEffect(false);
       setDisplayWinner(null);
       
-      // Reset strip position
       if (containerRef.current) {
         const ITEM_WIDTH_LOCAL = (isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH) + (isDesktop ? CARD_GAP_DESKTOP : CARD_GAP);
         containerRef.current.style.transform = `translate3d(${-INITIAL_POSITION * ITEM_WIDTH_LOCAL}px,0,0)`;
       }
       
-      // Generate new strip with new items
       const result = selectWeightedWinner(itemsWithTickets);
       if (result) generateStrip(result.winner);
     }
@@ -188,16 +167,14 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     const elapsed = now - state.startTime;
     const rawProgress = Math.min(elapsed / duration, 1);
     
-    // Simplified easing - single cubic ease-out for smoother animation
     const ease = 1 - Math.pow(1 - rawProgress, 3);
     
     const newX = state.targetX * ease;
     state.currentX = newX;
 
-    // Tick sound - throttled to prevent audio overlap
     const tickPosition = Math.abs(newX);
     const currentIndex = (tickPosition / ITEM_WIDTH) | 0;
-    const minTickInterval = 30; // Minimum ms between ticks
+    const minTickInterval = 30;
 
     if (currentIndex !== state.lastIndex && currentIndex > state.lastIndex) {
       const timeSinceLastTick = now - state.lastTickTime;
@@ -209,7 +186,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       }
     }
 
-    // DOM update - use will-change for GPU acceleration
     const startX = -INITIAL_POSITION * ITEM_WIDTH;
     if (containerRef.current) {
       containerRef.current.style.transform = `translate3d(${startX + newX}px,0,0)`;
@@ -218,14 +194,10 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     if (rawProgress < 1) {
       animationFrameId.current = requestAnimationFrame(animate);
     } else {
-      // ANIMATION COMPLETE
       state.isAnimating = false;
       if (navigator.vibrate) navigator.vibrate(30);
       
-      // Mostrar efecto de winner - permanece hasta el siguiente spin
       setShowWinnerEffect(true);
-      
-      // SIEMPRE llamar onComplete
       onComplete();
     }
   }, [duration, ITEM_WIDTH, onComplete]);
@@ -243,21 +215,14 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     if (justStartedSpinning && winner) {
       console.log('[SpinnerV2] Starting spin with winner:', winner.name);
       
-      // Limpiar efectos inmediatamente - sin delay
       setShowWinnerEffect(false);
-      
-      // Lock winner for display
       setDisplayWinner(winner);
-      
-      // Generate strip
       generateStrip(winner);
 
-      // Calculate animation
       const startX = -INITIAL_POSITION * ITEM_WIDTH;
       const endX = -WINNING_INDEX * ITEM_WIDTH;
       const travelDistance = endX - startX;
 
-      // Reset state
       stateRef.current = {
         startTime: 0,
         targetX: travelDistance,
@@ -267,18 +232,15 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         isAnimating: true,
       };
 
-      // Reset position
       if (containerRef.current) {
         containerRef.current.style.transform = `translate3d(${startX}px,0,0)`;
       }
 
-      // Start animation immediately
       cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = requestAnimationFrame(animate);
     }
   }, [isSpinning, winner, generateStrip, animate, ITEM_WIDTH]);
 
-  // Cleanup
   useEffect(() => {
     return () => cancelAnimationFrame(animationFrameId.current);
   }, []);
@@ -293,65 +255,64 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     <div 
       className="relative w-full h-[280px] sm:h-[320px] flex items-center"
       style={{
-        background: 'linear-gradient(180deg, #0a0a0a 0%, #111111 50%, #0a0a0a 100%)',
+        background: 'linear-gradient(180deg, #0f212e 0%, #1a2c38 50%, #0f212e 100%)',
         overflow: 'clip',
         overflowY: 'visible',
       }}
     >
-      {/* Bottom border */}
-      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F7C948]/40 to-transparent z-30" />
+      {/* Bottom border - Stake style */}
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#2f4553] z-30" />
       
-      {/* Winner Glow - fixed in center, BEHIND the cards */}
+      {/* Winner Glow - Blue */}
       {showWinnerEffect && (
         <div 
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
           style={{
             width: `${cardWidth * 2}px`,
             height: `${cardWidth * 2}px`,
-            background: 'radial-gradient(circle, rgba(247,201,72,0.35) 0%, rgba(247,201,72,0.12) 40%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(59,130,246,0.4) 0%, rgba(59,130,246,0.15) 40%, transparent 70%)',
             borderRadius: '50%',
           }}
         />
       )}
       
-      {/* Center Indicator */}
+      {/* Center Indicator - Blue */}
       <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showWinnerEffect ? 'opacity-0' : 'opacity-100'}`}>
         <div 
-          className="absolute left-1/2 top-0 bottom-0 w-[3px] -translate-x-1/2"
+          className="absolute left-1/2 top-0 bottom-0 w-[3px] -translate-x-1/2 bg-[#3b82f6]"
           style={{
-            background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 50%, #D4A520 100%)',
-            boxShadow: '0 0 15px rgba(247,201,72,0.4), 0 0 30px rgba(247,201,72,0.15)',
+            boxShadow: '0 0 15px rgba(59,130,246,0.5), 0 0 30px rgba(59,130,246,0.2)',
           }}
         />
         
-        {/* Top arrow */}
+        {/* Top arrow - Blue */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[2px]">
           <div 
             className="w-0 h-0"
             style={{
               borderLeft: '10px solid transparent',
               borderRight: '10px solid transparent',
-              borderTop: '14px solid #F7C948',
+              borderTop: '14px solid #3b82f6',
               filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
             }}
           />
         </div>
         
-        {/* Bottom arrow */}
+        {/* Bottom arrow - Blue */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[2px]">
           <div 
             className="w-0 h-0"
             style={{
               borderLeft: '10px solid transparent',
               borderRight: '10px solid transparent',
-              borderBottom: '14px solid #F7C948',
+              borderBottom: '14px solid #3b82f6',
               filter: 'drop-shadow(0 -2px 4px rgba(0,0,0,0.5))',
             }}
           />
         </div>
       </div>
 
-      {/* Loading Skeleton - smooth fade in/out */}
+      {/* Loading Skeleton - Stake colors */}
       <div 
         className={`absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 ease-out ${isLoading || strip.length === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
@@ -363,7 +324,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
               style={{
                 width: `${cardWidth}px`,
                 height: `${cardWidth * 1.2}px`,
-                background: 'linear-gradient(180deg, #1a1d26 0%, #12141a 100%)',
+                background: 'linear-gradient(180deg, #213743 0%, #1a2c38 100%)',
                 opacity: i === 2 ? 1 : 0.5,
               }}
             />
@@ -371,7 +332,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         </div>
       </div>
 
-      {/* Strip Container - smooth fade transition */}
+      {/* Strip Container */}
       <div 
         className={`flex items-center justify-center h-full will-change-transform transition-opacity duration-300 ease-out ${isLoading || strip.length === 0 ? 'opacity-0' : 'opacity-100'}`}
         ref={containerRef}
@@ -387,7 +348,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
           const isWinnerCard = showWinnerEffect && displayWinner && index === WINNING_INDEX && item.id === displayWinner.id;
           const isLoserCard = showWinnerEffect && !isWinnerCard;
           
-          // Determinar animacion
           let cardAnimation: string | undefined;
           if (isWinnerCard) {
             cardAnimation = 'winnerReveal 0.6s ease-out forwards';
@@ -407,17 +367,15 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 animation: cardAnimation,
               }}
             >
-              {/* Card */}
               <div className="relative rounded-xl overflow-hidden">
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
-              
             </div>
           );
         })}
       </div>
 
-      {/* Winner Info - positioned outside strip to avoid overflow clipping */}
+      {/* Winner Info - Blue accent */}
       {showWinnerEffect && displayWinner && (
         <div 
           className="absolute left-1/2 -translate-x-1/2 text-center px-4 pointer-events-none"
@@ -427,10 +385,10 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
             zIndex: 60,
           }}
         >
-          <p className="text-white font-medium text-sm sm:text-base leading-tight line-clamp-2">
+          <p className="text-white font-semibold text-sm sm:text-base leading-tight line-clamp-2">
             {displayWinner.name}
           </p>
-          <p className="text-[#F7C948] font-bold text-sm mt-1">{formatPrice(displayWinner.price)}</p>
+          <p className="text-[#3b82f6] font-bold text-sm mt-1">{formatPrice(displayWinner.price)}</p>
         </div>
       )}
     </div>

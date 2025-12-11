@@ -197,8 +197,8 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               className={`
                 h-10 px-4 rounded-lg flex items-center gap-2 border transition-all text-sm font-medium
                 ${demoMode 
-                  ? 'bg-[#213743] border-[#3d5564] text-[#3b82f6]' 
-                  : 'bg-[#213743] border-[#3d5564] text-[#00e701]'}
+                  ? 'bg-[#213743] border-[#3d5564] text-[#b1bad3]' 
+                  : 'bg-[#213743] border-[#3d5564] text-[#3b82f6]'}
               `}
             >
               {demoMode ? (

@@ -24,7 +24,7 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items, boxName }) => 
       {/* Header - Box Name + Content Info */}
       <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
         <div 
-          className="w-1 h-12 rounded-full bg-[#00e701]"
+          className="w-1 h-12 rounded-full bg-[#3b82f6]"
         />
         <div>
           {boxName && (
@@ -67,7 +67,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
       <div className="p-4 pb-2">
         <div className="relative w-full aspect-square flex items-center justify-center">
           {isLoading ? (
-            <div className="w-10 h-10 border-2 border-[#3d5564] border-t-[#00e701] rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-[#3d5564] border-t-[#3b82f6] rounded-full animate-spin" />
           ) : isEmoji ? (
             <span className="text-5xl drop-shadow-lg">{item.image}</span>
           ) : (
@@ -90,7 +90,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
         
         {/* Price bar */}
         <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-[#1a2c38]">
-          <span className="text-[#00e701] text-xs font-semibold">
+          <span className="text-[#3b82f6] text-xs font-semibold">
             {formatPrice(item.price, false)}
           </span>
           <span className="text-[#5f6c7b] text-[10px] font-medium">
