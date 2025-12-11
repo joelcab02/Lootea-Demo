@@ -275,11 +275,18 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       className="relative w-full flex items-center justify-center overflow-hidden"
       style={{
         height: `${spinnerHeight}px`,
-        background: 'linear-gradient(180deg, #0f212e 0%, #1a2c38 50%, #0f212e 100%)',
+        background: '#1a2c38',
+        border: '1px solid #2f4553',
+        borderRadius: '12px',
       }}
     >
-      {/* Bottom border - Stake style */}
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#2f4553] z-30" />
+      {/* Vignette overlay - subtle depth */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-20"
+        style={{
+          background: 'radial-gradient(ellipse at center, transparent 30%, rgba(15,33,46,0.5) 100%)',
+        }}
+      />
       
       {/* Winner Glow - Blue */}
       {showWinnerEffect && (
@@ -294,56 +301,30 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         />
       )}
       
-      {/* Center Indicator - Blue */}
+      {/* Center Indicator - Stake Style (Simple Line) */}
       <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showWinnerEffect ? 'opacity-0' : 'opacity-100'}`}>
         <div 
-          className="absolute left-1/2 top-0 bottom-0 w-[3px] -translate-x-1/2 bg-[#3b82f6]"
+          className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-[#3b82f6]"
           style={{
-            boxShadow: '0 0 15px rgba(59,130,246,0.5), 0 0 30px rgba(59,130,246,0.2)',
+            boxShadow: '0 0 8px rgba(59,130,246,0.4)',
           }}
         />
-        
-        {/* Top arrow - Blue */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[2px]">
-          <div 
-            className="w-0 h-0"
-            style={{
-              borderLeft: '10px solid transparent',
-              borderRight: '10px solid transparent',
-              borderTop: '14px solid #3b82f6',
-              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))',
-            }}
-          />
-        </div>
-        
-        {/* Bottom arrow - Blue */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[2px]">
-          <div 
-            className="w-0 h-0"
-            style={{
-              borderLeft: '10px solid transparent',
-              borderRight: '10px solid transparent',
-              borderBottom: '14px solid #3b82f6',
-              filter: 'drop-shadow(0 -2px 4px rgba(0,0,0,0.5))',
-            }}
-          />
-        </div>
       </div>
 
-      {/* Loading Skeleton - Stake colors */}
+      {/* Loading Skeleton - Stake tiles */}
       <div 
-        className={`absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 ease-out ${isLoading || strip.length === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`absolute inset-0 flex items-center justify-center z-10 transition-opacity duration-300 ease-out ${isLoading || strip.length === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center" style={{ gap: `${cardGap}px` }}>
           {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="rounded-xl animate-pulse"
+              className="rounded-lg animate-pulse"
               style={{
                 width: `${cardWidth}px`,
                 height: `${cardWidth * 1.2}px`,
-                background: 'linear-gradient(180deg, #213743 0%, #1a2c38 100%)',
-                opacity: i === 2 ? 1 : 0.5,
+                background: '#213743',
+                opacity: i === 2 ? 1 : 0.4,
               }}
             />
           ))}
