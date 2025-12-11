@@ -40,15 +40,6 @@ const Icons = {
   ),
 };
 
-// Rarity colors
-const RARITY_COLORS: Record<string, string> = {
-  common: '#9CA3AF',
-  uncommon: '#22C55E', 
-  rare: '#3B82F6',
-  epic: '#A855F7',
-  legendary: '#F59E0B',
-  mythic: '#EF4444',
-};
 
 interface CartModalProps {
   isOpen: boolean;
@@ -227,12 +218,6 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                   }`}
                   onClick={() => toggleSelectItem(item.inventory_id)}
                 >
-                  {/* Rarity indicator */}
-                  <div 
-                    className="absolute top-0 left-0 right-0 h-[2px]"
-                    style={{ backgroundColor: RARITY_COLORS[item.rarity] || RARITY_COLORS.common }}
-                  />
-                  
                   {/* Selection checkbox */}
                   <div className={`
                     absolute top-2 right-2 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors
