@@ -188,7 +188,7 @@ const Header: React.FC = () => {
                   >
                     <Icons.Inventory />
                     {(inventory?.itemCount || 0) > 0 && (
-                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#F7C948] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#00e701] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
                         {inventory?.itemCount}
                       </span>
                     )}
@@ -203,14 +203,14 @@ const Header: React.FC = () => {
                     >
                       <Icons.User />
                     </button>
-
+                    
                     {/* User Dropdown */}
                     {userMenuOpen && (
                       <div className="absolute right-0 top-full mt-2 w-56 bg-[#1a2c38] border border-[#2f4553] rounded-xl shadow-xl overflow-hidden z-50">
                         {/* User Info */}
                         <div className="p-3 border-b border-[#2f4553]">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#F7C948] flex items-center justify-center text-black font-bold">
+                            <div className="w-10 h-10 rounded-full bg-[#00e701] flex items-center justify-center text-black font-bold">
                               {displayName.charAt(0).toUpperCase()}
                             </div>
                             <div>
