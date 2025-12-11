@@ -1,3 +1,8 @@
+/**
+ * CaseContentGrid - Grid de premios de la caja
+ * Stake-style colors
+ */
+
 import React, { memo, useMemo } from 'react';
 import { LootItem } from '../../types';
 import { calculateTicketRanges } from '../../services/oddsService';
@@ -19,16 +24,15 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items, boxName }) => 
       {/* Header - Box Name + Content Info */}
       <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
         <div 
-          className="w-1 h-12 rounded-full"
-          style={{ background: 'linear-gradient(180deg, #F7C948 0%, #996600 100%)' }}
+          className="w-1 h-12 rounded-full bg-[#00e701]"
         />
         <div>
           {boxName && (
-            <h1 className="font-display text-2xl md:text-3xl text-white uppercase tracking-wide mb-1">
+            <h1 className="text-2xl md:text-3xl text-white font-bold tracking-tight mb-1">
               {boxName}
             </h1>
           )}
-          <p className="text-slate-500 text-xs uppercase tracking-wider">
+          <p className="text-[#b1bad3] text-xs uppercase tracking-wider">
             {sortedItemsWithOdds.length} premios • Ordenados por valor
           </p>
         </div>
@@ -44,9 +48,8 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items, boxName }) => 
   );
 };
 
-// Memoized ItemCard to prevent unnecessary re-renders
+// Memoized ItemCard - Stake style
 const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }) => {
-  // Pre-calculate image properties
   const imageProps = useMemo(() => {
     const isLoading = item.image === '⏳';
     const isEmoji = !item.image.startsWith('http') && !item.image.startsWith('data:') && !isLoading;
@@ -57,36 +60,21 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
 
   return (
     <div 
-      className="group relative rounded-2xl overflow-hidden transition-transform duration-300 hover:-translate-y-1"
-      style={{
-        background: '#1a1a1a',
-        border: '1px solid #222222',
-        contain: 'layout style paint',
-      }}
+      className="group relative rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-1 bg-[#213743] border border-[#2f4553] hover:border-[#3d5564] hover:bg-[#2f4553]"
+      style={{ contain: 'layout style paint' }}
     >
-      {/* Top shine line */}
-      <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-      
-      {/* Hover border glow */}
-      <div 
-        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{ 
-          boxShadow: 'inset 0 0 0 1px rgba(247,201,72,0.3), 0 0 20px rgba(247,201,72,0.1)' 
-        }}
-      />
-      
       {/* Image */}
       <div className="p-4 pb-2">
         <div className="relative w-full aspect-square flex items-center justify-center">
           {isLoading ? (
-            <div className="w-10 h-10 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-[#3d5564] border-t-[#00e701] rounded-full animate-spin" />
           ) : isEmoji ? (
             <span className="text-5xl drop-shadow-lg">{item.image}</span>
           ) : (
             <img 
               src={item.image} 
               alt={item.name}
-              className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
               loading="lazy"
               decoding="async"
             />
@@ -96,26 +84,16 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
 
       {/* Info */}
       <div className="p-3 pt-1">
-        <h3 className="font-display text-[11px] text-white truncate mb-2 uppercase tracking-wide text-center">
+        <h3 className="text-[11px] text-white font-medium truncate mb-2 text-center">
           {item.name}
         </h3>
         
         {/* Price bar */}
-        <div 
-          className="flex items-center justify-between px-2 py-1.5 rounded-lg"
-          style={{ background: 'rgba(247,201,72,0.08)' }}
-        >
-          <span 
-            className="font-display text-xs"
-            style={{
-              background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 50%, #D4A520 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
+        <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-[#1a2c38]">
+          <span className="text-[#00e701] text-xs font-semibold">
             {formatPrice(item.price, false)}
           </span>
-          <span className="text-slate-500 text-[10px] font-medium">
+          <span className="text-[#5f6c7b] text-[10px] font-medium">
             {item.normalizedOdds < 1 
               ? `${item.normalizedOdds.toFixed(2)}%` 
               : `${item.normalizedOdds.toFixed(1)}%`}
