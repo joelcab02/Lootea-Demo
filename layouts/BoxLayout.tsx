@@ -166,7 +166,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             className="w-full py-3.5 mb-3 bg-[#00e701] hover:bg-[#00cc01] text-black rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,231,1,0.25)] hover:shadow-[0_6px_20px_rgba(0,231,1,0.35)] hover:scale-[1.01] active:scale-[0.99]"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
-            <span className="text-lg font-bold tracking-tight">ABRIR</span>
+            <span className="text-lg font-bold">Abrir</span>
             <span className="text-lg font-bold tracking-tight">
               {formatPrice(BOX_PRICE)}
             </span>
