@@ -296,7 +296,7 @@ const DepositPage: React.FC = () => {
                     {copied === 'ref' ? 'Copiado' : 'Copiar'}
                   </button>
                 </div>
-                <p className="text-[#3b82f6] font-mono font-bold bg-[#0f212e] px-4 py-3 rounded-lg">
+                <p className="text-white font-mono font-bold bg-[#0f212e] px-4 py-3 rounded-lg">
                   {reference}
                 </p>
               </div>
@@ -333,7 +333,7 @@ const DepositPage: React.FC = () => {
                   {copied === 'ref' ? 'Copiado' : 'Copiar'}
                 </button>
               </div>
-              <p className="text-[#3b82f6] font-mono text-xl font-bold bg-[#0f212e] px-4 py-4 rounded-lg text-center">
+              <p className="text-white font-mono text-xl font-bold bg-[#0f212e] px-4 py-4 rounded-lg text-center">
                 {reference}
               </p>
             </div>
@@ -370,12 +370,12 @@ const DepositPage: React.FC = () => {
             
             <h2 className="text-2xl font-bold text-white mb-2">Solicitud Registrada</h2>
             <p className="text-[#b1bad3] mb-8">
-              Tu deposito de <span className="text-[#3b82f6] font-bold">${numericAmount.toLocaleString()}</span> esta pendiente de verificacion.
+              Tu deposito de <span className="text-white font-bold">${numericAmount.toLocaleString()}</span> esta pendiente de verificacion.
             </p>
             
             <div className="bg-[#213743] border border-[#2f4553] rounded-xl p-4 mb-6">
               <p className="text-xs text-[#5f6c7b] mb-1">Tu referencia</p>
-              <p className="text-[#3b82f6] font-mono font-bold text-xl">{reference}</p>
+              <p className="text-white font-mono font-bold text-xl">{reference}</p>
             </div>
             
             <div className="bg-[#213743] border border-[#2f4553] rounded-xl p-4 text-left mb-8">

@@ -337,7 +337,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                         {copied === 'ref' ? 'Copiado' : 'Copiar'}
                       </button>
                     </div>
-                    <p className="text-[#3b82f6] font-mono text-sm font-bold bg-[#0f212e] px-3 py-2 rounded-lg">{reference}</p>
+                    <p className="text-white font-mono text-sm font-bold bg-[#0f212e] px-3 py-2 rounded-lg">{reference}</p>
                   </div>
                 </div>
                 
@@ -372,7 +372,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                       {copied === 'ref' ? 'Copiado' : 'Copiar'}
                     </button>
                   </div>
-                  <p className="text-[#3b82f6] font-mono text-lg font-bold bg-[#0f212e] px-3 py-2 rounded-lg text-center">{reference}</p>
+                  <p className="text-white font-mono text-lg font-bold bg-[#0f212e] px-3 py-2 rounded-lg text-center">{reference}</p>
                 </div>
                 
                 <div className="text-sm text-[#b1bad3] space-y-1">
@@ -407,12 +407,12 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 
                 <h3 className="text-xl font-bold text-white mb-2">Solicitud Registrada</h3>
                 <p className="text-[#b1bad3] mb-6">
-                  Tu depósito de <span className="text-[#3b82f6] font-bold">${numericAmount.toLocaleString()}</span> está pendiente de verificación.
+                  Tu depósito de <span className="text-white font-bold">${numericAmount.toLocaleString()}</span> está pendiente de verificación.
                 </p>
                 
                 <div className="bg-[#213743] border border-[#2f4553] rounded-xl p-4 mb-6">
                   <p className="text-xs text-[#5f6c7b] mb-1">Tu referencia</p>
-                  <p className="text-[#3b82f6] font-mono font-bold text-lg">{reference}</p>
+                  <p className="text-white font-mono font-bold text-lg">{reference}</p>
                 </div>
                 
                 <div className="bg-[#213743] border border-[#2f4553] rounded-xl p-4 text-left mb-6">

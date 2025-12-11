@@ -388,7 +388,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
           <p className="text-white font-semibold text-sm sm:text-base leading-tight line-clamp-2">
             {displayWinner.name}
           </p>
-          <p className="text-[#3b82f6] font-bold text-sm mt-1">{formatPrice(displayWinner.price)}</p>
+          <p className="text-white font-bold text-sm mt-1">{formatPrice(displayWinner.price)}</p>
         </div>
       )}
     </div>

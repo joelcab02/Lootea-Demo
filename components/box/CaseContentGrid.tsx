@@ -90,7 +90,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
         
         {/* Price bar */}
         <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-[#1a2c38]">
-          <span className="text-[#3b82f6] text-xs font-semibold">
+          <span className="text-white text-xs font-semibold">
             {formatPrice(item.price, false)}
           </span>
           <span className="text-[#5f6c7b] text-[10px] font-medium">

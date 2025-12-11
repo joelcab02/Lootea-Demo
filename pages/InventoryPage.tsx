@@ -235,7 +235,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSell, isSelling }) => {
       {/* Info */}
       <div className="px-3 pb-2 text-center">
         <p className="text-white text-sm font-medium truncate mb-1">{item.name}</p>
-        <p className="text-[#3b82f6] text-base font-bold">${item.price.toFixed(2)} MXN</p>
+        <p className="text-white text-base font-bold">${item.price.toFixed(2)} MXN</p>
       </div>
       
       {/* Sell button */}
