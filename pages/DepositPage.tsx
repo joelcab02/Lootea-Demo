@@ -161,8 +161,8 @@ const DepositPage: React.FC = () => {
           <>
             {/* Tab Toggle - Stake pill style */}
             <div 
-              className="flex p-1 mb-6"
-              style={{ background: '#0f212e', borderRadius: '8px' }}
+              className="flex p-1.5 mb-6"
+              style={{ background: '#0f212e', borderRadius: '9999px' }}
             >
               <button 
                 onClick={() => setSelectedMethod('spei')}
@@ -170,7 +170,7 @@ const DepositPage: React.FC = () => {
                 style={{
                   background: selectedMethod === 'spei' ? '#213743' : 'transparent',
                   color: selectedMethod === 'spei' ? '#ffffff' : '#b1bad3',
-                  borderRadius: '6px',
+                  borderRadius: '9999px',
                 }}
               >
                 SPEI
@@ -181,7 +181,7 @@ const DepositPage: React.FC = () => {
                 style={{
                   background: selectedMethod === 'oxxo' ? '#213743' : 'transparent',
                   color: selectedMethod === 'oxxo' ? '#ffffff' : '#b1bad3',
-                  borderRadius: '6px',
+                  borderRadius: '9999px',
                 }}
               >
                 OXXO
@@ -193,19 +193,18 @@ const DepositPage: React.FC = () => {
               Monto
             </label>
             
-            {/* Amount Input - No border */}
-            <div className="relative mb-4">
+            {/* Amount Input - Stake style with container */}
+            <div 
+              className="relative mb-4"
+              style={{ background: '#213743', borderRadius: '12px' }}
+            >
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5f6c7b] text-xl font-bold">$</span>
               <input
                 type="text"
                 inputMode="numeric"
                 value={amount}
                 onChange={(e) => handleAmountChange(e.target.value)}
-                className="w-full text-white text-2xl font-bold pl-10 pr-4 py-4 focus:outline-none transition-colors"
-                style={{
-                  background: '#0f212e',
-                  borderRadius: '8px',
-                }}
+                className="w-full text-white text-2xl font-bold pl-10 pr-4 py-4 focus:outline-none transition-colors bg-transparent"
                 placeholder="0"
               />
             </div>
@@ -214,17 +213,17 @@ const DepositPage: React.FC = () => {
               <p className="text-red-400 text-xs mb-4">{error}</p>
             )}
             
-            {/* Preset Amounts - Clean buttons */}
+            {/* Preset Amounts - Stake style */}
             <div className="flex flex-wrap gap-2 mb-6">
               {PRESET_AMOUNTS.map((preset) => (
                 <button
                   key={preset}
                   onClick={() => setAmount(preset.toString())}
-                  className="px-4 py-2.5 text-sm font-medium transition-all"
+                  className="px-4 py-2.5 text-sm font-semibold transition-all"
                   style={{
-                    background: amount === preset.toString() ? '#213743' : 'transparent',
-                    color: amount === preset.toString() ? '#ffffff' : '#5f6c7b',
-                    borderRadius: '6px',
+                    background: amount === preset.toString() ? '#213743' : '#0f212e',
+                    color: amount === preset.toString() ? '#ffffff' : '#b1bad3',
+                    borderRadius: '8px',
                   }}
                 >
                   {formatPresetAmount(preset)}
@@ -232,15 +231,15 @@ const DepositPage: React.FC = () => {
               ))}
             </div>
             
-            {/* Method Info */}
+            {/* Method Info - Stake dropdown style */}
             <div 
               className="flex items-center justify-between p-4 mb-6"
-              style={{ background: '#213743', borderRadius: '8px' }}
+              style={{ background: '#213743', borderRadius: '12px' }}
             >
               <div className="flex items-center gap-3">
                 <div 
                   className="w-12 h-12 flex items-center justify-center"
-                  style={{ background: '#0f212e', borderRadius: '8px' }}
+                  style={{ background: '#0f212e', borderRadius: '12px' }}
                 >
                   {selectedMethod === 'spei' ? (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.5">
@@ -262,17 +261,20 @@ const DepositPage: React.FC = () => {
                   </p>
                 </div>
               </div>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5f6c7b" strokeWidth="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
             </div>
             
-            {/* CTA - Green */}
+            {/* CTA - BLUE (Stake style) */}
             <button
               onClick={handleContinue}
               disabled={!isValidAmount}
               className="w-full py-4 font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
-                background: '#00e701',
-                color: '#000000',
-                borderRadius: '8px',
+                background: '#3b82f6',
+                color: '#ffffff',
+                borderRadius: '12px',
               }}
             >
               Depositar
@@ -299,7 +301,7 @@ const DepositPage: React.FC = () => {
               <div className="space-y-4">
                 <div 
                   className="p-4 space-y-4"
-                  style={{ background: '#213743', borderRadius: '8px' }}
+                  style={{ background: '#213743', borderRadius: '12px' }}
                 >
                   <div className="flex justify-between">
                     <span className="text-[#5f6c7b]">Banco</span>
@@ -363,7 +365,7 @@ const DepositPage: React.FC = () => {
               <div className="space-y-4">
                 <div 
                   className="p-4"
-                  style={{ background: '#213743', borderRadius: '8px' }}
+                  style={{ background: '#213743', borderRadius: '12px' }}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-[#5f6c7b]">Referencia OXXO</span>
@@ -396,15 +398,15 @@ const DepositPage: React.FC = () => {
               </div>
             )}
             
-            {/* Confirm Button - Green */}
+            {/* Confirm Button - BLUE */}
             <button
               onClick={handleConfirmDeposit}
               disabled={isSubmitting}
               className="w-full py-4 font-bold transition-all disabled:opacity-50 mt-6"
               style={{
-                background: '#00e701',
-                color: '#000000',
-                borderRadius: '8px',
+                background: '#3b82f6',
+                color: '#ffffff',
+                borderRadius: '12px',
               }}
             >
               {isSubmitting ? 'Procesando...' : 'Ya realicé el pago'}
@@ -434,7 +436,7 @@ const DepositPage: React.FC = () => {
             {/* Reference */}
             <div 
               className="p-4 mb-6"
-              style={{ background: '#213743', borderRadius: '8px' }}
+              style={{ background: '#213743', borderRadius: '12px' }}
             >
               <p className="text-[#5f6c7b] text-xs mb-1">Tu referencia</p>
               <p className="text-white font-mono font-bold text-xl">{reference}</p>
@@ -443,7 +445,7 @@ const DepositPage: React.FC = () => {
             {/* Timeline */}
             <div 
               className="p-4 text-left mb-8"
-              style={{ background: '#213743', borderRadius: '8px' }}
+              style={{ background: '#213743', borderRadius: '12px' }}
             >
               <p className="text-white font-medium mb-4">¿Qué sigue?</p>
               <div className="space-y-4">
@@ -484,7 +486,7 @@ const DepositPage: React.FC = () => {
               style={{
                 background: '#213743',
                 color: '#ffffff',
-                borderRadius: '8px',
+                borderRadius: '12px',
               }}
             >
               Volver al Inicio
