@@ -156,12 +156,11 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
           />
         </div>
 
-        {/* BOTTOM TOOLBAR - Stake style */}
+        {/* BOTTOM TOOLBAR - Stake style (part of game area) */}
         <div 
-          className="w-full flex items-center justify-between px-4 py-3 mb-4"
+          className="w-full flex items-center justify-between px-4 py-3"
           style={{
-            background: '#1a2c38',
-            borderTop: '1px solid #2f4553',
+            background: '#0f212e',
           }}
         >
           {/* Left: Icon buttons */}
@@ -200,14 +199,14 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
         </div>
 
         {/* CONTROLS - Stake Style Panel */}
-        <div className="z-20 w-full max-w-full md:max-w-[420px] px-4 pb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <div className="z-20 w-full max-w-full md:max-w-[400px] px-4 py-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
           
-          {/* Control Panel - Stake style with border */}
+          {/* Control Panel - Stake style */}
           <div 
-            className="rounded-lg p-4"
+            className="p-4"
             style={{
               background: '#1a2c38',
-              border: '1px solid #2f4553',
+              borderRadius: '8px',
             }}
           >
             
@@ -297,11 +296,9 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
         </div>
       </div>
 
-      {/* CONTENT */}
-      <div className="flex-1">
-        <div className="flex flex-col gap-8 md:gap-12 py-8 md:py-12">
-          <CaseContentGrid items={items} boxName={currentBox?.name} />
-        </div>
+      {/* CONTENT - Consistent spacing */}
+      <div className="flex-1 py-8">
+        <CaseContentGrid items={items} boxName={currentBox?.name} />
       </div>
 
       <AuthModal 

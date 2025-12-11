@@ -275,9 +275,8 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       className="relative w-full flex items-center justify-center overflow-hidden"
       style={{
         height: `${spinnerHeight}px`,
-        background: '#1a2c38',
-        border: '1px solid #2f4553',
-        borderRadius: '12px',
+        background: '#0f212e',
+        borderRadius: '8px',
       }}
     >
       {/* Vignette overlay - subtle depth */}
