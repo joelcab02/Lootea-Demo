@@ -34,6 +34,7 @@ interface SpinnerProps {
 
 const INITIAL_POSITION = 10;
 const DESKTOP_BREAKPOINT = 640;
+const LARGE_DESKTOP_BREAKPOINT = 1024;
 
 // ============================================
 // COMPONENT
@@ -72,15 +73,30 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   // RESPONSIVE
   // ============================================
   
+  const [screenSize, setScreenSize] = useState<'mobile' | 'desktop' | 'large'>('mobile');
+  
   useEffect(() => {
-    const checkDesktop = () => setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
-    checkDesktop();
-    window.addEventListener('resize', checkDesktop);
-    return () => window.removeEventListener('resize', checkDesktop);
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      if (width >= LARGE_DESKTOP_BREAKPOINT) {
+        setScreenSize('large');
+        setIsDesktop(true);
+      } else if (width >= DESKTOP_BREAKPOINT) {
+        setScreenSize('desktop');
+        setIsDesktop(true);
+      } else {
+        setScreenSize('mobile');
+        setIsDesktop(false);
+      }
+    };
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
   
-  const cardWidth = isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH;
-  const cardGap = isDesktop ? CARD_GAP_DESKTOP : CARD_GAP;
+  // Scale card sizes based on screen - larger screens get bigger cards
+  const cardWidth = screenSize === 'large' ? 200 : (isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH);
+  const cardGap = screenSize === 'large' ? 24 : (isDesktop ? CARD_GAP_DESKTOP : CARD_GAP);
   const ITEM_WIDTH = cardWidth + cardGap;
 
   // ============================================
@@ -251,13 +267,15 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   
   const stripWidth = strip.length * ITEM_WIDTH;
 
+  // Dynamic height based on screen size
+  const spinnerHeight = screenSize === 'large' ? 380 : (isDesktop ? 340 : 280);
+
   return (
     <div 
-      className="relative w-full h-[280px] sm:h-[320px] flex items-center"
+      className="relative w-full flex items-center justify-center overflow-hidden"
       style={{
+        height: `${spinnerHeight}px`,
         background: 'linear-gradient(180deg, #0f212e 0%, #1a2c38 50%, #0f212e 100%)',
-        overflow: 'clip',
-        overflowY: 'visible',
       }}
     >
       {/* Bottom border - Stake style */}
@@ -332,13 +350,14 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         </div>
       </div>
 
-      {/* Strip Container */}
+      {/* Strip Container - Centered with absolute positioning */}
       <div 
-        className={`flex items-center justify-center h-full will-change-transform transition-opacity duration-300 ease-out ${isLoading || strip.length === 0 ? 'opacity-0' : 'opacity-100'}`}
+        className={`absolute flex items-center h-full will-change-transform transition-opacity duration-300 ease-out ${isLoading || strip.length === 0 ? 'opacity-0' : 'opacity-100'}`}
         ref={containerRef}
         style={{ 
+          left: '50%',
           width: `${stripWidth}px`,
-          marginLeft: `calc(50% - ${cardWidth/2}px)`,
+          marginLeft: `-${cardWidth/2}px`, // Offset to center the winning card
           transform: `translate3d(${-INITIAL_POSITION * ITEM_WIDTH}px,0,0)`,
           contain: 'layout paint',
           backfaceVisibility: 'hidden'
