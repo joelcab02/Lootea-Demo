@@ -21,12 +21,12 @@ interface FAQItemProps {
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) => {
   return (
-    <div className="border-b border-white/10 last:border-0">
+    <div className="border-b border-[#2f4553] last:border-0">
       <button
         onClick={onClick}
         className="w-full py-4 flex items-center justify-between text-left group"
       >
-        <span className={`font-medium transition-colors ${isOpen ? 'text-[#F7C948]' : 'text-white group-hover:text-[#F7C948]'}`}>
+        <span className={`font-medium transition-colors ${isOpen ? 'text-[#3b82f6]' : 'text-white group-hover:text-[#3b82f6]'}`}>
           {question}
         </span>
         <svg 
@@ -36,13 +36,13 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) 
           fill="none" 
           stroke="currentColor" 
           strokeWidth="2"
-          className={`text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`text-[#5f6c7b] transition-transform ${isOpen ? 'rotate-180' : ''}`}
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </button>
       {isOpen && (
-        <div className="pb-4 text-slate-400 leading-relaxed">
+        <div className="pb-4 text-[#b1bad3] leading-relaxed">
           {answer}
         </div>
       )}
@@ -348,9 +348,9 @@ const FAQPage: React.FC = () => {
           <a
             key={idx}
             href={`#faq-${idx}`}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] border border-[#222222] rounded-lg text-slate-400 hover:text-[#F7C948] hover:border-[#F7C948]/30 transition-all text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1a2c38] border border-[#2f4553] rounded-lg text-[#b1bad3] hover:text-white hover:border-[#3b82f6]/50 transition-all text-sm"
           >
-            <span className="text-[#F7C948]">{category.icon}</span>
+            <span className="text-[#3b82f6]">{category.icon}</span>
             {category.title}
           </a>
         ))}
@@ -360,15 +360,15 @@ const FAQPage: React.FC = () => {
       {categories.map((category, categoryIdx) => (
         <div key={categoryIdx} id={`faq-${categoryIdx}`} className="mt-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F7C948]/10 border border-[#F7C948]/20 flex items-center justify-center text-[#F7C948]">
+            <div className="w-10 h-10 rounded-lg bg-[#3b82f6]/10 border border-[#3b82f6]/25 flex items-center justify-center text-[#3b82f6]">
               {category.icon}
             </div>
-            <h2 className="font-display font-bold text-xl text-white m-0 border-0 p-0">
+            <h2 className="font-bold text-xl text-white m-0 border-0 p-0">
               {category.title}
             </h2>
           </div>
           
-          <div className="bg-[#1a1a1a] border border-[#222222] rounded-xl px-5">
+          <div className="bg-[#1a2c38] border border-[#2f4553] rounded-xl px-5">
             {category.items.map((item, itemIdx) => {
               const itemId = `${categoryIdx}-${itemIdx}`;
               return (
