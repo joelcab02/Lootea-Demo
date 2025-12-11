@@ -1,16 +1,18 @@
 /**
- * Asset Templates - Configuración por tipo de asset
+ * Asset Templates - Stake-Inspired Configurations
  * 
- * Cada tipo de asset tiene su propio template con:
+ * Each asset type has its own template with:
  * - Aspect ratio default
- * - Prompt base específico para ese tipo
- * - Configuración de composición
+ * - Prompt base specific to that type
+ * - Composition guidelines
+ * 
+ * Updated: December 2024 - Stake Casino Style
  */
 
 import type { AssetTemplate, AssetType, Preset } from './types';
 
 /**
- * Templates para cada tipo de asset
+ * Templates for each asset type - Stake Style
  */
 export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
   producto: {
@@ -18,38 +20,40 @@ export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
     label: 'Producto',
     icon: 'product',
     aspectRatio: '1:1',
-    description: 'Render individual de un producto',
+    description: 'Render individual de producto - estilo e-commerce',
     basePrompt: `
-      ASSET TYPE: Individual Product Render
+      ASSET TYPE: Individual Product Render - E-Commerce Style
       
       COMPOSITION:
       - Single product, centered in frame
-      - Product fills 75-85% of the frame
-      - Floating in space, no surface contact
+      - Product fills 70-80% of the frame
+      - Floating in space OR on subtle reflective surface
       - Front-facing or 3/4 angle view
       - Full product visible, no cropping
       
       STYLE:
-      - Premium 3D render quality
-      - E-commerce product photography aesthetic
+      - Clean, professional e-commerce photography
       - Sharp focus, high detail on product
-      - Materials look realistic (metal, glass, plastic, fabric)
+      - Materials look realistic and premium
+      - NO stylization or artistic effects
       
       CRITICAL - PRODUCT AUTHENTICITY:
-      - Render the REAL product with its ORIGINAL colors and design
-      - Do NOT change, tint, or add gold/yellow to the product itself
-      - The product must look exactly like the real-world version
-      - If product is black, keep it black. If silver, keep it silver.
-      - Golden rim light should only be AROUND the edges as lighting effect, NOT painted on the product
+      - Render the REAL product with its ORIGINAL colors
+      - Do NOT add any color tint or grading
+      - Product must look exactly like the real item
+      - If iPhone is Space Black, keep it Space Black
+      - If sneakers are red, keep them red
       
       BACKGROUND:
-      - Pure black (#000000)
+      - Pure black (#000000) for cutout-ready images
+      - OR dark teal (#0f212e) to match Lootea app
       - Clean, no distractions
-      - Perfect for cutout/transparency
       
-      LIGHTING (Lootea DNA):
-      - Subtle golden rim light AROUND product edges (as ambient light, not color change)
-      - The rim light is environmental, it does NOT change the product's actual colors
+      LIGHTING:
+      - Clean studio lighting, neutral white
+      - Soft shadows for depth
+      - NO colored rim lights
+      - Professional product photography style
     `
   },
 
@@ -58,33 +62,40 @@ export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
     label: 'Caja',
     icon: 'box',
     aspectRatio: '1:1',
-    description: 'Caja Lootea con productos emergiendo',
+    description: 'Caja Lootea con productos - estilo gaming',
     basePrompt: `
-      ASSET TYPE: Lootea Box Reveal Scene
+      ASSET TYPE: Lootea Box Reveal Scene - Gaming Style
       
       COMPOSITION:
-      - Lootea box as central element
-      - Box open with lid tilted back
+      - Lootea mystery box as central element
+      - Box open with lid tilted back at 45°
       - 2-4 products floating/emerging from inside
-      - Products arranged in visually pleasing formation
-      - Golden light rays from inside box
+      - Products arranged in visually appealing formation
+      - Light emanating from inside the box
       
-      BOX DESIGN:
-      - Two-tone: matte black side + brushed gold side
-      - Curved/wavy golden line patterns (topographic style)
-      - "LOOTEA" text with golden glow on black side
-      - Category logo silhouette on gold side
+      BOX DESIGN - STAKE INSPIRED:
+      - Clean geometric mystery box shape
+      - Body: Dark teal (#1a2c38) or category color
+      - Accents: Bright green (#00e701) edges or glow
+      - "LOOTEA" text subtle, modern sans-serif
+      - Premium gaming aesthetic, NOT luxury
+      - Clean design, minimal decoration
+      
+      LIGHT FROM BOX:
+      - Green (#00e701) or white light rays
+      - NOT gold or amber
+      - Creates excitement and reveal moment
       
       BACKGROUND:
-      - Dark textured surface (concrete/grunge)
-      - Subtle reflective floor
-      - Vignette effect on edges
-      - Atmospheric depth
+      - Dark teal (#0f212e) solid color
+      - Optional: Subtle reflective floor
+      - Clean, no texture or grunge
+      - Professional studio feel
       
-      LIGHTING:
-      - Golden glow from inside box
-      - Spotlight from above
-      - Rim lights on products
+      PRODUCTS:
+      - Keep original product colors
+      - Clean, sharp renders
+      - Professional photography quality
     `
   },
 
@@ -93,30 +104,38 @@ export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
     label: 'Banner',
     icon: 'banner',
     aspectRatio: '16:9',
-    description: 'Banner promocional horizontal',
+    description: 'Banner promocional horizontal - gaming style',
     basePrompt: `
-      ASSET TYPE: Promotional Banner (Horizontal)
+      ASSET TYPE: Promotional Banner - Gaming Platform Style
       
       COMPOSITION:
       - Wide cinematic format
       - Products arranged on one side (left or right)
-      - Leave space for text overlay on opposite side
-      - Dynamic, exciting arrangement
-      - Depth with foreground/background elements
+      - Leave 40% clear space for text overlay
+      - Dynamic but clean arrangement
+      - Products as hero elements
       
       STYLE:
-      - Cinematic, movie-poster quality
-      - High impact, attention-grabbing
-      - Premium gaming aesthetic
+      - Gaming platform promotional style
+      - Clean, professional, exciting
+      - NOT luxury or premium aesthetic
+      - Modern and accessible
       
       BACKGROUND:
-      - Dark with subtle texture or gradient
-      - Can include abstract golden elements
-      - Atmospheric effects (particles, glow, fog)
+      - Dark teal (#0f212e) primary
+      - Can include subtle gradient
+      - Optional: Geometric accent shapes in green (#00e701) or blue (#3b82f6)
+      - NO textures or grunge
       
       LAYOUT:
       - 60% product showcase area
-      - 40% clear space for text/CTA overlay
+      - 40% clear space for text/CTA
+      - Products should not overlap text area
+      
+      LIGHTING:
+      - Clean studio lighting on products
+      - Accent glow in green if needed
+      - Professional product photography
     `
   },
 
@@ -125,31 +144,32 @@ export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
     label: 'Social Post',
     icon: 'social',
     aspectRatio: '1:1',
-    description: 'Post para Instagram/Facebook',
+    description: 'Post para Instagram/Facebook - gaming style',
     basePrompt: `
-      ASSET TYPE: Social Media Post (Square)
+      ASSET TYPE: Social Media Post - Gaming Style
       
       COMPOSITION:
-      - Bold, eye-catching arrangement
+      - Bold, scroll-stopping arrangement
       - Product(s) as hero element
+      - Centered or dynamic off-center
       - Can include Lootea box if relevant
-      - Centered or dynamic off-center composition
-      - Leave small margins for platform UI
+      - Small margins for platform UI
       
       STYLE:
-      - Scroll-stopping visual impact
-      - High contrast, vibrant product colors
-      - Premium but exciting feel
+      - High impact, attention-grabbing
+      - Gaming/crypto platform aesthetic
+      - Clean but exciting
+      - Vibrant product colors
       
       BACKGROUND:
-      - Dark with golden accents
-      - Can include subtle patterns or effects
-      - Not too busy, product is focus
+      - Dark teal (#0f212e)
+      - Optional: Green (#00e701) accent elements
+      - Clean, professional
       
       ENGAGEMENT:
       - Creates curiosity
-      - Showcases value/prizes
-      - Aspirational feeling
+      - Showcases prizes clearly
+      - Gaming excitement vibe
     `
   },
 
@@ -158,24 +178,25 @@ export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
     label: 'Story',
     icon: 'story',
     aspectRatio: '9:16',
-    description: 'Story/Reel vertical',
+    description: 'Story/Reel vertical - mobile gaming',
     basePrompt: `
-      ASSET TYPE: Vertical Story/Reel Format
+      ASSET TYPE: Vertical Story/Reel - Mobile Gaming
       
       COMPOSITION:
       - Vertical format optimized for mobile
       - Products stacked or cascading vertically
       - Main product in center-upper area
-      - Leave space at top and bottom for text/UI
+      - Space at top/bottom for text/UI
       
       STYLE:
       - Dynamic, energetic feel
-      - Motion-implied composition
-      - Premium mobile-first aesthetic
+      - Mobile-first gaming aesthetic
+      - Clean and modern
+      - Easy to read at small size
       
       BACKGROUND:
-      - Dark with vertical golden accents
-      - Can include particles or effects
+      - Dark teal (#0f212e) 
+      - Can include vertical accent lines in green
       - Guides eye from top to bottom
       
       LAYOUT:
@@ -190,36 +211,42 @@ export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
     label: 'Icono',
     icon: 'icon',
     aspectRatio: '1:1',
-    description: 'Icono para UI/categorías',
+    description: 'Icono/thumbnail estilo Stake Originals',
     basePrompt: `
-      ASSET TYPE: Icon/Thumbnail
+      ASSET TYPE: Icon/Thumbnail - Stake Originals Style
       
       COMPOSITION:
-      - Single element, very centered
+      - Single iconic element, very centered
       - Simple, recognizable silhouette
       - Fills frame with small padding
       - Works at small sizes (64px-256px)
       
-      STYLE:
-      - Clean, minimal detail
-      - Iconic representation
-      - Readable at small scale
-      - Strong silhouette
+      STYLE - STAKE GAME CARDS:
+      - Solid vibrant background color
+      - Illustrated, 3D-ish but clean/flat icon
+      - Bold, simple shapes
+      - High contrast for visibility
+      - Playful but professional
       
-      BACKGROUND:
-      - Pure black or transparent-ready
-      - No complex elements
+      BACKGROUND COLORS BY CATEGORY:
+      - Tech: Blue (#3b82f6)
+      - Gaming: Green (#00e701 or #27ae60)
+      - Fashion: Purple (#9b59b6)
+      - Sports: Orange (#e67e22)
+      - Casino: Red (#e74c3c)
+      - General: Teal (#1abc9c)
       
       DESIGN:
-      - Bold, simple shapes
-      - Golden accent on key element
-      - High contrast for visibility
+      - Rounded corners feel (12px style)
+      - Clean iconography
+      - Category/game name can be at bottom
+      - Should be instantly recognizable
     `
   }
 };
 
 /**
- * Presets rápidos para casos de uso comunes
+ * Quick Presets - Stake Style
  */
 export const QUICK_PRESETS: Preset[] = [
   {
@@ -227,61 +254,75 @@ export const QUICK_PRESETS: Preset[] = [
     label: 'Caja Tech',
     icon: 'product',
     type: 'caja',
-    description: 'iPhone, AirPods, Apple Watch emergiendo de caja Lootea con logo de Apple'
+    description: 'iPhone, AirPods, Apple Watch emerging from Lootea box with blue accents and green light'
   },
   {
     id: 'caja-gaming',
     label: 'Caja Gaming',
     icon: 'gaming',
     type: 'caja',
-    description: 'PlayStation 5, controles, headset gaming emergiendo de caja Lootea'
+    description: 'PlayStation 5, controllers, gaming headset emerging from Lootea box with green gaming glow'
   },
   {
     id: 'caja-sneakers',
     label: 'Caja Sneakers',
     icon: 'sneakers',
     type: 'caja',
-    description: 'Nike Air Jordan, Yeezy, sneakers premium emergiendo de caja Lootea'
-  },
-  {
-    id: 'promo-flash',
-    label: 'Promo Flash',
-    icon: 'promo',
-    type: 'banner',
-    description: 'Banner promocional con productos premium, espacio para texto de oferta'
+    description: 'Nike Air Jordan, premium sneakers emerging from Lootea box with purple accents'
   },
   {
     id: 'producto-iphone',
     label: 'iPhone Pro',
     icon: 'product',
     type: 'producto',
-    description: 'iPhone 16 Pro Max, render premium flotando'
+    description: 'iPhone 16 Pro Max, clean e-commerce style render on dark background, true product colors'
   },
   {
     id: 'producto-ps5',
     label: 'PlayStation 5',
     icon: 'gaming',
     type: 'producto',
-    description: 'PlayStation 5 con control DualSense, render premium'
+    description: 'PlayStation 5 with DualSense controller, clean studio lighting, dark teal background'
+  },
+  {
+    id: 'icono-tech',
+    label: 'Icono Tech',
+    icon: 'icon',
+    type: 'icono',
+    description: 'Tech category icon, smartphone silhouette, solid blue (#3b82f6) background, Stake Originals style'
+  },
+  {
+    id: 'icono-gaming',
+    label: 'Icono Gaming',
+    icon: 'icon',
+    type: 'icono',
+    description: 'Gaming category icon, controller silhouette, solid green (#00e701) background, Stake Originals style'
+  },
+  {
+    id: 'banner-promo',
+    label: 'Banner Promo',
+    icon: 'promo',
+    type: 'banner',
+    description: 'Promotional banner with premium products on left, space for text on right, dark teal background with green accents'
   }
 ];
 
 /**
- * Obtener template por tipo
+ * Get template by type
  */
 export function getTemplate(type: AssetType): AssetTemplate {
   return ASSET_TEMPLATES[type];
 }
 
 /**
- * Obtener preset por ID
+ * Get preset by ID
  */
 export function getPreset(id: string): Preset | undefined {
   return QUICK_PRESETS.find(p => p.id === id);
 }
 
 /**
- * Obtener todos los tipos como array para UI
+ * Get all types as array for UI
  */
 export function getAssetTypes(): AssetTemplate[] {
   return Object.values(ASSET_TEMPLATES);

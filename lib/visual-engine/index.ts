@@ -1,16 +1,16 @@
 /**
- * Lootea Visual Engine
+ * Lootea Visual Engine - Stake Style
  * 
- * Sistema de generación de assets visuales con DNA de marca Lootea.
+ * AI-powered asset generation with Lootea/Stake brand DNA.
  * 
- * Uso:
+ * Usage:
  * ```typescript
  * import { buildPrompt, getTemplate, QUICK_PRESETS } from '@/lib/visual-engine';
  * 
  * const prompt = buildPrompt({
  *   mode: 'create',
  *   type: 'caja',
- *   description: 'iPhone 16 Pro en 3 colores'
+ *   description: 'iPhone 16 Pro emerging from gaming crate'
  * });
  * ```
  */
@@ -28,14 +28,17 @@ export type {
   GenerationHistory
 } from './types';
 
-// DNA
+// DNA - Stake Style
 export {
   LOOTEA_DNA_BASE,
   LIGHTING_STYLES,
   LOOTEA_BOX_PROMPT,
   TEXTURED_BACKGROUND_PROMPT,
-  PURE_BLACK_BACKGROUND_PROMPT
+  PURE_BLACK_BACKGROUND_PROMPT,
+  CATEGORY_COLORS
 } from './looteaDNA';
+
+export type { CategoryKey } from './looteaDNA';
 
 // Templates
 export {

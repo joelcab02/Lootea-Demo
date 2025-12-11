@@ -1,11 +1,13 @@
 /**
- * Prompt Builder - Construye el prompt final para Gemini
+ * Prompt Builder - Constructs the final prompt for Gemini
  * 
- * Combina:
- * 1. DNA base de Lootea (siempre)
- * 2. Template del tipo de asset
- * 3. Input del usuario (descripción)
- * 4. Opciones adicionales (iluminación, etc.)
+ * Combines:
+ * 1. Lootea DNA base (always)
+ * 2. Asset type template
+ * 3. User input (description)
+ * 4. Additional options (lighting, etc.)
+ * 
+ * Updated: December 2024 - Stake Style
  */
 
 import type { GenerationInput, AspectRatio } from './types';
@@ -19,45 +21,45 @@ import {
 import { getTemplate } from './assetTemplates';
 
 /**
- * Construye el prompt completo para modo "Crear Nuevo"
+ * Build complete prompt for "Create New" mode
  */
 export function buildCreatePrompt(input: GenerationInput): string {
   const template = getTemplate(input.type);
   const lighting = LIGHTING_STYLES[input.lighting || 'golden'];
   
-  // ID único para evitar caching
+  // Unique ID to prevent caching
   const requestId = `REQ-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   
   const parts: string[] = [
     `[${requestId}]`,
     '',
-    '=== LOOTEA VISUAL ENGINE ===',
+    '=== LOOTEA VISUAL ENGINE - STAKE STYLE ===',
     '',
-    // DNA base siempre primero
+    // DNA base always first
     LOOTEA_DNA_BASE,
     '',
-    // Template específico del tipo
+    // Type-specific template
     '=== ASSET TEMPLATE ===',
     template.basePrompt,
     '',
-    // Iluminación seleccionada
+    // Selected lighting style
     '=== LIGHTING STYLE ===',
     lighting.prompt,
     '',
-    // Descripción del usuario
+    // User description
     '=== USER REQUEST ===',
     `Generate: ${input.description}`,
     '',
   ];
 
-  // Agregar prompt de caja si es tipo caja o si el usuario lo pidió
+  // Add box prompt if type is caja or user requested
   if (input.type === 'caja' || input.includeBox) {
     parts.push('=== BOX DETAILS ===');
     parts.push(LOOTEA_BOX_PROMPT);
     parts.push('');
   }
 
-  // Background según tipo
+  // Background based on type
   if (input.type === 'producto' || input.type === 'icono') {
     parts.push(PURE_BLACK_BACKGROUND_PROMPT);
   } else {
@@ -68,37 +70,36 @@ export function buildCreatePrompt(input: GenerationInput): string {
 }
 
 /**
- * Construye el prompt para modo "Recrear con DNA"
- * Transforma una imagen existente al estilo Lootea
- * Respeta el tipo de asset seleccionado
+ * Build prompt for "Recreate with DNA" mode
+ * Transforms an existing image to Lootea/Stake style
  */
 export function buildRecreatePrompt(input: GenerationInput): string {
   const requestId = `REQ-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const template = getTemplate(input.type);
   const lighting = LIGHTING_STYLES[input.lighting || 'golden'];
   
-  // Determinar background según tipo
-  const backgroundPrompt = (input.type === 'producto' || input.type === 'icono')
-    ? PURE_BLACK_BACKGROUND_PROMPT
-    : TEXTURED_BACKGROUND_PROMPT;
+  // Determine background based on type
+  const backgroundInstruction = (input.type === 'producto' || input.type === 'icono')
+    ? 'pure black (#000000) or dark teal (#0f212e)'
+    : 'dark teal (#0f212e)';
   
-  // Solo incluir caja si el tipo es caja
+  // Box section only for caja type
   const boxSection = input.type === 'caja' 
     ? `\n=== LOOTEA BOX ===\n${LOOTEA_BOX_PROMPT}\n` 
     : '';
   
-  // Instrucciones específicas para producto (preservar colores originales)
+  // Product authenticity instructions
   const productAuthenticitySection = input.type === 'producto' 
     ? `
 === CRITICAL - PRODUCT AUTHENTICITY ===
 - Keep the EXACT original colors of the product from the reference image
-- Do NOT add gold/yellow tint to the product itself
+- Do NOT add any color tint or grading to the product
 - The product must look like the real-world version
-- Golden lighting is ONLY ambient/rim light AROUND the product, not ON it
+- Lighting should be neutral/white, NOT colored
 ` 
     : '';
 
-  // Prompt minimalista para máxima fidelidad
+  // Minimalist prompt for maximum fidelity
   return `
 [${requestId}]
 
@@ -111,28 +112,29 @@ KEEP IDENTICAL:
 - Exact colors of all products
 - Number of items and their arrangement
 
-ONLY CHANGE:
-- Background: replace with pure black (#000000)
-- Lighting: add subtle golden rim light around edges
-- Quality: enhance to premium 3D render quality
-- Materials: make metal/glass/plastic look more realistic
+STYLE TRANSFORMATION - STAKE/LOOTEA:
+- Background: Replace with ${backgroundInstruction}
+- Lighting: Clean studio lighting, neutral white
+- Quality: Enhance to professional e-commerce photography quality
+- Materials: Make metal/glass/plastic look realistic and premium
+- NO gold/amber tints - keep neutral color temperature
 
 DO NOT:
 - Move, rotate, or reposition anything
 - Add or remove any elements
-- Tint products with gold/yellow
+- Add colored rim lights or glows
 - Reinterpret or reimagine the layout
-- Float or separate items that are together
+- Make it look "luxury" or "premium" - keep it clean gaming style
 ${productAuthenticitySection}
 ${boxSection}
-${input.description ? `\nADDITIONAL: ${input.description}` : ''}
+${input.description ? `\nADDITIONAL INSTRUCTIONS: ${input.description}` : ''}
 
-OUTPUT: Same composition as reference, only with black background and golden rim lighting.
+OUTPUT: Same composition as reference, with dark teal/black background and clean studio lighting.
 `;
 }
 
 /**
- * Función principal que decide qué builder usar
+ * Main function that decides which builder to use
  */
 export function buildPrompt(input: GenerationInput): string {
   if (input.mode === 'recreate') {
@@ -142,20 +144,20 @@ export function buildPrompt(input: GenerationInput): string {
 }
 
 /**
- * Obtiene el aspect ratio para la generación
+ * Get aspect ratio for generation
  */
 export function getAspectRatio(input: GenerationInput): AspectRatio {
-  // Si el usuario especificó uno, usarlo
+  // If user specified one, use it
   if (input.aspectRatio) {
     return input.aspectRatio;
   }
-  // Si no, usar el default del template
+  // Otherwise use template default
   const template = getTemplate(input.type);
   return template.aspectRatio;
 }
 
 /**
- * Mapea aspect ratio a formato Gemini
+ * Map aspect ratio to Gemini format
  */
 export function getGeminiAspectRatio(ratio: AspectRatio): string {
   const mapping: Record<AspectRatio, string> = {
