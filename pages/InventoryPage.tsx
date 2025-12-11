@@ -15,16 +15,6 @@ import {
 } from '../services/inventoryService';
 import { refreshBalance } from '../services/authService';
 
-// Rarity colors
-const RARITY_COLORS: Record<string, string> = {
-  common: '#9CA3AF',
-  uncommon: '#22C55E', 
-  rare: '#3B82F6',
-  epic: '#A855F7',
-  legendary: '#F59E0B',
-  mythic: '#EF4444',
-};
-
 // Icons
 const Icons = {
   Package: () => (
@@ -214,12 +204,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSell, isSelling }) => {
     <div 
       className="group relative rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-1 bg-[#213743] border border-[#2f4553] hover:border-[#3d5564]"
     >
-      {/* Rarity indicator */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-[2px]"
-        style={{ backgroundColor: RARITY_COLORS[item.rarity] || RARITY_COLORS.common }}
-      />
-      
       {/* Image */}
       <div className="aspect-square p-4 flex items-center justify-center">
         <img 
@@ -242,7 +226,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSell, isSelling }) => {
       <button
         onClick={() => onSell(item.inventory_id)}
         disabled={isSelling}
-        className="w-full py-2.5 bg-[#1a2c38] hover:bg-[#3b82f6] text-[#b1bad3] hover:text-white text-sm font-semibold transition-all duration-200 disabled:opacity-50"
+        className="w-full py-2.5 bg-[#3b82f6] hover:bg-[#2563eb] text-white text-sm font-semibold transition-all duration-200 disabled:opacity-50"
       >
         {isSelling ? 'Vendiendo...' : 'Vender'}
       </button>
