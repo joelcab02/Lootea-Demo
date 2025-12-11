@@ -965,7 +965,7 @@ const BoxEditSection: React.FC<{
 
   // Get unique brands for filter
   const uniqueBrands = [...new Set(products.map(p => (p as any).brand).filter(Boolean))];
-  
+
   // Filter and sort products
   const filteredProducts = products
     .filter(p => {

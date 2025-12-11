@@ -150,82 +150,85 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
           />
         </div>
 
-        {/* CONTROLS */}
-        <div className="z-20 w-full max-w-[480px] px-4 pb-6">
+        {/* CONTROLS - Stake Style Panel */}
+        <div className="z-20 w-full max-w-[400px] px-4 pb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
           
-          {gameError && (
-            <div className="mb-2 p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs text-center">
-              {gameError}
-            </div>
-          )}
-          
-          {/* Main CTA - Green Stake Style */}
-          <button 
-            onClick={handleSpin}
-            disabled={isSpinning || isLoading}
-            className="w-full py-3.5 mb-3 bg-[#00e701] hover:bg-[#00cc01] text-black rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,231,1,0.25)] hover:shadow-[0_6px_20px_rgba(0,231,1,0.35)] hover:scale-[1.01] active:scale-[0.99]"
-            style={{ fontFamily: "'Outfit', sans-serif" }}
-          >
-            <span className="text-lg font-bold">Abrir</span>
-            <span className="text-lg font-bold tracking-tight">
-              {formatPrice(BOX_PRICE)}
-            </span>
-          </button>
-
-          {/* Secondary Controls - Stake Style */}
-          <div className={`flex items-center justify-center gap-3 transition-opacity ${(isSpinning || isLoading) ? 'opacity-50 pointer-events-none' : ''}`}>
+          {/* Control Panel */}
+          <div className="bg-[#213743] rounded-xl p-4">
             
-            {/* Fast Mode */}
+            {gameError && (
+              <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs text-center">
+                {gameError}
+              </div>
+            )}
+            
+            {/* Main CTA - Green Stake Style */}
             <button 
-              onClick={() => setFastMode(!fastMode)}
+              onClick={handleSpin}
               disabled={isSpinning || isLoading}
-              className={`
-                h-10 px-4 rounded-lg flex items-center justify-center gap-2 border transition-all text-sm font-medium
-                ${fastMode 
-                  ? 'bg-[#213743] border-[#3d5564] text-white' 
-                  : 'bg-[#0f212e] border-[#2f4553] text-[#b1bad3] hover:text-white hover:border-[#3d5564]'}
-              `}
+              className="w-full py-3 mb-3 bg-[#00e701] hover:bg-[#1fff20] text-black rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <Icons.Lightning />
-              <span>Rápido</span>
+              <span className="text-base font-bold">Abrir</span>
+              <span className="text-base font-bold">
+                {formatPrice(BOX_PRICE)}
+              </span>
             </button>
 
-            {/* Demo/Real Mode */}
-            <button 
-              onClick={() => setMode(demoMode ? 'real' : 'demo')}
-              disabled={isSpinning || isLoading}
-              className={`
-                h-10 px-4 rounded-lg flex items-center gap-2 border transition-all text-sm font-medium
-                ${demoMode 
-                  ? 'bg-[#213743] border-[#3d5564] text-[#b1bad3]' 
-                  : 'bg-[#213743] border-[#3d5564] text-[#3b82f6]'}
-              `}
-            >
-              {demoMode ? (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                  <span>Demo</span>
-                </>
-              ) : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                  <span>Jugar</span>
-                </>
-              )}
-            </button>
+            {/* Secondary Controls Row */}
+            <div className={`flex items-center gap-2 transition-opacity ${(isSpinning || isLoading) ? 'opacity-50 pointer-events-none' : ''}`}>
+              
+              {/* Fast Mode */}
+              <button 
+                onClick={() => setFastMode(!fastMode)}
+                disabled={isSpinning || isLoading}
+                className={`
+                  flex-1 h-9 rounded-md flex items-center justify-center gap-1.5 transition-all text-sm
+                  ${fastMode 
+                    ? 'bg-[#2f4553] text-white' 
+                    : 'bg-[#1a2c38] text-[#b1bad3] hover:text-white hover:bg-[#2f4553]'}
+                `}
+              >
+                <Icons.Lightning />
+                <span>Rápido</span>
+              </button>
 
-            {/* Mute */}
-            <button 
-              onClick={() => setIsMuted(!isMuted)}
-              className={`
-                h-10 w-10 rounded-lg flex items-center justify-center border transition-all
-                ${isMuted 
-                  ? 'bg-[#0f212e] border-[#2f4553] text-[#5f6c7b]' 
-                  : 'bg-[#0f212e] border-[#2f4553] text-[#b1bad3] hover:text-white hover:border-[#3d5564]'}
-              `}
-            >
-              {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
-            </button>
+              {/* Demo/Real Mode */}
+              <button 
+                onClick={() => setMode(demoMode ? 'real' : 'demo')}
+                disabled={isSpinning || isLoading}
+                className={`
+                  flex-1 h-9 rounded-md flex items-center justify-center gap-1.5 transition-all text-sm
+                  ${demoMode 
+                    ? 'bg-[#1a2c38] text-[#b1bad3] hover:text-white hover:bg-[#2f4553]' 
+                    : 'bg-[#2f4553] text-white'}
+                `}
+              >
+                {demoMode ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <span>Demo</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <span>Real</span>
+                  </>
+                )}
+              </button>
+
+              {/* Mute */}
+              <button 
+                onClick={() => setIsMuted(!isMuted)}
+                className={`
+                  h-9 w-9 rounded-md flex items-center justify-center transition-all
+                  ${isMuted 
+                    ? 'bg-[#1a2c38] text-[#5f6c7b]' 
+                    : 'bg-[#1a2c38] text-[#b1bad3] hover:text-white hover:bg-[#2f4553]'}
+                `}
+              >
+                {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -489,7 +489,7 @@ const PromoPage: React.FC = () => {
                   {/* Celebration Header */}
                   <h1 className="font-display font-bold text-2xl text-white mb-4">
                     ¡Felicidades! Has acumulado
-                  </h1>
+                    </h1>
                   
                   {/* Balance Display - Animated Shimmer */}
                   <div className="inline-block px-8 py-4 rounded-2xl bg-gradient-to-r from-[#F7C948]/5 via-[#F7C948]/20 to-[#F7C948]/5 border border-[#F7C948]/40 mb-4 animate-shimmer bg-[length:200%_100%]">
@@ -498,8 +498,8 @@ const PromoPage: React.FC = () => {
                     </span>
                     <span className="text-[#F7C948]/70 text-xl font-bold ml-2">MXN</span>
                   </div>
-                </div>
-                
+                  </div>
+                  
                 {/* Prizes Recap */}
                 {allResults.length > 0 && (
                   <div className="bg-[#1a1d26]/50 rounded-xl p-3 mb-4 border border-[#2a2d36]">
@@ -511,7 +511,7 @@ const PromoPage: React.FC = () => {
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                           <span className="text-white text-xs font-medium">${result.item.price.toLocaleString()}</span>
-                        </div>
+                </div>
                       ))}
                     </div>
                   </div>
@@ -553,24 +553,24 @@ const PromoPage: React.FC = () => {
                 {/* Register form */}
                 <form onSubmit={handleRegister} className="space-y-3">
                   {/* Email */}
-                  <input 
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="tu@email.com"
-                    disabled={isRegistering}
+                    <input 
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="tu@email.com"
+                      disabled={isRegistering}
                     className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-500 disabled:opacity-50"
-                  />
+                    />
                   
                   {/* Password */}
-                  <input 
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    <input 
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     placeholder="Contraseña (min. 6 caracteres)"
-                    disabled={isRegistering}
-                    className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-500 disabled:opacity-50"
-                  />
+                      disabled={isRegistering}
+                      className="w-full bg-[#1a1d26] border border-[#2a2d36] text-white text-sm px-4 py-3 rounded-xl focus:outline-none focus:border-[#F7C948] transition-colors placeholder-slate-500 disabled:opacity-50"
+                    />
                   
                   {/* Error message */}
                   {registerError && (
@@ -595,7 +595,7 @@ const PromoPage: React.FC = () => {
                     )}
                   </button>
                 </form>
-                
+                  
                 {/* Trust Signals */}
                 <div className="flex items-center justify-center gap-4 mt-5 text-slate-500 text-[10px]">
                   <div className="flex items-center gap-1">
@@ -618,13 +618,13 @@ const PromoPage: React.FC = () => {
                     <span>Retiro 24h</span>
                   </div>
                 </div>
-                
+                  
                 <p className="text-center text-slate-500 text-xs mt-4">
                   ¿Ya tienes cuenta?{' '}
-                  <Link to="/" className="text-[#F7C948] hover:underline font-medium">
+                    <Link to="/" className="text-[#F7C948] hover:underline font-medium">
                     Inicia Sesión
-                  </Link>
-                </p>
+                    </Link>
+                  </p>
               </>
             )}
           </div>
@@ -808,7 +808,7 @@ const PromoPage: React.FC = () => {
                 onClick={() => setShowRegisterModal(true)}
                 className="w-full py-3.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black rounded-xl font-display font-bold text-base uppercase tracking-tight shadow-[0_4px_20px_rgba(247,201,72,0.3)] hover:shadow-[0_6px_25px_rgba(247,201,72,0.4)] transition-all"
               >
-                {promoConfig?.cta_text || 'Reclamar Bono'}
+                  {promoConfig?.cta_text || 'Reclamar Bono'}
               </button>
             )}
           </div>
