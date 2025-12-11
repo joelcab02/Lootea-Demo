@@ -14,7 +14,7 @@ interface LogoProps {
 export const Logo: React.FC<LogoProps> = ({ 
   size = 28, 
   className = '',
-  color = 'green'
+  color = 'white'
 }) => {
   const fillColors = {
     green: '#00e701',

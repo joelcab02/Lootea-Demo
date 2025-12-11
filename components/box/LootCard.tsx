@@ -115,15 +115,15 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
           {item.name}
         </h3>
         
-        {/* Price tag - Stake Style (Green = Money) */}
+        {/* Price tag - Stake Style (White/Clean) */}
         <div 
           className="inline-flex items-center justify-center rounded px-2 py-0.5"
           style={{
-            background: 'rgba(0,231,1,0.1)',
-            border: '1px solid rgba(0,231,1,0.2)',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.12)',
           }}
         >
-          <span className="font-semibold text-[10px] sm:text-xs text-[#00e701]">
+          <span className="font-semibold text-[10px] sm:text-xs text-white">
             {formatPrice(item.price)}
           </span>
         </div>
