@@ -1,5 +1,6 @@
 /**
  * BottomNav - Mobile Bottom Navigation (Stake Style)
+ * Typography: Outfit (Stake-style geometric sans)
  */
 
 import React from 'react';
@@ -57,7 +58,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, to, isActive }) => {
       }`}
     >
       {icon}
-      <span className="text-[11px] font-medium">{label}</span>
+      <span className="text-[11px] font-medium tracking-wide">{label}</span>
     </Link>
   );
 };
@@ -80,8 +81,8 @@ const BottomNav: React.FC = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden">
-      <div className="bg-[#1e2329] border-t border-[#2b3139]">
+    <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      <div className="bg-[#1a1d24] border-t border-[#2b3139]">
         <div className="flex items-center justify-around">
           <NavItem
             icon={<Icons.Home />}
@@ -121,7 +122,7 @@ const BottomNav: React.FC = () => {
       </div>
       
       {/* Safe area for iOS */}
-      <div className="bg-[#1e2329] h-[env(safe-area-inset-bottom)]" />
+      <div className="bg-[#1a1d24] h-[env(safe-area-inset-bottom)]" />
     </nav>
   );
 };

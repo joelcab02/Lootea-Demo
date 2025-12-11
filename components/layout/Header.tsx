@@ -1,9 +1,6 @@
 /**
  * Header - Stake-inspired design with Lootea DNA
- * 
- * Structure:
- * - Logo (left)
- * - Balance + Wallet button + User icons (right)
+ * Typography: Outfit (Stake-style geometric sans)
  */
 
 import React, { useState, useEffect } from 'react';
@@ -37,28 +34,24 @@ const Icons = {
     </svg>
   ),
   User: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
     </svg>
   ),
   Inventory: () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <path d="M16 10a4 4 0 0 1-8 0" />
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/>
     </svg>
   ),
   History: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
       <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
+      <path d="M12 6v6l4 2" stroke="#1a1d24" strokeWidth="2" strokeLinecap="round" fill="none"/>
     </svg>
   ),
   Settings: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
     </svg>
   ),
   Logout: () => (
@@ -119,7 +112,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#1a1d24] border-b border-[#252830]">
+      <header className="sticky top-0 z-50 w-full bg-[#1a1d24] border-b border-[#2b3139]" style={{ fontFamily: "'Outfit', sans-serif" }}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center h-14">
             
@@ -152,7 +145,7 @@ const Header: React.FC = () => {
                     onClick={() => setShowDeposit(true)}
                   >
                     <Icons.DollarCircle />
-                    <span className="text-white font-semibold text-sm">
+                    <span className="text-white font-semibold text-sm tracking-tight">
                       MX${formatPriceValue(balance)}
                     </span>
                     <Icons.ChevronDown />
@@ -213,15 +206,15 @@ const Header: React.FC = () => {
 
                     {/* User Dropdown */}
                     {userMenuOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-56 bg-[#1a1d24] border border-[#252830] rounded-xl shadow-xl overflow-hidden z-50">
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-[#1a1d24] border border-[#2b3139] rounded-xl shadow-xl overflow-hidden z-50">
                         {/* User Info */}
-                        <div className="p-3 border-b border-[#252830]">
+                        <div className="p-3 border-b border-[#2b3139]">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-[#F7C948] flex items-center justify-center text-black font-bold">
                               {displayName.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <p className="text-white font-medium text-sm">{displayName}</p>
+                              <p className="text-white font-semibold text-sm">{displayName}</p>
                               <p className="text-white/50 text-xs">MX${formatPriceValue(balance)}</p>
                             </div>
                           </div>
@@ -232,7 +225,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/inventory"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                            className="flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm font-medium transition-colors"
                           >
                             <Icons.Inventory />
                             <span>Mi Inventario</span>
@@ -240,7 +233,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/profile"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                            className="flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm font-medium transition-colors"
                           >
                             <Icons.History />
                             <span>Historial</span>
@@ -248,7 +241,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/profile"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm transition-colors"
+                            className="flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm font-medium transition-colors"
                           >
                             <Icons.Settings />
                             <span>Configuración</span>
@@ -256,10 +249,10 @@ const Header: React.FC = () => {
                         </div>
 
                         {/* Logout */}
-                        <div className="p-2 border-t border-[#252830]">
+                        <div className="p-2 border-t border-[#2b3139]">
                           <button 
                             onClick={handleSignOut}
-                            className="w-full flex items-center gap-3 px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
+                            className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg text-sm font-medium transition-colors"
                           >
                             <Icons.Logout />
                             <span>Cerrar Sesión</span>
@@ -282,7 +275,7 @@ const Header: React.FC = () => {
                   </button>
                   <button 
                     onClick={() => setShowAuthModal(true)}
-                    className="px-4 py-2 bg-[#F7C948] hover:bg-[#E6B800] text-black text-sm font-bold rounded-lg transition-colors"
+                    className="px-4 py-2 bg-[#F7C948] hover:bg-[#E6B800] text-black text-sm font-semibold rounded-lg transition-colors"
                   >
                     Registrarse
                   </button>
