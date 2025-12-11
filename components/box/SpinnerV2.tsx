@@ -288,14 +288,14 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         }}
       />
       
-      {/* Winner Glow - Blue */}
+      {/* Winner Glow - Blue, more subtle Stake style */}
       {showWinnerEffect && (
         <div 
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 animate-pulse"
           style={{
-            width: `${cardWidth * 2}px`,
-            height: `${cardWidth * 2}px`,
-            background: 'radial-gradient(circle, rgba(59,130,246,0.4) 0%, rgba(59,130,246,0.15) 40%, transparent 70%)',
+            width: `${cardWidth * 1.8}px`,
+            height: `${cardWidth * 1.8}px`,
+            background: 'radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.08) 50%, transparent 70%)',
             borderRadius: '50%',
           }}
         />
@@ -367,7 +367,12 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 animation: cardAnimation,
               }}
             >
-              <div className="relative rounded-xl overflow-hidden">
+              <div 
+                className="relative rounded-lg overflow-hidden transition-all duration-300"
+                style={isWinnerCard ? {
+                  boxShadow: '0 0 0 2px #3b82f6, 0 0 20px rgba(59,130,246,0.3)',
+                } : undefined}
+              >
                 <LootCard item={item} width={cardWidth} isSpinner={true} />
               </div>
             </div>
@@ -375,20 +380,34 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
         })}
       </div>
 
-      {/* Winner Info - Blue accent */}
+      {/* Winner Info - Stake toast style */}
       {showWinnerEffect && displayWinner && (
         <div 
-          className="absolute left-1/2 -translate-x-1/2 text-center px-4 pointer-events-none"
+          className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
           style={{ 
-            bottom: '24px',
-            width: 'min(90vw, 400px)',
+            bottom: '16px',
             zIndex: 60,
           }}
         >
-          <p className="text-white font-semibold text-sm sm:text-base leading-tight line-clamp-2">
-            {displayWinner.name}
-          </p>
-          <p className="text-white font-bold text-sm mt-1">{formatPrice(displayWinner.price)}</p>
+          <div 
+            className="flex items-center gap-3 px-4 py-2.5 rounded-lg"
+            style={{
+              background: '#213743',
+              border: '1px solid #2f4553',
+            }}
+          >
+            <span className="text-[#b1bad3] text-sm">Ganaste</span>
+            <span className="text-white font-bold text-sm">{displayWinner.name}</span>
+            <span 
+              className="text-sm font-bold px-2 py-0.5 rounded"
+              style={{ 
+                background: 'rgba(0,231,1,0.15)',
+                color: '#00e701',
+              }}
+            >
+              {formatPrice(displayWinner.price)}
+            </span>
+          </div>
         </div>
       )}
     </div>
