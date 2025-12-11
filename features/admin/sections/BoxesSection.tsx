@@ -192,7 +192,7 @@ export const BoxesSection: React.FC<BoxesSectionProps> = ({
             <div className="p-4 space-y-4">
               {isLoadingItems ? (
                 <div className="flex justify-center py-8">
-                  <div className="w-8 h-8 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
+                  <div className="w-8 h-8 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
                 </div>
               ) : (
                 <>

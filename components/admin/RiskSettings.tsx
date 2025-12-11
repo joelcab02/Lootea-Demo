@@ -62,7 +62,7 @@ export const RiskSettings: React.FC<RiskSettingsProps> = ({ box, onSave }) => {
 
         {loading ? (
           <div className="flex items-center justify-center h-32">
-            <div className="w-6 h-6 border-2 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin" />
           </div>
         ) : riskState ? (
           <div className="space-y-4">

@@ -49,7 +49,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
         {/* Image only - no name/price until winner reveal */}
         <div className={`relative ${imageSizeClass} flex items-center justify-center`}>
           {isLoading ? (
-            <div className="w-12 h-12 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
           ) : isEmoji ? (
             <span className={`${emojiSizeClass} select-none drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)]`}>
               {item.image}
@@ -90,8 +90,8 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
       {/* Image Container */}
       <div className={`relative z-10 ${imageSizeClass} mb-1 sm:mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
         {isLoading ? (
-            <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#1e2330] to-[#0d1019] animate-pulse flex items-center justify-center">
-              <div className="w-10 h-10 border-2 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
+            <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#1a2c38] to-[#0f212e] animate-pulse flex items-center justify-center">
+              <div className="w-10 h-10 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
             </div>
         ) : isEmoji ? (
              <span className={`${emojiSizeClass} select-none`}>

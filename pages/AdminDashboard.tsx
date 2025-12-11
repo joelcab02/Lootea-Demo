@@ -167,7 +167,7 @@ const AdminDashboard: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#08090c] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-3 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-3 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-slate-400">Verificando permisos...</p>
         </div>
       </div>
@@ -453,7 +453,7 @@ const AdminDashboard: React.FC = () => {
 // === LOADING STATE ===
 const LoadingState = () => (
   <div className="flex items-center justify-center h-64">
-    <div className="w-8 h-8 border-2 border-[#F7C948]/20 border-t-[#F7C948] rounded-full animate-spin"></div>
+    <div className="w-8 h-8 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
   </div>
 );
 

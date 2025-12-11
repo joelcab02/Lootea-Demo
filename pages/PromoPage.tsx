@@ -387,8 +387,8 @@ const PromoPage: React.FC = () => {
   
   if (isLoadingBox) {
     return (
-      <div className="min-h-screen bg-[#111111] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-[#0f212e] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
       </div>
     );
   }

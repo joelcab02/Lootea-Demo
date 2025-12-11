@@ -1,11 +1,6 @@
 /**
  * Spinner - Componente de carga reutilizable
- * 
- * Tamaños:
- * - xs: 16px - para botones pequeños
- * - sm: 20px - para botones
- * - md: 32px - para secciones
- * - lg: 48px - para paginas
+ * Stake style - Blue accent
  */
 
 import React from 'react';
@@ -15,8 +10,8 @@ type SpinnerSize = 'xs' | 'sm' | 'md' | 'lg';
 interface SpinnerProps {
   size?: SpinnerSize;
   className?: string;
-  /** Color del spinner - default es dorado */
-  color?: 'gold' | 'white' | 'slate';
+  /** Color del spinner - default es azul */
+  color?: 'blue' | 'white' | 'slate';
 }
 
 const SIZES: Record<SpinnerSize, { width: number; border: number }> = {
@@ -27,24 +22,24 @@ const SIZES: Record<SpinnerSize, { width: number; border: number }> = {
 };
 
 const COLORS = {
-  gold: {
-    track: 'border-[#F7C948]/20',
-    spinner: 'border-t-[#F7C948]',
+  blue: {
+    track: 'border-[#2f4553]',
+    spinner: 'border-t-[#3b82f6]',
   },
   white: {
     track: 'border-white/20',
     spinner: 'border-t-white',
   },
   slate: {
-    track: 'border-slate-500/20',
-    spinner: 'border-t-slate-400',
+    track: 'border-[#2f4553]',
+    spinner: 'border-t-[#b1bad3]',
   },
 };
 
 export const Spinner: React.FC<SpinnerProps> = ({ 
   size = 'md', 
   className = '',
-  color = 'gold'
+  color = 'blue'
 }) => {
   const { width, border } = SIZES[size];
   const { track, spinner } = COLORS[color];
@@ -69,7 +64,7 @@ export const PageSpinner: React.FC<{ message?: string }> = ({ message }) => (
   <div className="flex flex-col items-center justify-center py-20">
     <Spinner size="lg" />
     {message && (
-      <p className="mt-4 text-slate-400 text-sm">{message}</p>
+      <p className="mt-4 text-[#b1bad3] text-sm">{message}</p>
     )}
   </div>
 );
@@ -77,7 +72,7 @@ export const PageSpinner: React.FC<{ message?: string }> = ({ message }) => (
 /**
  * ButtonSpinner - Spinner para usar dentro de botones
  */
-export const ButtonSpinner: React.FC<{ color?: 'gold' | 'white' | 'slate' }> = ({ 
+export const ButtonSpinner: React.FC<{ color?: 'blue' | 'white' | 'slate' }> = ({ 
   color = 'white' 
 }) => (
   <Spinner size="sm" color={color} />

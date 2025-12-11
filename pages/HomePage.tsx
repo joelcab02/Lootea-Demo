@@ -68,7 +68,7 @@ const HomePage: React.FC = () => {
         {/* Loading State */}
         {isLoading && (
           <div className="flex justify-center py-20">
-            <div className="w-12 h-12 border-4 border-[#2f4553] border-t-[#F7C948] rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
           </div>
         )}
 
