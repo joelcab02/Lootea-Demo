@@ -143,70 +143,85 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   return (
     <Layout>
       {/* GAME AREA - Constrained width for better desktop experience */}
-      <div className="flex flex-col items-center relative w-full max-w-[1200px] mx-auto">
-        {/* SPINNER */}
-        <div className="relative w-full z-10">
-          <SpinnerV2 
-            items={items}
-            winner={predeterminedWinner}
-            isSpinning={isSpinning}
-            isLoading={isLoadingBox}
-            duration={fastMode ? 2000 : 5500}
-            onComplete={handleSpinComplete}
-          />
-        </div>
-
-        {/* BOTTOM TOOLBAR - Stake style (part of game area) */}
+      <div className="flex flex-col items-center relative w-full max-w-[1200px] mx-auto px-4">
+        
+        {/* GAME CONTAINER - Spinner + Toolbar unified */}
         <div 
-          className="w-full flex items-center justify-between px-4 py-3"
+          className="w-full"
           style={{
             background: '#0f212e',
+            borderRadius: '12px',
+            border: '1px solid #2f4553',
+            overflow: 'hidden',
           }}
         >
-          {/* Left: Icon buttons */}
-          <div className="flex items-center gap-1">
-            <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
-              <Icons.Settings />
-            </button>
-            <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
-              <Icons.Fullscreen />
-            </button>
-            <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
-              <Icons.Stats />
-            </button>
-            <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
-              <Icons.Share />
-            </button>
+          {/* SPINNER */}
+          <div className="relative w-full z-10">
+            <SpinnerV2 
+              items={items}
+              winner={predeterminedWinner}
+              isSpinning={isSpinning}
+              isLoading={isLoadingBox}
+              duration={fastMode ? 2000 : 5500}
+              onComplete={handleSpinComplete}
+            />
           </div>
 
-          {/* Center: Logo */}
-          <div className="text-white font-bold text-lg tracking-tight">
-            Lootea
-          </div>
-
-          {/* Right: Fairness badge */}
-          <a 
-            href="/provably-fair"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+          {/* BOTTOM TOOLBAR - Integrated with spinner */}
+          <div 
+            className="w-full flex items-center justify-between px-4 py-3"
             style={{
-              background: '#213743',
-              color: '#b1bad3',
+              background: '#0f212e',
+              borderTop: '1px solid #2f4553',
             }}
           >
-            <Icons.Check />
-            <span>Fairness</span>
-          </a>
+            {/* Left: Icon buttons */}
+            <div className="flex items-center gap-1">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+                <Icons.Settings />
+              </button>
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+                <Icons.Fullscreen />
+              </button>
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+                <Icons.Stats />
+              </button>
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+                <Icons.Share />
+              </button>
+            </div>
+
+            {/* Center: Logo */}
+            <div className="text-white font-bold text-lg tracking-tight">
+              Lootea
+            </div>
+
+            {/* Right: Fairness badge */}
+            <a 
+              href="/provably-fair"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors"
+              style={{
+                background: '#213743',
+                borderRadius: '8px',
+                color: '#b1bad3',
+              }}
+            >
+              <Icons.Check />
+              <span>Fairness</span>
+            </a>
+          </div>
         </div>
 
         {/* CONTROLS - Stake Style Panel */}
-        <div className="z-20 w-full max-w-full md:max-w-[400px] px-4 py-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <div className="z-20 w-full max-w-full md:max-w-[420px] pt-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
           
           {/* Control Panel - Stake style */}
           <div 
             className="p-4"
             style={{
               background: '#1a2c38',
-              borderRadius: '8px',
+              borderRadius: '12px',
+              border: '1px solid #2f4553',
             }}
           >
             

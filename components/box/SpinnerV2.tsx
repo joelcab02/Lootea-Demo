@@ -276,7 +276,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       style={{
         height: `${spinnerHeight}px`,
         background: '#0f212e',
-        borderRadius: '8px',
       }}
     >
       {/* Vignette overlay - subtle depth */}
