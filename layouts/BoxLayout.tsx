@@ -151,10 +151,10 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
         </div>
 
         {/* CONTROLS - Stake Style Panel */}
-        <div className="z-20 w-full max-w-[400px] px-4 pb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <div className="z-20 w-full max-w-full md:max-w-[420px] px-4 pb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
           
           {/* Control Panel */}
-          <div className="bg-[#213743] rounded-xl p-4">
+          <div className="bg-[#213743] rounded-xl p-4 md:p-4">
             
             {gameError && (
               <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs text-center">
@@ -166,10 +166,10 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             <button 
               onClick={handleSpin}
               disabled={isSpinning || isLoading}
-              className="w-full py-3 mb-3 bg-[#00e701] hover:bg-[#1fff20] text-black rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 md:py-3 mb-3 bg-[#00e701] hover:bg-[#1fff20] text-black rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <span className="text-base font-bold">Abrir</span>
-              <span className="text-base font-bold">
+              <span className="text-base md:text-base font-bold">Abrir</span>
+              <span className="text-base md:text-base font-bold">
                 {formatPrice(BOX_PRICE)}
               </span>
             </button>
@@ -182,7 +182,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
                 onClick={() => setFastMode(!fastMode)}
                 disabled={isSpinning || isLoading}
                 className={`
-                  flex-1 h-9 rounded-md flex items-center justify-center gap-1.5 transition-all text-sm
+                  flex-1 h-11 md:h-9 rounded-lg md:rounded-md flex items-center justify-center gap-1.5 transition-all text-sm
                   ${fastMode 
                     ? 'bg-[#2f4553] text-white' 
                     : 'bg-[#1a2c38] text-[#b1bad3] hover:text-white hover:bg-[#2f4553]'}
@@ -197,7 +197,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
                 onClick={() => setMode(demoMode ? 'real' : 'demo')}
                 disabled={isSpinning || isLoading}
                 className={`
-                  flex-1 h-9 rounded-md flex items-center justify-center gap-1.5 transition-all text-sm
+                  flex-1 h-11 md:h-9 rounded-lg md:rounded-md flex items-center justify-center gap-1.5 transition-all text-sm
                   ${demoMode 
                     ? 'bg-[#1a2c38] text-[#b1bad3] hover:text-white hover:bg-[#2f4553]' 
                     : 'bg-[#2f4553] text-white'}
@@ -220,7 +220,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               <button 
                 onClick={() => setIsMuted(!isMuted)}
                 className={`
-                  h-9 w-9 rounded-md flex items-center justify-center transition-all
+                  h-11 w-11 md:h-9 md:w-9 rounded-lg md:rounded-md flex items-center justify-center transition-all
                   ${isMuted 
                     ? 'bg-[#1a2c38] text-[#5f6c7b]' 
                     : 'bg-[#1a2c38] text-[#b1bad3] hover:text-white hover:bg-[#2f4553]'}
