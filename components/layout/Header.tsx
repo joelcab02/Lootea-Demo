@@ -114,14 +114,14 @@ const Header: React.FC = () => {
     <>
       <header className="sticky top-0 z-50 w-full bg-[#1a2c38] border-b border-[#2f4553]" style={{ fontFamily: "'Outfit', sans-serif" }}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center h-14">
+          <div className="flex items-center h-16">
             
             {/* Logo - Left */}
             <Link to="/" className="flex items-center flex-shrink-0">
               <img 
                 src="https://tmikqlakdnkjhdbhkjru.supabase.co/storage/v1/object/public/assets/download__3___1_-removebg-preview.png"
                 alt="Lootea"
-                className="h-8 w-auto"
+                className="h-9 w-auto"
               />
             </Link>
 
@@ -133,7 +133,7 @@ const Header: React.FC = () => {
               
               {/* Loading State - Center */}
               {isLoading && (
-                <div className="w-32 h-10 bg-[#213743] rounded-lg animate-pulse" />
+                <div className="w-32 h-11 bg-[#213743] rounded-lg animate-pulse" />
               )}
 
               {/* Logged In - Balance Center */}
@@ -154,7 +154,7 @@ const Header: React.FC = () => {
                   {/* Wallet Button */}
                   <button 
                     onClick={() => setShowDeposit(true)}
-                    className="flex items-center justify-center w-10 h-10 bg-[#3b82f6] hover:bg-[#2563eb] transition-colors text-white"
+                    className="flex items-center justify-center w-11 h-11 bg-[#3b82f6] hover:bg-[#2563eb] transition-colors text-white"
                     title="Depositar"
                   >
                     <Icons.Wallet />
@@ -172,8 +172,8 @@ const Header: React.FC = () => {
               {/* Loading State */}
               {isLoading && (
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-[#213743] rounded-lg animate-pulse" />
-                  <div className="w-10 h-10 bg-[#213743] rounded-lg animate-pulse" />
+                  <div className="w-11 h-11 bg-[#213743] rounded-lg animate-pulse" />
+                  <div className="w-11 h-11 bg-[#213743] rounded-lg animate-pulse" />
                 </div>
               )}
 
@@ -183,7 +183,7 @@ const Header: React.FC = () => {
                   {/* Inventory Button - Desktop only */}
                   <button 
                     onClick={() => setShowCart(true)}
-                    className="relative hidden md:flex items-center justify-center w-10 h-10 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg transition-colors"
+                    className="relative hidden md:flex items-center justify-center w-11 h-11 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg transition-colors"
                     title="Inventario"
                   >
                     <Icons.Inventory />
@@ -198,7 +198,7 @@ const Header: React.FC = () => {
                   <div className="relative">
                     <button 
                       onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
-                      className="flex items-center justify-center w-10 h-10 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg transition-colors"
+                      className="flex items-center justify-center w-11 h-11 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg transition-colors"
                       title="Perfil"
                     >
                       <Icons.User />
