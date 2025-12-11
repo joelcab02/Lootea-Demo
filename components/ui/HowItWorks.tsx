@@ -1,3 +1,8 @@
+/**
+ * HowItWorks - Stake Style
+ * Blue accents, teal backgrounds
+ */
+
 import React from 'react';
 
 const Icons = {
@@ -17,19 +22,12 @@ const steps = [
 export default function HowItWorks() {
   return (
     <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
-      {/* Header - Premium */}
+      {/* Header - Stake Style */}
       <div className="text-center mb-8 sm:mb-12">
-        <h2 
-          className="font-display text-xl sm:text-2xl md:text-3xl mb-2 uppercase"
-          style={{
-            background: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
+        <h2 className="font-bold text-xl sm:text-2xl md:text-3xl mb-2 text-white">
           ¿Cómo Funciona?
         </h2>
-        <p className="text-slate-600 text-xs sm:text-sm">
+        <p className="text-[#5f6c7b] text-xs sm:text-sm">
           4 simples pasos para ganar productos reales
         </p>
       </div>
@@ -44,32 +42,29 @@ export default function HowItWorks() {
             {/* Card */}
             <div 
               className={`
-                relative p-4 sm:p-6 rounded-2xl text-center transition-all duration-300 overflow-hidden
+                relative p-4 sm:p-6 rounded-xl text-center transition-all duration-300 overflow-hidden
                 ${step.highlight ? '' : 'hover:-translate-y-1'}
               `}
               style={step.highlight ? {
-                background: 'linear-gradient(135deg, #FFD966 0%, #F7C948 50%, #E6A800 100%)',
-                boxShadow: '0 8px 32px rgba(247,201,72,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+                background: '#3b82f6',
+                boxShadow: '0 8px 32px rgba(59,130,246,0.3)',
               } : {
-                background: 'linear-gradient(145deg, #1a1d26 0%, #12141a 100%)',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+                background: 'linear-gradient(145deg, #1a2c38 0%, #0f212e 100%)',
+                border: '1px solid #2f4553',
               }}
             >
-              {/* Top shine */}
-              <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-              
               {/* Hover glow for non-highlight */}
               {!step.highlight && (
                 <div 
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                  style={{ boxShadow: 'inset 0 0 0 1px rgba(247,201,72,0.2)' }}
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  style={{ boxShadow: 'inset 0 0 0 1px rgba(59,130,246,0.3)' }}
                 />
               )}
 
               {/* Step number */}
               <div className={`
-                absolute top-3 right-3 text-[10px] sm:text-xs font-display
-                ${step.highlight ? 'text-black/30' : 'text-slate-700'}
+                absolute top-3 right-3 text-[10px] sm:text-xs font-semibold
+                ${step.highlight ? 'text-white/40' : 'text-[#5f6c7b]'}
               `}>
                 {step.num}
               </div>
@@ -78,25 +73,24 @@ export default function HowItWorks() {
               <div 
                 className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4"
                 style={step.highlight ? {
-                  background: '#000',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                  background: 'rgba(255,255,255,0.2)',
                 } : {
-                  background: 'linear-gradient(135deg, rgba(247,201,72,0.1) 0%, rgba(247,201,72,0.02) 100%)',
-                  border: '1px solid rgba(247,201,72,0.15)',
+                  background: 'rgba(59,130,246,0.1)',
+                  border: '1px solid rgba(59,130,246,0.2)',
                 }}
               >
-                <div className={step.highlight ? 'text-[#F7C948]' : 'text-[#F7C948]/70'}>
+                <div className={step.highlight ? 'text-white' : 'text-[#3b82f6]'}>
                   {step.icon}
                 </div>
               </div>
 
               {/* Content */}
               <h3 
-                className={`font-display text-sm sm:text-base mb-1 uppercase tracking-wide ${step.highlight ? 'text-black' : 'text-white'}`}
+                className={`font-semibold text-sm sm:text-base mb-1 ${step.highlight ? 'text-white' : 'text-white'}`}
               >
                 {step.title}
               </h3>
-              <p className={`text-[10px] sm:text-xs leading-relaxed ${step.highlight ? 'text-black/60' : 'text-slate-500'}`}>
+              <p className={`text-[10px] sm:text-xs leading-relaxed ${step.highlight ? 'text-white/70' : 'text-[#b1bad3]'}`}>
                 {step.desc}
               </p>
             </div>

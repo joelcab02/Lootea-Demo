@@ -1,9 +1,6 @@
 /**
- * User Menu - Header buttons for auth
- * Shows Sign In / Register when logged out
- * Shows user info + balance + cart when logged in
- * 
- * Design: Lootea Gold theme with gamer aesthetic
+ * User Menu - Stake Style
+ * Blue accents, Green cart badge only
  */
 
 import React, { useState, useEffect } from 'react';
@@ -140,8 +137,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
   if (!authState || authState.isLoading) {
     return (
       <div className="flex items-center gap-2">
-        <div className="w-24 h-9 bg-[#1a1d26] rounded-lg animate-pulse" />
-        <div className="w-10 h-9 bg-[#1a1d26] rounded-lg animate-pulse" />
+        <div className="w-24 h-9 bg-[#213743] rounded-lg animate-pulse" />
+        <div className="w-10 h-9 bg-[#213743] rounded-lg animate-pulse" />
       </div>
     );
   }
@@ -160,20 +157,20 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
           {/* Cart Button */}
           <button 
             onClick={() => setShowCart(true)}
-            className="relative p-2 text-slate-400 hover:text-white transition-colors"
+            className="relative p-2 text-[#b1bad3] hover:text-white transition-colors"
           >
             <Icons.Cart />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-[#F7C948] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-[#00e701] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
                 {cartCount > 99 ? '99' : cartCount}
               </span>
             )}
           </button>
           
-          {/* Balance - Click to deposit */}
+          {/* Balance - Click to deposit (Blue) */}
           <button 
             onClick={() => setShowDeposit(true)}
-            className="px-3 py-1.5 rounded-lg bg-[#F7C948] hover:bg-[#FFD966] text-black font-bold text-sm transition-colors"
+            className="px-3 py-1.5 rounded-lg bg-[#3b82f6] hover:bg-[#2563eb] text-white font-bold text-sm transition-colors"
           >
             ${formatPriceValue(balance)}
           </button>
@@ -182,7 +179,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
           <div className="relative">
             <button 
               onClick={toggleDropdown}
-              className="p-2 text-slate-400 hover:text-white transition-colors"
+              className="p-2 text-[#b1bad3] hover:text-white transition-colors"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="3" y1="12" x2="21" y2="12" />
@@ -191,24 +188,21 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
               </svg>
             </button>
           
-            {/* Dropdown Menu */}
+            {/* Dropdown Menu - Stake Style */}
             {dropdownOpen && (
             <div 
-              className="absolute right-0 top-full mt-2 w-56 rounded-2xl shadow-2xl z-50 overflow-hidden"
-              style={{ background: '#1a1a1a', border: '1px solid #222222' }}
+              className="absolute right-0 top-full mt-2 w-56 rounded-xl shadow-2xl z-50 overflow-hidden"
+              style={{ background: '#1a2c38', border: '1px solid #2f4553' }}
             >
-              {/* Top shine */}
-              <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-              
               {/* User info header */}
-              <div className="p-4 border-b border-white/5">
+              <div className="p-4 border-b border-[#2f4553]">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#F7C948] to-[#FF9500] flex items-center justify-center text-black text-lg font-display font-black">
+                  <div className="w-11 h-11 rounded-full bg-[#3b82f6] flex items-center justify-center text-white text-lg font-bold">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-medium text-sm truncate">{displayName}</p>
-                    <div className="flex items-center gap-1 text-[#F7C948]">
+                    <div className="flex items-center gap-1 text-[#3b82f6]">
                       <Icons.Level />
                       <span className="text-xs font-medium">Nivel {level}</span>
                     </div>
@@ -218,32 +212,32 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
               
               {/* Menu items */}
               <div className="p-2">
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-[#F7C948] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg text-sm transition-colors">
                   <Icons.Inventory />
                   <span>Mi Inventario</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-[#F7C948] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg text-sm transition-colors">
                   <Icons.History />
                   <span>Historial</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-[#F7C948] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg text-sm transition-colors">
                   <Icons.Fairness />
                   <span>Provably Fair</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-[#F7C948] rounded-lg text-sm transition-colors">
+                <button className="w-full flex items-center gap-3 px-3 py-2.5 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg text-sm transition-colors">
                   <Icons.Settings />
-                  <span>Configuracion</span>
+                  <span>Configuración</span>
                 </button>
               </div>
               
               {/* Logout */}
-              <div className="p-2 border-t border-white/5">
+              <div className="p-2 border-t border-[#2f4553]">
                 <button 
                   onClick={handleSignOut}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:text-red-300 rounded-lg text-sm transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
                 >
                   <Icons.Logout />
-                  <span>Cerrar Sesion</span>
+                  <span>Cerrar Sesión</span>
                 </button>
               </div>
             </div>
@@ -260,14 +254,14 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
     );
   }
 
-  // Logged out - PackDraw style
+  // Logged out - Stake style
   return (
     <>
       <div className="flex items-center gap-1">
-        {/* Login button */}
+        {/* Login button (Blue) */}
         <button
           onClick={openRegister}
-          className="px-3 py-1.5 text-sm font-bold text-black rounded-lg bg-[#F7C948] hover:bg-[#FFD966] transition-colors"
+          className="px-3 py-1.5 text-sm font-bold text-white rounded-lg bg-[#3b82f6] hover:bg-[#2563eb] transition-colors"
         >
           Entrar
         </button>
@@ -275,7 +269,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
         {/* Menu Button */}
         <button 
           onClick={onMenuClick}
-          className="p-2 text-slate-400 hover:text-white transition-colors"
+          className="p-2 text-[#b1bad3] hover:text-white transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="12" x2="21" y2="12" />
