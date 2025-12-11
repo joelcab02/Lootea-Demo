@@ -30,11 +30,6 @@ const generateReference = () => {
 
 // Icons
 const Icons = {
-  Back: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M19 12H5M12 19l-7-7 7-7"/>
-    </svg>
-  ),
   Copy: () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
@@ -82,13 +77,7 @@ const DepositPage: React.FC = () => {
     setStep('details');
   };
 
-  const handleBack = () => {
-    if (step === 'details') {
-      setStep('select');
-    } else {
-      navigate(-1);
-    }
-  };
+  // Navigation handled by bottom nav and header
 
   const copyToClipboard = async (text: string, field: string) => {
     try {
@@ -140,20 +129,12 @@ const DepositPage: React.FC = () => {
     <Layout>
       <div className="max-w-md mx-auto px-4 py-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
         
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <button 
-            onClick={handleBack}
-            className="text-[#b1bad3] hover:text-white transition-colors"
-          >
-            <Icons.Back />
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="text-[#3b82f6]"><Icons.Wallet /></span>
-            <span className="text-white font-bold text-lg">
-              {step === 'pending' ? 'Solicitud Enviada' : step === 'details' ? 'Depositar' : 'Agregar Fondos'}
-            </span>
-          </div>
+        {/* Header - Stake style: simple title, no back arrow */}
+        <div className="flex items-center gap-2 mb-6">
+          <span className="text-[#3b82f6]"><Icons.Wallet /></span>
+          <span className="text-white font-bold text-lg">
+            {step === 'pending' ? 'Solicitud Enviada' : step === 'details' ? 'Depositar' : 'Agregar Fondos'}
+          </span>
         </div>
 
         {/* STEP 1: Select Amount & Method */}
