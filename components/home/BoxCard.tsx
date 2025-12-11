@@ -36,7 +36,7 @@ export const BoxCard: React.FC<BoxCardProps> = ({ box }) => {
           />
         ) : (
           <div className="w-full aspect-[3/4] bg-gradient-to-br from-[#213743] to-[#1a2c38] flex items-center justify-center">
-            <svg width="40%" height="40%" viewBox="0 0 24 24" fill="#F7C948" opacity="0.3">
+            <svg width="40%" height="40%" viewBox="0 0 24 24" fill="#3b82f6" opacity="0.3">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
           </div>
@@ -45,10 +45,10 @@ export const BoxCard: React.FC<BoxCardProps> = ({ box }) => {
 
       {/* Box Name & Price */}
       <div className="mt-3 text-center">
-        <h3 className="text-white font-medium text-sm md:text-base truncate max-w-full group-hover:text-[#F7C948] transition-colors">
+        <h3 className="text-white font-medium text-sm md:text-base truncate max-w-full group-hover:text-[#b1bad3] transition-colors">
           {box.name}
         </h3>
-        <span className="text-[#F7C948] text-sm md:text-base font-bold">
+        <span className="text-white text-sm md:text-base font-bold">
           {formatPrice(box.price, false)}
         </span>
       </div>
