@@ -1,5 +1,5 @@
 /**
- * HomePage - Grid de cajas estilo PackDraw
+ * HomePage - Grid de cajas estilo Stake
  * El usuario ve las cajas disponibles y hace click para jugar
  */
 
@@ -55,12 +55,12 @@ const HomePage: React.FC = () => {
     <Layout>
       <div className="px-4 md:px-8 py-6 md:py-10">
         
-        {/* Title */}
+        {/* Title - Stake style */}
         <div className="text-center mb-8">
-          <h1 className="font-display text-2xl md:text-4xl font-black uppercase tracking-tight mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold tracking-tight mb-2 text-white">
             Elige tu caja
           </h1>
-          <p className="text-slate-500 text-sm md:text-base">
+          <p className="text-[#b1bad3] text-sm md:text-base">
             Abre cajas y gana premios reales
           </p>
         </div>
@@ -68,11 +68,11 @@ const HomePage: React.FC = () => {
         {/* Loading State */}
         {isLoading && (
           <div className="flex justify-center py-20">
-            <div className="w-12 h-12 border-4 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-[#2f4553] border-t-[#F7C948] rounded-full animate-spin"></div>
           </div>
         )}
 
-        {/* Boxes Grid - Estilo Packdraw */}
+        {/* Boxes Grid - Estilo Stake */}
         {!isLoading && boxes.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 max-w-7xl mx-auto">
             {boxes.map((box) => (
@@ -94,7 +94,7 @@ const HomePage: React.FC = () => {
             <h2 className="text-xl font-bold text-white mb-2">{error}</h2>
             <button 
               onClick={loadBoxes}
-              className="mt-4 px-6 py-2.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99]"
+              className="mt-4 px-6 py-2.5 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold text-sm rounded-lg transition-all duration-200"
             >
               Reintentar
             </button>
@@ -104,11 +104,11 @@ const HomePage: React.FC = () => {
         {/* Empty State */}
         {!isLoading && !error && boxes.length === 0 && (
           <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-4 text-slate-600">
+            <div className="w-20 h-20 mx-auto mb-4 text-[#5f6c7b]">
               <LogoIcon />
             </div>
             <h2 className="text-xl font-bold text-white mb-2">No hay cajas disponibles</h2>
-            <p className="text-slate-500">Vuelve pronto para ver nuevas cajas</p>
+            <p className="text-[#b1bad3]">Vuelve pronto para ver nuevas cajas</p>
           </div>
         )}
       </div>

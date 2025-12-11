@@ -5,7 +5,7 @@
  * - Header global
  * - BottomNav mobile
  * - Footer (opcional)
- * - Fondo consistente #111111
+ * - Fondo Stake-style #0f212e
  */
 
 import React from 'react';
@@ -24,7 +24,7 @@ export const Layout: React.FC<LayoutProps> = ({
   showFooter = true 
 }) => {
   return (
-    <div className="min-h-screen bg-[#111111] text-white font-sans">
+    <div className="min-h-screen bg-[#0f212e] text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
       <div className="flex flex-col min-h-screen">
         <Header />
         

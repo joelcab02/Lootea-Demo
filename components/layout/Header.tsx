@@ -1,6 +1,6 @@
 /**
- * Header - Stake-inspired design with Lootea DNA
- * Typography: Outfit (Stake-style geometric sans)
+ * Header - Stake-inspired design
+ * Colors: Dark teal/blue palette
  */
 
 import React, { useState, useEffect } from 'react';
@@ -46,7 +46,7 @@ const Icons = {
   History: () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
       <circle cx="12" cy="12" r="10" />
-      <path d="M12 6v6l4 2" stroke="#1a1d24" strokeWidth="2" strokeLinecap="round" fill="none"/>
+      <path d="M12 6v6l4 2" stroke="#1a2c38" strokeWidth="2" strokeLinecap="round" fill="none"/>
     </svg>
   ),
   Settings: () => (
@@ -112,7 +112,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#1a1d24] border-b border-[#2b3139]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      <header className="sticky top-0 z-50 w-full bg-[#1a2c38] border-b border-[#2f4553]" style={{ fontFamily: "'Outfit', sans-serif" }}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center h-14">
             
@@ -133,15 +133,15 @@ const Header: React.FC = () => {
               
               {/* Loading State - Center */}
               {isLoading && (
-                <div className="w-32 h-10 bg-[#252830] rounded-lg animate-pulse" />
+                <div className="w-32 h-10 bg-[#213743] rounded-lg animate-pulse" />
               )}
 
               {/* Logged In - Balance Center */}
               {!isLoading && isLoggedIn && (
-                <div className="flex items-center bg-[#252830] rounded-lg overflow-hidden">
+                <div className="flex items-center bg-[#0f212e] rounded-lg overflow-hidden border border-[#2f4553]">
                   {/* Balance Display */}
                   <button 
-                    className="flex items-center gap-2 px-3 py-2 hover:bg-[#2d3139] transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 hover:bg-[#213743] transition-colors"
                     onClick={() => setShowDeposit(true)}
                   >
                     <Icons.DollarCircle />
@@ -172,8 +172,8 @@ const Header: React.FC = () => {
               {/* Loading State */}
               {isLoading && (
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-[#252830] rounded-lg animate-pulse" />
-                  <div className="w-10 h-10 bg-[#252830] rounded-lg animate-pulse" />
+                  <div className="w-10 h-10 bg-[#213743] rounded-lg animate-pulse" />
+                  <div className="w-10 h-10 bg-[#213743] rounded-lg animate-pulse" />
                 </div>
               )}
 
@@ -183,7 +183,7 @@ const Header: React.FC = () => {
                   {/* Inventory Button - Desktop only */}
                   <button 
                     onClick={() => setShowCart(true)}
-                    className="relative hidden md:flex items-center justify-center w-10 h-10 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
+                    className="relative hidden md:flex items-center justify-center w-10 h-10 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg transition-colors"
                     title="Inventario"
                   >
                     <Icons.Inventory />
@@ -198,7 +198,7 @@ const Header: React.FC = () => {
                   <div className="relative">
                     <button 
                       onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
-                      className="flex items-center justify-center w-10 h-10 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg transition-colors"
+                      className="flex items-center justify-center w-10 h-10 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg transition-colors"
                       title="Perfil"
                     >
                       <Icons.User />
@@ -206,16 +206,16 @@ const Header: React.FC = () => {
 
                     {/* User Dropdown */}
                     {userMenuOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-56 bg-[#1a1d24] border border-[#2b3139] rounded-xl shadow-xl overflow-hidden z-50">
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-[#1a2c38] border border-[#2f4553] rounded-xl shadow-xl overflow-hidden z-50">
                         {/* User Info */}
-                        <div className="p-3 border-b border-[#2b3139]">
+                        <div className="p-3 border-b border-[#2f4553]">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-[#F7C948] flex items-center justify-center text-black font-bold">
                               {displayName.charAt(0).toUpperCase()}
                             </div>
                             <div>
                               <p className="text-white font-semibold text-sm">{displayName}</p>
-                              <p className="text-white/50 text-xs">MX${formatPriceValue(balance)}</p>
+                              <p className="text-[#b1bad3] text-xs">MX${formatPriceValue(balance)}</p>
                             </div>
                           </div>
                         </div>
@@ -225,7 +225,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/inventory"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm font-medium transition-colors"
+                            className="flex items-center gap-3 px-3 py-2.5 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg text-sm font-medium transition-colors"
                           >
                             <Icons.Inventory />
                             <span>Mi Inventario</span>
@@ -233,7 +233,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/profile"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm font-medium transition-colors"
+                            className="flex items-center gap-3 px-3 py-2.5 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg text-sm font-medium transition-colors"
                           >
                             <Icons.History />
                             <span>Historial</span>
@@ -241,7 +241,7 @@ const Header: React.FC = () => {
                           <Link 
                             to="/profile"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2.5 text-white/70 hover:text-white hover:bg-[#252830] rounded-lg text-sm font-medium transition-colors"
+                            className="flex items-center gap-3 px-3 py-2.5 text-[#b1bad3] hover:text-white hover:bg-[#213743] rounded-lg text-sm font-medium transition-colors"
                           >
                             <Icons.Settings />
                             <span>Configuración</span>
@@ -249,7 +249,7 @@ const Header: React.FC = () => {
                         </div>
 
                         {/* Logout */}
-                        <div className="p-2 border-t border-[#2b3139]">
+                        <div className="p-2 border-t border-[#2f4553]">
                           <button 
                             onClick={handleSignOut}
                             className="w-full flex items-center gap-3 px-3 py-2.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg text-sm font-medium transition-colors"
@@ -269,13 +269,13 @@ const Header: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setShowAuthModal(true)}
-                    className="px-4 py-2 text-white/70 hover:text-white text-sm font-medium transition-colors"
+                    className="px-4 py-2 text-[#b1bad3] hover:text-white text-sm font-medium transition-colors"
                   >
                     Iniciar Sesión
                   </button>
                   <button 
                     onClick={() => setShowAuthModal(true)}
-                    className="px-4 py-2 bg-[#F7C948] hover:bg-[#E6B800] text-black text-sm font-semibold rounded-lg transition-colors"
+                    className="px-4 py-2 bg-[#3b82f6] hover:bg-[#2563eb] text-white text-sm font-semibold rounded-lg transition-colors"
                   >
                     Registrarse
                   </button>

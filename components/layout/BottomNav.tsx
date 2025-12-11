@@ -1,6 +1,6 @@
 /**
  * BottomNav - Mobile Bottom Navigation (Stake Style)
- * Typography: Outfit (Stake-style geometric sans)
+ * Colors: Dark teal/blue palette
  */
 
 import React from 'react';
@@ -54,7 +54,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, to, isActive }) => {
     <Link
       to={to}
       className={`flex flex-col items-center justify-center gap-1 py-3 px-4 transition-colors ${
-        isActive ? 'text-white' : 'text-white/50 hover:text-white/70'
+        isActive ? 'text-white' : 'text-[#b1bad3] hover:text-white'
       }`}
     >
       {icon}
@@ -82,7 +82,7 @@ const BottomNav: React.FC = () => {
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
-      <div className="bg-[#1a1d24] border-t border-[#2b3139]">
+      <div className="bg-[#1a2c38] border-t border-[#2f4553]">
         <div className="flex items-center justify-around">
           <NavItem
             icon={<Icons.Home />}
@@ -122,7 +122,7 @@ const BottomNav: React.FC = () => {
       </div>
       
       {/* Safe area for iOS */}
-      <div className="bg-[#1a1d24] h-[env(safe-area-inset-bottom)]" />
+      <div className="bg-[#1a2c38] h-[env(safe-area-inset-bottom)]" />
     </nav>
   );
 };
