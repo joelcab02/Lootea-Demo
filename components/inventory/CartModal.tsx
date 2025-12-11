@@ -1,7 +1,6 @@
 /**
- * Cart Modal - Shows user's inventory/cart
- * Allows selling items for balance
- * Design: PackDraw style - dark modal with item grid
+ * Cart Modal - Stake Style
+ * Shows user's inventory/cart
  */
 
 import React, { useState, useEffect } from 'react';
@@ -24,17 +23,13 @@ const Icons = {
     </svg>
   ),
   DollarSign: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="1" x2="12" y2="23" />
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
     </svg>
   ),
   Package: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-      <line x1="12" y1="22.08" x2="12" y2="12" />
     </svg>
   ),
   Loader: () => (
@@ -73,20 +68,17 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   const [sellingAll, setSellingAll] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Subscribe to inventory updates
   useEffect(() => {
     const unsubscribe = subscribeInventory(setInventory);
     return unsubscribe;
   }, []);
 
-  // Fetch inventory when modal opens
   useEffect(() => {
     if (isOpen) {
       fetchInventory();
     }
   }, [isOpen]);
 
-  // Clear message after 3 seconds
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => setMessage(null), 3000);
@@ -147,40 +139,35 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/60 animate-backdrop-in"
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div 
-        className="relative z-10 w-full max-w-2xl rounded-2xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden animate-modal-in"
-        style={{ background: '#1a1a1a', border: '1px solid #222222' }}
-      >
-        {/* Top shine */}
-        <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10" />
+      <div className="relative z-10 w-full max-w-2xl rounded-xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden bg-[#1a2c38] border border-[#2f4553]">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/5">
+        <div className="flex items-center justify-between p-4 border-b border-[#2f4553]">
           <div className="flex items-center gap-3">
-            <span className="text-white font-display text-lg">Tu Carrito</span>
-            <span className="text-[#F7C948] font-bold">${inventory.totalValue.toFixed(2)} MXN</span>
+            <span className="text-white font-semibold text-lg">Tu Inventario</span>
+            <span className="text-[#3b82f6] font-bold">${inventory.totalValue.toFixed(2)} MXN</span>
           </div>
           <button 
             onClick={onClose}
-            className="text-slate-500 hover:text-white transition-colors p-1"
+            className="text-[#b1bad3] hover:text-white transition-colors p-1"
           >
             <Icons.X />
           </button>
         </div>
         
         {/* Action Bar */}
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-black/20">
-          <div className="text-slate-400 text-sm">
+        <div className="flex items-center justify-between p-4 border-b border-[#2f4553] bg-[#0f212e]">
+          <div className="text-[#b1bad3] text-sm">
             {selectedItems.size > 0 ? (
-              <span>{selectedItems.size} seleccionados <span className="text-[#F7C948]">${selectedValue.toFixed(2)} MXN</span></span>
+              <span>{selectedItems.size} seleccionados <span className="text-[#3b82f6]">${selectedValue.toFixed(2)} MXN</span></span>
             ) : (
               <span>{inventory.itemCount} items</span>
             )}
@@ -190,7 +177,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
             <button
               onClick={handleSellAll}
               disabled={inventory.itemCount === 0 || sellingAll}
-              className="px-4 py-2 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold text-sm rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {sellingAll ? <Icons.Loader /> : <Icons.DollarSign />}
               Vender Todo
@@ -213,8 +200,8 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         <div className="flex-1 overflow-y-auto p-4">
           {inventory.isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <Icons.Loader />
-              <span className="ml-2 text-slate-400">Cargando...</span>
+              <div className="w-8 h-8 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin" />
+              <span className="ml-3 text-[#b1bad3]">Cargando...</span>
             </div>
           ) : inventory.error ? (
             <div className="text-center py-20 text-red-400">
@@ -222,27 +209,27 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
             </div>
           ) : inventory.items.length === 0 ? (
             <div className="text-center py-20">
-              <div className="text-slate-600 mb-2">
+              <div className="w-16 h-16 mx-auto mb-4 text-[#5f6c7b]">
                 <Icons.Package />
               </div>
-              <p className="text-slate-400">Tu carrito está vacío</p>
-              <p className="text-slate-600 text-sm mt-1">Los premios que ganes aparecerán aquí</p>
+              <p className="text-white font-medium mb-1">Tu inventario está vacío</p>
+              <p className="text-[#5f6c7b] text-sm">Los premios que ganes aparecerán aquí</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {inventory.items.map((item) => (
                 <div 
                   key={item.inventory_id}
-                  className="relative rounded-xl overflow-hidden cursor-pointer transition-all group"
-                  style={{ 
-                    background: '#222222', 
-                    border: selectedItems.has(item.inventory_id) ? '2px solid #F7C948' : '1px solid #2a2a2a'
-                  }}
+                  className={`relative rounded-xl overflow-hidden cursor-pointer transition-all group bg-[#213743] border ${
+                    selectedItems.has(item.inventory_id) 
+                      ? 'border-[#3b82f6] ring-1 ring-[#3b82f6]' 
+                      : 'border-[#2f4553] hover:border-[#3d5564]'
+                  }`}
                   onClick={() => toggleSelectItem(item.inventory_id)}
                 >
                   {/* Rarity indicator */}
                   <div 
-                    className="absolute top-0 left-0 right-0 h-0.5"
+                    className="absolute top-0 left-0 right-0 h-[2px]"
                     style={{ backgroundColor: RARITY_COLORS[item.rarity] || RARITY_COLORS.common }}
                   />
                   
@@ -250,11 +237,11 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                   <div className={`
                     absolute top-2 right-2 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors
                     ${selectedItems.has(item.inventory_id)
-                      ? 'bg-[#F7C948] border-[#F7C948]'
-                      : 'border-slate-600 bg-transparent'}
+                      ? 'bg-[#3b82f6] border-[#3b82f6]'
+                      : 'border-[#5f6c7b] bg-transparent'}
                   `}>
                     {selectedItems.has(item.inventory_id) && (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     )}
@@ -265,7 +252,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                     <img 
                       src={item.image} 
                       alt={item.name}
-                      className="max-w-full max-h-full object-contain"
+                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-200"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://via.placeholder.com/100?text=?';
                       }}
@@ -275,7 +262,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                   {/* Info */}
                   <div className="p-2 pt-0">
                     <p className="text-white text-xs font-medium truncate">{item.name}</p>
-                    <p className="text-[#F7C948] text-sm font-bold">${item.price.toFixed(2)} MXN</p>
+                    <p className="text-[#3b82f6] text-sm font-bold">${item.price.toFixed(2)} MXN</p>
                   </div>
                   
                   {/* Sell button */}
@@ -285,7 +272,7 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                       handleSellItem(item.inventory_id);
                     }}
                     disabled={sellingItem === item.inventory_id}
-                    className="w-full py-2 bg-slate-600/50 hover:bg-slate-600 text-white text-xs font-medium transition-colors disabled:opacity-50"
+                    className="w-full py-2 bg-[#0f212e] hover:bg-[#3b82f6] text-[#b1bad3] hover:text-white text-xs font-semibold transition-colors disabled:opacity-50"
                   >
                     {sellingItem === item.inventory_id ? 'Vendiendo...' : 'Vender'}
                   </button>
@@ -297,15 +284,15 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         
         {/* Footer */}
         {inventory.items.length > 0 && (
-          <div className="flex items-center justify-between p-4 border-t border-white/5 bg-black/20">
+          <div className="flex items-center justify-between p-4 border-t border-[#2f4553] bg-[#0f212e]">
             <button
               onClick={selectAll}
-              className="text-slate-500 hover:text-white text-sm transition-colors"
+              className="text-[#b1bad3] hover:text-white text-sm transition-colors"
             >
               {selectedItems.size === inventory.items.length ? 'Deseleccionar todo' : `Seleccionar todo (${inventory.itemCount})`}
             </button>
             
-            <div className="text-sm text-slate-500">
+            <div className="text-sm text-[#5f6c7b]">
               Ordenar por: <span className="text-white">Precio</span>
             </div>
           </div>

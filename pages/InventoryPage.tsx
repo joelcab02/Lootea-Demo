@@ -1,6 +1,6 @@
 /**
- * InventoryPage - User's inventory/cart as a full page
- * Mobile-first design matching HomePage style
+ * InventoryPage - Stake Style
+ * User's inventory/cart as a full page
  */
 
 import React, { useState, useEffect } from 'react';
@@ -28,16 +28,13 @@ const RARITY_COLORS: Record<string, string> = {
 // Icons
 const Icons = {
   Package: () => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-      <line x1="12" y1="22.08" x2="12" y2="12" />
     </svg>
   ),
   DollarSign: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="1" x2="12" y2="23" />
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
     </svg>
   ),
   Loader: () => (
@@ -60,14 +57,12 @@ const InventoryPage: React.FC = () => {
   const [sellingAll, setSellingAll] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // Subscribe to inventory updates
   useEffect(() => {
     const unsubscribe = subscribeInventory(setInventory);
     fetchInventory();
     return unsubscribe;
   }, []);
 
-  // Clear message after 3 seconds
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => setMessage(null), 3000);
@@ -105,14 +100,14 @@ const InventoryPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="px-4 md:px-8 py-6 md:py-10">
+      <div className="px-4 md:px-8 py-6 md:py-10" style={{ fontFamily: "'Outfit', sans-serif" }}>
         
         {/* Title */}
         <div className="text-center mb-6">
-          <h1 className="font-display text-2xl md:text-4xl font-black uppercase tracking-tight mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold tracking-tight mb-2 text-white">
             Mi Inventario
           </h1>
-          <p className="text-slate-500 text-sm md:text-base">
+          <p className="text-[#b1bad3] text-sm md:text-base">
             {inventory.itemCount > 0 
               ? `${inventory.itemCount} items - $${inventory.totalValue.toFixed(2)} MXN`
               : 'Tus premios ganados apareceran aqui'
@@ -122,7 +117,7 @@ const InventoryPage: React.FC = () => {
 
         {/* Message Toast */}
         {message && (
-          <div className={`max-w-md mx-auto mb-6 p-3 rounded-xl text-sm text-center ${
+          <div className={`max-w-md mx-auto mb-6 p-3 rounded-lg text-sm text-center ${
             message.type === 'success' 
               ? 'bg-green-500/10 text-green-400 border border-green-500/30' 
               : 'bg-red-500/10 text-red-400 border border-red-500/30'
@@ -131,17 +126,15 @@ const InventoryPage: React.FC = () => {
           </div>
         )}
 
-        {/* Sell All Button - Only show if has items */}
+        {/* Sell All Button */}
         {!inventory.isLoading && inventory.itemCount > 0 && (
           <div className="flex justify-center mb-6">
             <button
               onClick={handleSellAll}
               disabled={sellingAll}
-              className="px-6 py-3 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)] hover:shadow-[0_6px_20px_rgba(247,201,72,0.35)] disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-3 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold text-sm rounded-lg transition-all duration-200 disabled:opacity-50 flex items-center gap-2"
             >
-              {sellingAll ? (
-                <Icons.Loader />
-              ) : null}
+              {sellingAll ? <Icons.Loader /> : <Icons.DollarSign />}
               Vender Todo (${inventory.totalValue.toFixed(2)})
             </button>
           </div>
@@ -150,7 +143,7 @@ const InventoryPage: React.FC = () => {
         {/* Loading State */}
         {inventory.isLoading && (
           <div className="flex justify-center py-20">
-            <div className="w-12 h-12 border-4 border-[#F7C948]/30 border-t-[#F7C948] rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
           </div>
         )}
 
@@ -171,14 +164,14 @@ const InventoryPage: React.FC = () => {
         {/* Empty State */}
         {!inventory.isLoading && inventory.items.length === 0 && (
           <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-4 text-slate-600">
+            <div className="w-20 h-20 mx-auto mb-4 text-[#5f6c7b]">
               <Icons.Package />
             </div>
             <h2 className="text-xl font-bold text-white mb-2">Sin items</h2>
-            <p className="text-slate-500 mb-6">Abre cajas para ganar premios</p>
+            <p className="text-[#b1bad3] mb-6">Abre cajas para ganar premios</p>
             <a 
               href="/"
-              className="inline-block px-6 py-2.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] hover:from-[#FFE082] hover:to-[#FFD966] text-black font-display font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_4px_16px_rgba(247,201,72,0.25)]"
+              className="inline-block px-6 py-2.5 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold text-sm rounded-lg transition-all duration-200"
             >
               Ver Cajas
             </a>
@@ -198,7 +191,7 @@ const InventoryPage: React.FC = () => {
             <h2 className="text-xl font-bold text-white mb-2">{inventory.error}</h2>
             <button 
               onClick={() => fetchInventory()}
-              className="mt-4 px-6 py-2.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] text-black font-display font-bold text-sm rounded-xl"
+              className="mt-4 px-6 py-2.5 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold text-sm rounded-lg"
             >
               Reintentar
             </button>
@@ -209,7 +202,7 @@ const InventoryPage: React.FC = () => {
   );
 };
 
-// Item Card Component - Similar to BoxCard style
+// Item Card Component - Stake style
 interface ItemCardProps {
   item: InventoryItem;
   onSell: (inventoryId: string) => void;
@@ -219,21 +212,12 @@ interface ItemCardProps {
 const ItemCard: React.FC<ItemCardProps> = ({ item, onSell, isSelling }) => {
   return (
     <div 
-      className="group relative rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02]"
-      style={{ 
-        background: '#1a1a1a', 
-        border: '1px solid #222222',
-      }}
+      className="group relative rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-1 bg-[#213743] border border-[#2f4553] hover:border-[#3d5564]"
     >
-      {/* Top shine */}
-      <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      
-      {/* Hover glow */}
+      {/* Rarity indicator */}
       <div 
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{
-          boxShadow: 'inset 0 0 30px rgba(247,201,72,0.1), 0 0 20px rgba(247,201,72,0.05)',
-        }}
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{ backgroundColor: RARITY_COLORS[item.rarity] || RARITY_COLORS.common }}
       />
       
       {/* Image */}
@@ -241,7 +225,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSell, isSelling }) => {
         <img 
           src={item.image} 
           alt={item.name}
-          className="max-w-full max-h-full object-contain drop-shadow-lg"
+          className="max-w-full max-h-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-200"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=?';
           }}
@@ -251,14 +235,14 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSell, isSelling }) => {
       {/* Info */}
       <div className="px-3 pb-2 text-center">
         <p className="text-white text-sm font-medium truncate mb-1">{item.name}</p>
-        <p className="text-[#F7C948] text-base font-bold">${item.price.toFixed(2)} MXN</p>
+        <p className="text-[#3b82f6] text-base font-bold">${item.price.toFixed(2)} MXN</p>
       </div>
       
       {/* Sell button */}
       <button
         onClick={() => onSell(item.inventory_id)}
         disabled={isSelling}
-        className="w-full py-2.5 bg-slate-700/50 hover:bg-[#F7C948] text-white hover:text-black text-sm font-bold transition-all duration-200 disabled:opacity-50"
+        className="w-full py-2.5 bg-[#1a2c38] hover:bg-[#3b82f6] text-[#b1bad3] hover:text-white text-sm font-semibold transition-all duration-200 disabled:opacity-50"
       >
         {isSelling ? 'Vendiendo...' : 'Vender'}
       </button>
