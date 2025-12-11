@@ -232,3 +232,80 @@ export const CATEGORY_COLORS = {
 } as const;
 
 export type CategoryKey = keyof typeof CATEGORY_COLORS;
+
+/**
+ * Box Card Style - PackDraw/HypeDrop Style Promotional Cards
+ * Vibrant gradient backgrounds with floating products
+ */
+export const BOX_CARD_STYLE_PROMPT = `
+BOX CARD PROMOTIONAL IMAGE - MYSTERY BOX STYLE:
+
+=== BACKGROUND ===
+- Vibrant gradient background (NOT solid colors)
+- Gradient direction: typically diagonal or radial
+- Color themes based on box category:
+  * Tech/Apple: Blue to cyan gradient (#3b82f6 → #06b6d4)
+  * Gaming: Green to teal gradient (#22c55e → #14b8a6)
+  * Luxury/Watches: Gold to amber gradient (#f59e0b → #d97706)
+  * Cars/High Value: Red to orange gradient (#ef4444 → #f97316), can include flames
+  * Fashion: Purple to pink gradient (#a855f7 → #ec4899)
+  * Mixed/General: Teal to blue gradient (#14b8a6 → #3b82f6)
+- Can include atmospheric effects: subtle glow, light rays, particles
+- Some premium boxes can have city skyline silhouettes or dramatic backdrops
+
+=== PRODUCTS ===
+- 2-5 products floating in composition
+- Products are CLEAN CUTOUTS with no background
+- Products should be recognizable, high-quality renders
+- Main/hero product slightly larger, centered or prominent
+- Secondary products arranged around it
+- Products can overlap slightly for depth
+- Products retain their TRUE original colors
+- Slight shadows beneath products for depth
+
+=== COMPOSITION ===
+- Products arranged in dynamic, visually appealing layout
+- Hero product in center or center-bottom
+- Supporting products around/above
+- Leave space at TOP for title text overlay
+- Balanced but not perfectly symmetrical
+- Creates sense of value and excitement
+
+=== CARD FRAME ===
+- Rounded corners (16-20px radius feel)
+- Subtle border or glow matching gradient colors
+- Can have decorative elements at edges (waves, patterns)
+- Overall portrait orientation (3:4 or 4:5 ratio)
+
+=== MOOD ===
+- Exciting, premium, aspirational
+- "Look what you could win" feeling
+- Eye-catching for thumbnail/grid display
+- Professional but energetic
+
+=== NEVER DO ===
+- Plain solid color backgrounds
+- Single product only
+- Dark/muted colors (unless luxury theme)
+- Cluttered, messy arrangements
+- Low quality or blurry products
+- Products with backgrounds still attached
+`;
+
+/**
+ * Gradient Background Themes for Box Cards
+ */
+export const BOX_GRADIENT_THEMES = {
+  tech: 'blue to cyan gradient (#3b82f6 to #06b6d4), cool and modern',
+  apple: 'light blue to white gradient with rainbow accents, clean Apple aesthetic',
+  gaming: 'green to teal gradient (#22c55e to #14b8a6), gaming energy',
+  luxury: 'gold to amber gradient (#f59e0b to #d97706), premium warm tones',
+  cars: 'red to orange gradient (#ef4444 to #f97316) with flame effects, high octane',
+  watches: 'deep blue to purple gradient (#1e3a8a to #7c3aed), sophisticated',
+  fashion: 'purple to pink gradient (#a855f7 to #ec4899), trendy and stylish',
+  hypebeast: 'black to gold gradient with metallic sheen, streetwear luxury',
+  crypto: 'purple to blue gradient with digital/holographic effects',
+  general: 'teal to blue gradient (#14b8a6 to #3b82f6), versatile and appealing',
+} as const;
+
+export type BoxGradientTheme = keyof typeof BOX_GRADIENT_THEMES;

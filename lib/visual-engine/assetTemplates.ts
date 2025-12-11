@@ -57,6 +57,58 @@ export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
     `
   },
 
+  boxcard: {
+    type: 'boxcard',
+    label: 'Box Card',
+    icon: 'card',
+    aspectRatio: '3:4',
+    description: 'Card promocional de caja - estilo PackDraw/HypeDrop',
+    basePrompt: `
+      ASSET TYPE: Mystery Box Promotional Card - PackDraw/HypeDrop Style
+      
+      COMPOSITION:
+      - Portrait orientation (3:4 ratio)
+      - Vibrant gradient background
+      - 2-5 products floating in dynamic arrangement
+      - Hero product centered or center-bottom, larger
+      - Supporting products arranged around/above
+      - Leave TOP 15-20% clear for title text overlay
+      
+      BACKGROUND:
+      - Rich, vibrant gradient (NOT solid color)
+      - Gradient should feel premium and exciting
+      - Can include subtle atmospheric effects: glow, light rays, particles
+      - Premium boxes can have dramatic backdrops (city skylines, flames for car boxes)
+      
+      PRODUCTS:
+      - Clean product cutouts, no backgrounds
+      - High quality, recognizable renders
+      - Products retain their TRUE original colors
+      - Main product prominent, supporting products smaller
+      - Slight overlap creates depth
+      - Soft shadows beneath products
+      
+      STYLE:
+      - Eye-catching, thumbnail-ready
+      - Premium mystery box aesthetic
+      - Exciting "look what you could win" feeling
+      - Professional but energetic
+      - NOT dark or muted - vibrant and appealing
+      
+      CARD FEEL:
+      - Rounded corners implied
+      - Subtle glow or border effect matching gradient
+      - Can have decorative wave patterns at top/bottom edges
+      
+      NEVER:
+      - Solid color backgrounds
+      - Single product only
+      - Dark, muted, or dull colors
+      - Messy or cluttered arrangement
+      - Products with their original backgrounds
+    `
+  },
+
   caja: {
     type: 'caja',
     label: 'Caja',
@@ -249,6 +301,48 @@ export const ASSET_TEMPLATES: Record<AssetType, AssetTemplate> = {
  * Quick Presets - Stake Style
  */
 export const QUICK_PRESETS: Preset[] = [
+  // BOX CARDS - PackDraw Style
+  {
+    id: 'boxcard-apple',
+    label: 'Apple Box Card',
+    icon: 'card',
+    type: 'boxcard',
+    aspectRatio: '3:4',
+    description: 'iPhone 16 Pro, AirPods Pro, Apple Watch floating on blue to cyan gradient background, clean product cutouts, premium mystery box card style'
+  },
+  {
+    id: 'boxcard-gaming',
+    label: 'Gaming Box Card',
+    icon: 'card',
+    type: 'boxcard',
+    aspectRatio: '3:4',
+    description: 'PlayStation 5, gaming headset, controller floating on green to teal gradient background, gaming energy, mystery box card style'
+  },
+  {
+    id: 'boxcard-luxury',
+    label: 'Luxury Box Card',
+    icon: 'card',
+    type: 'boxcard',
+    aspectRatio: '3:4',
+    description: 'Rolex watch, Louis Vuitton bag, luxury car floating on gold to amber gradient background with city skyline silhouette, premium mystery box card'
+  },
+  {
+    id: 'boxcard-cars',
+    label: 'Cars Box Card',
+    icon: 'card',
+    type: 'boxcard',
+    aspectRatio: '3:4',
+    description: 'Ferrari, Lamborghini, luxury sports cars with premium watches floating on red to orange gradient with flame effects, high value mystery box card'
+  },
+  {
+    id: 'boxcard-sneakers',
+    label: 'Sneakers Box Card',
+    icon: 'card',
+    type: 'boxcard',
+    aspectRatio: '3:4',
+    description: 'Nike Air Jordan, Yeezy, Off-White sneakers floating on purple to pink gradient background, hypebeast mystery box card style'
+  },
+  // CAJA - Gaming Style
   {
     id: 'caja-tech',
     label: 'Caja Tech',

@@ -28,17 +28,19 @@ export type {
   GenerationHistory
 } from './types';
 
-// DNA - Stake Style
+// DNA - Stake Style + Box Cards
 export {
   LOOTEA_DNA_BASE,
   LIGHTING_STYLES,
   LOOTEA_BOX_PROMPT,
   TEXTURED_BACKGROUND_PROMPT,
   PURE_BLACK_BACKGROUND_PROMPT,
-  CATEGORY_COLORS
+  CATEGORY_COLORS,
+  BOX_CARD_STYLE_PROMPT,
+  BOX_GRADIENT_THEMES
 } from './looteaDNA';
 
-export type { CategoryKey } from './looteaDNA';
+export type { CategoryKey, BoxGradientTheme } from './looteaDNA';
 
 // Templates
 export {

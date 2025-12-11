@@ -16,7 +16,8 @@ import {
   LIGHTING_STYLES, 
   LOOTEA_BOX_PROMPT,
   TEXTURED_BACKGROUND_PROMPT,
-  PURE_BLACK_BACKGROUND_PROMPT 
+  PURE_BLACK_BACKGROUND_PROMPT,
+  BOX_CARD_STYLE_PROMPT
 } from './looteaDNA';
 import { getTemplate } from './assetTemplates';
 
@@ -29,6 +30,11 @@ export function buildCreatePrompt(input: GenerationInput): string {
   
   // Unique ID to prevent caching
   const requestId = `REQ-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Special handling for boxcard - uses different DNA
+  if (input.type === 'boxcard') {
+    return buildBoxCardPrompt(input, requestId);
+  }
   
   const parts: string[] = [
     `[${requestId}]`,
@@ -67,6 +73,41 @@ export function buildCreatePrompt(input: GenerationInput): string {
   }
 
   return parts.join('\n');
+}
+
+/**
+ * Build prompt specifically for Box Card style (PackDraw/HypeDrop)
+ * This uses a different DNA optimized for vibrant promotional cards
+ */
+function buildBoxCardPrompt(input: GenerationInput, requestId: string): string {
+  const template = getTemplate(input.type);
+  
+  return `
+[${requestId}]
+
+=== LOOTEA BOX CARD GENERATOR ===
+
+${BOX_CARD_STYLE_PROMPT}
+
+=== SPECIFIC TEMPLATE ===
+${template.basePrompt}
+
+=== YOUR REQUEST ===
+Create a mystery box promotional card image with:
+${input.description}
+
+=== CRITICAL REQUIREMENTS ===
+1. VIBRANT gradient background - NOT solid colors, NOT dark
+2. Products must be CLEAN CUTOUTS floating on the gradient
+3. Products retain their ORIGINAL TRUE COLORS
+4. Dynamic, eye-catching composition
+5. Leave top area clear for title text overlay
+6. Portrait orientation (3:4 ratio)
+7. Premium mystery box aesthetic - exciting and aspirational
+
+=== OUTPUT ===
+Generate a high-quality promotional card image ready for mystery box thumbnail use.
+`;
 }
 
 /**

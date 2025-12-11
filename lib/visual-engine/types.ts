@@ -7,6 +7,7 @@
 export type AssetType = 
   | 'producto'    // Render individual de producto
   | 'caja'        // Caja Lootea con productos emergiendo
+  | 'boxcard'     // Box card promotional image (PackDraw style)
   | 'banner'      // Banner promocional horizontal
   | 'social'      // Post para redes sociales
   | 'story'       // Story/Reel vertical
