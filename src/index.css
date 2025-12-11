@@ -10,7 +10,7 @@
    ============================================ */
 
 @theme {
-  --font-sans: 'Satoshi', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
 }
 
 /* ============================================
@@ -19,7 +19,7 @@
 
 * {
   -webkit-tap-highlight-color: transparent;
-  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
 }
 
 html {
@@ -29,7 +29,7 @@ html {
 body {
   background-color: #111111;
   color: white;
-  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -45,19 +45,19 @@ body {
    ============================================ */
 
 .font-display {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-weight: 900;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .font-gamer {
-  font-family: 'Satoshi', system-ui, sans-serif;
-  font-weight: 900;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .font-mono {
-  font-family: 'Satoshi', system-ui, sans-serif;
+  font-family: 'Outfit', system-ui, sans-serif;
   font-weight: 700;
   font-feature-settings: "tnum" 1;
 }
