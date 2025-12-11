@@ -28,7 +28,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
     ? 'text-7xl sm:text-8xl'
     : 'text-7xl sm:text-8xl';
 
-  // PackDraw style: No card background in spinner, just floating image (no text)
+  // Stake style: Card tile with product + price (like Mines/Plinko tiles)
   if (isSpinner) {
     return (
       <div 
@@ -36,34 +36,48 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
         style={{ 
           width: `${width}px`,
           height: '100%',
+          padding: '8px',
         }}
       >
-        {/* Subtle glow behind image - PackDraw style */}
+        {/* Card Tile - Stake flat style */}
         <div 
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          className="w-full h-full rounded-lg flex flex-col items-center justify-center"
           style={{
-            background: 'radial-gradient(circle at center, rgba(255,255,255,0.04) 0%, transparent 60%)',
+            background: '#213743',
+            border: '1px solid #2f4553',
           }}
-        />
-        
-        {/* Image only - no name/price until winner reveal */}
-        <div className={`relative ${imageSizeClass} flex items-center justify-center`}>
-          {isLoading ? (
-            <div className="w-12 h-12 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
-          ) : isEmoji ? (
-            <span className={`${emojiSizeClass} select-none drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)]`}>
-              {item.image}
+        >
+          {/* Product Image */}
+          <div className={`relative ${imageSizeClass} flex items-center justify-center mb-2`}>
+            {isLoading ? (
+              <div className="w-12 h-12 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
+            ) : isEmoji ? (
+              <span className={`${emojiSizeClass} select-none`}>
+                {item.image}
+              </span>
+            ) : (
+              <img 
+                src={item.image} 
+                alt={item.name}
+                className="w-full h-full object-contain"
+                loading="eager"
+                decoding="async"
+                draggable={false}
+              />
+            )}
+          </div>
+          
+          {/* Price Tag - Stake style */}
+          <div 
+            className="px-3 py-1 rounded"
+            style={{
+              background: 'rgba(255,255,255,0.06)',
+            }}
+          >
+            <span className="text-white text-xs sm:text-sm font-semibold">
+              {formatPrice(item.price)}
             </span>
-          ) : (
-            <img 
-              src={item.image} 
-              alt={item.name}
-              className="w-full h-full object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)]"
-              loading="eager"
-              decoding="async"
-              draggable={false}
-            />
-          )}
+          </div>
         </div>
       </div>
     );
