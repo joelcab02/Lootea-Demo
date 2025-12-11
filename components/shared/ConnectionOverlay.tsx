@@ -1,8 +1,6 @@
 /**
- * ConnectionOverlay - Overlay de reconexion a Supabase
- * 
- * Muestra un overlay amigable cuando hay problemas de conexion.
- * Se suscribe al estado de conexion y muestra/oculta automaticamente.
+ * ConnectionOverlay - Supabase Reconnection Overlay
+ * Stake-style: Blue spinner, Green CTA
  */
 
 import React, { useState, useEffect } from 'react';
@@ -53,7 +51,7 @@ const RefreshIcon = () => (
 );
 
 interface ConnectionOverlayProps {
-  /** Mostrar solo cuando hay error (no durante connecting inicial) */
+  /** Show only on error (not during initial connecting) */
   showOnlyOnError?: boolean;
 }
 
@@ -64,7 +62,7 @@ export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = ({
   const [isRetrying, setIsRetrying] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
-  // Suscribirse a cambios de conexion
+  // Subscribe to connection state changes
   useEffect(() => {
     const unsubscribe = subscribeConnectionState((state) => {
       setConnectionState(state);
@@ -75,7 +73,7 @@ export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = ({
     return unsubscribe;
   }, []);
 
-  // Auto-retry cada 5 segundos cuando hay error
+  // Auto-retry every 5 seconds on error
   useEffect(() => {
     if (connectionState === 'error' && !isRetrying) {
       const timer = setTimeout(() => {
@@ -89,7 +87,7 @@ export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = ({
     setIsRetrying(true);
     setRetryCount(prev => prev + 1);
     
-    // Recrear cliente si hay muchos reintentos
+    // Recreate client if many retries
     if (retryCount >= 2) {
       recreateSupabaseClient();
     }
@@ -98,7 +96,7 @@ export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = ({
     setIsRetrying(false);
   };
 
-  // Determinar si mostrar overlay
+  // Determine if overlay should show
   const shouldShow = showOnlyOnError 
     ? connectionState === 'error' 
     : connectionState !== 'connected';
@@ -110,49 +108,49 @@ export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = ({
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <div 
-        className="max-w-sm mx-4 p-6 rounded-2xl text-center"
+        className="relative max-w-sm mx-4 p-6 rounded-2xl text-center"
         style={{ 
-          background: '#1a1a1a', 
-          border: '1px solid #222222',
+          background: '#1a2c38', 
+          border: '1px solid #2f4553',
         }}
       >
         {/* Top shine */}
         <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         
-        {/* Icon */}
+        {/* Icon - Blue for connecting, Red for error */}
         <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
           isConnecting 
-            ? 'bg-[#F7C948]/20 text-[#F7C948]' 
+            ? 'bg-[#3b82f6]/20 text-[#3b82f6]' 
             : 'bg-red-500/20 text-red-400'
         }`}>
           {isConnecting ? <SpinnerIcon /> : <WifiOffIcon />}
         </div>
         
         {/* Title */}
-        <h3 className="font-display text-lg font-bold text-white mb-2">
-          {isConnecting ? 'Reconectando...' : 'Sin conexion'}
+        <h3 className="text-lg font-bold text-white mb-2">
+          {isConnecting ? 'Reconectando...' : 'Sin conexión'}
         </h3>
         
         {/* Message */}
-        <p className="text-slate-400 text-sm mb-4">
+        <p className="text-[#b1bad3] text-sm mb-4">
           {isConnecting 
-            ? 'Estableciendo conexion con el servidor'
-            : 'No se pudo conectar al servidor. Verifica tu conexion a internet.'
+            ? 'Estableciendo conexión con el servidor'
+            : 'No se pudo conectar al servidor. Verifica tu conexión a internet.'
           }
         </p>
         
         {/* Retry count */}
         {retryCount > 0 && (
-          <p className="text-slate-500 text-xs mb-4">
-            Intento {retryCount} de reconexion
+          <p className="text-[#5f6c7b] text-xs mb-4">
+            Intento {retryCount} de reconexión
           </p>
         )}
         
-        {/* Retry button - solo mostrar si no esta reintentando */}
+        {/* Retry button - Stake green style */}
         {!isConnecting && (
           <button
             onClick={handleRetry}
-            className="px-6 py-2.5 bg-gradient-to-b from-[#FFD966] to-[#F7C948] text-black font-bold text-sm rounded-xl flex items-center gap-2 mx-auto transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="px-6 py-2.5 bg-[#00e701] hover:bg-[#1fff20] text-black font-bold text-sm rounded-lg flex items-center gap-2 mx-auto transition-all"
           >
             <RefreshIcon />
             Reintentar

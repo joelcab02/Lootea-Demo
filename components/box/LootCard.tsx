@@ -78,12 +78,12 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
         height: 'auto',
       }}
     >
-      {/* Card background - Premium style */}
+      {/* Card background - Stake Style */}
       <div 
         className="absolute inset-1 rounded-xl"
         style={{
-          background: 'linear-gradient(145deg, #1a1d26 0%, #12141a 100%)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+          background: 'linear-gradient(145deg, #1a2c38 0%, #0f212e 100%)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)',
         }}
       />
       
@@ -115,22 +115,15 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
           {item.name}
         </h3>
         
-        {/* Price tag - Premium */}
+        {/* Price tag - Stake Style (Green = Money) */}
         <div 
           className="inline-flex items-center justify-center rounded px-2 py-0.5"
           style={{
-            background: 'rgba(247,201,72,0.1)',
-            border: '1px solid rgba(247,201,72,0.2)',
+            background: 'rgba(0,231,1,0.1)',
+            border: '1px solid rgba(0,231,1,0.2)',
           }}
         >
-          <span 
-            className="font-display text-[10px] sm:text-xs"
-            style={{
-              background: 'linear-gradient(180deg, #FFD966 0%, #F7C948 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
+          <span className="font-semibold text-[10px] sm:text-xs text-[#00e701]">
             {formatPrice(item.price)}
           </span>
         </div>
