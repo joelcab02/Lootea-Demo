@@ -20,6 +20,12 @@ const Icons = {
   Close: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
   Volume2: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>,
   VolumeX: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>,
+  // Bottom toolbar icons - Stake style
+  Settings: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>,
+  Fullscreen: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>,
+  Stats: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>,
+  Share: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>,
+  Check: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>,
 };
 
 interface BoxLayoutProps {
@@ -139,7 +145,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
       {/* GAME AREA - Constrained width for better desktop experience */}
       <div className="flex flex-col items-center relative w-full max-w-[1200px] mx-auto">
         {/* SPINNER */}
-        <div className="relative w-full z-10 mb-4">
+        <div className="relative w-full z-10">
           <SpinnerV2 
             items={items}
             winner={predeterminedWinner}
@@ -148,6 +154,49 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             duration={fastMode ? 2000 : 5500}
             onComplete={handleSpinComplete}
           />
+        </div>
+
+        {/* BOTTOM TOOLBAR - Stake style */}
+        <div 
+          className="w-full flex items-center justify-between px-4 py-3 mb-4"
+          style={{
+            background: '#1a2c38',
+            borderTop: '1px solid #2f4553',
+          }}
+        >
+          {/* Left: Icon buttons */}
+          <div className="flex items-center gap-1">
+            <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+              <Icons.Settings />
+            </button>
+            <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+              <Icons.Fullscreen />
+            </button>
+            <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+              <Icons.Stats />
+            </button>
+            <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+              <Icons.Share />
+            </button>
+          </div>
+
+          {/* Center: Logo */}
+          <div className="text-white font-bold text-lg tracking-tight">
+            Lootea
+          </div>
+
+          {/* Right: Fairness badge */}
+          <a 
+            href="/provably-fair"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            style={{
+              background: '#213743',
+              color: '#b1bad3',
+            }}
+          >
+            <Icons.Check />
+            <span>Fairness</span>
+          </a>
         </div>
 
         {/* CONTROLS - Stake Style Panel */}
