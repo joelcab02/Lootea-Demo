@@ -1,0 +1,285 @@
+/**
+ * STAKE COLOR PALETTE & DESIGN SYSTEM
+ * Extracted from Stake.com screenshots
+ * For reference in Lootea design
+ */
+
+:root {
+  /* ============================================
+     BACKGROUND COLORS
+     ============================================ */
+  
+  /* Main backgrounds - Dark blue-gray */
+  --stake-bg-primary: #0f212e;        /* Darkest - main page bg */
+  --stake-bg-secondary: #1a2c38;      /* Sidebar, elevated areas */
+  --stake-bg-tertiary: #213743;       /* Cards, inputs */
+  --stake-bg-hover: #2f4553;          /* Hover states */
+  --stake-bg-active: #071824;         /* Active/pressed states */
+  
+  /* Alternative (lighter variant seen in some pages) */
+  --stake-bg-alt-primary: #1a1d24;    /* Darker gray variant */
+  --stake-bg-alt-secondary: #252830;  /* Elevated gray */
+  --stake-bg-alt-tertiary: #2d3139;   /* Cards gray */
+
+  /* ============================================
+     ACCENT COLORS
+     ============================================ */
+  
+  /* Primary - Teal/Cyan */
+  --stake-accent-primary: #00e701;    /* Main green accent (some areas) */
+  --stake-accent-teal: #1abc9c;       /* Teal accent */
+  
+  /* Wallet Button - Blue */
+  --stake-wallet-bg: #3b82f6;         /* Wallet button */
+  --stake-wallet-hover: #2563eb;      /* Wallet hover */
+  
+  /* Currency/Money - Green */
+  --stake-money-green: #22c55e;       /* Dollar sign, positive values */
+  --stake-money-green-light: #4ade80; /* Lighter green */
+  
+  /* Tabs - Active state */
+  --stake-tab-active-bg: #3d5564;     /* Active tab background */
+  --stake-tab-inactive-bg: transparent;
+
+  /* ============================================
+     TEXT COLORS
+     ============================================ */
+  
+  --stake-text-primary: #ffffff;       /* Main text */
+  --stake-text-secondary: #b1bad3;     /* Secondary text, labels */
+  --stake-text-muted: #5f6c7b;         /* Muted text, placeholders */
+  --stake-text-disabled: #4a5568;      /* Disabled state */
+  
+  /* ============================================
+     BORDER COLORS
+     ============================================ */
+  
+  --stake-border-primary: #2f4553;     /* Main borders */
+  --stake-border-secondary: #1a2c38;   /* Subtle borders */
+  --stake-border-light: #3d5564;       /* Light borders, dividers */
+
+  /* ============================================
+     STATUS COLORS
+     ============================================ */
+  
+  --stake-success: #22c55e;            /* Success, online, positive */
+  --stake-warning: #f59e0b;            /* Warning, pending */
+  --stake-error: #ef4444;              /* Error, negative, danger */
+  --stake-info: #3b82f6;               /* Info, links */
+
+  /* ============================================
+     CRYPTO ICON COLORS
+     ============================================ */
+  
+  --stake-btc: #f7931a;                /* Bitcoin orange */
+  --stake-eth: #627eea;                /* Ethereum purple */
+  --stake-ltc: #345d9d;                /* Litecoin blue */
+  --stake-usdt: #26a17b;               /* Tether green */
+  --stake-sol: linear-gradient(to right, #9945ff, #14f195); /* Solana gradient */
+  --stake-doge: #c2a633;               /* Dogecoin gold */
+  --stake-xrp: #23292f;                /* XRP dark */
+
+  /* ============================================
+     GAME CARD COLORS (Stake Originals)
+     ============================================ */
+  
+  --stake-card-dice: #e74c3c;          /* Red - Dice */
+  --stake-card-mines: #27ae60;         /* Green - Mines */
+  --stake-card-plinko: #e67e22;        /* Orange - Plinko */
+  --stake-card-chicken: #3498db;       /* Blue - Chicken */
+  --stake-card-crash: #9b59b6;         /* Purple - Crash */
+  --stake-card-keno: #1abc9c;          /* Teal - Keno */
+  --stake-card-limbo: #f39c12;         /* Yellow - Limbo */
+  --stake-card-hilo: #2ecc71;          /* Green - HiLo */
+
+  /* ============================================
+     SHADOWS
+     ============================================ */
+  
+  --stake-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --stake-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --stake-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --stake-shadow-dropdown: 0 10px 40px rgba(0, 0, 0, 0.5);
+
+  /* ============================================
+     BORDER RADIUS
+     ============================================ */
+  
+  --stake-radius-sm: 4px;
+  --stake-radius-md: 8px;
+  --stake-radius-lg: 12px;
+  --stake-radius-xl: 16px;
+  --stake-radius-full: 9999px;
+
+  /* ============================================
+     SPACING
+     ============================================ */
+  
+  --stake-header-height: 56px;
+  --stake-sidebar-width: 240px;
+  --stake-sidebar-collapsed: 72px;
+
+  /* ============================================
+     TRANSITIONS
+     ============================================ */
+  
+  --stake-transition-fast: 150ms ease;
+  --stake-transition-normal: 200ms ease;
+  --stake-transition-slow: 300ms ease;
+
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
+  
+  --stake-font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --stake-font-size-xs: 11px;
+  --stake-font-size-sm: 13px;
+  --stake-font-size-base: 14px;
+  --stake-font-size-md: 15px;
+  --stake-font-size-lg: 18px;
+  --stake-font-size-xl: 22px;
+  --stake-font-size-2xl: 28px;
+  
+  --stake-font-weight-normal: 400;
+  --stake-font-weight-medium: 500;
+  --stake-font-weight-semibold: 600;
+  --stake-font-weight-bold: 700;
+}
+
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
+
+/* Header */
+.stake-header {
+  background: var(--stake-bg-alt-primary);
+  border-bottom: 1px solid var(--stake-border-primary);
+  height: var(--stake-header-height);
+}
+
+/* Sidebar */
+.stake-sidebar {
+  background: var(--stake-bg-secondary);
+  width: var(--stake-sidebar-width);
+  border-right: 1px solid var(--stake-border-secondary);
+}
+
+/* Cards */
+.stake-card {
+  background: var(--stake-bg-tertiary);
+  border-radius: var(--stake-radius-lg);
+  border: 1px solid var(--stake-border-primary);
+  transition: var(--stake-transition-normal);
+}
+
+.stake-card:hover {
+  background: var(--stake-bg-hover);
+  border-color: var(--stake-border-light);
+}
+
+/* Buttons */
+.stake-btn-primary {
+  background: var(--stake-wallet-bg);
+  color: white;
+  font-weight: var(--stake-font-weight-semibold);
+  border-radius: var(--stake-radius-md);
+  padding: 8px 16px;
+  transition: var(--stake-transition-fast);
+}
+
+.stake-btn-primary:hover {
+  background: var(--stake-wallet-hover);
+}
+
+/* Balance Display */
+.stake-balance {
+  background: var(--stake-bg-alt-secondary);
+  border-radius: var(--stake-radius-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tabs */
+.stake-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--stake-bg-tertiary);
+  padding: 4px;
+  border-radius: var(--stake-radius-lg);
+}
+
+.stake-tab {
+  padding: 8px 16px;
+  border-radius: var(--stake-radius-md);
+  color: var(--stake-text-secondary);
+  font-weight: var(--stake-font-weight-medium);
+  transition: var(--stake-transition-fast);
+}
+
+.stake-tab:hover {
+  color: var(--stake-text-primary);
+}
+
+.stake-tab-active {
+  background: var(--stake-tab-active-bg);
+  color: var(--stake-text-primary);
+}
+
+/* Dropdown */
+.stake-dropdown {
+  background: var(--stake-bg-secondary);
+  border: 1px solid var(--stake-border-primary);
+  border-radius: var(--stake-radius-lg);
+  box-shadow: var(--stake-shadow-dropdown);
+}
+
+/* Input */
+.stake-input {
+  background: var(--stake-bg-tertiary);
+  border: 1px solid var(--stake-border-primary);
+  border-radius: var(--stake-radius-md);
+  color: var(--stake-text-primary);
+  padding: 10px 14px;
+}
+
+.stake-input::placeholder {
+  color: var(--stake-text-muted);
+}
+
+.stake-input:focus {
+  border-color: var(--stake-wallet-bg);
+  outline: none;
+}
+
+/* Game Card */
+.stake-game-card {
+  background: var(--stake-bg-tertiary);
+  border-radius: var(--stake-radius-lg);
+  overflow: hidden;
+  transition: var(--stake-transition-normal);
+}
+
+.stake-game-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--stake-shadow-lg);
+}
+
+/* Online indicator */
+.stake-online-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--stake-success);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Playing count */
+.stake-playing-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--stake-text-secondary);
+  font-size: var(--stake-font-size-sm);
+}
+
