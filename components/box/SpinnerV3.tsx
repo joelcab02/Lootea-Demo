@@ -34,46 +34,50 @@ const REVEAL_DELAY = 200; // Short pause after spin
 // CLEAN FRAMER VARIANTS
 // ============================================
 
-// Losers: Simple fade, all at once
+// Losers: Subtle fade
 const loserVariants = {
   visible: { 
     opacity: 1,
     filter: 'brightness(1)',
   },
   hidden: {
-    opacity: 0.25,
-    filter: 'brightness(0.6)',
+    opacity: 0.4,
+    filter: 'brightness(0.7)',
     transition: {
-      duration: 0.3,
+      duration: 0.4,
       ease: 'easeOut',
     },
   },
 };
 
-// Winner border: Quick, clean appearance
+// Winner border: Appears with scale
 const winnerBorderVariants = {
   hidden: { 
     opacity: 0,
+    scale: 0.95,
   },
   visible: { 
     opacity: 1,
+    scale: 1,
     transition: { 
-      duration: 0.2,
-      ease: 'easeOut',
+      duration: 0.3,
+      ease: [0.34, 1.56, 0.64, 1], // Spring-like
     },
   },
 };
 
-// Price: Simple fade in
+// Price: Slide up
 const priceVariants = {
   hidden: { 
     opacity: 0,
+    y: 10,
   },
   visible: { 
     opacity: 1,
+    y: 0,
     transition: { 
-      delay: 0.15,
-      duration: 0.2,
+      delay: 0.2,
+      duration: 0.3,
       ease: 'easeOut',
     },
   },
@@ -286,55 +290,62 @@ const SpinnerV3: React.FC<SpinnerProps> = ({
               initial="visible"
               animate={isLoserCard ? 'hidden' : 'visible'}
             >
-              <div className="relative">
-                {/* Winner Border */}
-                <motion.div
-                  className="absolute inset-0 pointer-events-none"
+              {/* Card container */}
+              <motion.div 
+                className="relative"
+                style={{ borderRadius: '8px', overflow: 'visible' }}
+                animate={isWinnerCard ? { scale: 1.02 } : { scale: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Green border for winner */}
+                <motion.div 
+                  className="absolute pointer-events-none"
                   style={{
+                    inset: -3,
                     border: '3px solid #00e701',
-                    borderRadius: isWinnerCard ? '8px 8px 0 0' : '8px',
+                    borderRadius: '11px',
                   }}
-                  variants={winnerBorderVariants}
-                  initial="hidden"
-                  animate={isWinnerCard ? 'visible' : 'hidden'}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isWinnerCard ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
                 />
                 
-                {/* Card - LootCard handles the tile background */}
+                {/* Card */}
                 <LootCard 
                   item={item} 
                   width={cardWidth} 
                   isSpinner 
                 />
-                
-                {/* Price bar for winner */}
-                <AnimatePresence>
-                  {isWinnerCard && (
-                    <motion.div 
-                      className="flex items-center justify-center"
-                      style={{
-                        background: '#00e701',
-                        borderRadius: '0 0 8px 8px',
-                        width: `${cardWidth}px`,
-                        padding: '8px 0',
+              </motion.div>
+              
+              {/* Price bar for winner */}
+              <AnimatePresence>
+                {isWinnerCard && (
+                  <motion.div 
+                    className="flex items-center justify-center mt-2"
+                    style={{
+                      background: '#00e701',
+                      borderRadius: '6px',
+                      width: `${cardWidth}px`,
+                      padding: '8px 0',
+                    }}
+                    variants={priceVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                  >
+                    <span 
+                      className="font-bold"
+                      style={{ 
+                        color: '#000',
+                        fontSize: screenSize === 'mobile' ? '13px' : '15px',
                       }}
-                      variants={priceVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
                     >
-                      <span 
-                        className="font-bold"
-                        style={{ 
-                          color: '#000',
-                          fontSize: screenSize === 'mobile' ? '12px' : '14px',
-                        }}
-                      >
-                        {formatPrice(item.price)}
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                      {formatPrice(item.price)}
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           );
         })}

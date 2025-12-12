@@ -220,12 +220,6 @@ const BoxLayoutV2: React.FC<BoxLayoutProps> = ({ slug }) => {
               >
                 <Icons.Stats />
               </button>
-              <button 
-                className="p-2 rounded transition-colors hover:bg-[#213743] hover:text-[#b1bad3]" 
-                style={{ color: '#5f6c7b' }}
-              >
-                <Icons.Share />
-              </button>
             </div>
 
             {/* Center - Logo */}
