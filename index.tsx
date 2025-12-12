@@ -19,6 +19,8 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const VisualEnginePage = lazy(() => import('./pages/VisualEnginePage'));
 // Lazy load promo page (funnel de adquisicion)
 const PromoPage = lazy(() => import('./pages/PromoPage'));
+// V2 Testing - Framer Motion spinner
+const BoxPageV2 = lazy(() => import('./pages/BoxPageV2'));
 
 // Lazy load páginas legales
 const TerminosPage = lazy(() => import('./pages/legal/TerminosPage'));
@@ -68,6 +70,7 @@ const PersistentTabs: React.FC = () => {
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/box/:slug" element={<BoxPage />} />
+            <Route path="/box-v2/:slug" element={<BoxPageV2 />} />
             <Route path="/promo/:slug" element={<PromoPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/visual-engine" element={<VisualEnginePage />} />

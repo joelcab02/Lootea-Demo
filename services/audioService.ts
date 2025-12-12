@@ -133,28 +133,27 @@ class AudioService {
   }
 
   /**
-   * Ultra-lightweight tick sound.
-   * Uses pooled gain nodes and precise scheduling for sync.
+   * Tick sound - ALWAYS the same sound.
+   * Drama comes from INTERVAL between ticks, not the sound itself.
    */
-  public playTick(velocityNormalized: number, isEnding: boolean = false) {
+  public playTick(_velocityNormalized?: number, _isEnding?: boolean) {
     if (!this.clickBuffer || !this.masterGain || this.gainPool.length === 0) return;
     const ctx = this.getContext();
     
     const source = ctx.createBufferSource();
     source.buffer = this.clickBuffer;
     
-    // Simpler pitch calculation for consistency
-    const baseRate = isEnding ? 0.7 : 0.9 + velocityNormalized * 0.3;
-    source.playbackRate.value = baseRate;
+    // SAME sound every time - consistent pitch
+    source.playbackRate.value = 1.0;
 
-    // Use pooled gain node
+    // Use pooled gain node - consistent volume
     const gainNode = this.getPooledGain();
-    gainNode.gain.value = 0.3 + velocityNormalized * 0.5;
+    gainNode.gain.value = 0.6;
 
-    // Connect and play immediately with precise timing
+    // Connect and play
     source.connect(gainNode);
-    source.start(ctx.currentTime); // Use precise audio clock
-    source.stop(ctx.currentTime + 0.08); // Shorter duration for snappier sound
+    source.start(ctx.currentTime);
+    source.stop(ctx.currentTime + 0.1);
   }
 
   public playWin() {

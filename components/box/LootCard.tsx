@@ -19,46 +19,58 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
   
   const { isLoading, isEmoji } = imageProps;
 
-  // Dynamic sizing - bigger cards
+  // Dynamic sizing
   const imageSizeClass = isSpinner 
-    ? 'w-28 h-28 sm:w-32 sm:h-32' // Bigger for spinner
+    ? 'w-[70%] h-[70%]' // Relative to card size
     : 'w-24 h-24 sm:w-32 sm:h-32'; // Grid cards
 
   const emojiSizeClass = isSpinner
-    ? 'text-5xl sm:text-6xl'
+    ? 'text-4xl'
     : 'text-5xl sm:text-6xl';
 
-  // Stake style: Minimal floating products (no tile background, no price)
+  // Stake style: Square card tile behind each item
   if (isSpinner) {
     return (
       <div 
-        className="relative flex-shrink-0 flex flex-col items-center justify-center select-none pointer-events-none"
+        className="relative flex-shrink-0 flex items-center justify-center select-none pointer-events-none"
         style={{ 
           width: `${width}px`,
-          height: '100%',
+          height: `${width}px`, // Square
         }}
       >
-        {/* Product floats directly - no background, no price */}
-        <div className="w-full h-full flex items-center justify-center">
-          {/* Product Image Only */}
-          <div className={`relative ${imageSizeClass} flex items-center justify-center`}>
-            {isLoading ? (
-              <div className="w-10 h-10 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
-            ) : isEmoji ? (
-              <span className={`${emojiSizeClass} select-none`}>
-                {item.image}
-              </span>
-            ) : (
-              <img 
-                src={item.image} 
-                alt={item.name}
-                className="w-full h-full object-contain drop-shadow-lg"
-                loading="eager"
-                decoding="async"
-                draggable={false}
-              />
-            )}
-          </div>
+        {/* Square tile background - Stake Mines style */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: '#213743',
+            borderRadius: '8px',
+          }}
+        />
+        
+        {/* Product Image centered on tile */}
+        <div className={`relative z-10 ${imageSizeClass} flex items-center justify-center`}>
+          {isLoading ? (
+            <div 
+              className="w-8 h-8 rounded-full animate-spin"
+              style={{ 
+                border: '2px solid #2f4553',
+                borderTopColor: '#5f6c7b',
+              }}
+            />
+          ) : isEmoji ? (
+            <span className={`${emojiSizeClass} select-none`}>
+              {item.image}
+            </span>
+          ) : (
+            <img 
+              src={item.image} 
+              alt={item.name}
+              className="w-full h-full object-contain"
+              loading="eager"
+              decoding="async"
+              draggable={false}
+            />
+          )}
         </div>
       </div>
     );
