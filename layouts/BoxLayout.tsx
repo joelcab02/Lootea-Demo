@@ -142,20 +142,20 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
 
   return (
     <Layout>
-      {/* GAME AREA - Constrained width for better desktop experience */}
-      <div className="flex flex-col items-center relative w-full max-w-[1200px] mx-auto px-4">
-        
-        {/* GAME CONTAINER - Spinner + Toolbar unified (Stake: no border, only bg) */}
-        <div 
-          className="w-full"
-          style={{
-            background: '#0f212e',
-            borderRadius: '8px',
-            overflow: 'hidden',
-          }}
-        >
-          {/* SPINNER */}
-          <div className="relative w-full z-10">
+      {/* 
+        STAKE HIERARCHY:
+        L1: #0f212e - Page bg (darkest)
+        L2: #1a2c38 - Elevated panels (control panel)
+        L3: #213743 - Interactive elements (cards, inputs)
+        L4: #2f4553 - Hover states
+      */}
+      
+      {/* GAME SECTION - Full width, same as page bg */}
+      <div className="w-full" style={{ background: '#0f212e' }}>
+        <div className="max-w-[1200px] mx-auto px-4">
+          
+          {/* SPINNER AREA */}
+          <div className="relative w-full">
             <SpinnerV2 
               items={items}
               winner={predeterminedWinner}
@@ -166,26 +166,23 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             />
           </div>
 
-          {/* BOTTOM TOOLBAR - Integrated with spinner (Stake: subtle separator) */}
+          {/* TOOLBAR - Same level as game, subtle top border */}
           <div 
             className="w-full flex items-center justify-between px-4 py-2.5"
-            style={{
-              background: '#0f212e',
-              borderTop: '1px solid rgba(47,69,83,0.5)', // Very subtle
-            }}
+            style={{ borderTop: '1px solid #1a2c38' }}
           >
             {/* Left: Icon buttons */}
             <div className="flex items-center gap-1">
-              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#1a2c38] transition-colors rounded">
                 <Icons.Settings />
               </button>
-              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#1a2c38] transition-colors rounded">
                 <Icons.Fullscreen />
               </button>
-              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#1a2c38] transition-colors rounded">
                 <Icons.Stats />
               </button>
-              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] transition-colors rounded">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#1a2c38] transition-colors rounded">
                 <Icons.Share />
               </button>
             </div>
@@ -210,9 +207,14 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             </a>
           </div>
         </div>
+      </div>
 
-        {/* CONTROLS - Stake Style Panel */}
-        <div className="z-20 w-full max-w-full md:max-w-[400px] pt-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      {/* CONTROLS SECTION - Elevated panel (L2) */}
+      <div 
+        className="w-full py-4"
+        style={{ background: '#0f212e' }}
+      >
+        <div className="max-w-[400px] mx-auto px-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
           
           {/* Control Panel - Stake style (no border, only bg) */}
           <div 
