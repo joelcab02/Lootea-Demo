@@ -1,15 +1,14 @@
 /**
- * SpinnerV3 - Stake-style Clean Reveal
+ * SpinnerV3 - Clean Stake-style Animations
  * 
- * Minimal, professional winner reveal:
- * - Quick, clean transitions
- * - No fancy effects
- * - Solid green border
- * - Simple price display
+ * Simple, effective animations:
+ * - Smooth loser fade
+ * - Clean winner highlight
+ * - Simple price reveal
  */
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence, useTransform } from 'framer-motion';
+import { motion, useTransform } from 'framer-motion';
 import { LootItem, Rarity } from '../../types';
 import LootCard from './LootCard';
 import { formatPrice } from '../../lib/format';
@@ -25,63 +24,10 @@ import {
 } from './spinner';
 
 // ============================================
-// SIMPLE TIMING
+// TIMING
 // ============================================
 
-const REVEAL_DELAY = 200; // Short pause after spin
-
-// ============================================
-// CLEAN FRAMER VARIANTS
-// ============================================
-
-// Losers: Subtle fade
-const loserVariants = {
-  visible: { 
-    opacity: 1,
-    filter: 'brightness(1)',
-  },
-  hidden: {
-    opacity: 0.4,
-    filter: 'brightness(0.7)',
-    transition: {
-      duration: 0.4,
-      ease: 'easeOut',
-    },
-  },
-};
-
-// Winner border: Appears with scale
-const winnerBorderVariants = {
-  hidden: { 
-    opacity: 0,
-    scale: 0.95,
-  },
-  visible: { 
-    opacity: 1,
-    scale: 1,
-    transition: { 
-      duration: 0.3,
-      ease: [0.34, 1.56, 0.64, 1], // Spring-like
-    },
-  },
-};
-
-// Price: Slide up
-const priceVariants = {
-  hidden: { 
-    opacity: 0,
-    y: 10,
-  },
-  visible: { 
-    opacity: 1,
-    y: 0,
-    transition: { 
-      delay: 0.2,
-      duration: 0.3,
-      ease: 'easeOut',
-    },
-  },
-};
+const REVEAL_DELAY = 200;
 
 // ============================================
 // COMPONENT
@@ -286,28 +232,22 @@ const SpinnerV3: React.FC<SpinnerProps> = ({
                 marginRight: `${cardGap}px`,
                 zIndex: isWinnerCard ? 50 : 1,
               }}
-              variants={loserVariants}
-              initial="visible"
-              animate={isLoserCard ? 'hidden' : 'visible'}
+              animate={{
+                opacity: isLoserCard ? 0.3 : 1,
+              }}
+              transition={{ duration: 0.3 }}
             >
-              {/* Card container */}
-              <motion.div 
-                className="relative"
-                style={{ borderRadius: '8px', overflow: 'visible' }}
-                animate={isWinnerCard ? { scale: 1.02 } : { scale: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                {/* Green border for winner */}
-                <motion.div 
-                  className="absolute pointer-events-none"
+              {/* Card */}
+              <div className="relative" style={{ borderRadius: '8px' }}>
+                {/* Green border for winner - CSS only */}
+                <div 
+                  className="absolute pointer-events-none transition-opacity duration-300"
                   style={{
                     inset: -3,
                     border: '3px solid #00e701',
                     borderRadius: '11px',
+                    opacity: isWinnerCard ? 1 : 0,
                   }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isWinnerCard ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
                 />
                 
                 {/* Card */}
@@ -316,41 +256,34 @@ const SpinnerV3: React.FC<SpinnerProps> = ({
                   width={cardWidth} 
                   isSpinner 
                 />
-              </motion.div>
+              </div>
               
-              {/* Price bar for winner */}
-              <AnimatePresence>
-                {isWinnerCard && (
-                  <motion.div 
-                    className="flex items-center justify-center mt-2"
-                    style={{
-                      background: '#00e701',
-                      borderRadius: '6px',
-                      width: `${cardWidth}px`,
-                      padding: '8px 0',
+              {/* Price tag - CSS transition */}
+              {isWinnerCard && (
+                <div 
+                  className="flex items-center justify-center mt-2 animate-[fadeIn_0.3s_ease-out_0.15s_both]"
+                  style={{
+                    background: '#00e701',
+                    borderRadius: '6px',
+                    width: `${cardWidth}px`,
+                    padding: '10px 0',
+                  }}
+                >
+                  <span 
+                    className="font-bold"
+                    style={{ 
+                      color: '#000',
+                      fontSize: screenSize === 'mobile' ? '14px' : '16px',
                     }}
-                    variants={priceVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
                   >
-                    <span 
-                      className="font-bold"
-                      style={{ 
-                        color: '#000',
-                        fontSize: screenSize === 'mobile' ? '13px' : '15px',
-                      }}
-                    >
-                      {formatPrice(item.price)}
-                    </span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    {formatPrice(item.price)}
+                  </span>
+                </div>
+              )}
             </motion.div>
           );
         })}
       </motion.div>
-      
     </div>
   );
 };

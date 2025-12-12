@@ -89,7 +89,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       className="flex flex-col gap-3 p-4 lg:gap-4"
       style={{ 
         background: '#1a2c38',
-        fontFamily: "'Outfit', sans-serif",
+        fontFamily: "'Inter', sans-serif",
       }}
     >
       {/* Error Message */}

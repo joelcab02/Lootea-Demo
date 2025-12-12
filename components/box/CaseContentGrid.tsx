@@ -24,7 +24,7 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items, boxName }) => 
   return (
     <section 
       className="w-full max-w-[1200px] mx-auto px-4" 
-      style={{ fontFamily: "'Outfit', sans-serif" }}
+      style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* SECTION CONTAINER */}
       <div 

@@ -135,7 +135,7 @@ const BoxLayoutV2: React.FC<BoxLayoutProps> = ({ slug }) => {
       {/* MAIN GAME SECTION */}
       <div 
         className="w-full max-w-[1200px] mx-auto px-4 pt-4"
-        style={{ fontFamily: "'Outfit', sans-serif" }}
+        style={{ fontFamily: "'Inter', sans-serif" }}
       >
         {/* GAME CONTAINER - Stake style */}
         <div 
