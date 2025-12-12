@@ -274,6 +274,7 @@ const SpinnerV3: React.FC<SpinnerProps> = ({
                     style={{ 
                       color: '#000',
                       fontSize: screenSize === 'mobile' ? '14px' : '16px',
+                      fontFamily: "'Inter', sans-serif",
                     }}
                   >
                     {formatPrice(item.price)}

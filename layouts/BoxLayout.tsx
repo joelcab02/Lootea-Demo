@@ -151,7 +151,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
       */}
       
       {/* UNIFIED GAME SECTION */}
-      <div className="w-full max-w-[1200px] mx-auto px-4 pt-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      <div className="w-full max-w-[1200px] mx-auto px-4 pt-4" style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}>
         
         {/* GAME CONTAINER - #1a2c38 visible container */}
         <div 
@@ -271,7 +271,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               }}
             >
               <span className="text-base font-bold">Abrir</span>
-              <span className="text-base font-bold">
+              <span className="text-base font-bold" style={{ fontFamily: "'Inter', sans-serif" }}>
                 {formatPrice(BOX_PRICE)}
               </span>
             </button>

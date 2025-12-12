@@ -19,7 +19,7 @@ export const LegalLayout: React.FC<LegalLayoutProps> = ({
   lastUpdated 
 }) => {
   return (
-    <div className="min-h-screen bg-[#0f212e] text-white font-sans" style={{ fontFamily: "'Outfit', sans-serif" }}>
+    <div className="min-h-screen bg-[#0f212e] text-white font-sans" style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}>
       <div className="flex flex-col min-h-screen">
         <Header />
         

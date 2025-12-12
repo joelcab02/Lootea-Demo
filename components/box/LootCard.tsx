@@ -123,7 +123,10 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
         </h3>
         
         {/* Price tag - Stake Style */}
-        <span className="text-[#b1bad3] text-[10px] sm:text-xs font-medium">
+        <span 
+          className="text-[#b1bad3] text-[10px] sm:text-xs font-medium"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
           {formatPrice(item.price)}
         </span>
       </div>

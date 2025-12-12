@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@google/genai": "^1.30.0",
     "@supabase/supabase-js": "^2.86.0",
     "cloudinary-core": "^2.14.0",
     "framer-motion": "^12.23.26",

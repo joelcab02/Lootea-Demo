@@ -379,7 +379,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    <span className="text-black font-bold text-sm">
+                    <span className="text-black font-bold text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
                       {formatPrice(item.price)}
                     </span>
                   </div>

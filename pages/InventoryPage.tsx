@@ -90,7 +90,7 @@ const InventoryPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="px-4 md:px-8 py-6 md:py-10" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      <div className="px-4 md:px-8 py-6 md:py-10" style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}>
         
         {/* Title */}
         <div className="text-center mb-6">

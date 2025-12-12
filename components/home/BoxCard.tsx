@@ -48,7 +48,10 @@ export const BoxCard: React.FC<BoxCardProps> = ({ box }) => {
         <h3 className="text-white font-bold text-sm md:text-base truncate max-w-full group-hover:text-[#b1bad3] transition-colors">
           {box.name}
         </h3>
-        <span className="text-white text-sm md:text-base font-medium">
+        <span 
+          className="text-white text-sm md:text-base font-medium"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
           {formatPrice(box.price, false)}
         </span>
       </div>

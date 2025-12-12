@@ -41,7 +41,7 @@ const Icons = {
 
 function Footer() {
   return (
-    <footer className="bg-[#0f212e] border-t border-[#2f4553]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+    <footer className="bg-[#0f212e] border-t border-[#2f4553]" style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}>
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12">
         
         {/* Links Grid - 6 columns like Stake */}

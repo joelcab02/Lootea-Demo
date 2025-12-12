@@ -16,7 +16,6 @@ initAuth();              // Segundo: autenticación
 
 // Lazy load páginas de admin (no críticas para jugadores)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const VisualEnginePage = lazy(() => import('./pages/VisualEnginePage'));
 // Lazy load promo page (funnel de adquisicion)
 const PromoPage = lazy(() => import('./pages/PromoPage'));
 // V2 Testing - Framer Motion spinner
@@ -73,7 +72,6 @@ const PersistentTabs: React.FC = () => {
             <Route path="/box-v2/:slug" element={<BoxPageV2 />} />
             <Route path="/promo/:slug" element={<PromoPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/visual-engine" element={<VisualEnginePage />} />
             <Route path="/terminos" element={<TerminosPage />} />
             <Route path="/privacidad" element={<PrivacidadPage />} />
             <Route path="/aml" element={<AMLPage />} />

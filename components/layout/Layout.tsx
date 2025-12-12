@@ -24,7 +24,7 @@ export const Layout: React.FC<LayoutProps> = ({
   showFooter = true 
 }) => {
   return (
-    <div className="min-h-screen bg-[#0f212e] text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
+    <div className="min-h-screen bg-[#0f212e] text-white" style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}>
       <div className="flex flex-col min-h-screen">
         <Header />
         

@@ -127,7 +127,7 @@ const DepositPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-md mx-auto px-4 py-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      <div className="max-w-md mx-auto px-4 py-6" style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}>
         
         {/* Card Container - Like desktop modal */}
         <div style={{ background: '#1a2c38', borderRadius: '16px' }}>

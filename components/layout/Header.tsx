@@ -112,7 +112,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#1a2c38] border-b border-[#2f4553]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      <header className="sticky top-0 z-50 w-full bg-[#1a2c38] border-b border-[#2f4553]" style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center h-16">
             
@@ -145,7 +145,10 @@ const Header: React.FC = () => {
                     onClick={() => setShowDeposit(true)}
                   >
                     <Icons.DollarCircle />
-                    <span className="text-white font-semibold text-sm tracking-tight">
+                    <span 
+                      className="text-white font-semibold text-sm tracking-tight"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       MX${formatPriceValue(balance)}
                     </span>
                     <Icons.ChevronDown />
@@ -215,7 +218,7 @@ const Header: React.FC = () => {
                             </div>
                             <div>
                               <p className="text-white font-semibold text-sm">{displayName}</p>
-                              <p className="text-[#b1bad3] text-xs">MX${formatPriceValue(balance)}</p>
+                              <p className="text-[#b1bad3] text-xs" style={{ fontFamily: "'Inter', sans-serif" }}>MX${formatPriceValue(balance)}</p>
                             </div>
                           </div>
                         </div>

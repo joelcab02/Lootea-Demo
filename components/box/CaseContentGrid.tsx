@@ -24,7 +24,7 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items, boxName }) => 
   return (
     <section 
       className="w-full max-w-[1200px] mx-auto px-4" 
-      style={{ fontFamily: "'Inter', sans-serif" }}
+      style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}
     >
       {/* SECTION CONTAINER */}
       <div 
@@ -131,7 +131,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
         </h3>
         <p 
           className="text-sm font-semibold"
-          style={{ color: '#b1bad3' }}
+          style={{ color: '#b1bad3', fontFamily: "'Inter', sans-serif" }}
         >
           {formatPrice(item.price, false)}
         </p>

@@ -10,10 +10,6 @@ export default defineConfig(({ mode }) => {
         host: '0.0.0.0',
       },
       plugins: [react()],
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-      },
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
@@ -26,7 +22,6 @@ export default defineConfig(({ mode }) => {
               // Vendor chunks - librerías externas
               'vendor-react': ['react', 'react-dom', 'react-router-dom'],
               'vendor-supabase': ['@supabase/supabase-js'],
-              // AI se carga solo cuando se necesita (lazy)
             }
           }
         }

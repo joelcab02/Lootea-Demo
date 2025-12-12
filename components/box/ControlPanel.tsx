@@ -89,7 +89,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       className="flex flex-col gap-3 p-4 lg:gap-4"
       style={{ 
         background: '#1a2c38',
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Proxima Nova', 'Inter', sans-serif",
       }}
     >
       {/* Error Message */}
@@ -149,13 +149,14 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           style={{ fontSize: '12px' }}
         >
           <span style={{ color: '#5f6c7b' }}>Box Price</span>
-          <span style={{ color: '#5f6c7b' }}>{formatPrice(boxPrice)}</span>
+          <span style={{ color: '#5f6c7b', fontFamily: "'Inter', sans-serif" }}>{formatPrice(boxPrice)}</span>
         </div>
         <div 
-          className="w-full py-3 px-4 rounded-lg text-sm"
+          className="w-full py-3 px-4 rounded-lg text-sm font-bold"
           style={{ 
             background: '#0f212e',
             color: '#ffffff',
+            fontFamily: "'Inter', sans-serif",
           }}
         >
           {formatPrice(boxPrice)}

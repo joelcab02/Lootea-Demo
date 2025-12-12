@@ -171,6 +171,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onMenuClick }) => {
           <button 
             onClick={() => setShowDeposit(true)}
             className="px-3 py-1.5 rounded-lg bg-[#3b82f6] hover:bg-[#2563eb] text-white font-bold text-sm transition-colors"
+            style={{ fontFamily: "'Inter', sans-serif" }}
           >
             ${formatPriceValue(balance)}
           </button>

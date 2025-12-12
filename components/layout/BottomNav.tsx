@@ -81,7 +81,7 @@ const BottomNav: React.FC = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
+    <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden" style={{ fontFamily: "'Proxima Nova', 'Inter', sans-serif" }}>
       <div className="bg-[#1a2c38] border-t border-[#2f4553]">
         <div className="flex items-center justify-around">
           <NavItem
