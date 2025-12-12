@@ -44,7 +44,7 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
           className="w-full h-full flex flex-col items-center justify-center py-3 px-2"
           style={{
             background: '#213743',
-            borderRadius: '8px',
+            borderRadius: '6px',
           }}
         >
           {/* Product Image */}

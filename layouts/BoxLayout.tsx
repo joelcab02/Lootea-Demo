@@ -145,13 +145,12 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
       {/* GAME AREA - Constrained width for better desktop experience */}
       <div className="flex flex-col items-center relative w-full max-w-[1200px] mx-auto px-4">
         
-        {/* GAME CONTAINER - Spinner + Toolbar unified */}
+        {/* GAME CONTAINER - Spinner + Toolbar unified (Stake: no border, only bg) */}
         <div 
           className="w-full"
           style={{
             background: '#0f212e',
-            borderRadius: '12px',
-            border: '1px solid #2f4553',
+            borderRadius: '8px',
             overflow: 'hidden',
           }}
         >
@@ -167,12 +166,12 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             />
           </div>
 
-          {/* BOTTOM TOOLBAR - Integrated with spinner */}
+          {/* BOTTOM TOOLBAR - Integrated with spinner (Stake: subtle separator) */}
           <div 
-            className="w-full flex items-center justify-between px-4 py-3"
+            className="w-full flex items-center justify-between px-4 py-2.5"
             style={{
               background: '#0f212e',
-              borderTop: '1px solid #2f4553',
+              borderTop: '1px solid rgba(47,69,83,0.5)', // Very subtle
             }}
           >
             {/* Left: Icon buttons */}
@@ -199,10 +198,10 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             {/* Right: Fairness badge */}
             <a 
               href="/provably-fair"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-[#2f4553]"
               style={{
                 background: '#213743',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 color: '#b1bad3',
               }}
             >
@@ -213,15 +212,14 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
         </div>
 
         {/* CONTROLS - Stake Style Panel */}
-        <div className="z-20 w-full max-w-full md:max-w-[420px] pt-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <div className="z-20 w-full max-w-full md:max-w-[400px] pt-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
           
-          {/* Control Panel - Stake style */}
+          {/* Control Panel - Stake style (no border, only bg) */}
           <div 
             className="p-4"
             style={{
               background: '#1a2c38',
-              borderRadius: '12px',
-              border: '1px solid #2f4553',
+              borderRadius: '8px',
             }}
           >
             
@@ -231,9 +229,9 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               </div>
             )}
 
-            {/* Mode Toggle - Stake pill style (Manual/Auto → Demo/Real) */}
+            {/* Mode Toggle - Stake style with icon */}
             <div 
-              className="flex p-1 rounded-full mb-4"
+              className="flex items-center p-1 rounded-full mb-3"
               style={{ background: '#0f212e' }}
             >
               <button 
@@ -260,16 +258,23 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               >
                 Real
               </button>
+              {/* Stake-style icon at end */}
+              <div className="px-3 text-[#5f6c7b]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+              </div>
             </div>
             
             {/* Main CTA - Green Stake Style */}
             <button 
               onClick={handleSpin}
               disabled={isSpinning || isLoading}
-              className="w-full py-3 mb-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3 mb-2.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               style={{
                 background: '#00e701',
                 color: '#000000',
+                borderRadius: '8px',
               }}
             >
               <span className="text-base font-bold">Abrir</span>
@@ -285,10 +290,11 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               <button 
                 onClick={() => setFastMode(!fastMode)}
                 disabled={isSpinning || isLoading}
-                className="flex-1 py-2.5 rounded-lg flex items-center justify-center gap-1.5 text-sm font-medium transition-all"
+                className="flex-1 py-2.5 flex items-center justify-center gap-1.5 text-sm font-medium transition-all"
                 style={{
                   background: fastMode ? '#2f4553' : '#213743',
                   color: fastMode ? '#ffffff' : '#b1bad3',
+                  borderRadius: '8px',
                 }}
               >
                 <Icons.Lightning />
@@ -298,10 +304,11 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               {/* Mute - Stake icon button */}
               <button 
                 onClick={() => setIsMuted(!isMuted)}
-                className="w-11 h-11 rounded-lg flex items-center justify-center transition-all"
+                className="w-11 h-11 flex items-center justify-center transition-all"
                 style={{
                   background: '#213743',
                   color: isMuted ? '#5f6c7b' : '#b1bad3',
+                  borderRadius: '8px',
                 }}
               >
                 {isMuted ? <Icons.VolumeX /> : <Icons.Volume2 />}

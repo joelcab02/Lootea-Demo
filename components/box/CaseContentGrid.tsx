@@ -67,7 +67,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
       style={{ 
         contain: 'layout style paint',
         background: '#1a2c38',
-        borderRadius: '8px',
+        borderRadius: '6px',
       }}
     >
       {/* Odds Badge - Top Center */}
