@@ -21,30 +21,50 @@ const CaseContentGrid: React.FC<CaseContentGridProps> = ({ items, boxName }) => 
   }, [items]);
 
   return (
-    <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
-      {/* Header - Stake style */}
-      <div className="mb-6">
-        {boxName && (
-          <h1 className="text-xl md:text-2xl text-white font-bold mb-1">
-            {boxName}
-          </h1>
-        )}
-        <p className="text-[#b1bad3] text-sm">
-          {sortedItemsWithOdds.length} premios • Ordenados por valor
-        </p>
-      </div>
+    <section className="w-full max-w-[1200px] mx-auto px-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      {/* SECTION CONTAINER - Stake DNA: Todo contenido en container #1a2c38 */}
+      <div 
+        className="overflow-hidden"
+        style={{ 
+          background: '#1a2c38', 
+          borderRadius: '8px',
+        }}
+      >
+        {/* Header inside container */}
+        <div className="px-4 md:px-6 py-4">
+          {boxName && (
+            <h2 className="text-lg md:text-xl text-white font-bold">
+              {boxName}
+            </h2>
+          )}
+          <p className="text-[#5f6c7b] text-sm">
+            {sortedItemsWithOdds.length} premios • Ordenados por valor
+          </p>
+        </div>
 
-      {/* Grid - Stake style consistent spacing */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-        {sortedItemsWithOdds.map((item) => (
-          <ItemCard key={item.id} item={item as LootItem & { normalizedOdds: number }} />
-        ))}
+        {/* Grid inside container */}
+        <div className="p-4 md:p-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+            {sortedItemsWithOdds.map((item) => (
+              <ItemCard key={item.id} item={item as LootItem & { normalizedOdds: number }} />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
 };
 
-// Packdraw-style ItemCard
+// Get rarity color based on odds - Stake DNA
+const getRarityColor = (odds: number): { bg: string; text: string } => {
+  if (odds < 0.01) return { bg: '#7c3aed', text: '#ffffff' };      // Jackpot - Purple
+  if (odds < 0.1) return { bg: '#ef4444', text: '#ffffff' };       // Legendary - Red
+  if (odds < 1) return { bg: '#f59e0b', text: '#000000' };         // Rare - Orange
+  if (odds < 10) return { bg: '#3b82f6', text: '#ffffff' };        // Uncommon - Blue
+  return { bg: '#213743', text: '#b1bad3' };                       // Common - Gray
+};
+
+// Stake DNA ItemCard
 const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }) => {
   const imageProps = useMemo(() => {
     const isLoading = item.image === '⏳';
@@ -53,6 +73,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
   }, [item.image]);
 
   const { isLoading, isEmoji } = imageProps;
+  const rarityColor = getRarityColor(item.normalizedOdds);
 
   // Format odds
   const oddsDisplay = item.normalizedOdds < 0.01 
@@ -66,18 +87,18 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
       className="group relative overflow-hidden transition-all duration-200 hover:-translate-y-1"
       style={{ 
         contain: 'layout style paint',
-        background: '#1a2c38',
-        borderRadius: '6px',
+        background: '#0f212e',
+        borderRadius: '8px',
       }}
     >
-      {/* Odds Badge - Top Center */}
+      {/* Odds Badge - Color-coded by rarity */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
         <span 
-          className="text-[11px] font-medium px-2 py-0.5"
+          className="text-[11px] font-bold px-2.5 py-1"
           style={{
-            background: '#213743',
+            background: rarityColor.bg,
             borderRadius: '4px',
-            color: '#b1bad3',
+            color: rarityColor.text,
           }}
         >
           {oddsDisplay}
@@ -85,7 +106,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
       </div>
 
       {/* Image Container */}
-      <div className="pt-10 pb-2 px-4">
+      <div className="pt-12 pb-3 px-4">
         <div className="relative w-full aspect-square flex items-center justify-center">
           {isLoading ? (
             <div className="w-10 h-10 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin" />
@@ -95,7 +116,7 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
             <img 
               src={item.image} 
               alt={item.name}
-              className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-200"
+              className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-200"
               loading="lazy"
               decoding="async"
             />
@@ -106,12 +127,12 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
       {/* Info - Centered */}
       <div className="px-3 pb-4 text-center">
         {/* Name */}
-        <h3 className="text-white text-xs font-medium truncate mb-1">
+        <h3 className="text-white text-xs font-medium truncate mb-1.5">
           {item.name}
         </h3>
         
-        {/* Price */}
-        <p className="text-[#b1bad3] text-sm font-medium">
+        {/* Price - More prominent */}
+        <p className="text-[#b1bad3] text-sm font-semibold">
           {formatPrice(item.price, false)}
         </p>
       </div>

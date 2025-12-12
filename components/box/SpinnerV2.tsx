@@ -1,10 +1,8 @@
 /**
- * SpinnerV2 - Stake Style
+ * SpinnerV2 - Stake FLAT Design
  * 
- * Colors:
- * - Background: #0f212e → #1a2c38 (teal)
- * - Indicator: #3b82f6 (blue)
- * - Winner glow: Blue
+ * 100% FLAT: No borders, no shadows, no gradients
+ * Only solid backgrounds + borderRadius
  */
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
@@ -94,9 +92,9 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
   
-  // Scale card sizes based on screen - larger screens get bigger cards
-  const cardWidth = screenSize === 'large' ? 200 : (isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH);
-  const cardGap = screenSize === 'large' ? 24 : (isDesktop ? CARD_GAP_DESKTOP : CARD_GAP);
+  // Scale card sizes - bigger cards
+  const cardWidth = screenSize === 'large' ? 200 : (isDesktop ? 180 : 140);
+  const cardGap = screenSize === 'large' ? 20 : (isDesktop ? 16 : 12);
   const ITEM_WIDTH = cardWidth + cardGap;
 
   // ============================================
@@ -267,47 +265,31 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   
   const stripWidth = strip.length * ITEM_WIDTH;
 
-  // Dynamic height based on screen size
-  const spinnerHeight = screenSize === 'large' ? 380 : (isDesktop ? 340 : 280);
+  // Dynamic height - room for winner badge
+  const spinnerHeight = screenSize === 'large' ? 380 : (isDesktop ? 340 : 300);
 
   return (
     <div 
-      className="relative w-full flex items-center justify-center overflow-hidden"
+      className="relative w-full flex items-center justify-center"
       style={{
         height: `${spinnerHeight}px`,
-        background: '#0f212e',
+        // No background - parent container handles it
+        // overflow visible to allow winner card to scale without clipping
       }}
     >
-      {/* Vignette overlay - subtle depth */}
+      {/* Edge Vignette - Fade effect for cut-off cards */}
       <div 
-        className="absolute inset-0 pointer-events-none z-20"
+        className="absolute left-0 top-0 bottom-0 w-16 z-20 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 30%, rgba(15,33,46,0.5) 100%)',
+          background: 'linear-gradient(to right, #0f212e 0%, transparent 100%)',
         }}
       />
-      
-      {/* Winner Glow - Blue, more subtle Stake style */}
-      {showWinnerEffect && (
-        <div 
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 animate-pulse"
-          style={{
-            width: `${cardWidth * 1.8}px`,
-            height: `${cardWidth * 1.8}px`,
-            background: 'radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.08) 50%, transparent 70%)',
-            borderRadius: '50%',
-          }}
-        />
-      )}
-      
-      {/* Center Indicator - Stake Style (Simple Line) */}
-      <div className={`absolute left-1/2 top-0 bottom-0 z-30 transform -translate-x-1/2 transition-opacity duration-300 ${showWinnerEffect ? 'opacity-0' : 'opacity-100'}`}>
-        <div 
-          className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-[#3b82f6]"
-          style={{
-            boxShadow: '0 0 8px rgba(59,130,246,0.4)',
-          }}
-        />
-      </div>
+      <div 
+        className="absolute right-0 top-0 bottom-0 w-16 z-20 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to left, #0f212e 0%, transparent 100%)',
+        }}
+      />
 
       {/* Loading Skeleton - Stake tiles */}
       <div 
@@ -346,13 +328,6 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
           const isWinnerCard = showWinnerEffect && displayWinner && index === WINNING_INDEX && item.id === displayWinner.id;
           const isLoserCard = showWinnerEffect && !isWinnerCard;
           
-          let cardAnimation: string | undefined;
-          if (isWinnerCard) {
-            cardAnimation = 'winnerReveal 0.6s ease-out forwards';
-          } else if (isLoserCard) {
-            cardAnimation = 'loserFade 0.4s ease-out forwards';
-          }
-          
           return (
             <div 
               key={`${item.id}-${index}`} 
@@ -362,52 +337,60 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
                 flexShrink: 0,
                 marginRight: `${cardGap}px`,
                 zIndex: isWinnerCard ? 50 : 1,
-                animation: cardAnimation,
+                animation: isLoserCard ? 'loserFade 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards' : undefined,
               }}
             >
+              {/* Winner card with integrated price - Smooth reveal */}
               <div 
-                className="relative rounded-lg overflow-hidden transition-all duration-300"
-                style={isWinnerCard ? {
-                  boxShadow: '0 0 0 2px #3b82f6, 0 0 20px rgba(59,130,246,0.3)',
-                } : undefined}
+                className="relative overflow-visible"
+                style={{
+                  borderRadius: '8px',
+                  animation: isWinnerCard ? 'winnerRevealBorder 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' : undefined,
+                }}
               >
-                <LootCard item={item} width={cardWidth} isSpinner={true} />
+                {/* Card container */}
+                <div 
+                  className="flex items-center justify-center transition-all duration-500"
+                  style={isWinnerCard ? {
+                    borderRadius: '8px 8px 0 0',
+                    boxShadow: '0 0 0 3px #00e701, 0 0 12px rgba(0, 231, 1, 0.2)',
+                    width: `${cardWidth}px`,
+                    height: `${cardWidth}px`,
+                    background: '#0f212e',
+                    animation: 'winnerBorderPulse 2s ease-in-out infinite 0.5s',
+                  } : {
+                    borderRadius: '8px',
+                  }}
+                >
+                  <LootCard item={item} width={isWinnerCard ? cardWidth - 6 : cardWidth} isSpinner={true} />
+                </div>
+                
+                {/* Integrated price tag - Fade in */}
+                {isWinnerCard && (
+                  <div 
+                    className="flex items-center justify-center gap-2 py-2.5"
+                    style={{
+                      background: '#00e701',
+                      borderRadius: '0 0 8px 8px',
+                      width: `${cardWidth}px`,
+                      animation: 'fadeIn 0.3s ease-out 0.2s both',
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span className="text-black font-bold text-sm">
+                      {formatPrice(item.price)}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Winner Info - Stake toast style */}
-      {showWinnerEffect && displayWinner && (
-        <div 
-          className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-          style={{ 
-            bottom: '16px',
-            zIndex: 60,
-          }}
-        >
-          <div 
-            className="flex items-center gap-3 px-4 py-2.5 rounded-lg"
-            style={{
-              background: '#213743',
-              border: '1px solid #2f4553',
-            }}
-          >
-            <span className="text-[#b1bad3] text-sm">Ganaste</span>
-            <span className="text-white font-bold text-sm">{displayWinner.name}</span>
-            <span 
-              className="text-sm font-bold px-2 py-0.5 rounded"
-              style={{ 
-                background: 'rgba(0,231,1,0.15)',
-                color: '#00e701',
-              }}
-            >
-              {formatPrice(displayWinner.price)}
-            </span>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };

@@ -1,0 +1,52 @@
+# Lootea Project Rules
+
+## 🎨 DISEÑO OBLIGATORIO
+
+**ANTES de crear o modificar cualquier componente UI, DEBES:**
+
+1. Leer `docs/STAKE_DNA.md` - El único design system válido
+2. Usar SOLO los colores de la paleta Stake
+3. Seguir el principio de "Elevation through Color" (sin borders, sin shadows)
+4. Verificar contra el checklist del DNA
+
+## Paleta de Colores (Memorizar)
+```
+Backgrounds:
+- #0f212e (darkest - inputs, game areas)
+- #1a2c38 (primary - panels, cards)
+- #213743 (secondary - buttons, active states)
+- #2f4553 (hover states)
+
+Acentos:
+- #00e701 (verde - CTAs de juego, wins)
+- #3b82f6 (azul - wallet, deposit, links)
+
+Texto:
+- #ffffff (primary)
+- #b1bad3 (secondary)
+- #5f6c7b (muted)
+```
+
+## Reglas de Colores CTA
+- Verde (#00e701) = Acciones de JUEGO (Abrir, Bet, Spin)
+- Azul (#3b82f6) = Acciones de DINERO (Deposit, Withdraw)
+
+## ❌ PROHIBIDO
+- Borders visibles (excepto winner highlight)
+- Box-shadows
+- Gradients en UI
+- Colores fuera de la paleta
+- Border-radius inconsistentes (usar 8px default)
+
+## ✅ SIEMPRE
+- Consultar STAKE_DNA.md antes de cambios UI
+- Inputs más oscuros que su contenedor
+- Spacing en múltiplos de 4px
+- Fuente Outfit
+- Animaciones sutiles (0.2s-0.3s)
+
+## Archivos de Referencia
+- `docs/STAKE_DNA.md` - Design system completo
+- `styles/stake-palette.css` - Variables CSS
+- `lib/visual-engine/looteaDNA.ts` - DNA para imágenes AI
+

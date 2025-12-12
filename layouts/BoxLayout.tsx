@@ -143,19 +143,33 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
   return (
     <Layout>
       {/* 
-        STAKE HIERARCHY:
-        L1: #0f212e - Page bg (darkest)
-        L2: #1a2c38 - Elevated panels (control panel)
-        L3: #213743 - Interactive elements (cards, inputs)
-        L4: #2f4553 - Hover states
+        STAKE FLAT DESIGN - UN SOLO BLOQUE:
+        - Game Container (#1a2c38) = visible container with radius
+        - Spinner Area (#0f212e) = inset/recessed inside
+        - Controls = part of same container
+        - Inputs = #0f212e (darker than container)
       */}
       
-      {/* GAME SECTION - Full width, same as page bg */}
-      <div className="w-full" style={{ background: '#0f212e' }}>
-        <div className="max-w-[1200px] mx-auto px-4">
-          
-          {/* SPINNER AREA */}
-          <div className="relative w-full">
+      {/* UNIFIED GAME SECTION */}
+      <div className="w-full max-w-[1200px] mx-auto px-4 pt-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        
+        {/* GAME CONTAINER - #1a2c38 visible container */}
+        <div 
+          style={{ 
+            background: '#1a2c38',
+            borderRadius: '12px',
+            overflow: 'hidden',
+          }}
+        >
+          {/* SPINNER AREA - #0f212e inset/recessed */}
+          <div 
+            className="relative w-full m-3 mb-0 overflow-hidden"
+            style={{ 
+              background: '#0f212e',
+              borderRadius: '8px',
+              width: 'calc(100% - 24px)',
+            }}
+          >
             <SpinnerV2 
               items={items}
               winner={predeterminedWinner}
@@ -166,30 +180,22 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             />
           </div>
 
-          {/* TOOLBAR - Same level as game, subtle top border */}
-          <div 
-            className="w-full flex items-center justify-between px-4 py-2.5"
-            style={{ borderTop: '1px solid #1a2c38' }}
-          >
+          {/* TOOLBAR - Same bg as container */}
+          <div className="w-full flex items-center justify-between px-4 py-2.5">
             {/* Left: Icon buttons */}
             <div className="flex items-center gap-1">
-              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#1a2c38] transition-colors rounded">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#213743] transition-colors rounded">
                 <Icons.Settings />
               </button>
-              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#1a2c38] transition-colors rounded">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#213743] transition-colors rounded">
                 <Icons.Fullscreen />
               </button>
-              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#1a2c38] transition-colors rounded">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#213743] transition-colors rounded">
                 <Icons.Stats />
               </button>
-              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#1a2c38] transition-colors rounded">
+              <button className="p-2 text-[#5f6c7b] hover:text-[#b1bad3] hover:bg-[#213743] transition-colors rounded">
                 <Icons.Share />
               </button>
-            </div>
-
-            {/* Center: Logo */}
-            <div className="text-white font-bold text-lg tracking-tight">
-              Lootea
             </div>
 
             {/* Right: Fairness badge */}
@@ -206,32 +212,17 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               <span>Fairness</span>
             </a>
           </div>
-        </div>
-      </div>
 
-      {/* CONTROLS SECTION - Elevated panel (L2) */}
-      <div 
-        className="w-full py-4"
-        style={{ background: '#0f212e' }}
-      >
-        <div className="max-w-[400px] mx-auto px-4" style={{ fontFamily: "'Outfit', sans-serif" }}>
-          
-          {/* Control Panel - Stake style (no border, only bg) */}
-          <div 
-            className="p-4"
-            style={{
-              background: '#1a2c38',
-              borderRadius: '8px',
-            }}
-          >
+          {/* CONTROLS - Inside same container */}
+          <div className="px-4 pb-4">
             
             {gameError && (
-              <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-xs text-center">
+              <div className="mb-3 p-2 rounded text-red-400 text-xs text-center" style={{ background: '#0f212e' }}>
                 {gameError}
               </div>
             )}
 
-            {/* Mode Toggle - Stake style with icon */}
+            {/* Mode Toggle - #0f212e inset */}
             <div 
               className="flex items-center p-1 rounded-full mb-3"
               style={{ background: '#0f212e' }}
@@ -260,7 +251,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               >
                 Real
               </button>
-              {/* Stake-style icon at end */}
+              {/* Icon at end */}
               <div className="px-3 text-[#5f6c7b]">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
@@ -268,11 +259,11 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
               </div>
             </div>
             
-            {/* Main CTA - Green Stake Style */}
+            {/* Main CTA - Green */}
             <button 
               onClick={handleSpin}
               disabled={isSpinning || isLoading}
-              className="w-full py-3 mb-2.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 mb-3 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               style={{
                 background: '#00e701',
                 color: '#000000',
@@ -288,7 +279,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
             {/* Secondary Controls Row */}
             <div className={`flex items-center gap-2 transition-opacity ${(isSpinning || isLoading) ? 'opacity-50 pointer-events-none' : ''}`}>
               
-              {/* Fast Mode - Stake secondary button */}
+              {/* Fast Mode */}
               <button 
                 onClick={() => setFastMode(!fastMode)}
                 disabled={isSpinning || isLoading}
@@ -303,7 +294,7 @@ const BoxLayout: React.FC<BoxLayoutProps> = ({ slug }) => {
                 <span>Rápido</span>
               </button>
 
-              {/* Mute - Stake icon button */}
+              {/* Mute */}
               <button 
                 onClick={() => setIsMuted(!isMuted)}
                 className="w-11 h-11 flex items-center justify-center transition-all"

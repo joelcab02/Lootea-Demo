@@ -270,19 +270,19 @@ body {
   100% { transform: translateX(-50%); }
 }
 
-/* Spinner Winner/Loser Animations - Stake Blue */
+/* Spinner Winner/Loser Animations - Stake Style */
 @keyframes winnerReveal {
   0% {
     transform: scale(1);
-    filter: brightness(1);
+    box-shadow: 0 0 0 0px #00e701;
   }
   50% {
-    transform: scale(1.08);
-    filter: brightness(1.2);
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px #00e701;
   }
   100% {
-    transform: scale(1.05);
-    filter: brightness(1.1) drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+    transform: scale(1.02);
+    box-shadow: 0 0 0 3px #00e701;
   }
 }
 
@@ -290,10 +290,56 @@ body {
   0% {
     opacity: 1;
     transform: scale(1);
+    filter: brightness(1);
   }
   100% {
-    opacity: 0.35;
+    opacity: 0.2;
     transform: scale(0.95);
+    filter: brightness(0.7);
+  }
+}
+
+@keyframes winnerRevealBorder {
+  0% {
+    box-shadow: 0 0 0 0px transparent;
+    transform: scale(1);
+  }
+  30% {
+    box-shadow: 0 0 0 4px #00e701, 0 0 20px rgba(0, 231, 1, 0.4);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 0 3px #00e701, 0 0 12px rgba(0, 231, 1, 0.2);
+    transform: scale(1);
+  }
+}
+
+@keyframes winnerBorderPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px #00e701, 0 0 8px rgba(0, 231, 1, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 3px #00e701, 0 0 16px rgba(0, 231, 1, 0.3);
+  }
+}
+
+@keyframes toastSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes priceShine {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }
 

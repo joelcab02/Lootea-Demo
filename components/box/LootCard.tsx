@@ -19,16 +19,16 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
   
   const { isLoading, isEmoji } = imageProps;
 
-  // Dynamic sizing - consistent proportions
+  // Dynamic sizing - bigger cards
   const imageSizeClass = isSpinner 
-    ? 'w-20 h-20 sm:w-24 sm:h-24' // Compact for spinner
+    ? 'w-28 h-28 sm:w-32 sm:h-32' // Bigger for spinner
     : 'w-24 h-24 sm:w-32 sm:h-32'; // Grid cards
 
   const emojiSizeClass = isSpinner
     ? 'text-5xl sm:text-6xl'
     : 'text-5xl sm:text-6xl';
 
-  // Stake style: Compact card tile
+  // Stake style: Minimal floating products (no tile background, no price)
   if (isSpinner) {
     return (
       <div 
@@ -36,19 +36,12 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
         style={{ 
           width: `${width}px`,
           height: '100%',
-          padding: '4px',
         }}
       >
-        {/* Card Tile - Stake flat style */}
-        <div 
-          className="w-full h-full flex flex-col items-center justify-center py-3 px-2"
-          style={{
-            background: '#213743',
-            borderRadius: '6px',
-          }}
-        >
-          {/* Product Image */}
-          <div className={`relative ${imageSizeClass} flex items-center justify-center mb-1.5`}>
+        {/* Product floats directly - no background, no price */}
+        <div className="w-full h-full flex items-center justify-center">
+          {/* Product Image Only */}
+          <div className={`relative ${imageSizeClass} flex items-center justify-center`}>
             {isLoading ? (
               <div className="w-10 h-10 border-2 border-[#2f4553] border-t-[#3b82f6] rounded-full animate-spin"></div>
             ) : isEmoji ? (
@@ -59,18 +52,13 @@ const LootCard: React.FC<LootCardProps> = ({ item, width, isSpinner = false }) =
               <img 
                 src={item.image} 
                 alt={item.name}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain drop-shadow-lg"
                 loading="eager"
                 decoding="async"
                 draggable={false}
               />
             )}
           </div>
-          
-          {/* Price Tag - Stake style */}
-          <span className="text-[#b1bad3] text-xs font-medium">
-            {formatPrice(item.price)}
-          </span>
         </div>
       </div>
     );
