@@ -98,25 +98,50 @@ const initialState: GameState = {
 export const useGameStore = create<GameStore>()(
   devtools(
     (set, get) => {
-      // Listen for connection recovery to reset stuck states
-      // Note: This registers once when the store is created
       // Use setTimeout to defer registration until after store is initialized
       setTimeout(() => {
+        // Listen for connection recovery
         onConnectionChange((status) => {
           if (status === 'connected') {
             const state = get();
-            // Guard: store might not be ready on first call
             if (!state) return;
             
-            if (state.phase === 'spinning') {
-              console.log('[GameStore] Connection restored - resetting stuck spinning state');
-              set({ phase: 'idle', predeterminedWinner: null, error: null }, false, 'connectionReset');
-            }
             // Sync balance after reconnection
             const balance = getBalance();
             set({ balance }, false, 'connectionBalanceSync');
           }
         });
+        
+        // Listen for tab visibility to reset stuck spins
+        // This is separate from connection status - handles animation pause
+        if (typeof document !== 'undefined') {
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+              const state = get();
+              if (!state) return;
+              
+              // If we're spinning and have a winner, the animation might be stuck
+              if (state.phase === 'spinning' && state.predeterminedWinner) {
+                console.log('[GameStore] Tab visible - checking spin state...');
+                
+                // Give animation 2 seconds to complete naturally
+                // If still spinning after that, force complete
+                setTimeout(() => {
+                  const currentState = get();
+                  if (currentState?.phase === 'spinning' && currentState.predeterminedWinner) {
+                    console.log('[GameStore] Spin stuck - forcing completion with winner:', currentState.predeterminedWinner.name);
+                    set({ 
+                      phase: 'idle', 
+                      lastWinner: currentState.predeterminedWinner,
+                      predeterminedWinner: null,
+                      error: null 
+                    }, false, 'forceSpinComplete');
+                  }
+                }, 2000);
+              }
+            }
+          });
+        }
       }, 0);
       
       return {
