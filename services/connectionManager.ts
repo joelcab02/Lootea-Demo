@@ -165,44 +165,38 @@ async function refreshSession(): Promise<boolean> {
 }
 
 /**
- * Full reconnection flow
+ * Full reconnection flow - used when user manually retries
  */
 async function reconnect(): Promise<boolean> {
-  console.log('[ConnectionManager] Starting reconnection...');
+  console.log('[ConnectionManager] Starting manual reconnection...');
   setStatus('reconnecting');
   
-  for (let attempt = 1; attempt <= CONFIG.MAX_RECONNECT_ATTEMPTS; attempt++) {
-    console.log(`[ConnectionManager] Reconnect attempt ${attempt}/${CONFIG.MAX_RECONNECT_ATTEMPTS}`);
+  try {
+    // Step 1: Recreate the client (fresh start)
+    console.log('[ConnectionManager] Recreating Supabase client...');
+    recreateSupabaseClient();
+    await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Step 1: Try refreshing session first (might fix auth issues)
-    await refreshSession();
+    // Step 2: Try to get session with the new client
+    const { error } = await Promise.race([
+      supabase.auth.getSession(),
+      new Promise<{ error: Error }>((resolve) => {
+        setTimeout(() => resolve({ error: new Error('Timeout') }), 5000);
+      })
+    ]);
     
-    // Step 2: Test if connection works now
-    const healthy = await healthCheck();
-    if (healthy) {
-      console.log('[ConnectionManager] Reconnection successful (session refresh worked)');
-      return true;
+    if (error) {
+      console.error('[ConnectionManager] Reconnection failed:', error.message);
+      return false;
     }
     
-    // Step 3: If still broken, recreate the client
-    if (attempt < CONFIG.MAX_RECONNECT_ATTEMPTS) {
-      console.log('[ConnectionManager] Recreating Supabase client...');
-      recreateSupabaseClient();
-      
-      // Wait a moment for new client to stabilize
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      // Re-check after recreation
-      const healthyAfterRecreate = await healthCheck();
-      if (healthyAfterRecreate) {
-        console.log('[ConnectionManager] Reconnection successful (client recreated)');
-        return true;
-      }
-    }
+    console.log('[ConnectionManager] Reconnection successful');
+    return true;
+    
+  } catch (err: any) {
+    console.error('[ConnectionManager] Reconnection error:', err.message);
+    return false;
   }
-  
-  console.error('[ConnectionManager] Reconnection failed after all attempts');
-  return false;
 }
 
 /**
@@ -241,6 +235,10 @@ async function handleVisibilityChange(): Promise<void> {
 
 /**
  * Check connection and reconnect if needed
+ * 
+ * NEW APPROACH: Don't test with hanging health checks.
+ * After long background, proactively refresh the client and session.
+ * This is faster and more reliable than trying to detect if connection is broken.
  */
 async function checkAndReconnect(): Promise<void> {
   // Guard against concurrent processing
@@ -250,48 +248,43 @@ async function checkAndReconnect(): Promise<void> {
   }
   
   isProcessing = true;
-  console.log('[ConnectionManager] Starting connection check...');
-  
-  // Failsafe: force complete after max time to prevent getting stuck
-  const failsafeTimeout = setTimeout(() => {
-    console.error('[ConnectionManager] Failsafe timeout - forcing completion');
-    isProcessing = false;
-    // Don't change status here - let user manually retry
-  }, CONFIG.RECONNECT_TIMEOUT_MS + 10000); // 25s total failsafe
+  console.log('[ConnectionManager] Refreshing connection after background...');
   
   try {
-    // Give browser time to "wake up" after being backgrounded
-    // This helps on mobile where network requests may not work immediately
-    console.log('[ConnectionManager] Waiting for browser wake-up...');
-    await new Promise(resolve => setTimeout(resolve, CONFIG.WAKE_UP_DELAY_MS));
+    // Simple approach: just refresh the session
+    // This is usually enough to "wake up" the Supabase client
+    console.log('[ConnectionManager] Refreshing auth session...');
     
-    // Quick health check
-    const healthy = await healthCheck();
+    const { data, error } = await Promise.race([
+      supabase.auth.getSession(),
+      new Promise<{ data: null; error: Error }>((resolve) => {
+        setTimeout(() => resolve({ data: null, error: new Error('Session refresh timeout') }), 5000);
+      })
+    ]);
     
-    if (healthy) {
-      console.log('[ConnectionManager] Connection healthy');
-      setStatus('connected');
-      return;
-    }
-    
-    // Not healthy - now show reconnecting status
-    console.log('[ConnectionManager] Connection unhealthy - attempting reconnect');
-    const reconnected = await reconnect();
-    
-    if (reconnected) {
-      setStatus('connected');
+    if (error) {
+      console.warn('[ConnectionManager] Session refresh failed:', error.message);
+      // Try recreating the client
+      console.log('[ConnectionManager] Recreating Supabase client...');
+      recreateSupabaseClient();
+      await new Promise(resolve => setTimeout(resolve, 500));
     } else {
-      setStatus('disconnected');
+      console.log('[ConnectionManager] Session refreshed successfully');
     }
+    
+    // Always mark as connected - we've done what we can
+    // If there's a real problem, the next actual operation will fail
+    // and the user will see an error message
+    setStatus('connected');
     
   } catch (err) {
     console.error('[ConnectionManager] Unexpected error:', err);
-    setStatus('disconnected');
+    // Still mark as connected - let actual operations surface errors
+    setStatus('connected');
   } finally {
-    clearTimeout(failsafeTimeout);
     isProcessing = false;
     lastHiddenTime = null;
-    console.log('[ConnectionManager] Connection check complete, status:', currentStatus);
+    console.log('[ConnectionManager] Connection refresh complete');
   }
 }
 
