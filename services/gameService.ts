@@ -57,44 +57,13 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
  * All operations have timeouts to prevent hanging
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
-  const TIMEOUT_MS = 8000; // 8 second timeout for each operation
+  const TIMEOUT_MS = 10000; // 10 second timeout
   
   try {
-    // 1. Get session with timeout
-    console.log('🔐 Getting session...');
-    let sessionData;
-    try {
-      const result = await withTimeout(
-        supabase.auth.getSession(),
-        TIMEOUT_MS,
-        'Session check timeout'
-      );
-      sessionData = result.data;
-    } catch (err: any) {
-      console.warn('🔐 Session check failed:', err.message);
-      // Don't recreate client - just tell user to reload
-      return {
-        success: false,
-        error: 'INTERNAL_ERROR',
-        message: 'Conexión perdida. Recarga la página.'
-      };
-    }
+    // Skip session check - it can hang after tab switches
+    // The RPC will return auth error if not authenticated
     
-    if (!sessionData?.session) {
-      console.error('❌ No session - user not authenticated');
-      return {
-        success: false,
-        error: 'NOT_AUTHENTICATED',
-        message: 'Sesión expirada. Por favor inicia sesión de nuevo.'
-      };
-    }
-    
-    console.log('🔐 Session verified:', {
-      userId: sessionData.session?.user?.id,
-      expiresAt: sessionData.session?.expires_at,
-    });
-    
-    // 2. Generate request ID for idempotency
+    // Generate request ID for idempotency
     const requestId = generateRequestId();
     
     // 3. Execute RPC with timeout
@@ -126,10 +95,20 @@ export async function openBox(boxId: string): Promise<PlayResult> {
     
     if (error) {
       console.error('RPC error:', error);
+      
+      // Check for auth errors
+      if (error.message?.includes('JWT') || error.message?.includes('auth') || error.code === 'PGRST301') {
+        return {
+          success: false,
+          error: 'NOT_AUTHENTICATED',
+          message: 'Sesión expirada. Por favor inicia sesión de nuevo.'
+        };
+      }
+      
       return {
         success: false,
         error: 'INTERNAL_ERROR',
-        message: error.message
+        message: error.message || 'Error del servidor'
       };
     }
     
