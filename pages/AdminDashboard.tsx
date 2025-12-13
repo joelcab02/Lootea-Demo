@@ -10,6 +10,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Rarity, LootItem } from '../types';
 import { supabase, withRetry } from '../services/supabaseClient';
 import { Box, getBoxes, getBoxBySlug } from '../services/boxService';
+import { formatOdds } from '../lib/format';
 import type { User } from '@supabase/supabase-js';
 
 // Game Engine v2.0 Components
@@ -1430,7 +1431,7 @@ const BoxEditSection: React.FC<{
                             className="w-16 px-2 py-1 bg-[#0c0e14] border border-[#1a1d24] rounded text-white text-xs text-center"
                             step="0.1"
                           />
-                          <span className="text-xs text-slate-500 w-16 text-right">({normalizedOdds.toFixed(2)}%)</span>
+                          <span className="text-xs text-slate-500 w-16 text-right">({formatOdds(normalizedOdds)})</span>
                         </>
                       )}
                     </div>

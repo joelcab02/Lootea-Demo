@@ -8,7 +8,7 @@
 import React, { memo, useMemo } from 'react';
 import { LootItem } from '../../types';
 import { calculateTicketRanges } from '../../services/oddsService';
-import { formatPrice } from '../../lib/format';
+import { formatPrice, formatOdds } from '../../lib/format';
 
 interface CaseContentGridProps {
   items: LootItem[];
@@ -69,10 +69,8 @@ const ItemCard = memo(({ item }: { item: LootItem & { normalizedOdds: number } }
 
   const { isLoading, isEmoji } = imageProps;
 
-  // Format odds
-  const oddsDisplay = item.normalizedOdds < 0.01 
-    ? `${item.normalizedOdds.toFixed(4)}%`
-    : `${item.normalizedOdds.toFixed(2)}%`;
+  // Format odds using smart formatter
+  const oddsDisplay = formatOdds(item.normalizedOdds);
 
   return (
     <div 
