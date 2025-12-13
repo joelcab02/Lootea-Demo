@@ -58,7 +58,7 @@ export function calculateTicketRanges(items: LootItem[]): LootItemWithTickets[] 
       ...item,
       ticketStart,
       ticketEnd,
-      normalizedOdds: Math.round(normalizedOdds * 100) / 100 // Round to 2 decimals
+      normalizedOdds // Keep full precision - formatOdds() handles display
     };
   });
 
