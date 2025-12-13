@@ -100,18 +100,24 @@ export const useGameStore = create<GameStore>()(
     (set, get) => {
       // Listen for connection recovery to reset stuck states
       // Note: This registers once when the store is created
-      onConnectionChange((status) => {
-        if (status === 'connected') {
-          const { phase } = get();
-          if (phase === 'spinning') {
-            console.log('[GameStore] Connection restored - resetting stuck spinning state');
-            set({ phase: 'idle', predeterminedWinner: null, error: null }, false, 'connectionReset');
+      // Use setTimeout to defer registration until after store is initialized
+      setTimeout(() => {
+        onConnectionChange((status) => {
+          if (status === 'connected') {
+            const state = get();
+            // Guard: store might not be ready on first call
+            if (!state) return;
+            
+            if (state.phase === 'spinning') {
+              console.log('[GameStore] Connection restored - resetting stuck spinning state');
+              set({ phase: 'idle', predeterminedWinner: null, error: null }, false, 'connectionReset');
+            }
+            // Sync balance after reconnection
+            const balance = getBalance();
+            set({ balance }, false, 'connectionBalanceSync');
           }
-          // Sync balance after reconnection
-          const balance = getBalance();
-          set({ balance }, false, 'connectionBalanceSync');
-        }
-      });
+        });
+      }, 0);
       
       return {
       ...initialState,
