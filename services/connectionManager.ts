@@ -46,11 +46,12 @@ const listeners = new Set<StatusListener>();
 // Configuration
 const CONFIG = {
   DEBOUNCE_MS: 500,              // Ignore rapid visibility changes
-  HEALTH_CHECK_TIMEOUT_MS: 3000, // Fast fail on health check
+  HEALTH_CHECK_TIMEOUT_MS: 6000, // Timeout for health check (increased for mobile)
   HEALTH_CHECK_CACHE_MS: 5000,   // Don't re-check if checked recently
-  MIN_BACKGROUND_MS: 5000,       // Min time in background to trigger check
-  RECONNECT_TIMEOUT_MS: 8000,    // Total time allowed for reconnection
+  MIN_BACKGROUND_MS: 10000,      // Min 10s in background to trigger check (was 5s)
+  RECONNECT_TIMEOUT_MS: 15000,   // Total time allowed for reconnection (increased)
   MAX_RECONNECT_ATTEMPTS: 2,     // How many times to try before giving up
+  WAKE_UP_DELAY_MS: 500,         // Delay before health check to let browser wake up
 };
 
 // ============================================
@@ -76,6 +77,7 @@ function setStatus(newStatus: ConnectionStatus): void {
 
 /**
  * Quick health check - just verify we can reach Supabase
+ * Includes one automatic retry on failure
  */
 async function healthCheck(): Promise<boolean> {
   // Return cached result if recent
@@ -85,36 +87,53 @@ async function healthCheck(): Promise<boolean> {
     return true;
   }
   
-  console.log('[ConnectionManager] Running health check...');
-  
-  try {
-    // Use Promise.race with a manual timeout for more reliable timeout handling
-    const timeoutPromise = new Promise<{ error: Error }>((resolve) => {
-      setTimeout(() => {
-        resolve({ error: new Error('Health check timeout') });
-      }, CONFIG.HEALTH_CHECK_TIMEOUT_MS);
-    });
+  // Try up to 2 times
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    console.log(`[ConnectionManager] Running health check (attempt ${attempt}/2)...`);
     
-    const queryPromise = supabase
-      .from('boxes')
-      .select('id')
-      .limit(1);
-    
-    const result = await Promise.race([queryPromise, timeoutPromise]);
-    
-    if (result.error) {
-      console.warn('[ConnectionManager] Health check failed:', result.error.message);
+    try {
+      // Use Promise.race with a manual timeout for more reliable timeout handling
+      const timeoutPromise = new Promise<{ error: Error }>((resolve) => {
+        setTimeout(() => {
+          resolve({ error: new Error('Health check timeout') });
+        }, CONFIG.HEALTH_CHECK_TIMEOUT_MS);
+      });
+      
+      const queryPromise = supabase
+        .from('boxes')
+        .select('id')
+        .limit(1);
+      
+      const result = await Promise.race([queryPromise, timeoutPromise]);
+      
+      if (result.error) {
+        console.warn(`[ConnectionManager] Health check attempt ${attempt} failed:`, result.error.message);
+        
+        // If first attempt failed, wait and retry
+        if (attempt === 1) {
+          console.log('[ConnectionManager] Retrying health check after delay...');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          continue;
+        }
+        return false;
+      }
+      
+      console.log('[ConnectionManager] Health check passed');
+      lastHealthCheckTime = Date.now();
+      return true;
+      
+    } catch (err: any) {
+      console.warn(`[ConnectionManager] Health check attempt ${attempt} error:`, err.message);
+      
+      if (attempt === 1) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        continue;
+      }
       return false;
     }
-    
-    console.log('[ConnectionManager] Health check passed');
-    lastHealthCheckTime = Date.now();
-    return true;
-    
-  } catch (err: any) {
-    console.warn('[ConnectionManager] Health check error:', err.message);
-    return false;
   }
+  
+  return false;
 }
 
 /**
@@ -237,14 +256,14 @@ async function checkAndReconnect(): Promise<void> {
   const failsafeTimeout = setTimeout(() => {
     console.error('[ConnectionManager] Failsafe timeout - forcing completion');
     isProcessing = false;
-    if (currentStatus !== 'connected') {
-      setStatus('disconnected');
-    }
-  }, CONFIG.RECONNECT_TIMEOUT_MS + 5000);
+    // Don't change status here - let user manually retry
+  }, CONFIG.RECONNECT_TIMEOUT_MS + 10000); // 25s total failsafe
   
   try {
-    // Don't show overlay for quick health check - only set 'checking' internally
-    // The overlay will only show on 'reconnecting' or 'disconnected'
+    // Give browser time to "wake up" after being backgrounded
+    // This helps on mobile where network requests may not work immediately
+    console.log('[ConnectionManager] Waiting for browser wake-up...');
+    await new Promise(resolve => setTimeout(resolve, CONFIG.WAKE_UP_DELAY_MS));
     
     // Quick health check
     const healthy = await healthCheck();
