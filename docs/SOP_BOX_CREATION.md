@@ -70,16 +70,138 @@ Create inventory spreadsheet:
 | Holiday Tote | $1,390 | $1,100 | 21% | Mid |
 | Cupón | $0.18 | $0 | 100% | Common |
 
-### 1.3 Item Distribution Guidelines
+### 1.3 Item Quantity Recommendations
 
-| Tier | Value Range | Recommended Count | Purpose |
-|------|-------------|-------------------|---------|
-| Common | < $100 | 1-2 items | Absorb probability |
-| Mid | $100 - $15,000 | 2-4 items | Small wins |
-| Rare | $15,000 - $70,000 | 5-12 items | Exciting wins |
-| Jackpot | $70,000+ | 2-4 items | Life-changing |
+#### Total Items per Box
 
-**Critical:** You MUST have at least 1 low-value "common" item to absorb 95%+ probability.
+| Box Type | Min Items | Optimal | Max Items | Notes |
+|----------|-----------|---------|-----------|-------|
+| Budget ($50-99) | 8 | 10-12 | 15 | Less variety needed |
+| Standard ($100-199) | 10 | 12-15 | 20 | Good balance |
+| Premium ($200-299) | 12 | 15-18 | 25 | More visual variety |
+| VIP ($300+) | 15 | 18-22 | 30 | Maximum excitement |
+
+**Why these numbers?**
+- **Minimum 8:** Ensures spinner looks diverse, not repetitive
+- **Optimal 12-18:** Best balance of variety vs. management complexity
+- **Maximum 25-30:** Beyond this, items get lost, harder to track odds
+
+### 1.4 Tier Distribution by Box Type
+
+#### Budget Box ($50-99) - 10 Items
+
+| Tier | Count | % of Items | Probability Share | Example Items |
+|------|-------|------------|-------------------|---------------|
+| Common | 1-2 | 10-20% | 97-99% | Coupon, sticker |
+| Mid | 3-4 | 30-40% | 0.8-1.5% | Small accessories |
+| Rare | 3-4 | 30-40% | 0.1-0.5% | Mid-tier products |
+| Jackpot | 1-2 | 10-20% | 0.01-0.05% | Hero item |
+
+#### Standard Box ($100-199) - 15 Items
+
+| Tier | Count | % of Items | Probability Share | Example Items |
+|------|-------|------------|-------------------|---------------|
+| Common | 1 | ~7% | 98-99% | Single absorber item |
+| Mid | 3-4 | 20-27% | 0.5-1.0% | Entry fashion items |
+| Rare | 7-9 | 47-60% | 0.05-0.15% | Brand items |
+| Jackpot | 2-3 | 13-20% | 0.005-0.02% | Luxury items |
+
+#### Premium Box ($200-299) - 17 Items (Recommended)
+
+| Tier | Count | % of Items | Probability Share | Example Items |
+|------|-------|------------|-------------------|---------------|
+| Common | 1 | ~6% | 99-99.7% | Cupón/voucher |
+| Mid | 2-3 | 12-18% | 0.15-0.3% | Tote bags, accessories |
+| Rare | 10-12 | 59-71% | 0.08-0.15% | Designer items |
+| Jackpot | 2-4 | 12-24% | 0.003-0.01% | Ultra-luxury items |
+
+#### VIP Box ($300+) - 20 Items
+
+| Tier | Count | % of Items | Probability Share | Example Items |
+|------|-------|------------|-------------------|---------------|
+| Common | 1 | 5% | 98-99% | Credit voucher |
+| Mid | 2-4 | 10-20% | 0.3-0.6% | Premium accessories |
+| Rare | 10-14 | 50-70% | 0.1-0.3% | High-end fashion |
+| Jackpot | 3-5 | 15-25% | 0.01-0.05% | Exclusive pieces |
+
+### 1.5 Visual Distribution Strategy
+
+**The Spinner Problem:** Even if jackpot is 0.01%, players want to SEE jackpot items during the spin.
+
+| Tier | Actual Win Rate | Visual Appearance* |
+|------|-----------------|-------------------|
+| Common | 97-99% | 30% of strip |
+| Mid | 0.5-1.5% | 25% of strip |
+| Rare | 0.1-0.5% | 30% of strip |
+| Jackpot | 0.01-0.05% | 15% of strip |
+
+*Controlled by `SpinnerV2.tsx` VISUAL_DISTRIBUTION constant
+
+### 1.6 Golden Rules for Item Selection
+
+#### ✅ DO
+
+1. **Always have 1 absorber item** - Low value ($0-$10) that takes 95%+ probability
+2. **Create visual variety** - Different colors, shapes, sizes
+3. **Include aspirational items** - Items players dream about
+4. **Balance price spread** - Items at multiple price points within each tier
+5. **Match theme** - All items should fit the box concept
+
+#### ❌ DON'T
+
+1. **Don't skip the common tier** - Impossible to profit without it
+2. **Don't have all similar prices** - Feels like lottery, not discovery
+3. **Don't exceed 30 items** - Too complex to manage
+4. **Don't have less than 8 items** - Spinner looks repetitive
+5. **Don't put cheap items in jackpot** - Ruins the excitement
+
+### 1.7 Item Value Ratios
+
+**Rule of thumb:** Each tier should average ~5-10x the tier below it
+
+| Tier Transition | Value Multiplier | Example |
+|-----------------|------------------|---------|
+| Common → Mid | 100-1000x | $0.18 → $1,500 |
+| Mid → Rare | 5-10x | $5,000 → $35,000 |
+| Rare → Jackpot | 2-3x | $35,000 → $85,000 |
+
+**Total value range:** Jackpot should be ~1000-500,000x Common
+
+### 1.8 Example: Perfect 17-Item Distribution
+
+```
+COMMON (1 item) - Absorbs 99.7% probability
+├── Cupón $0.18
+
+MID (2 items) - 0.16% total probability
+├── Holiday Tote Bag $1,390
+└── Money Stool $13,800
+
+RARE (11 items) - 0.11% total probability
+├── Gucci Rhyton $25,200
+├── Chrome Hearts LS $26,800
+├── iPhone 15 Pro Max $26,900
+├── Sudadera Gucci $32,700
+├── Dior B27 High $33,500
+├── Chrome Hearts Hoodie $34,500
+├── Nike Blazer Off-White $38,300
+├── LV Avenue Sling $50,000
+├── LV x Supreme Chain $51,200
+├── Gucci x North Face $58,300
+└── Dior x RIMOWA $61,300
+
+JACKPOT (3 items) - 0.005% total probability
+├── Dior Book Tote Oblique $72,100
+├── Louis Vuitton Bumbag $79,200
+└── Dior Dioriviera Book Tote $89,000
+```
+
+**Why this works:**
+- Visual variety: 17 different items in spinner
+- Price spread: $0.18 to $89,000
+- Tier progression: Clear value jumps between tiers
+- Rare depth: 11 items = lots of visual excitement
+- Jackpot aspirational: 3 items above $70k
 
 ---
 
