@@ -278,52 +278,29 @@ function showReconnectingOverlay(): void {
  * - This ensures 100% clean Supabase state
  */
 async function handleVisibilityChange(): Promise<void> {
-  const state = document.visibilityState;
-  console.log(`[ConnectionManager] 👁️ visibilitychange event! State: ${state}, criticalOp: ${criticalOperationInProgress}, hiddenDuring: ${hiddenDuringCriticalOperation}`);
-  
-  if (state === 'hidden') {
+  if (document.visibilityState === 'hidden') {
     lastHiddenTime = Date.now();
     
-    // Track if hidden during a critical operation
+    // Track if hidden during a critical operation (like spinning)
     if (criticalOperationInProgress) {
-      console.log(`[ConnectionManager] ⚠️ Tab hidden DURING critical operation! Setting flag.`);
       hiddenDuringCriticalOperation = true;
     }
-    
     return;
   }
   
   // Tab became visible
   const backgroundTime = lastHiddenTime ? Date.now() - lastHiddenTime : 0;
-  const backgroundSeconds = Math.round(backgroundTime / 1000);
-  
-  console.log(`[ConnectionManager] Tab visible after ${backgroundSeconds}s`);
-  console.log(`[ConnectionManager] State check: criticalOp=${criticalOperationInProgress}, hiddenDuring=${hiddenDuringCriticalOperation}, bgTime=${backgroundTime}ms`);
   
   // Reload if: hidden during critical operation OR hidden > 3 seconds
   const shouldReload = hiddenDuringCriticalOperation || backgroundTime > 3000;
   
   if (shouldReload) {
-    const reason = hiddenDuringCriticalOperation 
-      ? 'hidden during critical operation' 
-      : `${backgroundSeconds}s > 3s threshold`;
-    console.log(`[ConnectionManager] 🔄 RELOADING! Reason: ${reason}`);
-    
-    // Reset flag
     hiddenDuringCriticalOperation = false;
-    
-    // Show nice overlay first
     showReconnectingOverlay();
-    
-    // Brief delay for animation to be visible, then reload
-    setTimeout(() => {
-      window.location.reload();
-    }, 600);
-    
+    setTimeout(() => window.location.reload(), 600);
     return;
   }
   
-  console.log(`[ConnectionManager] ✅ No reload needed (criticalOp=${criticalOperationInProgress}, hiddenDuring=${hiddenDuringCriticalOperation}, bgTime=${backgroundTime}ms)`);
   lastHiddenTime = null;
   hiddenDuringCriticalOperation = false;
 }
@@ -380,22 +357,13 @@ let isInitialized = false;
  * Call once at app startup
  */
 export function initConnectionManager(): void {
-  if (isInitialized) {
-    console.log('[ConnectionManager] Already initialized');
-    return;
-  }
-  
-  if (typeof document === 'undefined' || typeof window === 'undefined') {
-    console.warn('[ConnectionManager] No document/window - skipping initialization');
-    return;
-  }
+  if (isInitialized) return;
+  if (typeof document === 'undefined' || typeof window === 'undefined') return;
   
   isInitialized = true;
   
-  // Listen for visibility changes
+  // Listen for visibility changes (tab switches)
   document.addEventListener('visibilitychange', handleVisibilityChange);
-  console.log('[ConnectionManager] ✅ Added visibilitychange listener');
-  console.log('[ConnectionManager] Current visibility state:', document.visibilityState);
   
   // Listen for network changes
   window.addEventListener('online', handleOnline);
@@ -405,16 +373,6 @@ export function initConnectionManager(): void {
   if (!navigator.onLine) {
     setStatus('disconnected');
   }
-  
-  // Diagnostic: Also listen to focus/blur as alternative detection
-  window.addEventListener('focus', () => {
-    console.log('[ConnectionManager] 🎯 window.focus event');
-  });
-  window.addEventListener('blur', () => {
-    console.log('[ConnectionManager] 🎯 window.blur event');
-  });
-  
-  console.log('[ConnectionManager] Initialized with diagnostics');
 }
 
 /**
@@ -440,29 +398,19 @@ export function getConnectionStatus(): ConnectionStatus {
 }
 
 /**
- * Mark that a critical operation (like game RPC) is starting
+ * Mark that a critical operation (like spinning animation) is starting
  * If tab is hidden during this, we'll reload on return
  */
 export function markCriticalOperationStart(): void {
   criticalOperationInProgress = true;
-  hiddenDuringCriticalOperation = false; // Reset on new operation
-  console.log('[ConnectionManager] 🎮 Critical operation STARTED - criticalOperationInProgress:', criticalOperationInProgress);
+  hiddenDuringCriticalOperation = false;
 }
 
 /**
  * Mark that a critical operation has completed
  */
 export function markCriticalOperationEnd(): void {
-  console.log('[ConnectionManager] 🎮 Critical operation ENDING - was hidden during:', hiddenDuringCriticalOperation);
   criticalOperationInProgress = false;
-  // Don't reset hiddenDuringCriticalOperation here - let the visibility handler check it
-}
-
-/**
- * Check if currently in a critical operation (for debugging)
- */
-export function isCriticalOperationInProgress(): boolean {
-  return criticalOperationInProgress;
 }
 
 /**
