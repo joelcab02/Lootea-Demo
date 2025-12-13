@@ -5,6 +5,7 @@
 
 import { supabase } from './supabaseClient';
 import { refreshWallet, isLoggedIn, getAuthState } from './authService';
+import { markCriticalOperationStart, markCriticalOperationEnd } from './connectionManager';
 import type { LootItem } from '../core/types/game.types';
 import { Rarity } from '../core/types/game.types';
 import type { PlayResult, GameEngineResponse } from '../core/types/api.types';
@@ -44,6 +45,9 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
  * Simple and clean - page reloads on tab return so no stale state issues
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
+  // Mark critical operation - if tab hidden during this, we'll reload on return
+  markCriticalOperationStart();
+  
   try {
     const requestId = generateRequestId();
     
@@ -56,6 +60,9 @@ export async function openBox(boxId: string): Promise<PlayResult> {
     });
     
     console.log('✅ RPC completed in', Date.now() - startTime, 'ms');
+    
+    // Critical operation done
+    markCriticalOperationEnd();
     
     if (error) {
       console.error('RPC error:', error);
@@ -114,6 +121,9 @@ export async function openBox(boxId: string): Promise<PlayResult> {
     };
     
   } catch (err: any) {
+    // Critical operation done (even on error)
+    markCriticalOperationEnd();
+    
     console.error('❌ openBox error:', err);
     return {
       success: false,

@@ -41,6 +41,10 @@ let lastHiddenTime: number | null = null;
 let lastHealthCheckTime = 0;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
+// Track if a critical operation (like RPC) is in progress
+let criticalOperationInProgress = false;
+let hiddenDuringCriticalOperation = false;
+
 const listeners = new Set<StatusListener>();
 
 // Configuration
@@ -268,10 +272,10 @@ function showReconnectingOverlay(): void {
 /**
  * Main handler for visibility changes
  * 
- * SIMPLE RELIABLE APPROACH:
- * - Any background > 3 seconds = show overlay + reload page
+ * RELIABLE APPROACH:
+ * - If tab hidden during critical operation (RPC) = reload on return
+ * - Any background > 3 seconds = reload
  * - This ensures 100% clean Supabase state
- * - Nice animation makes the reload feel intentional
  */
 async function handleVisibilityChange(): Promise<void> {
   const state = document.visibilityState;
@@ -279,7 +283,14 @@ async function handleVisibilityChange(): Promise<void> {
   
   if (state === 'hidden') {
     lastHiddenTime = Date.now();
-    console.log(`[ConnectionManager] Tab hidden at ${lastHiddenTime}`);
+    
+    // Track if hidden during a critical operation
+    if (criticalOperationInProgress) {
+      console.log(`[ConnectionManager] ⚠️ Tab hidden DURING critical operation!`);
+      hiddenDuringCriticalOperation = true;
+    }
+    
+    console.log(`[ConnectionManager] Tab hidden at ${lastHiddenTime}, criticalOp: ${criticalOperationInProgress}`);
     return;
   }
   
@@ -287,12 +298,20 @@ async function handleVisibilityChange(): Promise<void> {
   const backgroundTime = lastHiddenTime ? Date.now() - lastHiddenTime : 0;
   const backgroundSeconds = Math.round(backgroundTime / 1000);
   
-  console.log(`[ConnectionManager] Tab visible! Was hidden for ${backgroundSeconds}s (${backgroundTime}ms)`);
-  console.log(`[ConnectionManager] lastHiddenTime was: ${lastHiddenTime}`);
+  console.log(`[ConnectionManager] Tab visible! Was hidden for ${backgroundSeconds}s`);
+  console.log(`[ConnectionManager] hiddenDuringCriticalOperation: ${hiddenDuringCriticalOperation}`);
   
-  // If was hidden for more than 3 seconds, show overlay and reload
-  if (backgroundTime > 3000) {
-    console.log(`[ConnectionManager] Triggering reload (${backgroundSeconds}s > 3s threshold)`);
+  // Reload if: hidden during critical operation OR hidden > 3 seconds
+  const shouldReload = hiddenDuringCriticalOperation || backgroundTime > 3000;
+  
+  if (shouldReload) {
+    const reason = hiddenDuringCriticalOperation 
+      ? 'hidden during critical operation' 
+      : `${backgroundSeconds}s > 3s threshold`;
+    console.log(`[ConnectionManager] 🔄 Triggering reload: ${reason}`);
+    
+    // Reset flag
+    hiddenDuringCriticalOperation = false;
     
     // Show nice overlay first
     showReconnectingOverlay();
@@ -305,8 +324,9 @@ async function handleVisibilityChange(): Promise<void> {
     return;
   }
   
-  console.log(`[ConnectionManager] No reload needed (${backgroundSeconds}s < 3s threshold)`);
+  console.log(`[ConnectionManager] ✅ No reload needed`);
   lastHiddenTime = null;
+  hiddenDuringCriticalOperation = false;
 }
 
 /**
@@ -418,6 +438,23 @@ export function onConnectionChange(listener: StatusListener): () => void {
  */
 export function getConnectionStatus(): ConnectionStatus {
   return currentStatus;
+}
+
+/**
+ * Mark that a critical operation (like game RPC) is starting
+ * If tab is hidden during this, we'll reload on return
+ */
+export function markCriticalOperationStart(): void {
+  criticalOperationInProgress = true;
+  console.log('[ConnectionManager] 🎮 Critical operation STARTED');
+}
+
+/**
+ * Mark that a critical operation has completed
+ */
+export function markCriticalOperationEnd(): void {
+  criticalOperationInProgress = false;
+  console.log('[ConnectionManager] 🎮 Critical operation ENDED');
 }
 
 /**
