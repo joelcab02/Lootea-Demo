@@ -274,8 +274,12 @@ function showReconnectingOverlay(): void {
  * - Nice animation makes the reload feel intentional
  */
 async function handleVisibilityChange(): Promise<void> {
-  if (document.visibilityState === 'hidden') {
+  const state = document.visibilityState;
+  console.log(`[ConnectionManager] 👁️ visibilitychange event fired! State: ${state}`);
+  
+  if (state === 'hidden') {
     lastHiddenTime = Date.now();
+    console.log(`[ConnectionManager] Tab hidden at ${lastHiddenTime}`);
     return;
   }
   
@@ -283,9 +287,12 @@ async function handleVisibilityChange(): Promise<void> {
   const backgroundTime = lastHiddenTime ? Date.now() - lastHiddenTime : 0;
   const backgroundSeconds = Math.round(backgroundTime / 1000);
   
+  console.log(`[ConnectionManager] Tab visible! Was hidden for ${backgroundSeconds}s (${backgroundTime}ms)`);
+  console.log(`[ConnectionManager] lastHiddenTime was: ${lastHiddenTime}`);
+  
   // If was hidden for more than 3 seconds, show overlay and reload
   if (backgroundTime > 3000) {
-    console.log(`[ConnectionManager] Tab was hidden ${backgroundSeconds}s - reconnecting...`);
+    console.log(`[ConnectionManager] Triggering reload (${backgroundSeconds}s > 3s threshold)`);
     
     // Show nice overlay first
     showReconnectingOverlay();
@@ -298,6 +305,7 @@ async function handleVisibilityChange(): Promise<void> {
     return;
   }
   
+  console.log(`[ConnectionManager] No reload needed (${backgroundSeconds}s < 3s threshold)`);
   lastHiddenTime = null;
 }
 
@@ -367,6 +375,8 @@ export function initConnectionManager(): void {
   
   // Listen for visibility changes
   document.addEventListener('visibilitychange', handleVisibilityChange);
+  console.log('[ConnectionManager] ✅ Added visibilitychange listener');
+  console.log('[ConnectionManager] Current visibility state:', document.visibilityState);
   
   // Listen for network changes
   window.addEventListener('online', handleOnline);
@@ -377,7 +387,15 @@ export function initConnectionManager(): void {
     setStatus('disconnected');
   }
   
-  console.log('[ConnectionManager] Initialized');
+  // Diagnostic: Also listen to focus/blur as alternative detection
+  window.addEventListener('focus', () => {
+    console.log('[ConnectionManager] 🎯 window.focus event');
+  });
+  window.addEventListener('blur', () => {
+    console.log('[ConnectionManager] 🎯 window.blur event');
+  });
+  
+  console.log('[ConnectionManager] Initialized with diagnostics');
 }
 
 /**
