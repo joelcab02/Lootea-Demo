@@ -3,6 +3,11 @@
  * 
  * 100% FLAT: No borders, no shadows, no gradients
  * Only solid backgrounds + borderRadius
+ * 
+ * Features:
+ * - Visual Excitement Distribution (shows rare items during spin)
+ * - Near-miss psychology (high-value items near winner)
+ * - Actual winner determined by real odds (server-side)
  */
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
@@ -33,6 +38,25 @@ interface SpinnerProps {
 const INITIAL_POSITION = 10;
 const DESKTOP_BREAKPOINT = 640;
 const LARGE_DESKTOP_BREAKPOINT = 1024;
+
+// ============================================
+// VISUAL EXCITEMENT DISTRIBUTION
+// Controls what appears in the spinner strip (NOT actual odds)
+// This creates an exciting visual experience regardless of outcome
+// ============================================
+
+const VISUAL_DISTRIBUTION = {
+  common: 0.30,     // 30% common items (creates contrast)
+  mid: 0.25,        // 25% mid-tier items  
+  rare: 0.30,       // 30% rare/epic items (exciting!)
+  jackpot: 0.15,    // 15% jackpot/legendary items (teasers!)
+};
+
+// Strategic positions for jackpot items in the strip
+const JACKPOT_TEASE_POSITIONS = [3, 7, 12, 18, 24, 28];
+
+// Near-miss: always place high-value item near winner when player loses
+const NEAR_MISS_ENABLED = true;
 
 // ============================================
 // COMPONENT
@@ -107,36 +131,150 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   }, [items]);
 
   // ============================================
-  // STRIP GENERATION
+  // CATEGORIZE ITEMS BY TIER (for visual distribution)
+  // ============================================
+  
+  const itemsByTier = useMemo(() => {
+    if (!itemsWithTickets.length) return { common: [], mid: [], rare: [], jackpot: [] };
+    
+    const common: LootItem[] = [];
+    const mid: LootItem[] = [];
+    const rare: LootItem[] = [];
+    const jackpot: LootItem[] = [];
+    
+    // Sort by price for fallback categorization
+    const sorted = [...itemsWithTickets].sort((a, b) => a.price - b.price);
+    const total = sorted.length;
+    
+    sorted.forEach((item, idx) => {
+      // Use rarity if available
+      const rarity = item.rarity?.toString().toUpperCase();
+      
+      if (rarity === 'LEGENDARY') {
+        jackpot.push(item);
+      } else if (rarity === 'EPIC') {
+        rare.push(item);
+      } else if (rarity === 'RARE') {
+        mid.push(item);
+      } else if (rarity === 'COMMON') {
+        common.push(item);
+      } else {
+        // Fallback: use price percentile
+        const percentile = idx / total;
+        if (percentile < 0.25) common.push(item);
+        else if (percentile < 0.50) mid.push(item);
+        else if (percentile < 0.85) rare.push(item);
+        else jackpot.push(item);
+      }
+    });
+    
+    return { common, mid, rare, jackpot };
+  }, [itemsWithTickets]);
+
+  // ============================================
+  // SELECT BY VISUAL DISTRIBUTION (NOT actual odds)
+  // ============================================
+  
+  const selectByVisualDistribution = useCallback((): LootItem => {
+    const { common, mid, rare, jackpot } = itemsByTier;
+    const rand = Math.random();
+    
+    // Select tier based on visual distribution
+    let tier: LootItem[] = [];
+    const cumCommon = VISUAL_DISTRIBUTION.common;
+    const cumMid = cumCommon + VISUAL_DISTRIBUTION.mid;
+    const cumRare = cumMid + VISUAL_DISTRIBUTION.rare;
+    
+    if (rand < cumCommon && common.length > 0) {
+      tier = common;
+    } else if (rand < cumMid && mid.length > 0) {
+      tier = mid;
+    } else if (rand < cumRare && rare.length > 0) {
+      tier = rare;
+    } else if (jackpot.length > 0) {
+      tier = jackpot;
+    }
+    
+    // Fallback: try any available tier
+    if (tier.length === 0) {
+      tier = jackpot.length > 0 ? jackpot : 
+             rare.length > 0 ? rare : 
+             mid.length > 0 ? mid : 
+             common.length > 0 ? common : 
+             itemsWithTickets;
+    }
+    
+    // Random item from selected tier
+    return tier[Math.floor(Math.random() * tier.length)];
+  }, [itemsByTier, itemsWithTickets]);
+
+  // ============================================
+  // STRIP GENERATION WITH VISUAL EXCITEMENT
   // ============================================
   
   const generateStrip = useCallback((winnerItem: LootItem) => {
     if (itemsWithTickets.length === 0) return;
     
     const newStrip = new Array(TOTAL_CARDS_IN_STRIP);
+    const { rare, jackpot } = itemsByTier;
     
+    // Combine rare + jackpot for high-value items
+    const highValueItems = [...rare, ...jackpot].sort((a, b) => b.price - a.price);
+    const legendaryItems = jackpot.length > 0 ? jackpot : highValueItems.slice(0, 3);
+    
+    // Fill strip with visually exciting distribution
     for (let i = 0; i < TOTAL_CARDS_IN_STRIP; i++) {
       if (i === WINNING_INDEX) {
         newStrip[i] = winnerItem;
       } else {
-        const result = selectWeightedWinner(itemsWithTickets);
-        newStrip[i] = result ? result.winner : itemsWithTickets[0];
+        newStrip[i] = selectByVisualDistribution();
       }
     }
 
-    if (winnerItem.rarity !== Rarity.LEGENDARY) {
-      const legendary = itemsWithTickets.find(i => i.rarity === Rarity.LEGENDARY);
-      if (legendary) {
-        const offset = Math.random() > 0.5 ? 1 : -1;
-        const baitIndex = WINNING_INDEX + offset;
-        if (baitIndex >= 0 && baitIndex < TOTAL_CARDS_IN_STRIP) {
-          newStrip[baitIndex] = legendary;
+    // ============================================
+    // NEAR-MISS PSYCHOLOGY
+    // ============================================
+    
+    if (NEAR_MISS_ENABLED) {
+      const winnerIsLowValue = 
+        winnerItem.rarity?.toString().toUpperCase() === 'COMMON' ||
+        winnerItem.price < (highValueItems[0]?.price || 0) * 0.05;
+      
+      // Place high-value item RIGHT BEFORE winner (near-miss!)
+      if (winnerIsLowValue && highValueItems.length > 0 && WINNING_INDEX > 0) {
+        const candidates = highValueItems.filter(i => i.id !== winnerItem.id);
+        if (candidates.length > 0) {
+          newStrip[WINNING_INDEX - 1] = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
+        }
+      }
+      
+      // Place legendary item RIGHT AFTER winner
+      if (legendaryItems.length > 0 && winnerItem.rarity !== Rarity.LEGENDARY && WINNING_INDEX + 1 < TOTAL_CARDS_IN_STRIP) {
+        const candidates = legendaryItems.filter(i => i.id !== winnerItem.id);
+        if (candidates.length > 0) {
+          newStrip[WINNING_INDEX + 1] = candidates[Math.floor(Math.random() * candidates.length)];
         }
       }
     }
+    
+    // ============================================
+    // JACKPOT TEASERS THROUGHOUT STRIP
+    // Sprinkle legendary items at strategic positions
+    // ============================================
+    
+    if (legendaryItems.length > 0) {
+      JACKPOT_TEASE_POSITIONS.forEach(pos => {
+        // Don't override winner or near-miss positions
+        if (pos !== WINNING_INDEX && pos !== WINNING_INDEX - 1 && pos !== WINNING_INDEX + 1) {
+          if (pos < TOTAL_CARDS_IN_STRIP && Math.random() < 0.7) { // 70% chance
+            newStrip[pos] = legendaryItems[Math.floor(Math.random() * legendaryItems.length)];
+          }
+        }
+      });
+    }
 
     setStrip(newStrip);
-  }, [itemsWithTickets]);
+  }, [itemsWithTickets, itemsByTier, selectByVisualDistribution]);
 
   useEffect(() => {
     if (itemsWithTickets.length === 0) {
