@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { getBoxes, BoxWithItems } from '../services/boxService';
 import { Layout } from '../components/layout/Layout';
 import { BoxCard } from '../components/home/BoxCard';
-import { onTabVisible } from '../services/visibilityService';
+import { onConnectionChange } from '../services/connectionManager';
 
 // Logo Icon (para empty state)
 const LogoIcon = () => (
@@ -42,11 +42,13 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     loadBoxes();
     
-    // Registrar callback de visibilidad (prioridad 30 = después de auth)
-    const unsubscribe = onTabVisible('homepage-boxes', () => {
-      console.log('[HomePage] Tab visible - reloading boxes');
-      loadBoxes();
-    }, 30);
+    // Refresh boxes when connection is restored
+    const unsubscribe = onConnectionChange((status) => {
+      if (status === 'connected') {
+        console.log('[HomePage] Connection restored - reloading boxes');
+        loadBoxes();
+      }
+    });
     
     return unsubscribe;
   }, []);

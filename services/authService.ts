@@ -3,7 +3,7 @@
  */
 
 import { supabase } from './supabaseClient';
-import { onTabVisible } from './visibilityService';
+import { onConnectionChange } from './connectionManager';
 import type { User, Session } from '@supabase/supabase-js';
 import type { DbProfile, DbWallet } from '../core/types/database.types';
 import type { AuthState } from '../core/types/user.types';
@@ -69,21 +69,23 @@ export async function initAuth(): Promise<AuthState> {
     notifyListeners();
   });
   
-  // Registrar callback de visibilidad (prioridad 10 = se ejecuta primero)
-  onTabVisible('auth-refresh', async () => {
-    if (currentState.user) {
-      console.log('🔐 Tab visible - refreshing session');
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          await loadUserData(session.user, session);
-          notifyListeners();
-        }
-      } catch (err) {
-        console.error('🔐 Session refresh failed:', err);
-      }
+  // Listen for connection recovery - refresh session when reconnected
+  onConnectionChange((status) => {
+    if (status === 'connected' && currentState.user) {
+      console.log('🔐 Connection restored - refreshing session in background');
+      // Refresh in background, don't block
+      supabase.auth.getSession()
+        .then(async ({ data: { session } }) => {
+          if (session?.user) {
+            await loadUserData(session.user, session);
+            notifyListeners();
+          }
+        })
+        .catch((err) => {
+          console.error('🔐 Session refresh failed:', err);
+        });
     }
-  }, 10); // Prioridad 10 = auth se refresca primero
+  });
   
   return currentState;
 }

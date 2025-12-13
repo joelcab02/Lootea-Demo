@@ -292,6 +292,59 @@ export async function withRetry<T>(
 }
 
 // ============================================
+// Connection-Aware Operation Wrapper
+// ============================================
+
+/**
+ * Execute a Supabase operation with connection awareness
+ * Automatically triggers reconnection on failure
+ * 
+ * @param operation - Async function that performs the Supabase operation
+ * @param timeoutMs - Timeout in milliseconds (default 8000)
+ * @returns Result of the operation
+ */
+export async function withConnectionCheck<T>(
+  operation: () => Promise<T>,
+  timeoutMs: number = 8000
+): Promise<{ data: T | null; error: Error | null; connectionLost: boolean }> {
+  try {
+    // Create timeout promise
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('Operation timeout'));
+      }, timeoutMs);
+    });
+    
+    // Race between operation and timeout
+    const result = await Promise.race([operation(), timeoutPromise]);
+    
+    return { data: result, error: null, connectionLost: false };
+    
+  } catch (err: any) {
+    const isConnectionError = 
+      err.message?.includes('timeout') ||
+      err.message?.includes('fetch') ||
+      err.message?.includes('network') ||
+      err.name === 'AbortError';
+    
+    if (isConnectionError) {
+      console.warn('[Supabase] Connection error detected:', err.message);
+      notifyConnectionListeners('disconnected');
+      
+      // Trigger reconnection in background (don't block)
+      // Import dynamically to avoid circular dependency
+      import('./connectionManager').then(({ triggerConnectionCheck }) => {
+        triggerConnectionCheck().catch(console.error);
+      });
+      
+      return { data: null, error: err, connectionLost: true };
+    }
+    
+    return { data: null, error: err, connectionLost: false };
+  }
+}
+
+// ============================================
 // Database Types - Now in /core/types/database.types.ts
 // Re-exported at top of this file for compatibility
 // ============================================

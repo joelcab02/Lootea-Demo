@@ -23,7 +23,7 @@ import { openBox as serverOpenBox } from '../services/gameService';
 import { getBalance, refreshBalance, isLoggedIn, subscribeAuth } from '../services/authService';
 import { fetchInventory } from '../services/inventoryService';
 import { calculateTicketRanges, selectWeightedWinner } from '../services/oddsService';
-import { onTabVisible } from '../services/visibilityService';
+import { onConnectionChange } from '../services/connectionManager';
 
 // Re-export types for compatibility
 export type { GameMode, GamePhase } from '../core/types/game.types';
@@ -98,18 +98,20 @@ const initialState: GameState = {
 export const useGameStore = create<GameStore>()(
   devtools(
     (set, get) => {
-      // Registrar callback de visibilidad (prioridad 20 = después de auth, antes de data)
-      // Nota: Este callback se registra una vez cuando el store se crea
-      onTabVisible('gamestore-reset', () => {
-        const { phase } = get();
-        if (phase === 'spinning') {
-          console.log('[GameStore] Tab visible - resetting stuck spinning state');
-          set({ phase: 'idle', predeterminedWinner: null, error: null }, false, 'visibilityReset');
+      // Listen for connection recovery to reset stuck states
+      // Note: This registers once when the store is created
+      onConnectionChange((status) => {
+        if (status === 'connected') {
+          const { phase } = get();
+          if (phase === 'spinning') {
+            console.log('[GameStore] Connection restored - resetting stuck spinning state');
+            set({ phase: 'idle', predeterminedWinner: null, error: null }, false, 'connectionReset');
+          }
+          // Sync balance after reconnection
+          const balance = getBalance();
+          set({ balance }, false, 'connectionBalanceSync');
         }
-        // Sincronizar balance después de volver
-        const balance = getBalance();
-        set({ balance }, false, 'visibilityBalanceSync');
-      }, 20);
+      });
       
       return {
       ...initialState,

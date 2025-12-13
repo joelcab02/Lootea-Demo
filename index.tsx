@@ -3,16 +3,16 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import './src/index.css';
 import { initAuth } from './services/authService';
-import { initVisibilityService } from './services/visibilityService';
+import { initConnectionManager } from './services/connectionManager';
 import HomePage from './pages/HomePage';
 import BoxPage from './pages/BoxPage';
 import InventoryPage from './pages/InventoryPage';
 import DepositPage from './pages/DepositPage';
 import ScrollToTop from './components/shared/ScrollToTop';
 
-// Inicializar servicios UNA sola vez al cargar la app
-initVisibilityService(); // Primero: manejo de cambio de pestaña
-initAuth();              // Segundo: autenticación
+// Initialize services ONCE at app load
+initConnectionManager(); // First: connection health management
+initAuth();              // Second: authentication
 
 // Lazy load páginas de admin (no críticas para jugadores)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));

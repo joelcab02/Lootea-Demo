@@ -1,16 +1,17 @@
 /**
  * ConnectionOverlay - Supabase Reconnection Overlay
  * Stake-style: Blue spinner, Green CTA
+ * 
+ * Now uses the new connectionManager for robust connection handling.
  */
 
 import React, { useState, useEffect } from 'react';
 import { 
-  subscribeConnectionState, 
-  getConnectionState, 
-  testConnection,
-  recreateSupabaseClient,
-  ConnectionState 
-} from '../../services/supabaseClient';
+  onConnectionChange, 
+  getConnectionStatus, 
+  forceReconnection,
+  ConnectionStatus 
+} from '../../services/connectionManager';
 
 // Spinner Icon
 const SpinnerIcon = () => (
@@ -51,59 +52,56 @@ const RefreshIcon = () => (
 );
 
 interface ConnectionOverlayProps {
-  /** Show only on error (not during initial connecting) */
-  showOnlyOnError?: boolean;
+  /** Show only on disconnected (not during checking/reconnecting) */
+  showOnlyOnDisconnected?: boolean;
 }
 
 export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = ({ 
-  showOnlyOnError = true 
+  showOnlyOnDisconnected = false 
 }) => {
-  const [connectionState, setConnectionState] = useState<ConnectionState>(getConnectionState());
+  const [status, setStatus] = useState<ConnectionStatus>(getConnectionStatus());
   const [isRetrying, setIsRetrying] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
-  // Subscribe to connection state changes
+  // Subscribe to connection status changes
   useEffect(() => {
-    const unsubscribe = subscribeConnectionState((state) => {
-      setConnectionState(state);
-      if (state === 'connected') {
+    const unsubscribe = onConnectionChange((newStatus) => {
+      setStatus(newStatus);
+      if (newStatus === 'connected') {
         setRetryCount(0);
+        setIsRetrying(false);
       }
     });
     return unsubscribe;
   }, []);
 
-  // Auto-retry every 5 seconds on error
+  // Auto-retry every 8 seconds on disconnected
   useEffect(() => {
-    if (connectionState === 'error' && !isRetrying) {
+    if (status === 'disconnected' && !isRetrying) {
       const timer = setTimeout(() => {
         handleRetry();
-      }, 5000);
+      }, 8000);
       return () => clearTimeout(timer);
     }
-  }, [connectionState, isRetrying, retryCount]);
+  }, [status, isRetrying, retryCount]);
 
   const handleRetry = async () => {
     setIsRetrying(true);
     setRetryCount(prev => prev + 1);
     
-    // Recreate client if many retries
-    if (retryCount >= 2) {
-      recreateSupabaseClient();
-    }
-    
-    await testConnection();
+    await forceReconnection();
     setIsRetrying(false);
   };
 
   // Determine if overlay should show
-  const shouldShow = showOnlyOnError 
-    ? connectionState === 'error' 
-    : connectionState !== 'connected';
+  // Show on: disconnected always, checking/reconnecting unless showOnlyOnDisconnected
+  const shouldShow = showOnlyOnDisconnected 
+    ? status === 'disconnected' 
+    : status !== 'connected';
 
   if (!shouldShow) return null;
 
-  const isConnecting = connectionState === 'connecting' || isRetrying;
+  const isConnecting = status === 'checking' || status === 'reconnecting' || isRetrying;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
