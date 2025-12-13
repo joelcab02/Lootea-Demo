@@ -52,13 +52,10 @@ const RefreshIcon = () => (
 );
 
 interface ConnectionOverlayProps {
-  /** Show only on disconnected (not during checking/reconnecting) */
-  showOnlyOnDisconnected?: boolean;
+  // No props needed - overlay logic is now simplified
 }
 
-export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = ({ 
-  showOnlyOnDisconnected = false 
-}) => {
+export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = () => {
   const [status, setStatus] = useState<ConnectionStatus>(getConnectionStatus());
   const [isRetrying, setIsRetrying] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -94,14 +91,13 @@ export const ConnectionOverlay: React.FC<ConnectionOverlayProps> = ({
   };
 
   // Determine if overlay should show
-  // Show on: disconnected always, checking/reconnecting unless showOnlyOnDisconnected
-  const shouldShow = showOnlyOnDisconnected 
-    ? status === 'disconnected' 
-    : status !== 'connected';
+  // Only show on 'reconnecting' or 'disconnected' - NOT on 'checking'
+  // 'checking' is a brief health check that shouldn't interrupt the user
+  const shouldShow = status === 'reconnecting' || status === 'disconnected';
 
   if (!shouldShow) return null;
 
-  const isConnecting = status === 'checking' || status === 'reconnecting' || isRetrying;
+  const isConnecting = status === 'reconnecting' || isRetrying;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">

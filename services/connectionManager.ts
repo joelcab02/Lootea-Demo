@@ -85,33 +85,34 @@ async function healthCheck(): Promise<boolean> {
     return true;
   }
   
+  console.log('[ConnectionManager] Running health check...');
+  
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), CONFIG.HEALTH_CHECK_TIMEOUT_MS);
+    // Use Promise.race with a manual timeout for more reliable timeout handling
+    const timeoutPromise = new Promise<{ error: Error }>((resolve) => {
+      setTimeout(() => {
+        resolve({ error: new Error('Health check timeout') });
+      }, CONFIG.HEALTH_CHECK_TIMEOUT_MS);
+    });
     
-    // Simple query to verify connection
-    const { error } = await supabase
+    const queryPromise = supabase
       .from('boxes')
       .select('id')
-      .limit(1)
-      .abortSignal(controller.signal);
+      .limit(1);
     
-    clearTimeout(timeoutId);
+    const result = await Promise.race([queryPromise, timeoutPromise]);
     
-    if (error) {
-      console.warn('[ConnectionManager] Health check failed:', error.message);
+    if (result.error) {
+      console.warn('[ConnectionManager] Health check failed:', result.error.message);
       return false;
     }
     
+    console.log('[ConnectionManager] Health check passed');
     lastHealthCheckTime = Date.now();
     return true;
     
   } catch (err: any) {
-    if (err.name === 'AbortError') {
-      console.warn('[ConnectionManager] Health check timeout');
-    } else {
-      console.warn('[ConnectionManager] Health check error:', err.message);
-    }
+    console.warn('[ConnectionManager] Health check error:', err.message);
     return false;
   }
 }
@@ -230,19 +231,32 @@ async function checkAndReconnect(): Promise<void> {
   }
   
   isProcessing = true;
+  console.log('[ConnectionManager] Starting connection check...');
+  
+  // Failsafe: force complete after max time to prevent getting stuck
+  const failsafeTimeout = setTimeout(() => {
+    console.error('[ConnectionManager] Failsafe timeout - forcing completion');
+    isProcessing = false;
+    if (currentStatus !== 'connected') {
+      setStatus('disconnected');
+    }
+  }, CONFIG.RECONNECT_TIMEOUT_MS + 5000);
   
   try {
-    setStatus('checking');
+    // Don't show overlay for quick health check - only set 'checking' internally
+    // The overlay will only show on 'reconnecting' or 'disconnected'
     
     // Quick health check
     const healthy = await healthCheck();
     
     if (healthy) {
+      console.log('[ConnectionManager] Connection healthy');
       setStatus('connected');
       return;
     }
     
-    // Not healthy - try to reconnect
+    // Not healthy - now show reconnecting status
+    console.log('[ConnectionManager] Connection unhealthy - attempting reconnect');
     const reconnected = await reconnect();
     
     if (reconnected) {
@@ -255,8 +269,10 @@ async function checkAndReconnect(): Promise<void> {
     console.error('[ConnectionManager] Unexpected error:', err);
     setStatus('disconnected');
   } finally {
+    clearTimeout(failsafeTimeout);
     isProcessing = false;
     lastHiddenTime = null;
+    console.log('[ConnectionManager] Connection check complete, status:', currentStatus);
   }
 }
 
