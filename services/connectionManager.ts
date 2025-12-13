@@ -45,10 +45,10 @@ const listeners = new Set<StatusListener>();
 
 // Configuration
 const CONFIG = {
-  DEBOUNCE_MS: 500,              // Ignore rapid visibility changes
+  DEBOUNCE_MS: 300,              // Ignore rapid visibility changes
   HEALTH_CHECK_TIMEOUT_MS: 6000, // Timeout for health check (increased for mobile)
   HEALTH_CHECK_CACHE_MS: 5000,   // Don't re-check if checked recently
-  MIN_BACKGROUND_MS: 10000,      // Min 10s in background to trigger check (was 5s)
+  MIN_BACKGROUND_MS: 3000,       // Min 3s in background to trigger refresh
   RECONNECT_TIMEOUT_MS: 15000,   // Total time allowed for reconnection (increased)
   MAX_RECONNECT_ATTEMPTS: 2,     // How many times to try before giving up
   WAKE_UP_DELAY_MS: 500,         // Delay before health check to let browser wake up

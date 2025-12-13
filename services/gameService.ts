@@ -3,7 +3,7 @@
  * Calls Supabase RPC function for secure server-side game logic
  */
 
-import { supabase, testConnection, forceReconnect } from './supabaseClient';
+import { supabase, forceReconnect, recreateSupabaseClient } from './supabaseClient';
 import { refreshWallet, isLoggedIn, getAuthState } from './authService';
 import type { LootItem } from '../core/types/game.types';
 import { Rarity } from '../core/types/game.types';
@@ -17,6 +17,20 @@ export type { PlayResult } from '../core/types/api.types';
  */
 function generateRequestId(): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+}
+
+/**
+ * Execute a promise with timeout
+ */
+async function withTimeout<T>(
+  promise: Promise<T>, 
+  timeoutMs: number, 
+  errorMessage: string
+): Promise<T> {
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new Error(errorMessage)), timeoutMs);
+  });
+  return Promise.race([promise, timeoutPromise]);
 }
 
 /**
@@ -40,32 +54,51 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
 /**
  * Open a box - main game function
  * Calls server-side RPC for secure game logic
- * Includes connection verification and auto-reconnect
+ * All operations have timeouts to prevent hanging
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
+  const TIMEOUT_MS = 8000; // 8 second timeout for each operation
+  
   try {
-    // 1. Verificar sesión antes de llamar
-    let { data: sessionData } = await supabase.auth.getSession();
-    
-    // Si no hay sesión, intentar reconectar
-    if (!sessionData.session) {
-      console.warn('🔐 No session - attempting reconnect...');
-      const reconnected = await forceReconnect();
+    // 1. Get session with timeout
+    console.log('🔐 Getting session...');
+    let sessionData;
+    try {
+      const result = await withTimeout(
+        supabase.auth.getSession(),
+        TIMEOUT_MS,
+        'Session check timeout'
+      );
+      sessionData = result.data;
+    } catch (err: any) {
+      console.warn('🔐 Session check failed:', err.message, '- recreating client');
+      recreateSupabaseClient();
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      if (reconnected) {
-        // Reintentar obtener sesión
-        const refreshed = await supabase.auth.getSession();
-        sessionData = refreshed.data;
-      }
-      
-      if (!sessionData.session) {
-        console.error('❌ No session after reconnect - user not authenticated');
+      // Try once more with new client
+      try {
+        const result = await withTimeout(
+          supabase.auth.getSession(),
+          TIMEOUT_MS,
+          'Session check timeout after recreate'
+        );
+        sessionData = result.data;
+      } catch {
         return {
           success: false,
-          error: 'NOT_AUTHENTICATED',
-          message: 'Sesión expirada. Por favor inicia sesión de nuevo.'
+          error: 'INTERNAL_ERROR',
+          message: 'Error de conexión. Recarga la página.'
         };
       }
+    }
+    
+    if (!sessionData?.session) {
+      console.error('❌ No session - user not authenticated');
+      return {
+        success: false,
+        error: 'NOT_AUTHENTICATED',
+        message: 'Sesión expirada. Por favor inicia sesión de nuevo.'
+      };
     }
     
     console.log('🔐 Session verified:', {
@@ -73,42 +106,44 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       expiresAt: sessionData.session?.expires_at,
     });
     
-    // 2. Verificar conexión antes de la operación crítica
-    const isConnected = await testConnection();
-    if (!isConnected) {
-      console.warn('🔌 Connection test failed - attempting reconnect...');
-      const reconnected = await forceReconnect();
-      if (!reconnected) {
-        return {
-          success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Error de conexión. Intenta de nuevo.'
-        };
-      }
-    }
-    
-    // 3. Generate request ID for idempotency
+    // 2. Generate request ID for idempotency
     const requestId = generateRequestId();
     
-    // 4. Ejecutar RPC game_engine_play (v2)
+    // 3. Execute RPC with timeout
     console.log('📡 Calling game_engine_play RPC with boxId:', boxId, 'requestId:', requestId);
     const startTime = Date.now();
     
-    const { data, error } = await supabase.rpc('game_engine_play', { 
-      p_box_id: boxId,
-      p_request_id: requestId
-    });
+    let data, error;
+    try {
+      const result = await withTimeout(
+        supabase.rpc('game_engine_play', { 
+          p_box_id: boxId,
+          p_request_id: requestId
+        }),
+        TIMEOUT_MS,
+        'RPC timeout'
+      );
+      data = result.data;
+      error = result.error;
+    } catch (err: any) {
+      console.error('📡 RPC failed:', err.message);
+      
+      // On timeout, recreate client for next attempt
+      if (err.message.includes('timeout')) {
+        recreateSupabaseClient();
+      }
+      
+      return {
+        success: false,
+        error: 'INTERNAL_ERROR',
+        message: 'Tiempo de espera agotado. Intenta de nuevo.'
+      };
+    }
     
     console.log('✅ RPC completed in', Date.now() - startTime, 'ms');
     
     if (error) {
       console.error('RPC error:', error);
-      
-      // Si es error de auth, intentar reconectar
-      if (error.message?.includes('JWT') || error.message?.includes('auth')) {
-        await forceReconnect();
-      }
-      
       return {
         success: false,
         error: 'INTERNAL_ERROR',
@@ -142,8 +177,8 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       tier: response.winner!.tier
     };
     
-    // Refresh wallet to update balance in UI
-    await refreshWallet();
+    // Refresh wallet in background (don't wait)
+    refreshWallet().catch(() => {});
     
     return {
       success: true,
@@ -158,18 +193,10 @@ export async function openBox(boxId: string): Promise<PlayResult> {
   } catch (err: any) {
     console.error('❌ openBox error:', err);
     
-    // Si es error de conexión/timeout, intentar reconectar para la próxima
-    if (err?.name === 'AbortError' || err?.message?.includes('fetch')) {
-      console.warn('🔌 Network error detected - scheduling reconnect');
-      forceReconnect().catch(() => {}); // Fire and forget
-    }
-    
     return {
       success: false,
       error: 'INTERNAL_ERROR',
-      message: err?.name === 'AbortError' 
-        ? 'Tiempo de espera agotado. Intenta de nuevo.'
-        : 'Error de conexión'
+      message: 'Error de conexión. Intenta de nuevo.'
     };
   }
 }
