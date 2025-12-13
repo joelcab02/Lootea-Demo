@@ -201,23 +201,26 @@ async function reconnect(): Promise<boolean> {
 
 /**
  * Main handler for visibility changes
+ * 
+ * SIMPLE RELIABLE APPROACH:
+ * - Any background > 3 seconds = reload page
+ * - This ensures 100% clean Supabase state
+ * - No hanging requests, no stale clients
+ * - Brief reload is acceptable for MVP
  */
 async function handleVisibilityChange(): Promise<void> {
   if (document.visibilityState === 'hidden') {
     lastHiddenTime = Date.now();
-    console.log('[ConnectionManager] Tab hidden');
     return;
   }
   
   // Tab became visible
   const backgroundTime = lastHiddenTime ? Date.now() - lastHiddenTime : 0;
-  console.log(`[ConnectionManager] Tab visible (was hidden ${Math.round(backgroundTime / 1000)}s)`);
+  const backgroundSeconds = Math.round(backgroundTime / 1000);
   
-  // If was hidden for more than 30 seconds, reload the page
-  // This is the most reliable way to ensure a clean Supabase state
-  // Recreating clients causes "Multiple GoTrueClient" conflicts
-  if (backgroundTime > 30000) {
-    console.log('[ConnectionManager] Long background detected - reloading page for clean state');
+  // If was hidden for more than 3 seconds, reload for clean state
+  if (backgroundTime > 3000) {
+    console.log(`[ConnectionManager] Tab was hidden ${backgroundSeconds}s - reloading for clean state`);
     window.location.reload();
     return;
   }

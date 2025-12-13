@@ -20,20 +20,6 @@ function generateRequestId(): string {
 }
 
 /**
- * Execute a promise with timeout
- */
-async function withTimeout<T>(
-  promise: Promise<T>, 
-  timeoutMs: number, 
-  errorMessage: string
-): Promise<T> {
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => reject(new Error(errorMessage)), timeoutMs);
-  });
-  return Promise.race([promise, timeoutPromise]);
-}
-
-/**
  * Check if user can play (logged in + has balance)
  */
 export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string } {
@@ -54,42 +40,20 @@ export function canPlay(boxPrice: number): { canPlay: boolean; reason?: string }
 /**
  * Open a box - main game function
  * Calls server-side RPC for secure game logic
- * All operations have timeouts to prevent hanging
+ * 
+ * Simple and clean - page reloads on tab return so no stale state issues
  */
 export async function openBox(boxId: string): Promise<PlayResult> {
-  const TIMEOUT_MS = 10000; // 10 second timeout
-  
   try {
-    // Skip session check - it can hang after tab switches
-    // The RPC will return auth error if not authenticated
-    
-    // Generate request ID for idempotency
     const requestId = generateRequestId();
     
-    // 3. Execute RPC with timeout
     console.log('📡 Calling game_engine_play RPC with boxId:', boxId, 'requestId:', requestId);
     const startTime = Date.now();
     
-    let data, error;
-    try {
-      const result = await withTimeout(
-        supabase.rpc('game_engine_play', { 
-          p_box_id: boxId,
-          p_request_id: requestId
-        }),
-        TIMEOUT_MS,
-        'RPC timeout'
-      );
-      data = result.data;
-      error = result.error;
-    } catch (err: any) {
-      console.error('📡 RPC failed:', err.message);
-      return {
-        success: false,
-        error: 'INTERNAL_ERROR',
-        message: 'Conexión perdida. Recarga la página.'
-      };
-    }
+    const { data, error } = await supabase.rpc('game_engine_play', { 
+      p_box_id: boxId,
+      p_request_id: requestId
+    });
     
     console.log('✅ RPC completed in', Date.now() - startTime, 'ms');
     
@@ -122,23 +86,21 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       };
     }
     
-    // Log if result was cached (idempotency)
     if (response.cached) {
       console.log('📦 Result was cached (idempotent retry)');
     }
     
-    // Convert winner to LootItem format with tier
     const winner: LootItem & { tier?: string } = {
       id: response.winner!.id,
       name: response.winner!.name,
       price: response.winner!.price,
       rarity: response.winner!.rarity as Rarity,
       image: response.winner!.image,
-      odds: 0, // Not needed for display
+      odds: 0,
       tier: response.winner!.tier
     };
     
-    // Refresh wallet in background (don't wait)
+    // Refresh wallet in background
     refreshWallet().catch(() => {});
     
     return {
@@ -153,7 +115,6 @@ export async function openBox(boxId: string): Promise<PlayResult> {
     
   } catch (err: any) {
     console.error('❌ openBox error:', err);
-    
     return {
       success: false,
       error: 'INTERNAL_ERROR',
