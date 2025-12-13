@@ -210,81 +210,66 @@ async function handleVisibilityChange(): Promise<void> {
   }
   
   // Tab became visible
-  console.log('[ConnectionManager] Tab visible');
-  
-  // Calculate background time
   const backgroundTime = lastHiddenTime ? Date.now() - lastHiddenTime : 0;
-  console.log(`[ConnectionManager] Was in background for ${Math.round(backgroundTime / 1000)}s`);
+  console.log(`[ConnectionManager] Tab visible (was hidden ${Math.round(backgroundTime / 1000)}s)`);
   
-  // Skip if was only briefly hidden
-  if (backgroundTime < CONFIG.MIN_BACKGROUND_MS) {
-    console.log('[ConnectionManager] Brief background - skipping check');
-    return;
+  // ALWAYS refresh when tab becomes visible (if was hidden for more than 1 second)
+  // This ensures the Supabase client is always in a good state
+  if (backgroundTime > 1000) {
+    // Do it immediately in background - don't block user interaction
+    refreshClientInBackground();
   }
   
-  // Debounce rapid changes
-  if (debounceTimer) {
-    clearTimeout(debounceTimer);
-  }
-  
-  debounceTimer = setTimeout(async () => {
-    debounceTimer = null;
-    await checkAndReconnect();
-  }, CONFIG.DEBOUNCE_MS);
+  lastHiddenTime = null;
 }
 
 /**
- * Check connection and reconnect if needed
- * 
- * NEW APPROACH: Don't test with hanging health checks.
- * After long background, proactively refresh the client and session.
- * This is faster and more reliable than trying to detect if connection is broken.
+ * Refresh the Supabase client in background
+ * Non-blocking - user can interact immediately
+ */
+function refreshClientInBackground(): void {
+  // Don't await - let it run in background
+  (async () => {
+    if (isProcessing) {
+      console.log('[ConnectionManager] Already refreshing - skipping');
+      return;
+    }
+    
+    isProcessing = true;
+    console.log('[ConnectionManager] Refreshing client in background...');
+    
+    try {
+      // Just recreate the client - it's fast and ensures fresh state
+      recreateSupabaseClient();
+      console.log('[ConnectionManager] Client refreshed');
+    } catch (err) {
+      console.error('[ConnectionManager] Refresh error:', err);
+    } finally {
+      isProcessing = false;
+    }
+  })();
+}
+
+/**
+ * Force refresh the connection (used by manual retry)
  */
 async function checkAndReconnect(): Promise<void> {
-  // Guard against concurrent processing
   if (isProcessing) {
     console.log('[ConnectionManager] Already processing - skipping');
     return;
   }
   
   isProcessing = true;
-  console.log('[ConnectionManager] Refreshing connection after background...');
   
   try {
-    // Simple approach: just refresh the session
-    // This is usually enough to "wake up" the Supabase client
-    console.log('[ConnectionManager] Refreshing auth session...');
-    
-    const { data, error } = await Promise.race([
-      supabase.auth.getSession(),
-      new Promise<{ data: null; error: Error }>((resolve) => {
-        setTimeout(() => resolve({ data: null, error: new Error('Session refresh timeout') }), 5000);
-      })
-    ]);
-    
-    if (error) {
-      console.warn('[ConnectionManager] Session refresh failed:', error.message);
-      // Try recreating the client
-      console.log('[ConnectionManager] Recreating Supabase client...');
-      recreateSupabaseClient();
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } else {
-      console.log('[ConnectionManager] Session refreshed successfully');
-    }
-    
-    // Always mark as connected - we've done what we can
-    // If there's a real problem, the next actual operation will fail
-    // and the user will see an error message
+    console.log('[ConnectionManager] Force refreshing client...');
+    recreateSupabaseClient();
     setStatus('connected');
-    
   } catch (err) {
-    console.error('[ConnectionManager] Unexpected error:', err);
-    // Still mark as connected - let actual operations surface errors
-    setStatus('connected');
+    console.error('[ConnectionManager] Refresh error:', err);
+    setStatus('disconnected');
   } finally {
     isProcessing = false;
-    lastHiddenTime = null;
-    console.log('[ConnectionManager] Connection refresh complete');
   }
 }
 
