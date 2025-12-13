@@ -213,41 +213,16 @@ async function handleVisibilityChange(): Promise<void> {
   const backgroundTime = lastHiddenTime ? Date.now() - lastHiddenTime : 0;
   console.log(`[ConnectionManager] Tab visible (was hidden ${Math.round(backgroundTime / 1000)}s)`);
   
-  // ALWAYS refresh when tab becomes visible (if was hidden for more than 1 second)
-  // This ensures the Supabase client is always in a good state
-  if (backgroundTime > 1000) {
-    // Do it immediately in background - don't block user interaction
-    refreshClientInBackground();
+  // If was hidden for more than 30 seconds, reload the page
+  // This is the most reliable way to ensure a clean Supabase state
+  // Recreating clients causes "Multiple GoTrueClient" conflicts
+  if (backgroundTime > 30000) {
+    console.log('[ConnectionManager] Long background detected - reloading page for clean state');
+    window.location.reload();
+    return;
   }
   
   lastHiddenTime = null;
-}
-
-/**
- * Refresh the Supabase client in background
- * Non-blocking - user can interact immediately
- */
-function refreshClientInBackground(): void {
-  // Don't await - let it run in background
-  (async () => {
-    if (isProcessing) {
-      console.log('[ConnectionManager] Already refreshing - skipping');
-      return;
-    }
-    
-    isProcessing = true;
-    console.log('[ConnectionManager] Refreshing client in background...');
-    
-    try {
-      // Just recreate the client - it's fast and ensures fresh state
-      recreateSupabaseClient();
-      console.log('[ConnectionManager] Client refreshed');
-    } catch (err) {
-      console.error('[ConnectionManager] Refresh error:', err);
-    } finally {
-      isProcessing = false;
-    }
-  })();
 }
 
 /**

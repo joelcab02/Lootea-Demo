@@ -3,7 +3,7 @@
  * Calls Supabase RPC function for secure server-side game logic
  */
 
-import { supabase, forceReconnect, recreateSupabaseClient } from './supabaseClient';
+import { supabase } from './supabaseClient';
 import { refreshWallet, isLoggedIn, getAuthState } from './authService';
 import type { LootItem } from '../core/types/game.types';
 import { Rarity } from '../core/types/game.types';
@@ -71,25 +71,13 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       );
       sessionData = result.data;
     } catch (err: any) {
-      console.warn('🔐 Session check failed:', err.message, '- recreating client');
-      recreateSupabaseClient();
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Try once more with new client
-      try {
-        const result = await withTimeout(
-          supabase.auth.getSession(),
-          TIMEOUT_MS,
-          'Session check timeout after recreate'
-        );
-        sessionData = result.data;
-      } catch {
-        return {
-          success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Error de conexión. Recarga la página.'
-        };
-      }
+      console.warn('🔐 Session check failed:', err.message);
+      // Don't recreate client - just tell user to reload
+      return {
+        success: false,
+        error: 'INTERNAL_ERROR',
+        message: 'Conexión perdida. Recarga la página.'
+      };
     }
     
     if (!sessionData?.session) {
@@ -127,16 +115,10 @@ export async function openBox(boxId: string): Promise<PlayResult> {
       error = result.error;
     } catch (err: any) {
       console.error('📡 RPC failed:', err.message);
-      
-      // On timeout, recreate client for next attempt
-      if (err.message.includes('timeout')) {
-        recreateSupabaseClient();
-      }
-      
       return {
         success: false,
         error: 'INTERNAL_ERROR',
-        message: 'Tiempo de espera agotado. Intenta de nuevo.'
+        message: 'Conexión perdida. Recarga la página.'
       };
     }
     
