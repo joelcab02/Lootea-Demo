@@ -52,11 +52,40 @@ const VISUAL_DISTRIBUTION = {
   jackpot: 0.15,    // 15% jackpot/legendary items (teasers!)
 };
 
-// Strategic positions for jackpot items in the strip
-const JACKPOT_TEASE_POSITIONS = [3, 7, 12, 18, 24, 28];
-
 // Near-miss: always place high-value item near winner when player loses
 const NEAR_MISS_ENABLED = true;
+
+// ============================================
+// RANDOMNESS UTILITIES (Visual Only)
+// These only affect what items APPEAR in the strip,
+// NOT the actual winner (that's determined by RPC/odds)
+// ============================================
+
+// Fisher-Yates shuffle - proper randomization
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+// Generate random positions avoiding a zone around the winner
+const generateRandomPositions = (
+  count: number, 
+  total: number, 
+  excludeStart: number, 
+  excludeEnd: number
+): number[] => {
+  const available: number[] = [];
+  for (let i = 0; i < total; i++) {
+    if (i < excludeStart || i > excludeEnd) {
+      available.push(i);
+    }
+  }
+  return shuffleArray(available).slice(0, count);
+};
 
 // ============================================
 // COMPONENT
@@ -173,9 +202,12 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
 
   // ============================================
   // SELECT BY VISUAL DISTRIBUTION (NOT actual odds)
+  // Includes duplicate prevention for variety
   // ============================================
   
-  const selectByVisualDistribution = useCallback((): LootItem => {
+  const selectByVisualDistribution = useCallback((
+    excludeItem?: LootItem | null
+  ): LootItem => {
     const { common, mid, rare, jackpot } = itemsByTier;
     const rand = Math.random();
     
@@ -204,12 +236,22 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
              itemsWithTickets;
     }
     
-    // Random item from selected tier
-    return tier[Math.floor(Math.random() * tier.length)];
+    // Filter out excluded item to prevent consecutive duplicates
+    let candidates = tier;
+    if (excludeItem && tier.length > 1) {
+      const filtered = tier.filter(i => i.id !== excludeItem.id);
+      if (filtered.length > 0) {
+        candidates = filtered;
+      }
+    }
+    
+    // Shuffle and pick first (true randomness)
+    return shuffleArray(candidates)[0];
   }, [itemsByTier, itemsWithTickets]);
 
   // ============================================
   // STRIP GENERATION WITH VISUAL EXCITEMENT
+  // Enhanced randomness - each spin looks different
   // ============================================
   
   const generateStrip = useCallback((winnerItem: LootItem) => {
@@ -218,57 +260,83 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     const newStrip = new Array(TOTAL_CARDS_IN_STRIP);
     const { rare, jackpot } = itemsByTier;
     
-    // Combine rare + jackpot for high-value items
-    const highValueItems = [...rare, ...jackpot].sort((a, b) => b.price - a.price);
-    const legendaryItems = jackpot.length > 0 ? jackpot : highValueItems.slice(0, 3);
+    // Shuffle high-value items for variety each spin
+    const highValueItems = shuffleArray([...rare, ...jackpot]);
+    const legendaryItems = shuffleArray(
+      jackpot.length > 0 ? [...jackpot] : highValueItems.slice(0, 3)
+    );
     
-    // Fill strip with visually exciting distribution
+    // ============================================
+    // STEP 1: Place winner at WINNING_INDEX (NEVER CHANGES)
+    // ============================================
+    newStrip[WINNING_INDEX] = winnerItem;
+    
+    // ============================================
+    // STEP 2: Fill strip with NO consecutive duplicates
+    // ============================================
+    let lastItem: LootItem | null = null;
     for (let i = 0; i < TOTAL_CARDS_IN_STRIP; i++) {
       if (i === WINNING_INDEX) {
-        newStrip[i] = winnerItem;
-      } else {
-        newStrip[i] = selectByVisualDistribution();
+        lastItem = winnerItem;
+        continue;
       }
+      const item = selectByVisualDistribution(lastItem);
+      newStrip[i] = item;
+      lastItem = item;
     }
 
     // ============================================
-    // NEAR-MISS PSYCHOLOGY
+    // STEP 3: NEAR-MISS with VARIABLE offset (1-2 positions)
     // ============================================
-    
     if (NEAR_MISS_ENABLED) {
       const winnerIsLowValue = 
         winnerItem.rarity?.toString().toUpperCase() === 'COMMON' ||
         winnerItem.price < (highValueItems[0]?.price || 0) * 0.05;
       
-      // Place high-value item RIGHT BEFORE winner (near-miss!)
-      if (winnerIsLowValue && highValueItems.length > 0 && WINNING_INDEX > 0) {
-        const candidates = highValueItems.filter(i => i.id !== winnerItem.id);
-        if (candidates.length > 0) {
-          newStrip[WINNING_INDEX - 1] = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
+      // Random offset: 1 or 2 positions
+      const beforeOffset = Math.floor(Math.random() * 2) + 1;
+      const afterOffset = Math.floor(Math.random() * 2) + 1;
+      
+      // Place high-value item BEFORE winner (near-miss!)
+      if (winnerIsLowValue && highValueItems.length > 0) {
+        const pos = WINNING_INDEX - beforeOffset;
+        if (pos >= 0) {
+          newStrip[pos] = shuffleArray(highValueItems)[0];
         }
       }
       
-      // Place legendary item RIGHT AFTER winner
-      if (legendaryItems.length > 0 && winnerItem.rarity !== Rarity.LEGENDARY && WINNING_INDEX + 1 < TOTAL_CARDS_IN_STRIP) {
-        const candidates = legendaryItems.filter(i => i.id !== winnerItem.id);
-        if (candidates.length > 0) {
-          newStrip[WINNING_INDEX + 1] = candidates[Math.floor(Math.random() * candidates.length)];
+      // Place legendary item AFTER winner
+      if (legendaryItems.length > 0 && winnerItem.rarity !== Rarity.LEGENDARY) {
+        const pos = WINNING_INDEX + afterOffset;
+        if (pos < TOTAL_CARDS_IN_STRIP) {
+          newStrip[pos] = shuffleArray(legendaryItems)[0];
         }
       }
     }
     
     // ============================================
-    // JACKPOT TEASERS THROUGHOUT STRIP
-    // Sprinkle legendary items at strategic positions
+    // STEP 4: RANDOM jackpot positions (not fixed!)
     // ============================================
-    
     if (legendaryItems.length > 0) {
-      JACKPOT_TEASE_POSITIONS.forEach(pos => {
-        // Don't override winner or near-miss positions
-        if (pos !== WINNING_INDEX && pos !== WINNING_INDEX - 1 && pos !== WINNING_INDEX + 1) {
-          if (pos < TOTAL_CARDS_IN_STRIP && Math.random() < 0.7) { // 70% chance
-            newStrip[pos] = legendaryItems[Math.floor(Math.random() * legendaryItems.length)];
-          }
+      // Exclude zone around winner (±3 positions)
+      const excludeStart = Math.max(0, WINNING_INDEX - 3);
+      const excludeEnd = Math.min(TOTAL_CARDS_IN_STRIP - 1, WINNING_INDEX + 3);
+      
+      // Random number of jackpot teasers (3-5)
+      const jackpotCount = 3 + Math.floor(Math.random() * 3);
+      
+      // Generate random positions
+      const positions = generateRandomPositions(
+        jackpotCount,
+        TOTAL_CARDS_IN_STRIP,
+        excludeStart,
+        excludeEnd
+      );
+      
+      // Place jackpot items at random positions (70% chance each)
+      positions.forEach(pos => {
+        if (Math.random() < 0.7) {
+          newStrip[pos] = shuffleArray(legendaryItems)[0];
         }
       });
     }
