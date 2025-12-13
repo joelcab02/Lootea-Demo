@@ -306,8 +306,30 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
   }, [itemsWithTickets, strip.length, generateStrip, isDesktop]);
 
   // ============================================
-  // ANIMATION
+  // ANIMATION - Smooth Casino-style Easing
   // ============================================
+  
+  // Custom easing function: Fast start, very smooth deceleration
+  // Creates that satisfying "slot machine" feel
+  const smoothEase = useCallback((t: number): number => {
+    // Phase 1 (0-0.3): Quick acceleration
+    // Phase 2 (0.3-0.7): Maintain speed
+    // Phase 3 (0.7-1.0): Smooth deceleration with slight tension
+    
+    if (t < 0.15) {
+      // Quick ramp up - quadratic ease in
+      return 0.15 * Math.pow(t / 0.15, 2);
+    } else if (t < 0.6) {
+      // Cruise phase - mostly linear with slight curve
+      const cruiseT = (t - 0.15) / 0.45;
+      return 0.15 + 0.55 * cruiseT;
+    } else {
+      // Smooth deceleration - quintic ease out for buttery finish
+      const decelT = (t - 0.6) / 0.4;
+      const easeOut = 1 - Math.pow(1 - decelT, 5);
+      return 0.70 + 0.30 * easeOut;
+    }
+  }, []);
   
   const animate = useCallback(() => {
     const state = stateRef.current;
@@ -319,19 +341,23 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
     const elapsed = now - state.startTime;
     const rawProgress = Math.min(elapsed / duration, 1);
     
-    const ease = 1 - Math.pow(1 - rawProgress, 3);
+    // Use smooth custom easing
+    const ease = smoothEase(rawProgress);
     
     const newX = state.targetX * ease;
     state.currentX = newX;
 
     const tickPosition = Math.abs(newX);
     const currentIndex = (tickPosition / ITEM_WIDTH) | 0;
-    const minTickInterval = 30;
+    
+    // Dynamic tick interval - faster ticks at high speed, slower at end
+    const velocity = 1 - rawProgress;
+    const minTickInterval = rawProgress > 0.85 ? 60 : (rawProgress > 0.7 ? 45 : 25);
 
     if (currentIndex !== state.lastIndex && currentIndex > state.lastIndex) {
       const timeSinceLastTick = now - state.lastTickTime;
       if (timeSinceLastTick >= minTickInterval) {
-        const velocityNormalized = Math.max(0.1, 1 - rawProgress);
+        const velocityNormalized = Math.max(0.1, velocity);
         audioService.playTick(velocityNormalized, rawProgress > 0.9);
         state.lastIndex = currentIndex;
         state.lastTickTime = now;
@@ -352,7 +378,7 @@ const SpinnerV2: React.FC<SpinnerProps> = ({
       setShowWinnerEffect(true);
       onComplete();
     }
-  }, [duration, ITEM_WIDTH, onComplete]);
+  }, [duration, ITEM_WIDTH, onComplete, smoothEase]);
 
   // ============================================
   // SPIN TRIGGER
