@@ -314,6 +314,7 @@ export const useGameStore = create<GameStore>()(
         }
 
         // Mark critical operation - if tab hidden during spin animation, reload on return
+        console.log('[GameStore] 🎰 About to start critical operation (animation starting)');
         markCriticalOperationStart();
 
         set({ 
@@ -330,6 +331,7 @@ export const useGameStore = create<GameStore>()(
        */
       onSpinComplete: (winner) => {
         // Critical operation complete - safe to switch tabs now
+        console.log('[GameStore] 🏁 Animation complete - ending critical operation');
         markCriticalOperationEnd();
         
         set({ 

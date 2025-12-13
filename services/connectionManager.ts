@@ -279,18 +279,17 @@ function showReconnectingOverlay(): void {
  */
 async function handleVisibilityChange(): Promise<void> {
   const state = document.visibilityState;
-  console.log(`[ConnectionManager] 👁️ visibilitychange event fired! State: ${state}`);
+  console.log(`[ConnectionManager] 👁️ visibilitychange event! State: ${state}, criticalOp: ${criticalOperationInProgress}, hiddenDuring: ${hiddenDuringCriticalOperation}`);
   
   if (state === 'hidden') {
     lastHiddenTime = Date.now();
     
     // Track if hidden during a critical operation
     if (criticalOperationInProgress) {
-      console.log(`[ConnectionManager] ⚠️ Tab hidden DURING critical operation!`);
+      console.log(`[ConnectionManager] ⚠️ Tab hidden DURING critical operation! Setting flag.`);
       hiddenDuringCriticalOperation = true;
     }
     
-    console.log(`[ConnectionManager] Tab hidden at ${lastHiddenTime}, criticalOp: ${criticalOperationInProgress}`);
     return;
   }
   
@@ -298,8 +297,8 @@ async function handleVisibilityChange(): Promise<void> {
   const backgroundTime = lastHiddenTime ? Date.now() - lastHiddenTime : 0;
   const backgroundSeconds = Math.round(backgroundTime / 1000);
   
-  console.log(`[ConnectionManager] Tab visible! Was hidden for ${backgroundSeconds}s`);
-  console.log(`[ConnectionManager] hiddenDuringCriticalOperation: ${hiddenDuringCriticalOperation}`);
+  console.log(`[ConnectionManager] Tab visible after ${backgroundSeconds}s`);
+  console.log(`[ConnectionManager] State check: criticalOp=${criticalOperationInProgress}, hiddenDuring=${hiddenDuringCriticalOperation}, bgTime=${backgroundTime}ms`);
   
   // Reload if: hidden during critical operation OR hidden > 3 seconds
   const shouldReload = hiddenDuringCriticalOperation || backgroundTime > 3000;
@@ -308,7 +307,7 @@ async function handleVisibilityChange(): Promise<void> {
     const reason = hiddenDuringCriticalOperation 
       ? 'hidden during critical operation' 
       : `${backgroundSeconds}s > 3s threshold`;
-    console.log(`[ConnectionManager] 🔄 Triggering reload: ${reason}`);
+    console.log(`[ConnectionManager] 🔄 RELOADING! Reason: ${reason}`);
     
     // Reset flag
     hiddenDuringCriticalOperation = false;
@@ -324,7 +323,7 @@ async function handleVisibilityChange(): Promise<void> {
     return;
   }
   
-  console.log(`[ConnectionManager] ✅ No reload needed`);
+  console.log(`[ConnectionManager] ✅ No reload needed (criticalOp=${criticalOperationInProgress}, hiddenDuring=${hiddenDuringCriticalOperation}, bgTime=${backgroundTime}ms)`);
   lastHiddenTime = null;
   hiddenDuringCriticalOperation = false;
 }
@@ -446,15 +445,24 @@ export function getConnectionStatus(): ConnectionStatus {
  */
 export function markCriticalOperationStart(): void {
   criticalOperationInProgress = true;
-  console.log('[ConnectionManager] 🎮 Critical operation STARTED');
+  hiddenDuringCriticalOperation = false; // Reset on new operation
+  console.log('[ConnectionManager] 🎮 Critical operation STARTED - criticalOperationInProgress:', criticalOperationInProgress);
 }
 
 /**
  * Mark that a critical operation has completed
  */
 export function markCriticalOperationEnd(): void {
+  console.log('[ConnectionManager] 🎮 Critical operation ENDING - was hidden during:', hiddenDuringCriticalOperation);
   criticalOperationInProgress = false;
-  console.log('[ConnectionManager] 🎮 Critical operation ENDED');
+  // Don't reset hiddenDuringCriticalOperation here - let the visibility handler check it
+}
+
+/**
+ * Check if currently in a critical operation (for debugging)
+ */
+export function isCriticalOperationInProgress(): boolean {
+  return criticalOperationInProgress;
 }
 
 /**
