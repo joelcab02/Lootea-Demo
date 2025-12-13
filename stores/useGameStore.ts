@@ -23,7 +23,7 @@ import { openBox as serverOpenBox } from '../services/gameService';
 import { getBalance, refreshBalance, isLoggedIn, subscribeAuth } from '../services/authService';
 import { fetchInventory } from '../services/inventoryService';
 import { calculateTicketRanges, selectWeightedWinner } from '../services/oddsService';
-import { onConnectionChange } from '../services/connectionManager';
+import { onConnectionChange, markCriticalOperationStart, markCriticalOperationEnd } from '../services/connectionManager';
 
 // Re-export types for compatibility
 export type { GameMode, GamePhase } from '../core/types/game.types';
@@ -130,6 +130,10 @@ export const useGameStore = create<GameStore>()(
                   const currentState = get();
                   if (currentState?.phase === 'spinning' && currentState.predeterminedWinner) {
                     console.log('[GameStore] Spin stuck - forcing completion with winner:', currentState.predeterminedWinner.name);
+                    
+                    // End critical operation
+                    markCriticalOperationEnd();
+                    
                     set({ 
                       phase: 'idle', 
                       lastWinner: currentState.predeterminedWinner,
@@ -309,6 +313,9 @@ export const useGameStore = create<GameStore>()(
           return false;
         }
 
+        // Mark critical operation - if tab hidden during spin animation, reload on return
+        markCriticalOperationStart();
+
         set({ 
           phase: 'spinning',
           predeterminedWinner: winner,
@@ -322,6 +329,9 @@ export const useGameStore = create<GameStore>()(
        * Va directo a idle - el usuario puede jugar de nuevo inmediatamente
        */
       onSpinComplete: (winner) => {
+        // Critical operation complete - safe to switch tabs now
+        markCriticalOperationEnd();
+        
         set({ 
           phase: 'idle',  // Directo a idle, listo para jugar
           lastWinner: winner,
