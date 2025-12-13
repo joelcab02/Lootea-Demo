@@ -200,13 +200,78 @@ async function reconnect(): Promise<boolean> {
 }
 
 /**
+ * Show a nice reconnecting overlay before reload
+ */
+function showReconnectingOverlay(): void {
+  // Create overlay element
+  const overlay = document.createElement('div');
+  overlay.id = 'reconnecting-overlay';
+  overlay.innerHTML = `
+    <div style="
+      position: fixed;
+      inset: 0;
+      background: #0f212e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      animation: fadeIn 0.2s ease-out;
+    ">
+      <style>
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      </style>
+      
+      <!-- Spinner -->
+      <div style="
+        width: 48px;
+        height: 48px;
+        border: 3px solid #2f4553;
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 24px;
+      "></div>
+      
+      <!-- Text -->
+      <div style="
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+        font-family: 'Proxima Nova', 'Inter', sans-serif;
+        margin-bottom: 8px;
+      ">Reconectando...</div>
+      
+      <div style="
+        color: #b1bad3;
+        font-size: 14px;
+        font-family: 'Proxima Nova', 'Inter', sans-serif;
+        animation: pulse 1.5s ease-in-out infinite;
+      ">Un momento por favor</div>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+}
+
+/**
  * Main handler for visibility changes
  * 
  * SIMPLE RELIABLE APPROACH:
- * - Any background > 3 seconds = reload page
+ * - Any background > 3 seconds = show overlay + reload page
  * - This ensures 100% clean Supabase state
- * - No hanging requests, no stale clients
- * - Brief reload is acceptable for MVP
+ * - Nice animation makes the reload feel intentional
  */
 async function handleVisibilityChange(): Promise<void> {
   if (document.visibilityState === 'hidden') {
@@ -218,10 +283,18 @@ async function handleVisibilityChange(): Promise<void> {
   const backgroundTime = lastHiddenTime ? Date.now() - lastHiddenTime : 0;
   const backgroundSeconds = Math.round(backgroundTime / 1000);
   
-  // If was hidden for more than 3 seconds, reload for clean state
+  // If was hidden for more than 3 seconds, show overlay and reload
   if (backgroundTime > 3000) {
-    console.log(`[ConnectionManager] Tab was hidden ${backgroundSeconds}s - reloading for clean state`);
-    window.location.reload();
+    console.log(`[ConnectionManager] Tab was hidden ${backgroundSeconds}s - reconnecting...`);
+    
+    // Show nice overlay first
+    showReconnectingOverlay();
+    
+    // Brief delay for animation to be visible, then reload
+    setTimeout(() => {
+      window.location.reload();
+    }, 600);
+    
     return;
   }
   
